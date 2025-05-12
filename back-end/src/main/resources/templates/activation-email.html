@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Code de vérification</title>
+    <link
+            href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap"
+            rel="stylesheet"
+    />
+</head>
+<body style="margin:0;font-family:'Poppins',sans-serif;background:#ffffff;font-size:14px;">
+<div
+        style="
+        max-width:680px;margin:0 auto;padding:45px 30px 60px;
+        background:#f4f7ff url(https://archisketch-resources.s3.ap-northeast-2.amazonaws.com/vrstyler/1661497957196_595865/email-template-background-banner) no-repeat top center;
+        background-size:800px 452px;color:#434343;
+      "
+>
+    <header>
+        <table style="width:100%;">
+            <tr style="height:0;">
+                <td>
+                    <img
+                            th:src="@{${logoUrl}}"
+                            alt="Afya Logo"
+                            height="30"
+                    />
+                </td>
+                <td style="text-align:right;">
+              <span style="font-size:16px;line-height:30px;color:#ffffff;"
+                    th:text="${today}">05 May, 2025</span>
+                </td>
+            </tr>
+        </table>
+    </header>
+
+    <main>
+        <div
+                style="
+            margin-top:70px;padding:92px 30px 115px;
+            background:#ffffff;border-radius:30px;text-align:center;
+          "
+        >
+            <div style="max-width:489px;margin:0 auto;">
+                <h1 style="margin:0;font-size:24px;font-weight:500;color:#1f1f1f;">
+                    Votre code de vérification
+                </h1>
+                <p style="margin:17px 0 0;font-size:16px;font-weight:500;">
+                    Hey <span th:text="${name}">Tomy</span>,
+                </p>
+                <p style="margin:17px 0 0;font-weight:500;letter-spacing:0.56px;">
+                    Merci de vous être inscrit·e chez Afya. Utilisez le code ci-dessous pour activer votre compte.
+                    Ce code est valable <span style="font-weight:600;color:#1f1f1f;"
+                                              th:text="${expiry}">15 minutes</span>.
+                    Ne le partagez jamais.
+                </p>
+                <p style="margin:60px 0 0;font-size:40px;font-weight:600;letter-spacing:8px;color:#ba3d4f;"
+                   th:text="${code}">12345678</p>
+            </div>
+        </div>
+
+        <p style="max-width:400px;margin:90px auto 0;text-align:center;font-weight:500;color:#8c8c8c;">
+            Besoin d’aide ? Écrivez-nous à
+            <a href="mailto:support@afya.com" style="color:#499fb6;text-decoration:none;">
+                support@afya.com
+            </a>
+            ou visitez notre
+            <a href="https://afya.com/help" target="_blank" style="color:#499fb6;text-decoration:none;">
+                Centre d’aide
+            </a>.
+        </p>
+    </main>
+
+    <footer style="max-width:490px;margin:20px auto 0;text-align:center;
+                     border-top:1px solid #e6ebf1;padding-top:20px;
+                     font-family:'Poppins',sans-serif;font-size:12px;color:#888;">
+        <p style="margin:0;font-weight:600;color:#434343;">Afya Company</p>
+        <p style="margin:8px 0 0;color:#434343;">123 Rue Exemple, 75000 Paris, France</p>
+        <p style="margin:16px 0 0;color:#434343;"
+           th:text="'Copyright © ' + ${year} + ' Afya. All rights reserved.'">
+            © 2025 Afya. All rights reserved.
+        </p>
+    </footer>
+</div>
+</body>
+</html>
