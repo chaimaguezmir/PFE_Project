@@ -14,16 +14,22 @@ import java.util.UUID;
 @Entity(name = "refreshtoken")
 public class RefreshToken {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
-    @OneToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private User user;
 
     @Column(nullable = false, unique = true)
     private String token;
 
-    @Column(nullable = false)
+    @Column(name = "expiry_date", nullable = false)
     private Instant expiryDate;
+
+    @Column(name = "device_id", length = 36,nullable = false,unique = true)
+    private String deviceId;
+
+    @Column(name = "device_name", length = 100,nullable = false)
+    private String deviceName;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 }

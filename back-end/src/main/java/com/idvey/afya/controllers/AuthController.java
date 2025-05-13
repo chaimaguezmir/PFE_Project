@@ -70,6 +70,7 @@ public class AuthController {
     @AuthenticationDocs.SignIn
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+
         User user = userRepository.findByUsername(loginRequest.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException(
                         "User Not Found with username: " + loginRequest.getUsername()));
@@ -80,37 +81,45 @@ public class AuthController {
                     .body(new MessageResponse(
                             "Error: Account not activated. Please check your email for the activation code."));
         }
-            Authentication authentication = authenticationManager
-                    .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+        Authentication authentication = authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        if (loginRequest.getDeviceId() == null || loginRequest.getDeviceId().isBlank())
+            loginRequest.setDeviceId(UUID.randomUUID().toString());
+        if (loginRequest.getDeviceName() == null || loginRequest.getDeviceName().isBlank())
+            loginRequest.setDeviceName("Unknown Device");
 
-            String jwt = jwtUtils.generateJwtToken(userDetails);
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-            List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority)
-                    .collect(Collectors.toList());
+        String jwt = jwtUtils.generateJwtToken(userDetails);
 
-            RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
-            System.out.println(" logged in successfully!");
-            JwtResponse jtr = JwtResponse.builder()
-                    .token(jwt)
-                    .refreshToken(refreshToken.getToken())
-                    .id(userDetails.getId())
-                    .username(userDetails.getUsername())
-                    .email(userDetails.getEmail())
-                    .firstName(userDetails.getFirstName())
-                    .LastName(userDetails.getLastName())
-                    .roles(roles)
-                    .type("Bearer")
-                    .build();
-            return ResponseEntity.ok(jtr);
+        List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
+    try{
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId(), loginRequest.getDeviceId(), loginRequest.getDeviceName());
+        System.out.println(" logged in successfully!");
+        JwtResponse jtr = JwtResponse.builder()
+                .token(jwt)
+                .refreshToken(refreshToken.getToken())
+                .id(userDetails.getId())
+                .username(userDetails.getUsername())
+                .email(userDetails.getEmail())
+                .firstName(userDetails.getFirstName())
+                .LastName(userDetails.getLastName())
+                .deviceName(refreshToken.getDeviceName())
+                .deviceId(refreshToken.getDeviceId())
+                .roles(roles)
+                .type("Bearer")
+                .build();
+        return ResponseEntity.ok(jtr);
 
+    } catch (TokenRefreshException tre) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new MessageResponse(tre.getMessage()));
+    }
 
-
-        //new JwtResponse(jwt, refreshToken.getToken(), userDetails.getId(),
-        //userDetails.getUsername(), userDetails.getEmail(), roles)
     }
 
     @AuthenticationDocs.SignUp
@@ -185,7 +194,7 @@ public class AuthController {
 
         // send activation code
         ActivationCode ac = activationCodeService.createCodeFor(user);
-        emailService.sendActivationEmail(user.getEmail(),user.getFirstName(), ac.getCode());
+        emailService.sendActivationEmail(user.getEmail(), user.getFirstName(), ac.getCode());
 
         System.out.println("User with ID " + user.getId() + " Registration successful—please check email to activate your account.");
         return ResponseEntity.ok(new MessageResponse("User with ID " + user.getId() + " Registration successful—please check email to activate your account."));
@@ -245,7 +254,7 @@ public class AuthController {
                     .body(new MessageResponse("Account already activated."));
         }
         ActivationCode ac = activationCodeService.createCodeFor(user);
-        emailService.sendActivationEmail(user.getEmail(),user.getFirstName(), ac.getCode());
+        emailService.sendActivationEmail(user.getEmail(), user.getFirstName(), ac.getCode());
         return ResponseEntity.ok(new MessageResponse("Activation code resent—please check your email."));
     }
 
