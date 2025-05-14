@@ -20,6 +20,8 @@ public class JwtResponse {
     private List<String> roles;
     private String firstName;
     private String LastName;
+    private String deviceName;
+    private String deviceId;
 
 
 }

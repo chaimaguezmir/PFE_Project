@@ -2,6 +2,7 @@ package com.idvey.afya.security.service;
 
 import com.idvey.afya.exception.TokenRefreshException;
 import com.idvey.afya.models.RefreshToken;
+import com.idvey.afya.models.User;
 import com.idvey.afya.repository.RefreshTokenRepository;
 import com.idvey.afya.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,16 +30,23 @@ public class RefreshTokenService {
         return refreshTokenRepository.findByToken(token);
     }
 
-    public RefreshToken createRefreshToken(UUID userId) {
-        RefreshToken refreshToken = new RefreshToken();
+    public RefreshToken createRefreshToken(UUID userId, String deviceId, String deviceName) {
+        // 1. Lookup the user entity
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        refreshToken.setUser(userRepository.findById(userId).get());
+        // 2. If a refresh token already exists for this (user, device), delete it
+        refreshTokenRepository.findByUserIdAndDeviceId(userId, deviceId).ifPresent(refreshTokenRepository::delete);  // delete the old token
+
+        // 3. Create and persist the new token
+        RefreshToken refreshToken = new RefreshToken();
+        refreshToken.setUser(user);
         refreshToken.setExpiryDate(Instant.now().plusMillis(refreshTokenDurationMs));
         refreshToken.setToken(UUID.randomUUID().toString());
-
-        refreshToken = refreshTokenRepository.save(refreshToken);
-        return refreshToken;
+        refreshToken.setDeviceId(deviceId);
+        refreshToken.setDeviceName(deviceName);
+        return refreshTokenRepository.save(refreshToken);
     }
+
 
     public RefreshToken verifyExpiration(RefreshToken token) {
         if (token.getExpiryDate().compareTo(Instant.now()) < 0) {

@@ -9,25 +9,23 @@ import com.idvey.afya.payload.response.TokenRefreshResponse;
 import com.idvey.afya.repository.RoleRepository;
 import com.idvey.afya.repository.UserRepository;
 import com.idvey.afya.security.jwt.JwtUtils;
-import com.idvey.afya.security.service.ActivationCodeService;
-import com.idvey.afya.security.service.EmailService;
-import com.idvey.afya.security.service.RefreshTokenService;
-import com.idvey.afya.security.service.UserDetailsImpl;
+import com.idvey.afya.security.service.*;
 import com.idvey.afya.docs.AuthenticationDocs;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestClient;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashSet;
@@ -60,6 +58,8 @@ public class AuthController {
     @Autowired
     RefreshTokenService refreshTokenService;
 
+    @Autowired
+    private PasswordResetService passwordResetService;
 
     @Autowired
     private ActivationCodeService activationCodeService;
@@ -67,9 +67,13 @@ public class AuthController {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private UserService userService;
+
     @AuthenticationDocs.SignIn
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+
         User user = userRepository.findByUsername(loginRequest.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException(
                         "User Not Found with username: " + loginRequest.getUsername()));
@@ -80,37 +84,45 @@ public class AuthController {
                     .body(new MessageResponse(
                             "Error: Account not activated. Please check your email for the activation code."));
         }
-            Authentication authentication = authenticationManager
-                    .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+        Authentication authentication = authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        if (loginRequest.getDeviceId() == null || loginRequest.getDeviceId().isBlank())
+            loginRequest.setDeviceId(UUID.randomUUID().toString());
+        if (loginRequest.getDeviceName() == null || loginRequest.getDeviceName().isBlank())
+            loginRequest.setDeviceName("Unknown Device");
 
-            String jwt = jwtUtils.generateJwtToken(userDetails);
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-            List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority)
-                    .collect(Collectors.toList());
+        String jwt = jwtUtils.generateJwtToken(userDetails);
 
-            RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
-            System.out.println(" logged in successfully!");
-            JwtResponse jtr = JwtResponse.builder()
-                    .token(jwt)
-                    .refreshToken(refreshToken.getToken())
-                    .id(userDetails.getId())
-                    .username(userDetails.getUsername())
-                    .email(userDetails.getEmail())
-                    .firstName(userDetails.getFirstName())
-                    .LastName(userDetails.getLastName())
-                    .roles(roles)
-                    .type("Bearer")
-                    .build();
-            return ResponseEntity.ok(jtr);
+        List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
+    try{
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId(), loginRequest.getDeviceId(), loginRequest.getDeviceName());
+        System.out.println(" logged in successfully!");
+        JwtResponse jtr = JwtResponse.builder()
+                .token(jwt)
+                .refreshToken(refreshToken.getToken())
+                .id(userDetails.getId())
+                .username(userDetails.getUsername())
+                .email(userDetails.getEmail())
+                .firstName(userDetails.getFirstName())
+                .LastName(userDetails.getLastName())
+                .deviceName(refreshToken.getDeviceName())
+                .deviceId(refreshToken.getDeviceId())
+                .roles(roles)
+                .type("Bearer")
+                .build();
+        return ResponseEntity.ok(jtr);
 
+    } catch (TokenRefreshException tre) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new MessageResponse(tre.getMessage()));
+    }
 
-
-        //new JwtResponse(jwt, refreshToken.getToken(), userDetails.getId(),
-        //userDetails.getUsername(), userDetails.getEmail(), roles)
     }
 
     @AuthenticationDocs.SignUp
@@ -185,7 +197,7 @@ public class AuthController {
 
         // send activation code
         ActivationCode ac = activationCodeService.createCodeFor(user);
-        emailService.sendActivationEmail(user.getEmail(),user.getFirstName(), ac.getCode());
+        emailService.sendActivationEmail(user.getEmail(), user.getFirstName(), ac.getCode());
 
         System.out.println("User with ID " + user.getId() + " Registration successful—please check email to activate your account.");
         return ResponseEntity.ok(new MessageResponse("User with ID " + user.getId() + " Registration successful—please check email to activate your account."));
@@ -245,8 +257,35 @@ public class AuthController {
                     .body(new MessageResponse("Account already activated."));
         }
         ActivationCode ac = activationCodeService.createCodeFor(user);
-        emailService.sendActivationEmail(user.getEmail(),user.getFirstName(), ac.getCode());
+        emailService.sendActivationEmail(user.getEmail(), user.getFirstName(), ac.getCode());
         return ResponseEntity.ok(new MessageResponse("Activation code resent—please check your email."));
+    }
+
+    @PostMapping("/change-password")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<MessageResponse> changePassword(
+            @AuthenticationPrincipal UserDetailsImpl currentUser,
+            @Valid @RequestBody ChangePasswordRequest req) {
+
+        userService.changePassword(currentUser.getId(), req);
+        return ResponseEntity.ok(new MessageResponse("Password changed successfully"));
+    }
+
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<MessageResponse> forgotPassword(
+            @Valid @RequestBody ForgotPasswordRequest req) {
+        passwordResetService.sendResetCode(req.getEmail());
+        return ResponseEntity.ok(
+                new MessageResponse("Reset code sent to your email"));
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<MessageResponse> resetPassword(
+            @Valid @RequestBody ResetPasswordRequest req) {
+        passwordResetService.resetPassword(req.getCode(), req.getNewPassword());
+        return ResponseEntity.ok(
+                new MessageResponse("Password has been reset successfully"));
     }
 
 }
