@@ -70,6 +70,9 @@ public class AuthController {
 	@Autowired
 	private UserService userService;
 
+	@Autowired
+	private GroupService groupService;
+
 	@AuthenticationDocs.SignIn
 	@PostMapping("/signin")
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
@@ -187,6 +190,8 @@ public class AuthController {
 
 		user.setRoles(roles);
 		userRepository.save(user);
+
+		groupService.createGroup(user.getId(), "default");
 
 		// send activation code
 		ActivationCode ac = activationCodeService.createCodeFor(user);
