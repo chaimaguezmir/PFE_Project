@@ -1,6 +1,5 @@
 package com.idvey.afya.repository;
 
-import com.idvey.afya.models.groupe.Group;
 import com.idvey.afya.models.groupe.GroupMember;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

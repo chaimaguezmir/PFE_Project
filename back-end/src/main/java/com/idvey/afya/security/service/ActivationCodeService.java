@@ -5,7 +5,6 @@ import com.idvey.afya.models.User;
 import com.idvey.afya.repository.ActivationCodeRepository;
 import com.idvey.afya.repository.UserRepository;
 import jakarta.transaction.Transactional;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
