@@ -9,7 +9,11 @@ import java.util.UUID;
 @Getter
 @AllArgsConstructor
 public class GroupResponse {
-    private UUID groupId;
-    private String name;
-    private GroupRole role;
+
+	private UUID groupId;
+
+	private String name;
+
+	private GroupRole role;
+
 }

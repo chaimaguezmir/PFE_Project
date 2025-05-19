@@ -18,101 +18,106 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-
 @Configuration
-//@EnableWebSecurity
+// @EnableWebSecurity
 @EnableMethodSecurity(
-        // securedEnabled = true,
-        // jsr250Enabled = true,
-        prePostEnabled = true)
-public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter {
-    @Autowired
-    UserDetailsServiceImpl userDetailsService;
+		// securedEnabled = true,
+		// jsr250Enabled = true,
+		prePostEnabled = true)
+public class WebSecurityConfig {
 
-    @Autowired
-    private AuthEntryPointJwt unauthorizedHandler;
+	// extends WebSecurityConfigurerAdapter {
+	@Autowired
+	UserDetailsServiceImpl userDetailsService;
 
-    @Bean
-    public AuthTokenFilter authenticationJwtTokenFilter() {
-        return new AuthTokenFilter();
-    }
+	@Autowired
+	private AuthEntryPointJwt unauthorizedHandler;
 
-    //	@Override
-//	public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
-//		authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
-//	}
-    @Bean
-    public DaoAuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+	@Bean
+	public AuthTokenFilter authenticationJwtTokenFilter() {
+		return new AuthTokenFilter();
+	}
 
-        authProvider.setUserDetailsService(userDetailsService);
-        authProvider.setPasswordEncoder(passwordEncoder());
+	// @Override
+	// public void configure(AuthenticationManagerBuilder authenticationManagerBuilder)
+	// throws Exception {
+	// authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+	// }
+	@Bean
+	public DaoAuthenticationProvider authenticationProvider() {
+		DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
 
-        return authProvider;
-    }
+		authProvider.setUserDetailsService(userDetailsService);
+		authProvider.setPasswordEncoder(passwordEncoder());
 
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
-        return authConfig.getAuthenticationManager();
-    }
+		return authProvider;
+	}
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+	@Bean
+	public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+		return authConfig.getAuthenticationManager();
+	}
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.cors(cors -> cors.configurationSource(request -> {
-            var corsConfig = new org.springframework.web.cors.CorsConfiguration();
-            corsConfig.addAllowedOrigin("*");
-            corsConfig.addAllowedMethod("*");
-            corsConfig.addAllowedHeader("*");
-            return corsConfig;
-        })).csrf(AbstractHttpConfigurer::disable)
-                .exceptionHandling(
-                        exceptionHandling -> exceptionHandling
-                                .authenticationEntryPoint(unauthorizedHandler))
-                .sessionManagement(
-                        sessionManagement -> sessionManagement
-                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(
-                        authorize -> authorize
-                                .requestMatchers("/api/auth/**").permitAll()
-                                .requestMatchers("/api/test/**").permitAll()
-                                .requestMatchers("/api/groups/**").authenticated()
-                //.requestMatchers("/client/**").authenticated()
-                //.requestMatchers(HttpMethod.GET, "/api/medic/**").hasAuthority("ROLE_ADMIN")
-                //    .requestMatchers(HttpMethod.POST, "/api/medic/**").hasAuthority("ROLE_ADMIN")
-                //    .requestMatchers(HttpMethod.PUT, "/api/medic/**").denyAll()
-                //    .requestMatchers(HttpMethod.PATCH, "/api/medic/**").denyAll()
-                //    .requestMatchers(HttpMethod.DELETE, "/api/medic/**").hasAuthority("ROLE_ADMIN")
-                //  .requestMatchers("/api/medic/specific").hasAuthority("ROLE_ADMIN")
-                .anyRequest().permitAll());
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
 
-        http.authenticationProvider(authenticationProvider());
-        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+	@Bean
+	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+		http.cors(cors -> cors.configurationSource(request -> {
+			var corsConfig = new org.springframework.web.cors.CorsConfiguration();
+			corsConfig.addAllowedOrigin("*");
+			corsConfig.addAllowedMethod("*");
+			corsConfig.addAllowedHeader("*");
+			return corsConfig;
+		}))
+			.csrf(AbstractHttpConfigurer::disable)
+			.exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(unauthorizedHandler))
+			.sessionManagement(
+					sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+			.authorizeHttpRequests(authorize -> authorize.requestMatchers("/api/auth/**")
+				.permitAll()
+				.requestMatchers("/api/test/**")
+				.permitAll()
+				.requestMatchers("/api/groups/**")
+				.authenticated()
+				// .requestMatchers("/client/**").authenticated()
+				// .requestMatchers(HttpMethod.GET,
+				// "/api/medic/**").hasAuthority("ROLE_ADMIN")
+				// .requestMatchers(HttpMethod.POST,
+				// "/api/medic/**").hasAuthority("ROLE_ADMIN")
+				// .requestMatchers(HttpMethod.PUT, "/api/medic/**").denyAll()
+				// .requestMatchers(HttpMethod.PATCH, "/api/medic/**").denyAll()
+				// .requestMatchers(HttpMethod.DELETE,
+				// "/api/medic/**").hasAuthority("ROLE_ADMIN")
+				// .requestMatchers("/api/medic/specific").hasAuthority("ROLE_ADMIN")
+				.anyRequest()
+				.permitAll());
 
-        return http.build();
-    }
+		http.authenticationProvider(authenticationProvider());
+		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
+		return http.build();
+	}
 
 	/*
-	@Bean
-  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    http.cors().and().csrf().disable()
-        .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
-        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-        .authorizeRequests().requestMatchers("/api/auth/**").permitAll()
-        .requestMatchers("/api/test/**").permitAll()
-			//.requestMatchers(HttpMethod.POST,"/client/save").hasAnyAuthority(String.valueOf(ERole.ROLE_ADMIN))
+	 * @Bean public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+	 * http.cors().and().csrf().disable()
+	 * .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
+	 * .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+	 * .authorizeRequests().requestMatchers("/api/auth/**").permitAll()
+	 * .requestMatchers("/api/test/**").permitAll()
+	 * //.requestMatchers(HttpMethod.POST,"/client/save").hasAnyAuthority(String.valueOf(
+	 * ERole.ROLE_ADMIN))
+	 *
+	 * .requestMatchers("/client/**").permitAll() .anyRequest().permitAll();
+	 * http.authenticationProvider(authenticationProvider());
+	 *
+	 * http.addFilterBefore(authenticationJwtTokenFilter(),
+	 * UsernamePasswordAuthenticationFilter.class);
+	 *
+	 * return http.build(); }
+	 */
 
-              .requestMatchers("/client/**").permitAll()
-			.anyRequest().permitAll();
-    http.authenticationProvider(authenticationProvider());
-
-    http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-
-    return http.build();
-  }*/
 }

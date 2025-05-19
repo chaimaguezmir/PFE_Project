@@ -14,51 +14,55 @@ import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
-
 @Service
 public class RefreshTokenService {
-    @Value("${afya.app.jwtRefreshExpirationMs}")
-    private Long refreshTokenDurationMs;
 
-    @Autowired
-    private RefreshTokenRepository refreshTokenRepository;
+	@Value("${afya.app.jwtRefreshExpirationMs}")
+	private Long refreshTokenDurationMs;
 
-    @Autowired
-    private UserRepository userRepository;
+	@Autowired
+	private RefreshTokenRepository refreshTokenRepository;
 
-    public Optional<RefreshToken> findByToken(String token) {
-        return refreshTokenRepository.findByToken(token);
-    }
+	@Autowired
+	private UserRepository userRepository;
 
-    public RefreshToken createRefreshToken(UUID userId, String deviceId, String deviceName) {
-        // 1. Lookup the user entity
-        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+	public Optional<RefreshToken> findByToken(String token) {
+		return refreshTokenRepository.findByToken(token);
+	}
 
-        // 2. If a refresh token already exists for this (user, device), delete it
-        refreshTokenRepository.findByUserIdAndDeviceId(userId, deviceId).ifPresent(refreshTokenRepository::delete);  // delete the old token
+	public RefreshToken createRefreshToken(UUID userId, String deviceId, String deviceName) {
+		// 1. Lookup the user entity
+		User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        // 3. Create and persist the new token
-        RefreshToken refreshToken = new RefreshToken();
-        refreshToken.setUser(user);
-        refreshToken.setExpiryDate(Instant.now().plusMillis(refreshTokenDurationMs));
-        refreshToken.setToken(UUID.randomUUID().toString());
-        refreshToken.setDeviceId(deviceId);
-        refreshToken.setDeviceName(deviceName);
-        return refreshTokenRepository.save(refreshToken);
-    }
+		// 2. If a refresh token already exists for this (user, device), delete it
+		refreshTokenRepository.findByUserIdAndDeviceId(userId, deviceId).ifPresent(refreshTokenRepository::delete); // delete
+																													// the
+																													// old
+																													// token
 
+		// 3. Create and persist the new token
+		RefreshToken refreshToken = new RefreshToken();
+		refreshToken.setUser(user);
+		refreshToken.setExpiryDate(Instant.now().plusMillis(refreshTokenDurationMs));
+		refreshToken.setToken(UUID.randomUUID().toString());
+		refreshToken.setDeviceId(deviceId);
+		refreshToken.setDeviceName(deviceName);
+		return refreshTokenRepository.save(refreshToken);
+	}
 
-    public RefreshToken verifyExpiration(RefreshToken token) {
-        if (token.getExpiryDate().compareTo(Instant.now()) < 0) {
-            refreshTokenRepository.delete(token);
-            throw new TokenRefreshException(token.getToken(), "Refresh token was expired. Please make a new signin request");
-        }
+	public RefreshToken verifyExpiration(RefreshToken token) {
+		if (token.getExpiryDate().compareTo(Instant.now()) < 0) {
+			refreshTokenRepository.delete(token);
+			throw new TokenRefreshException(token.getToken(),
+					"Refresh token was expired. Please make a new signin request");
+		}
 
-        return token;
-    }
+		return token;
+	}
 
-    @Transactional
-    public int deleteByUserId(UUID userId) {
-        return refreshTokenRepository.deleteByUser(userRepository.findById(userId).get());
-    }
+	@Transactional
+	public int deleteByUserId(UUID userId) {
+		return refreshTokenRepository.deleteByUser(userRepository.findById(userId).get());
+	}
+
 }

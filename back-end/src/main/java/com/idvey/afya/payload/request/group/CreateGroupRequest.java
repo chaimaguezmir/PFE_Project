@@ -8,6 +8,7 @@ import lombok.Setter;
 @Setter
 public class CreateGroupRequest {
 
-    @NotBlank(message = "Group name must not be blank")
-    private String name;
+	@NotBlank(message = "Group name must not be blank")
+	private String name;
+
 }

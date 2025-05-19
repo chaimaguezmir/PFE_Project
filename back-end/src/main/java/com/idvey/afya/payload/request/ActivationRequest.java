@@ -4,7 +4,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-
 import java.util.UUID;
 
 @Getter
@@ -13,9 +12,11 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ActivationRequest {
-    @NotNull
-    private UUID userId;
 
-    @NotBlank
-    private String code;
+	@NotNull
+	private UUID userId;
+
+	@NotBlank
+	private String code;
+
 }

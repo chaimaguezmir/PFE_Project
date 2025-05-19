@@ -155,6 +155,21 @@
 					</excludes>
 				</configuration>
 			</plugin>
+<!--			java formatter -->
+			<plugin>
+				<groupId>io.spring.javaformat</groupId>
+				<artifactId>spring-javaformat-maven-plugin</artifactId>
+				<version>0.0.44</version>
+				<executions>
+					<execution>
+						<id>validate-format</id>
+						<goals>
+							<!-- "validate" will fail the build on any formatting violations -->
+							<goal>validate</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 

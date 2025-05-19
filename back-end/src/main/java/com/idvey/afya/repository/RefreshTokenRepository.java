@@ -11,12 +11,13 @@ import java.util.UUID;
 
 @Repository
 public interface RefreshTokenRepository extends JpaRepository<RefreshToken, UUID> {
-    Optional<RefreshToken> findByToken(String token);
 
-    @Modifying
-    int deleteByUser(User user);
+	Optional<RefreshToken> findByToken(String token);
 
-    /** NEW: lookup a refresh token for this user + device */
-    Optional<RefreshToken> findByUserIdAndDeviceId(UUID userId, String deviceId);
+	@Modifying
+	int deleteByUser(User user);
+
+	/** NEW: lookup a refresh token for this user + device */
+	Optional<RefreshToken> findByUserIdAndDeviceId(UUID userId, String deviceId);
 
 }

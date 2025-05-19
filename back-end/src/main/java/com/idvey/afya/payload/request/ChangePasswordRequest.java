@@ -10,9 +10,10 @@ import lombok.*;
 @AllArgsConstructor
 public class ChangePasswordRequest {
 
-    @NotBlank
-    private String oldPassword;
+	@NotBlank
+	private String oldPassword;
 
-    @NotBlank
-    private String newPassword;
+	@NotBlank
+	private String newPassword;
+
 }

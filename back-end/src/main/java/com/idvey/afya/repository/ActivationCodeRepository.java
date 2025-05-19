@@ -11,8 +11,12 @@ import java.util.UUID;
 
 @Repository
 public interface ActivationCodeRepository extends JpaRepository<ActivationCode, UUID> {
-    Optional<ActivationCode> findByCode(String code);
-    Optional<ActivationCode> findByUser(User user);
-    @Modifying
-    int deleteByUser(User user);
+
+	Optional<ActivationCode> findByCode(String code);
+
+	Optional<ActivationCode> findByUser(User user);
+
+	@Modifying
+	int deleteByUser(User user);
+
 }

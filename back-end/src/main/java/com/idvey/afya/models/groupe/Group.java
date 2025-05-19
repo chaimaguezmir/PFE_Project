@@ -7,36 +7,35 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-
-@Getter @Setter
+@Getter
+@Setter
 @Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "groups")
 public class Group {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
 
-    @Column(nullable = false)
-    private String name;
+	@Id
+	@GeneratedValue(strategy = GenerationType.UUID)
+	private UUID id;
 
-    // link to members
-    @OneToMany(
-            mappedBy = "group",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
-    private Set<GroupMember> members = new HashSet<>();
+	@Column(nullable = false)
+	private String name;
 
-    // convenience:
-    public void addMember(GroupMember gm) {
-        members.add(gm);
-        gm.setGroup(this);
-    }
-    public void removeMember(GroupMember gm) {
-        members.remove(gm);
-        gm.setGroup(null);
-    }
+	// link to members
+	@OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<GroupMember> members = new HashSet<>();
+
+	// convenience:
+	public void addMember(GroupMember gm) {
+		members.add(gm);
+		gm.setGroup(this);
+	}
+
+	public void removeMember(GroupMember gm) {
+		members.remove(gm);
+		gm.setGroup(null);
+	}
+
 }

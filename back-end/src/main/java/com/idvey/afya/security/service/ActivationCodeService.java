@@ -21,59 +21,50 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 @Service
 public class ActivationCodeService {
-    private static final int EXPIRATION_MINUTES = 5;
 
-    @Autowired
-    private ActivationCodeRepository codeRepo;
-    @Autowired
-    private UserRepository userRepo;
+	private static final int EXPIRATION_MINUTES = 5;
 
-    @Transactional
-    public ActivationCode createCodeFor(User user) {
-        // delete old code if exists
-        ActivationCode old = user.getActivationCode();
-        if (old != null) {
-            codeRepo.delete(old);
-            codeRepo.flush();              // ⬅️ force the DELETE now
-        }
+	@Autowired
+	private ActivationCodeRepository codeRepo;
 
-        int code = new Random().ints(1, 100000, 999999).sum();
-        String codeStr = String.valueOf(code);
-        Date expiry = Date.from(Instant.now().plus(EXPIRATION_MINUTES, ChronoUnit.MINUTES));
-        ActivationCode ac = ActivationCode.builder()
-                .user(user)
-                .code(codeStr)
-                .expiryDate(expiry)
-                .build();
+	@Autowired
+	private UserRepository userRepo;
 
-        user.setActivationCode(ac);
-        userRepo.save(user);    // cascades save of ActivationCode
-        return ac;
-    }
+	@Transactional
+	public ActivationCode createCodeFor(User user) {
+		// delete old code if exists
+		ActivationCode old = user.getActivationCode();
+		if (old != null) {
+			codeRepo.delete(old);
+			codeRepo.flush(); // ⬅️ force the DELETE now
+		}
 
-    @Transactional
-    public void activate(UUID userId, String code) {
-        ActivationCode ac = codeRepo.findByCode(code)
-                .orElseThrow(() ->
-                        new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid activation code")
-                );
-        User user = ac.getUser();
+		int code = new Random().ints(1, 100000, 999999).sum();
+		String codeStr = String.valueOf(code);
+		Date expiry = Date.from(Instant.now().plus(EXPIRATION_MINUTES, ChronoUnit.MINUTES));
+		ActivationCode ac = ActivationCode.builder().user(user).code(codeStr).expiryDate(expiry).build();
 
-        if (!user.getId().equals(userId)) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Activation code does not match user"
-            );
-        }
-        if (ac.getExpiryDate().before(new Date())) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Activation code expired"
-            );
-        }
+		user.setActivationCode(ac);
+		userRepo.save(user); // cascades save of ActivationCode
+		return ac;
+	}
 
-        user.setEnabled(true);
-        user.setActivationCode(null);
-        userRepo.save(user);
-    }
+	@Transactional
+	public void activate(UUID userId, String code) {
+		ActivationCode ac = codeRepo.findByCode(code)
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid activation code"));
+		User user = ac.getUser();
+
+		if (!user.getId().equals(userId)) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Activation code does not match user");
+		}
+		if (ac.getExpiryDate().before(new Date())) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Activation code expired");
+		}
+
+		user.setEnabled(true);
+		user.setActivationCode(null);
+		userRepo.save(user);
+	}
+
 }

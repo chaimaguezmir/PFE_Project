@@ -12,60 +12,59 @@ import java.util.Set;
 @Setter
 @Getter
 public class SignupRequest {
-    @NotBlank
-    @Size(min = 3, max = 20)
-    private String username;
 
-    @NotBlank
-    @Size(max = 50)
-    @Email
-    private String email;
+	@NotBlank
+	@Size(min = 3, max = 20)
+	private String username;
 
-    private Set<String> role;
+	@NotBlank
+	@Size(max = 50)
+	@Email
+	private String email;
 
-    @NotBlank
-    @Size(min = 6, max = 40)
-    private String password;
+	private Set<String> role;
 
+	@NotBlank
+	@Size(min = 6, max = 40)
+	private String password;
 
-    @Size(min = 3, max = 20)
+	@Size(min = 3, max = 20)
 
-    private String firstName;
+	private String firstName;
 
+	@Size(min = 3, max = 20)
 
-    @Size(min = 3, max = 20)
+	private String lastName;
 
-    private String lastName;
+	private String phoneNumber;
 
-    private String phoneNumber;
+	private Double weight;
 
-    private Double weight;
+	private Double height;
 
-    private Double height;
+	@Size(min = 2, max = 2)
+	private String bloodGroup;
 
-    @Size(min = 2, max = 2)
-    private String bloodGroup;
+	private String gender;
 
-    private String gender;
+	private String birthDate;
 
-    private String birthDate;
+	private boolean smokingStatus;
 
-    private boolean smokingStatus;
+	private boolean alcoholConsumption;
 
-    private boolean alcoholConsumption;
+	private boolean exerciseRegularly;
 
-    private boolean exerciseRegularly;
+	private boolean familyHistoryHeartDisease;
 
-    private boolean familyHistoryHeartDisease;
+	private boolean hypertensionHistory;
 
-    private boolean hypertensionHistory;
+	private boolean heartDisease;
 
-    private boolean heartDisease;
+	private boolean diabetes;
 
-    private boolean diabetes;
+	private boolean cholesterol;
 
-    private boolean cholesterol;
-
-    private boolean allergies;
+	private boolean allergies;
 
 }

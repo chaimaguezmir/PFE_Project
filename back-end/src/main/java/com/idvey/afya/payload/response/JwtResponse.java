@@ -11,17 +11,27 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class JwtResponse {
-    private String token;
-    private String type = "Bearer";
-    private String refreshToken;
-    private UUID id;
-    private String username;
-    private String email;
-    private List<String> roles;
-    private String firstName;
-    private String LastName;
-    private String deviceName;
-    private String deviceId;
 
+	private String token;
+
+	private String type = "Bearer";
+
+	private String refreshToken;
+
+	private UUID id;
+
+	private String username;
+
+	private String email;
+
+	private List<String> roles;
+
+	private String firstName;
+
+	private String LastName;
+
+	private String deviceName;
+
+	private String deviceId;
 
 }

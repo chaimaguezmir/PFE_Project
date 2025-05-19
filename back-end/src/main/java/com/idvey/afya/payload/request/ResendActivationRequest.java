@@ -1,4 +1,5 @@
 package com.idvey.afya.payload.request;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -7,7 +8,9 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ResendActivationRequest {
-    @NotBlank
-    @Email
-    private String email;
+
+	@NotBlank
+	@Email
+	private String email;
+
 }

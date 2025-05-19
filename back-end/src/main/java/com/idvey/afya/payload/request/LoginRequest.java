@@ -7,14 +7,15 @@ import lombok.Setter;
 @Setter
 @Getter
 public class LoginRequest {
-    @NotBlank
-    private String username;
 
-    @NotBlank
-    private String password;
+	@NotBlank
+	private String username;
 
-    private String deviceName;
+	@NotBlank
+	private String password;
 
-    private String deviceId;
+	private String deviceName;
+
+	private String deviceId;
 
 }

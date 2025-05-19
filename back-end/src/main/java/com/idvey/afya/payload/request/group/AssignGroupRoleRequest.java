@@ -9,6 +9,7 @@ import lombok.Setter;
 @Setter
 public class AssignGroupRoleRequest {
 
-    @NotNull(message = "Role must not be null")
-    private GroupRole role;
+	@NotNull(message = "Role must not be null")
+	private GroupRole role;
+
 }
