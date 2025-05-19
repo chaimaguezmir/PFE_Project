@@ -1,5 +1,6 @@
 package com.idvey.afya.models;
 
+import com.idvey.afya.models.groupe.GroupMember;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -109,4 +110,12 @@ public class User {
 
     @Column(name = "enabled", nullable = false)
     private boolean enabled = false;
+
+
+    @OneToMany(
+            mappedBy = "user",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private Set<GroupMember> groupMemberships = new HashSet<>();
 }

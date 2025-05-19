@@ -69,7 +69,18 @@ public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter {
             corsConfig.addAllowedMethod("*");
             corsConfig.addAllowedHeader("*");
             return corsConfig;
-        })).csrf(AbstractHttpConfigurer::disable).exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(unauthorizedHandler)).sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)).authorizeHttpRequests(authorize -> authorize.requestMatchers("/api/auth/**").permitAll().requestMatchers("/api/test/**").permitAll().requestMatchers("/client/**").permitAll()
+        })).csrf(AbstractHttpConfigurer::disable)
+                .exceptionHandling(
+                        exceptionHandling -> exceptionHandling
+                                .authenticationEntryPoint(unauthorizedHandler))
+                .sessionManagement(
+                        sessionManagement -> sessionManagement
+                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(
+                        authorize -> authorize
+                                .requestMatchers("/api/auth/**").permitAll()
+                                .requestMatchers("/api/test/**").permitAll()
+                                .requestMatchers("/api/groups/**").authenticated()
                 //.requestMatchers("/client/**").authenticated()
                 //.requestMatchers(HttpMethod.GET, "/api/medic/**").hasAuthority("ROLE_ADMIN")
                 //    .requestMatchers(HttpMethod.POST, "/api/medic/**").hasAuthority("ROLE_ADMIN")
