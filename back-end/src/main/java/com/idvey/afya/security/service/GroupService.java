@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class GroupService {
@@ -68,14 +69,14 @@ public class GroupService {
 		System.out.println("[Service] addUserToGroup called by user " + actorId + " to add '" + usernameToAdd
 				+ "' to group " + groupId);
 		GroupMember actor = memberRepo.findByGroup_IdAndUser_Id(groupId, actorId)
-			.orElseThrow(() -> new NoSuchElementException("You are not a member of this group"));
+				.orElseThrow(() -> new NoSuchElementException("You are not a member of this group"));
 		if (actor.getRole() != GroupRole.MANAGER) {
 			System.out.println("[Service] Access denied: user " + actorId + " is not manager for group " + groupId);
 			throw new AccessDeniedException("Only the manager can add members");
 		}
 
-		var newUser = userRepo.findByUsername(usernameToAdd)
-			.orElseThrow(() -> new NoSuchElementException("User '" + usernameToAdd + "' not found"));
+		User newUser = userRepo.findByUsername(usernameToAdd)
+				.orElseThrow(() -> new NoSuchElementException("User '" + usernameToAdd + "' not found"));
 
 		GroupMember.Key key = new GroupMember.Key();
 		key.setGroupId(groupId);
@@ -97,16 +98,19 @@ public class GroupService {
 		System.out.println("[Service] removeUserFromGroup called by user " + actorId + " to remove user " + targetId
 				+ " from group " + groupId);
 		GroupMember actor = memberRepo.findByGroup_IdAndUser_Id(groupId, actorId)
-			.orElseThrow(() -> new NoSuchElementException("You are not a member of this group"));
+				.orElseThrow(() -> new NoSuchElementException("You are not a member of this group"));
 		if (actor.getRole() != GroupRole.MANAGER) {
 			System.out.println("[Service] Access denied: user " + actorId + " is not manager for group " + groupId);
 			throw new AccessDeniedException("Only the manager can remove members");
 		}
 		GroupMember target = memberRepo.findByGroup_IdAndUser_Id(groupId, targetId)
-			.orElseThrow(() -> new NoSuchElementException("Target user is not a member"));
+				.orElseThrow(() -> new NoSuchElementException("Target user is not a member"));
 
 		memberRepo.delete(target);
 		System.out.println("[Service] User " + targetId + " removed from group " + groupId);
+
+		// Ensure removed user still has at least one group
+		recreateDefaultIfNone(targetId);
 	}
 
 	@Transactional
@@ -114,7 +118,7 @@ public class GroupService {
 		System.out.println("[Service] renameGroup called by user " + actorId + " for group " + groupId + " to name '"
 				+ newName + "'");
 		GroupMember actor = memberRepo.findByGroup_IdAndUser_Id(groupId, actorId)
-			.orElseThrow(() -> new NoSuchElementException("You are not a member of this group"));
+				.orElseThrow(() -> new NoSuchElementException("You are not a member of this group"));
 		if (actor.getRole() != GroupRole.MANAGER) {
 			System.out.println("[Service] Access denied: user " + actorId + " is not manager for group " + groupId);
 			throw new AccessDeniedException("Only the manager can rename the group");
@@ -135,37 +139,68 @@ public class GroupService {
 	public void leaveGroup(UUID groupId, UUID userId) {
 		System.out.println("[Service] leaveGroup called by user " + userId + " for group " + groupId);
 		GroupMember self = memberRepo.findByGroup_IdAndUser_Id(groupId, userId)
-			.orElseThrow(() -> new NoSuchElementException("You are not a member of this group"));
+				.orElseThrow(() -> new NoSuchElementException("You are not a member of this group"));
 		boolean wasManager = self.getRole() == GroupRole.MANAGER;
 		memberRepo.delete(self);
 		System.out.println("[Service] User " + userId + " left group " + groupId);
 
-		if (!wasManager)
-			return;
-
-		var remaining = memberRepo.findByGroup_Id(groupId);
-		if (remaining.isEmpty()) {
-			groupRepo.deleteById(groupId);
-			System.out.println("[Service] Group " + groupId + " deleted (no members left)");
+		if (!wasManager) {
+			// After leaving, ensure default exists
+			recreateDefaultIfNone(userId);
 			return;
 		}
 
-		var firstJoined = remaining.stream().min(Comparator.comparing(GroupMember::getJoinedAt)).orElseThrow();
+		List<GroupMember> remaining = memberRepo.findByGroup_Id(groupId);
+		if (remaining.isEmpty()) {
+			groupRepo.deleteById(groupId);
+			System.out.println("[Service] Group " + groupId + " deleted (no members left)");
+			recreateDefaultIfNone(userId);
+			return;
+		}
+
+		GroupMember firstJoined = remaining.stream().min(Comparator.comparing(GroupMember::getJoinedAt)).orElseThrow();
 		firstJoined.setRole(GroupRole.MANAGER);
 		memberRepo.save(firstJoined);
 		System.out
-			.println("[Service] User " + firstJoined.getUser().getId() + " promoted to MANAGER for group " + groupId);
+				.println("[Service] User " + firstJoined.getUser().getId() + " promoted to MANAGER for group " + groupId);
+
+		recreateDefaultIfNone(userId);
 	}
 
 	@Transactional
 	public List<GroupResponse> getUserGroups(UUID userId) {
 		System.out.println("[Service] getUserGroups called for user " + userId);
-		var memberships = memberRepo.findByUser_Id(userId);
-		var responses = memberships.stream()
-			.map(m -> new GroupResponse(m.getGroup().getId(), m.getGroup().getName(), m.getRole()))
-			.collect(Collectors.toList());
+		List<GroupMember> memberships = memberRepo.findByUser_Id(userId);
+		List<GroupResponse> responses = memberships.stream()
+				.map(m -> new GroupResponse(m.getGroup().getId(), m.getGroup().getName(), m.getRole()))
+				.collect(Collectors.toList());
 		System.out.println("[Service] User " + userId + " belongs to " + responses.size() + " groups");
 		return responses;
+	}
+
+	@Transactional
+	public void deleteGroup(UUID groupId, UUID actorId) {
+		System.out.println("[Service] deleteGroup called by user " + actorId + " for group " + groupId);
+		GroupMember actor = memberRepo.findByGroup_IdAndUser_Id(groupId, actorId)
+				.orElseThrow(() -> new NoSuchElementException("You are not a member of this group"));
+		if (actor.getRole() != GroupRole.MANAGER) {
+			System.out.println("[Service] Access denied: user " + actorId + " is not manager for group " + groupId);
+			throw new AccessDeniedException("Only the manager can delete a group");
+		}
+
+		List<UUID> userIds = memberRepo.findByGroup_Id(groupId).stream().map(m -> m.getUser().getId()).toList();
+		memberRepo.deleteAll(memberRepo.findByGroup_Id(groupId));
+		groupRepo.deleteById(groupId);
+		System.out.println("[Service] Group " + groupId + " deleted by manager " + actorId);
+
+		userIds.forEach(uid -> recreateDefaultIfNone(uid));
+	}
+
+	private void recreateDefaultIfNone(UUID userId) {
+		if (memberRepo.findByUser_Id(userId).isEmpty()) {
+			System.out.println("[Service] User " + userId + " has no groups; recreating default");
+			createGroup(userId, "default");
+		}
 	}
 
 }

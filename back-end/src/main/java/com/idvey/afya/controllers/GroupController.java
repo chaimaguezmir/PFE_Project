@@ -1,5 +1,6 @@
 package com.idvey.afya.controllers;
 
+import com.idvey.afya.models.groupe.GroupMember;
 import com.idvey.afya.payload.request.group.AddMemberRequest;
 import com.idvey.afya.payload.request.group.CreateGroupRequest;
 import com.idvey.afya.payload.request.group.RenameGroupRequest;
@@ -36,47 +37,54 @@ public class GroupController {
 
 	@PostMapping
 	public ResponseEntity<UUID> createGroup(@AuthenticationPrincipal UserDetailsImpl currentUser,
-			@Valid @RequestBody CreateGroupRequest req) {
+											@Valid @RequestBody CreateGroupRequest req) {
 		return ResponseEntity.ok(groupService.createGroup(currentUser.getId(), req.getName()));
 	}
 
 	@GetMapping("/{groupId}/members")
 	public ResponseEntity<List<GroupMemberResponse>> listMembers(@AuthenticationPrincipal UserDetailsImpl currentUser,
-			@PathVariable UUID groupId) {
-		var members = groupService.getMembers(groupId);
-		var resp = members.stream()
-			.map(m -> new GroupMemberResponse(m.getUser().getId(), m.getUser().getUsername(), m.getRole()))
-			.collect(Collectors.toList());
+																 @PathVariable UUID groupId) {
+		List<GroupMember> members = groupService.getMembers(groupId);
+		List<GroupMemberResponse> resp = members.stream()
+				.map(m -> new GroupMemberResponse(m.getUser().getId(), m.getUser().getUsername(), m.getRole()))
+				.collect(Collectors.toList());
 		return ResponseEntity.ok(resp);
 	}
 
 	@PostMapping("/{groupId}/members")
 	public ResponseEntity<MessageResponse> addMember(@AuthenticationPrincipal UserDetailsImpl currentUser,
-			@PathVariable UUID groupId, @Valid @RequestBody AddMemberRequest req) throws AccessDeniedException {
+													 @PathVariable UUID groupId, @Valid @RequestBody AddMemberRequest req) throws AccessDeniedException {
 		groupService.addUserToGroup(groupId, currentUser.getId(), req.getUsername());
 		return ResponseEntity.ok(new MessageResponse("User added to group successfully"));
 	}
 
 	@PatchMapping("/{groupId}")
 	public ResponseEntity<MessageResponse> renameGroup(@AuthenticationPrincipal UserDetailsImpl currentUser,
-			@PathVariable UUID groupId, @Valid @RequestBody RenameGroupRequest req) throws AccessDeniedException {
+													   @PathVariable UUID groupId, @Valid @RequestBody RenameGroupRequest req) throws AccessDeniedException {
 		groupService.renameGroup(groupId, currentUser.getId(), req.getName());
 		return ResponseEntity.ok(new MessageResponse("Group renamed successfully"));
 	}
 
 	@DeleteMapping("/{groupId}/leave")
 	public ResponseEntity<MessageResponse> leaveGroup(@AuthenticationPrincipal UserDetailsImpl currentUser,
-			@PathVariable UUID groupId) {
+													  @PathVariable UUID groupId) {
 		groupService.leaveGroup(groupId, currentUser.getId());
 		return ResponseEntity.ok(new MessageResponse("You have left the group"));
 	}
 
 	@DeleteMapping("/{groupId}/members/{userId}")
 	public ResponseEntity<MessageResponse> removeMember(@AuthenticationPrincipal UserDetailsImpl currentUser,
-			@PathVariable UUID groupId, @PathVariable UUID userId) throws AccessDeniedException {
+														@PathVariable UUID groupId, @PathVariable UUID userId) throws AccessDeniedException {
 		groupService.removeUserFromGroup(groupId, currentUser.getId(), userId);
 		return ResponseEntity.ok(new MessageResponse("User removed from group successfully"));
 
+	}
+
+	@DeleteMapping("/{groupId}")
+	public ResponseEntity<MessageResponse> deleteGroup(@AuthenticationPrincipal UserDetailsImpl currentUser,
+													   @PathVariable UUID groupId) throws AccessDeniedException {
+		groupService.deleteGroup(groupId, currentUser.getId());
+		return ResponseEntity.ok(new MessageResponse("Group deleted successfully"));
 	}
 
 }
