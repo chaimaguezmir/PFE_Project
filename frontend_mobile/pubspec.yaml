@@ -1,0 +1,65 @@
+name: frontend_mobile
+description: "A new Flutter project."
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.8.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  path: ^1.9.1
+  path_provider: ^2.1.5
+  flutter_secure_storage: ^9.2.4
+  # ========== ICONS ==========
+  cupertino_icons: ^1.0.8    # iOS-style icons for Flutter apps
+
+  # ========== STATE MANAGEMENT ==========
+  flutter_bloc: ^9.1.1      # BLoC pattern implementation for state management
+  equatable: ^2.0.7          # Easy equality comparisons for objects (used in BLoC states/events)
+
+  # ========== FUNCTIONAL PROGRAMMING ==========
+  dartz: ^0.10.1             # Functional programming - Either<Failure, Success> pattern
+
+  #========== DEPENDENCY INJECTION ==========
+  get_it: ^8.0.3             # Service locator for dependency injection
+
+  # ========== NETWORK & API ==========
+  dio: ^5.8.0+1                # HTTP client with interceptors, better error handling
+  connectivity_plus: ^6.1.4   # Check internet connectivity status
+
+  # ========== LOCAL STORAGE ==========
+  shared_preferences: ^2.5.3  # Simple key-value storage (user settings, tokens)
+  sqflite: ^2.4.2            # SQLite database for complex local data
+
+  # ========== JSON SERIALIZATION ==========
+  json_annotation: ^4.9.0    # Annotations for JSON serialization
+
+  # ========== NAVIGATION ==========
+  go_router: ^15.1.2         # Declarative routing and navigation
+
+  # ========== UI UTILITIES ==========
+  cached_network_image: ^3.4.1  # Network images with caching
+  shimmer: ^3.0.0              # Loading shimmer effects
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^6.0.0
+  # ========== CODE GENERATION ==========
+  build_runner: ^2.4.15      # Code generation runner
+  json_serializable: ^6.9.5  # Generate JSON serialization code
+  # ========== TESTING ==========
+  mockito: ^5.4.6           # Mocking framework for unit tests
+  bloc_test: ^10.0.0         # Testing utilities specifically for BLoC
+
+# The following section is specific to Flutter packages.
+flutter:
+  uses-material-design: true
+
+
