@@ -13,6 +13,19 @@ dependencies:
 
 
   cupertino_icons: ^1.0.8
+  flutter_native_splash: ^2.4.6
+  flutter_bloc:
+  # for declarative, URL-based routing
+  go_router:
+  dartz:
+  dio:
+  logger:
+  get_it:
+  shared_preferences:
+  flutter_svg:
+  fan_carousel_image_slider:
+  smooth_page_indicator: ^1.2.1
+  flutter_screenutil: ^5.9.3
 
 dev_dependencies:
   flutter_test:
@@ -20,11 +33,12 @@ dev_dependencies:
 
 
 
-  flutter_lints: ^5.0.0
+  flutter_lints: ^6.0.0
 
 flutter:
   uses-material-design: true
-
+  assets:
+    - lib/config/assets/images/
 
   # assets:
   #   - images/a_dot_burr.jpeg
