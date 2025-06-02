@@ -14,16 +14,17 @@ dependencies:
 
   cupertino_icons: ^1.0.8
   flutter_native_splash: ^2.4.6
-  flutter_bloc:
+  flutter_bloc: ^9.1.1
   # for declarative, URL-based routing
-  go_router:
-  dartz:
-  dio:
-  logger:
-  get_it:
-  shared_preferences:
-  flutter_svg:
-  fan_carousel_image_slider:
+  go_router: ^15.1.2
+  dartz: ^0.10.1
+  dio: ^5.8.0+1
+  logger: ^2.5.0
+  get_it: ^8.0.3
+  equatable: ^2.0.7
+  shared_preferences: ^2.5.3
+  flutter_svg: ^2.1.0
+  fan_carousel_image_slider: ^1.3.0
   smooth_page_indicator: ^1.2.1
   flutter_screenutil: ^5.9.3
 

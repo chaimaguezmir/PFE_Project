@@ -1,21 +1,27 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_mobile/presentation/screens/onboarding/onboarding_screen.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../presentation/auth/pages/login_page.dart';
-import '../../presentation/onboarding/bloc/OnboardingCubit.dart';
-import '../../presentation/onboarding/pages/onboarding_page.dart';
+import '../../presentation/screens/auth/login_page.dart';
 
-GoRouter router(String initialLocation) => GoRouter(
-  initialLocation: initialLocation,
-  routes: [
-    GoRoute(
-      path: '/onboarding',
-      builder: (context, state) => BlocProvider(
-        create: (_) => OnboardingCubit(),
-        child: OnboardingPage(),
-      ),
-    ),
-    GoRoute(path: '/login', builder: (_, _) => const LoginPage()),
-    // … other routes …
-  ],
-);
+class AppRouter {
+  AppRouter(this._hasSeenOnboarding);
+  final bool _hasSeenOnboarding;
+
+  String get initialLocation {
+    if (_hasSeenOnboarding) {
+      return '/login';
+    } else {
+      return '/onboarding';
+    }
+  }
+
+  GoRouter get router => _router;
+
+  late final GoRouter _router = GoRouter(
+    initialLocation: initialLocation,
+    routes: [
+      GoRoute(path: '/onboarding', builder: (_, _) => const OnboardingScreen()),
+      GoRoute(path: '/login', builder: (_, _) => const LoginPage()),
+    ],
+  );
+}
