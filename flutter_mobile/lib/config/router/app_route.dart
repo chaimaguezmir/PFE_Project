@@ -5,6 +5,7 @@ import '../../presentation/screens/auth/login_page.dart';
 
 class AppRouter {
   AppRouter(this._hasSeenOnboarding);
+
   final bool _hasSeenOnboarding;
 
   String get initialLocation {

@@ -16,7 +16,10 @@ class OnboardingScreen extends StatelessWidget {
       body: SafeArea(
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 20.w),
-          child: BlocProvider(create: (_) => sl<AuthCubit>(), child: const _OnBoardingForm()),
+          child: BlocProvider(
+            create: (_) => sl<AuthCubit>(),
+            child: const _OnBoardingForm(),
+          ),
         ),
       ),
     );
@@ -37,15 +40,25 @@ class _OnBoardingForm extends StatelessWidget {
           onPageChanged: (index) {
             context.read<AuthCubit>().setPage(index);
           },
-          children: [
-            _IntroScreen(imagePath: 'lib/config/assets/images/intro.png', description: 'Welcome to our app!'),
-            _IntroScreen(imagePath: 'lib/config/assets/images/intro.png', description: 'Welcome to our app!'),
-            _IntroScreen(imagePath: 'lib/config/assets/images/intro.png', description: 'Welcome to our app!'),
+          children: const [
+            _IntroScreen(
+              imagePath: 'lib/config/assets/images/intro.png',
+              description:
+                  'Prenez le contrôle de votre santé.. Tout à portée de main !',
+            ),
+            _IntroScreen(
+              imagePath: 'lib/config/assets/images/intro.png',
+              description: 'Ajoutez vos \nmédicaments en toute \nsimplicité.',
+            ),
+            _IntroScreen(
+              imagePath: 'lib/config/assets/images/intro.png',
+              description: 'Suivez vos doses, \nrestez informé',
+            ),
           ],
         ),
 
         Container(
-          alignment: Alignment(0, 0.75),
+          alignment: const Alignment(0, 0.75),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -60,7 +73,7 @@ class _OnBoardingForm extends StatelessWidget {
 }
 
 class _SmoothPageIndicator extends StatelessWidget {
-  const _SmoothPageIndicator({super.key, required this.pageController});
+  const _SmoothPageIndicator({required this.pageController});
 
   final PageController pageController;
 
@@ -69,7 +82,12 @@ class _SmoothPageIndicator extends StatelessWidget {
     return SmoothPageIndicator(
       controller: pageController,
       count: 3,
-      effect: WormEffect(dotHeight: 10.w, dotWidth: 24.w, activeDotColor: theme().colorScheme.primary, dotColor: Colors.grey),
+      effect: WormEffect(
+        dotHeight: 10.w,
+        dotWidth: 40.w,
+        activeDotColor: theme().colorScheme.primary,
+        dotColor: Colors.grey,
+      ),
     );
   }
 }
@@ -82,22 +100,30 @@ class _NextButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthCubit, AuthState>(
-      buildWhen: (previous, current) => previous.currentPage != current.currentPage,
+      buildWhen: (previous, current) =>
+          previous.currentPage != current.currentPage,
       builder: (context, state) {
         return IconButton(
           color: theme().colorScheme.onSecondary,
           style: IconButton.styleFrom(
             backgroundColor: theme().colorScheme.primary,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50.r)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(50.r),
+            ),
           ),
           onPressed: () {
             if (state.currentPage < 2) {
-              pageController.nextPage(duration: Duration(milliseconds: 200), curve: Curves.bounceIn);
+              pageController.nextPage(
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.bounceIn,
+              );
               return;
             }
             context.read<AuthCubit>().setOnboardingDone(context);
           },
-          icon: state.currentPage != 2 ? Icon(Icons.arrow_forward) : Icon(Icons.check),
+          icon: state.currentPage != 2
+              ? const Icon(Icons.arrow_forward)
+              : const Icon(Icons.check),
         );
       },
     );
@@ -106,8 +132,10 @@ class _NextButton extends StatelessWidget {
 
 class _IntroScreen extends StatelessWidget {
   const _IntroScreen({required this.imagePath, required this.description});
+
   final String imagePath;
   final String description;
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -115,7 +143,7 @@ class _IntroScreen extends StatelessWidget {
         Expanded(
           flex: 1,
           child: Container(
-            alignment: Alignment(0.75, 0.25),
+            alignment: const Alignment(0.75, 0.25),
             child: GestureDetector(
               onTap: () {
                 context.read<AuthCubit>().setOnboardingDone(context);
@@ -131,7 +159,10 @@ class _IntroScreen extends StatelessWidget {
           flex: 1,
           child: Container(
             alignment: Alignment.center,
-            child: Image.asset('lib/config/assets/images/logo.png', fit: BoxFit.contain),
+            child: Image.asset(
+              'lib/config/assets/images/logo.png',
+              fit: BoxFit.contain,
+            ),
           ),
         ),
         Expanded(
@@ -145,13 +176,20 @@ class _IntroScreen extends StatelessWidget {
           flex: 3,
           child: Container(
             width: 1000.w,
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(80.r), gradient: appGradient),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(80.r),
+              gradient: appGradient,
+            ),
             child: Padding(
               padding: const EdgeInsets.all(20.0),
               child: Text(
                 maxLines: 3,
                 description,
-                style: TextStyle(color: theme().colorScheme.onPrimary, fontSize: 70.sp, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  color: theme().colorScheme.onPrimary,
+                  fontSize: 70.sp,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),

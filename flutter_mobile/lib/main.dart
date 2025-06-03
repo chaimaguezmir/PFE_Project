@@ -19,7 +19,7 @@ void main() async {
   await initInjectionContainer();
 
   // runApp(MyApp(initialLocation: hasSeenOnboarding ? '/login' : '/onboarding'));
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -28,14 +28,19 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO: Remove this line when you want to reset the onboarding state
-    //sl<SharedPreferences>().setBool('hasSeenOnboarding', false);
-    final bool hasSeenOnboarding = sl<SharedPreferences>().getBool('hasSeenOnboarding') ?? false;
+    sl<SharedPreferences>().setBool('hasSeenOnboarding', false);
+    final bool hasSeenOnboarding =
+        sl<SharedPreferences>().getBool('hasSeenOnboarding') ?? false;
     final GoRouter route = AppRouter(hasSeenOnboarding).router;
     return ScreenUtilInit(
-      designSize: Size(1080, 2400), // Set to your design's size
+      designSize: const Size(1080, 2400), // Set to your design's size
       minTextAdapt: true,
-      builder: (context, child) =>
-          MaterialApp.router(title: 'Flutter Demo', debugShowCheckedModeBanner: false, theme: theme(), routerConfig: route),
+      builder: (context, child) => MaterialApp.router(
+        title: 'AFYA',
+        debugShowCheckedModeBanner: false,
+        theme: theme(),
+        routerConfig: route,
+      ),
     );
   }
 }
