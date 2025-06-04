@@ -1,37 +1,39 @@
 // app theme configuration
 import 'package:flutter/material.dart';
-
+const Color primaryColor = Color(0xFF245960);   // Main brand color (dark teal)
+const Color secondaryColor = Color(0xff249689);
 // Returns the main ThemeData for the app
 ThemeData theme() {
-  const Color backgroundColor = Color(
-    0xFFFFFFFF,
-  ); // App background color (white)
-  const Color primaryColor = Color(0xFF245960); // Main brand color (dark teal)
-  const Color secondaryColor = Color(
-    0xFF249689,
-  ); // Accent/secondary color (teal)
-
   return ThemeData(
-    colorScheme: ColorScheme.fromSeed(
-      seedColor: primaryColor,
-      // Used to generate color scheme
-      primary: primaryColor,
-      // Main color for app elements
-      secondary: secondaryColor,
-      // Secondary/accent color
-      surface: Colors.white,
-      // Default surface color
-      error: const Color(0xFFB00020),
-      // Error color (red)
-      onPrimary: Colors.black,
-      // Text/icon color on primary
-      onSecondary: Colors.white,
-      // Text/icon color on secondary
-      surfaceContainerHighest: backgroundColor,
-      // Highest surface container color (black)
-      onSurface: const Color(0xFFFFFFFF),
-      // Text/icon color on surface
-      onError: Colors.white, // Text/icon color on error
+      useMaterial3: true,
+      fontFamily: 'Roboto',
+      colorScheme: const ColorScheme.light(
+        primary: primaryColor,
+        secondary: secondaryColor,
+        onPrimary: Colors.black,      // Text/icon color on primary
+        onSecondary: Colors.white,
+        onTertiary: Colors.grey,
+        surface: Colors.white,
+        onSurface: Colors.black,
+        error: Colors.red,
+        onError: Colors.white,
+      ),
+    inputDecorationTheme: InputDecorationTheme(
+
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(25),
+        borderSide: const BorderSide(color: primaryColor),
+      ),
+      filled: true,
+      fillColor: Colors.white,
+      labelStyle: const TextStyle(color: Colors.grey,),
+      prefixIconColor: Colors.grey,
+    ),
+    scaffoldBackgroundColor: Colors.white,
+    appBarTheme: const AppBarTheme(
+      backgroundColor: primaryColor,
+      foregroundColor: Colors.white,
+      elevation: 0,
     ),
   );
 }

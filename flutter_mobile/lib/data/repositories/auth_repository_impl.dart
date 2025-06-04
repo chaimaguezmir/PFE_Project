@@ -9,8 +9,8 @@ import 'package:flutter_mobile/data/model/sign_up_request_model.dart';
 import 'package:flutter_mobile/data/model/sign_up_result_model.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
-  AuthRepositoryImpl({Dio? dio}) : dio = dio ?? Dio();
-  final Dio dio;
+  AuthRepositoryImpl(this._dio);
+  final Dio _dio;
 
   @override
   Future<DataState<SignUpResultEntity>> signUp(
@@ -18,7 +18,7 @@ class AuthRepositoryImpl implements AuthRepository {
   ) async {
     try {
       final requestModel = SignUpRequestModel.fromCredentials(credentials);
-      final response = await dio.post(
+      final response = await _dio.post(
         ApiEndpoints.signUp,
         data: jsonEncode(requestModel.toJson()),
         options: Options(headers: {'Content-Type': 'application/json'}),
