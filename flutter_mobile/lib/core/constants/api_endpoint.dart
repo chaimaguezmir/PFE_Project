@@ -1,5 +1,7 @@
 class ApiEndpoints {
-  static const String baseurl = 'http://localhost:8081/api';
+  static const String baseurl = 'http://10.0.2.2:8081/api';
   static const String signUp = '$baseurl/auth/signup';
   static const String signIn = '$baseurl/auth/signin';
+  static const String activateAccount = '$baseurl/auth/activate';
+  static const String resendcOTP = '$baseurl/auth/resendActivation';
 }
