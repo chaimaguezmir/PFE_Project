@@ -1,8 +1,6 @@
 import 'package:flutter_mobile/domain/entities/auth/activate_account_credentials.dart';
 
 class ActivateAccountRequestModel {
-  final String email;
-  final String code;
 
   ActivateAccountRequestModel({
     required this.email,
@@ -16,6 +14,8 @@ class ActivateAccountRequestModel {
       code: credentials.code,
     );
   }
+  final String email;
+  final String code;
 
   Map<String, dynamic> toJson() => {
     'email': email,

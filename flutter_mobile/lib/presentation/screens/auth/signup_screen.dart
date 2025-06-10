@@ -38,9 +38,7 @@ class SignUpScreen extends StatelessWidget {
                 message: 'Création de votre compte...',
                 child: Container(
                   padding: EdgeInsets.only(top: 150.h, left: 50.w, right: 50.w),
-                  child: const SingleChildScrollView(
-                    child: _SignUpForm(),
-                  ),
+                  child: const SingleChildScrollView(child: _SignUpForm()),
                 ),
               );
             },
@@ -64,7 +62,7 @@ class _SignUpForm extends StatelessWidget {
         // Error Display Section
         BlocBuilder<SignUpCubit, SignUpState>(
           buildWhen: (previous, current) =>
-          previous.errorMessage != current.errorMessage,
+              previous.errorMessage != current.errorMessage,
           builder: (context, state) {
             if (state.hasError) {
               return Container(
@@ -77,11 +75,7 @@ class _SignUpForm extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    Icon(
-                      Icons.error_outline,
-                      color: Colors.red,
-                      size: 50.w,
-                    ),
+                    Icon(Icons.error_outline, color: Colors.red, size: 50.w),
                     SizedBox(width: 20.w),
                     Expanded(
                       child: Text(
@@ -97,11 +91,7 @@ class _SignUpForm extends StatelessWidget {
                       onPressed: () {
                         context.read<SignUpCubit>().clearError();
                       },
-                      icon: Icon(
-                        Icons.close,
-                        color: Colors.red,
-                        size: 45.w,
-                      ),
+                      icon: Icon(Icons.close, color: Colors.red, size: 45.w),
                     ),
                   ],
                 ),
@@ -208,7 +198,6 @@ class _UsernameField extends StatelessWidget {
       buildWhen: (previous, current) => previous.username != current.username,
       builder: (context, state) {
         return TextField(
-
           style: const TextStyle(color: Colors.black),
           onChanged: (value) {
             context.read<SignUpCubit>().usernameChanged(value);
@@ -218,15 +207,26 @@ class _UsernameField extends StatelessWidget {
           decoration: InputDecoration(
             prefixIcon: const Icon(Icons.person_outline),
             labelText: 'Entrez votre Nom / Prénom',
-            border: const OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(25)),
-              borderSide: BorderSide(color: Colors.grey),
+            floatingLabelStyle: TextStyle(color: theme().colorScheme.primary),
+
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(75.r)),
+              borderSide: BorderSide(color: theme().colorScheme.tertiary),
             ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(75.r),
+              borderSide: BorderSide(
+                color: theme().colorScheme.tertiary,
+                width: 2,
+              ),
+            ),
+            focusColor: theme().colorScheme.primary,
             filled: true,
             fillColor: Colors.white,
 
             errorText: state.hasError && state.username.isEmpty
-                ? 'Nom requis' : null,
+                ? 'Nom requis'
+                : null,
           ),
         );
       },
@@ -251,14 +251,25 @@ class _EmailTextField extends StatelessWidget {
           decoration: InputDecoration(
             prefixIcon: const Icon(Icons.email_outlined),
             labelText: 'Entrez votre adresse E-mail',
-            border: const OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(25)),
-              borderSide: BorderSide(color: Colors.grey),
+            floatingLabelStyle: TextStyle(color: theme().colorScheme.primary),
+
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(75.r)),
+              borderSide: BorderSide(color: theme().colorScheme.tertiary),
             ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(75.r),
+              borderSide: BorderSide(
+                color: theme().colorScheme.tertiary,
+                width: 2,
+              ),
+            ),
+            focusColor: theme().colorScheme.primary,
             filled: true,
             fillColor: Colors.white,
             errorText: state.hasError && state.email.isEmpty
-                ? 'E-mail requis' : null,
+                ? 'E-mail requis'
+                : null,
           ),
         );
       },
@@ -273,7 +284,7 @@ class _PasswordField extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<SignUpCubit, SignUpState>(
       buildWhen: (previous, current) =>
-      previous.isPasswordVisible != current.isPasswordVisible ||
+          previous.isPasswordVisible != current.isPasswordVisible ||
           previous.password != current.password,
       builder: (context, state) {
         return TextField(
@@ -285,16 +296,28 @@ class _PasswordField extends StatelessWidget {
           decoration: InputDecoration(
             prefixIcon: const Icon(Icons.lock_outline_rounded),
             labelText: 'Entrez votre mot de passe',
-            border: const OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(25)),
-              borderSide: BorderSide(color: Colors.black),
+            floatingLabelStyle: TextStyle(color: theme().colorScheme.primary),
+
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(75.r)),
+              borderSide: BorderSide(color: theme().colorScheme.tertiary),
             ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(75.r),
+              borderSide: BorderSide(
+                color: theme().colorScheme.tertiary,
+                width: 2,
+              ),
+            ),
+            focusColor: theme().colorScheme.primary,
             filled: true,
             fillColor: Colors.white,
             errorText: state.hasError && state.password.isEmpty
-                ? 'Mot de passe requis' : null,
+                ? 'Mot de passe requis'
+                : null,
             suffixIcon: IconButton(
               icon: Icon(
+                color: theme().colorScheme.onTertiary,
                 state.isPasswordVisible
                     ? Icons.visibility
                     : Icons.visibility_off,
@@ -316,7 +339,8 @@ class _PhoneNumberTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<SignUpCubit, SignUpState>(
-      buildWhen: (previous, current) => previous.phoneNumber != current.phoneNumber,
+      buildWhen: (previous, current) =>
+          previous.phoneNumber != current.phoneNumber,
       builder: (context, state) {
         return TextField(
           onChanged: (value) {
@@ -327,14 +351,25 @@ class _PhoneNumberTextField extends StatelessWidget {
           decoration: InputDecoration(
             prefixIcon: const Icon(Icons.phone_outlined),
             labelText: 'Votre Téléphone',
-            border: const OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(25)),
-              borderSide: BorderSide(color: Colors.grey),
+            floatingLabelStyle: TextStyle(color: theme().colorScheme.primary),
+
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(75.r)),
+              borderSide: BorderSide(color: theme().colorScheme.tertiary),
             ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(75.r),
+              borderSide: BorderSide(
+                color: theme().colorScheme.tertiary,
+                width: 2,
+              ),
+            ),
+            focusColor: theme().colorScheme.primary,
             filled: true,
             fillColor: Colors.white,
             errorText: state.hasError && state.phoneNumber.isEmpty
-                ? 'Téléphone requis' : null,
+                ? 'Téléphone requis'
+                : null,
           ),
         );
       },
@@ -359,14 +394,33 @@ class _BirthdateField extends StatelessWidget {
           decoration: InputDecoration(
             prefixIcon: const Icon(Icons.calendar_month),
             labelText: 'Date de naissance',
+            floatingLabelStyle: TextStyle(color: theme().colorScheme.primary),
+
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(75.r)),
+              borderSide: BorderSide(color: theme().colorScheme.tertiary),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(75.r),
+              borderSide: BorderSide(
+                color: theme().colorScheme.tertiary,
+                width: 2,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(75.r),
+              borderSide: BorderSide(
+                color: theme().colorScheme.tertiary, // Set your color here
+                width: 2,
+              ),
+            ),
+            focusColor: theme().colorScheme.primary,
             filled: true,
             fillColor: Colors.white,
-            border: const OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(25)),
-              borderSide: BorderSide(color: Colors.grey),
-            ),
+
             errorText: state.hasError && state.birthdate.isEmpty
-                ? 'Date de naissance requise' : null,
+                ? 'Date de naissance requise'
+                : null,
           ),
           onTap: onTap,
         );
@@ -375,7 +429,6 @@ class _BirthdateField extends StatelessWidget {
   }
 }
 
-
 class _GenderSelection extends StatelessWidget {
   const _GenderSelection();
 
@@ -383,7 +436,7 @@ class _GenderSelection extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<SignUpCubit, SignUpState>(
       buildWhen: (previous, current) =>
-      previous.gender != current.gender ||
+          previous.gender != current.gender ||
           previous.errorMessage != current.errorMessage,
       builder: (context, state) {
         return Column(
@@ -443,10 +496,7 @@ class _GenderSelection extends StatelessWidget {
                 margin: EdgeInsets.only(top: 10.h),
                 child: Text(
                   'Veuillez sélectionner votre genre',
-                  style: TextStyle(
-                    color: Colors.red,
-                    fontSize: 35.sp,
-                  ),
+                  style: TextStyle(color: Colors.red, fontSize: 35.sp),
                 ),
               ),
           ],
@@ -463,7 +513,7 @@ class _TermsAndConditions extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<SignUpCubit, SignUpState>(
       buildWhen: (previous, current) =>
-      previous.isTermsAccepted != current.isTermsAccepted ||
+          previous.isTermsAccepted != current.isTermsAccepted ||
           previous.errorMessage != current.errorMessage,
       builder: (context, state) {
         return Column(
@@ -481,8 +531,9 @@ class _TermsAndConditions extends StatelessWidget {
                         : theme().colorScheme.onTertiary,
                     width: 3.w,
                   ),
-                  onChanged: (checked) =>
-                      context.read<SignUpCubit>().termsAcceptedChanged(checked!),
+                  onChanged: (checked) => context
+                      .read<SignUpCubit>()
+                      .termsAcceptedChanged(checked!),
                 ),
                 Expanded(
                   child: RichText(
@@ -529,10 +580,7 @@ class _TermsAndConditions extends StatelessWidget {
                 margin: EdgeInsets.only(top: 10.h),
                 child: Text(
                   'Vous devez accepter les conditions d\'utilisation',
-                  style: TextStyle(
-                    color: Colors.red,
-                    fontSize: 35.sp,
-                  ),
+                  style: TextStyle(color: Colors.red, fontSize: 35.sp),
                 ),
               ),
           ],
@@ -548,8 +596,7 @@ class _CustomLoadingElevatedButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<SignUpCubit, SignUpState>(
-      buildWhen: (previous, current) =>
-      previous.isLoading != current.isLoading,
+      buildWhen: (previous, current) => previous.isLoading != current.isLoading,
       builder: (context, state) {
         return CustomLoadingButton(
           isLoading: state.isLoading,
@@ -557,8 +604,8 @@ class _CustomLoadingElevatedButton extends StatelessWidget {
           onPressed: state.isLoading
               ? null
               : () {
-            context.read<SignUpCubit>().signUpWithCredentials(context);
-          },
+                  context.read<SignUpCubit>().signUpWithCredentials(context);
+                },
           child: Text(
             "S'inscrire",
             style: TextStyle(

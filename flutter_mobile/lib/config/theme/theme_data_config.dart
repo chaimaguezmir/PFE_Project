@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 const Color primaryColor = Color(0xFF245960);   // Main brand color (dark teal)
 const Color secondaryColor = Color(0xff249689);
+const ternaryColor = Color(0xffE5E7EB); // Light grey for tertiary elements
 // Returns the main ThemeData for the app
 ThemeData theme() {
   return ThemeData(
@@ -10,6 +11,7 @@ ThemeData theme() {
       colorScheme: const ColorScheme.light(
         primary: primaryColor,
         secondary: secondaryColor,
+        tertiary: ternaryColor,
         onPrimary: Colors.black,      // Text/icon color on primary
         onSecondary: Colors.white,
         onTertiary: Colors.grey,

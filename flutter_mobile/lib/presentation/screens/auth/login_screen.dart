@@ -35,9 +35,10 @@ class LoginScreen extends StatelessWidget {
                 isLoading: state.isLoading,
                 message: 'Connexion en cours...',
                 child: Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 50.w,
-                    vertical: 100.h,
+                  padding: EdgeInsets.only(
+                    top: 150.w,
+                    left: 100.h,
+                    right: 100.w,
                   ),
                   child: const SingleChildScrollView(child: _LoginForm()),
                 ),
@@ -103,14 +104,45 @@ class _LoginForm extends StatelessWidget {
         ),
 
         const _InputFieldsSection(),
-        SizedBox(height: 40.h),
-        const _RememberMeSection(),
-        SizedBox(height: 60.h),
-        const _LoginButton(),
-        SizedBox(height: 40.h),
+        SizedBox(height: 30.h),
         const _ForgotPasswordLink(),
+        SizedBox(height: 80.h),
+        const _LoginButton(),
+
         SizedBox(height: 60.h),
         const _SignUpLink(),
+        SizedBox(height: 100.h),
+        const _CustomDivider(),
+        SizedBox(height: 100.h),
+        _SocialLoginButton(
+          label: "Se connecter avec Facebook",
+          icon: Image.asset(
+            'lib/config/assets/icons/facebook.png',
+            height: 70.h,
+            width: 70.w,
+          ),
+          backgroundColor: Colors.white,
+          textColor: Colors.black,
+          onPressed: () {
+            // Handle Google login
+          },
+        ),
+
+        SizedBox(height: 70.h),
+
+        _SocialLoginButton(
+          label: "Se connecter avec Google",
+          icon: Image.asset(
+            'lib/config/assets/icons/google.png',
+            height: 70.h,
+            width: 70.w,
+          ),
+          backgroundColor: Colors.white,
+          textColor: Colors.black,
+          onPressed: () {
+            // Handle Facebook login
+          },
+        ),
       ],
     );
   }
@@ -128,7 +160,7 @@ class _TitleWidget extends StatelessWidget {
         style: TextStyle(
           fontSize: 60.sp,
           fontWeight: FontWeight.bold,
-          color: theme().colorScheme.secondary,
+          color: theme().colorScheme.onPrimary,
         ),
       ),
     );
@@ -140,16 +172,12 @@ class _InputFieldsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 80.h),
-      width: 850.w,
-      child: Column(
-        children: [
-          const _EmailField(),
-          SizedBox(height: 50.h),
-          const _PasswordField(),
-        ],
-      ),
+    return Column(
+      children: [
+        const _EmailField(),
+        SizedBox(height: 50.h),
+        const _PasswordField(),
+      ],
     );
   }
 }
@@ -165,20 +193,34 @@ class _EmailField extends StatelessWidget {
           previous.errorMessage != current.errorMessage,
       builder: (context, state) {
         return TextField(
-          style: const TextStyle(color: Colors.black),
+          style: TextStyle(color: theme().colorScheme.onPrimary),
           keyboardType: TextInputType.emailAddress,
           onChanged: (value) {
             context.read<LoginCubit>().emailChanged(value);
           },
           decoration: InputDecoration(
-            prefixIcon: const Icon(Icons.email_outlined, color: Colors.black),
-            labelText: 'Entrez votre E-mail',
-            border: const OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(10)),
-              borderSide: BorderSide(color: Colors.black),
+            prefixIcon: Icon(
+              Icons.email_outlined,
+              color: theme().colorScheme.onTertiary,
             ),
+            labelText: 'Entrez votre E-mail',
+            enabledBorder: OutlineInputBorder(
+              borderRadius: const BorderRadius.all(Radius.circular(15)),
+              borderSide: BorderSide(
+                width: 2.0,
+                color: theme().colorScheme.tertiary, // default border color
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: const BorderRadius.all(Radius.circular(15)),
+              borderSide: BorderSide(
+                color: theme().colorScheme.primary, // border color when typing
+                width: 2.0,
+              ),
+            ),
+
             filled: true,
-            fillColor: Colors.white,
+            fillColor: Colors.grey.shade50,
             errorText: state.hasError && state.email.isEmpty
                 ? 'E-mail requis'
                 : null,
@@ -201,23 +243,33 @@ class _PasswordField extends StatelessWidget {
           previous.errorMessage != current.errorMessage,
       builder: (context, state) {
         return TextField(
-          style: const TextStyle(color: Colors.black),
+          style: TextStyle(color: theme().colorScheme.onPrimary),
           obscureText: !state.isPasswordVisible,
           onChanged: (value) {
             context.read<LoginCubit>().passwordChanged(value);
           },
           decoration: InputDecoration(
-            prefixIcon: const Icon(
+            prefixIcon: Icon(
               Icons.lock_outline_rounded,
-              color: Colors.black,
+              color: theme().colorScheme.onTertiary,
             ),
-            labelText: 'Mot de passe',
-            border: const OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(10)),
-              borderSide: BorderSide(color: Colors.black),
+            labelText: 'Entrez votre mot de passe',
+            enabledBorder: OutlineInputBorder(
+              borderRadius: const BorderRadius.all(Radius.circular(15)),
+              borderSide: BorderSide(
+                width: 2.0,
+                color: theme().colorScheme.tertiary,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: const BorderRadius.all(Radius.circular(15)),
+              borderSide: BorderSide(
+                color: theme().colorScheme.primary,
+                width: 2.0,
+              ),
             ),
             filled: true,
-            fillColor: Colors.white,
+            fillColor: Colors.grey.shade50,
             errorText: state.hasError && state.password.isEmpty
                 ? 'Mot de passe requis'
                 : null,
@@ -226,72 +278,11 @@ class _PasswordField extends StatelessWidget {
                 state.isPasswordVisible
                     ? Icons.visibility
                     : Icons.visibility_off,
+                color: theme().colorScheme.onTertiary,
               ),
               onPressed: () {
                 context.read<LoginCubit>().togglePasswordVisibility();
               },
-            ),
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _RememberMeSection extends StatelessWidget {
-  const _RememberMeSection();
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<LoginCubit, LoginState>(
-      buildWhen: (previous, current) =>
-          previous.rememberMe != current.rememberMe,
-      builder: (context, state) {
-        return Row(
-          children: [
-            Checkbox(
-              value: state.rememberMe,
-              onChanged: (value) {
-                context.read<LoginCubit>().rememberMeChanged(value ?? false);
-              },
-              activeColor: theme().colorScheme.secondary,
-            ),
-            Text(
-              'Se souvenir de moi',
-              style: TextStyle(
-                fontSize: 40.sp,
-                color: theme().colorScheme.onSurface,
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-}
-
-class _LoginButton extends StatelessWidget {
-  const _LoginButton();
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<LoginCubit, LoginState>(
-      buildWhen: (previous, current) => previous.isLoading != current.isLoading,
-      builder: (context, state) {
-        return CustomLoadingButton(
-          isLoading: state.isLoading,
-          loadingText: "Connexion...",
-          onPressed: state.isLoading
-              ? null
-              : () {
-                  context.read<LoginCubit>().signInWithCredentials(context);
-                },
-          child: Text(
-            'Se Connecter',
-            style: TextStyle(
-              fontSize: 45.sp,
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
             ),
           ),
         );
@@ -319,9 +310,9 @@ class _ForgotPasswordLink extends StatelessWidget {
             child: Text(
               'Mot de passe oublié ?',
               style: TextStyle(
-                color: theme().colorScheme.primary,
+                color: theme().colorScheme.secondary,
                 fontSize: 40.sp,
-                decoration: TextDecoration.underline,
+                decoration: TextDecoration.none,
               ),
             ),
           ),
@@ -384,6 +375,36 @@ class _ForgotPasswordLink extends StatelessWidget {
   }
 }
 
+class _LoginButton extends StatelessWidget {
+  const _LoginButton();
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<LoginCubit, LoginState>(
+      buildWhen: (previous, current) => previous.isLoading != current.isLoading,
+      builder: (context, state) {
+        return CustomLoadingButton(
+          isLoading: state.isLoading,
+          loadingText: "Connexion...",
+          onPressed: state.isLoading
+              ? null
+              : () {
+                  context.read<LoginCubit>().signInWithCredentials(context);
+                },
+          child: Text(
+            'Se Connecter',
+            style: TextStyle(
+              fontSize: 45.sp,
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
 class _SignUpLink extends StatelessWidget {
   const _SignUpLink();
 
@@ -395,7 +416,7 @@ class _SignUpLink extends StatelessWidget {
         Text(
           "Vous n'avez pas de compte ? ",
           style: TextStyle(
-            fontSize: 38.sp,
+            fontSize: 40.sp,
             color: theme().colorScheme.onTertiary,
           ),
         ),
@@ -403,7 +424,7 @@ class _SignUpLink extends StatelessWidget {
           text: TextSpan(
             text: "S'inscrire",
             style: TextStyle(
-              fontSize: 38.sp,
+              fontSize: 40.sp,
               color: theme().colorScheme.secondary,
               decoration: TextDecoration.underline,
             ),
@@ -414,6 +435,81 @@ class _SignUpLink extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _CustomDivider extends StatelessWidget {
+  const _CustomDivider();
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(child: Divider(color: Colors.grey.shade300, thickness: 2.0)),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Text(
+            'OU',
+            style: TextStyle(
+              color: Colors.grey.shade500,
+              fontSize: 38.sp,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+        ),
+        Expanded(child: Divider(color: Colors.grey.shade300, thickness: 2.0)),
+      ],
+    );
+  }
+}
+
+class _SocialLoginButton extends StatelessWidget {
+  const _SocialLoginButton({
+    required this.label,
+    required this.icon,
+    required this.onPressed,
+    this.backgroundColor = Colors.white,
+    this.textColor = Colors.black,
+  });
+  final String label;
+  final Color backgroundColor;
+  final Color textColor;
+  final Widget icon;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 130.h,
+      width: double.infinity,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: backgroundColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(100.r),
+            side: BorderSide(color: theme().colorScheme.tertiary, width: 4.w),
+          ),
+
+          elevation: 1,
+        ),
+        onPressed: onPressed,
+        child: Row(
+          children: [
+            SizedBox(width: 10.w),
+            icon,
+            SizedBox(width: 50.w),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 42.sp,
+                color: textColor,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

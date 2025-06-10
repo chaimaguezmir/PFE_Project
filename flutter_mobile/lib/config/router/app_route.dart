@@ -5,6 +5,7 @@ import 'package:flutter_mobile/presentation/bloc/login/login_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/signup/signup_cubit.dart';
 import 'package:flutter_mobile/presentation/screens/auth/account_verification_screen.dart';
 import 'package:flutter_mobile/presentation/screens/auth/signup_screen.dart';
+import 'package:flutter_mobile/presentation/screens/home/home_screen.dart';
 import 'package:flutter_mobile/presentation/screens/onboarding/onboarding_screen.dart';
 import 'package:go_router/go_router.dart';
 
@@ -17,7 +18,7 @@ class AppRouter {
 
   String get initialLocation {
     if (_hasSeenOnboarding) {
-      return AppRoutePath.signUp;
+      return AppRoutePath.signIn;
     } else {
       return AppRoutePath.onboarding;
     }
@@ -27,7 +28,6 @@ class AppRouter {
 
   late final GoRouter _router = GoRouter(
     initialLocation: initialLocation,
-    // initialLocation: '/accountverification',
     routes: [
       ShellRoute(
         builder: (context, state, child) =>
@@ -61,6 +61,11 @@ class AppRouter {
             builder: (_, _) => const LoginScreen(),
           ),
         ],
+      ),
+      GoRoute(
+        path: AppRoutePath.home,
+        name: AppRouteName.home,
+        builder: (_, _) => const HomeScreen(),
       ),
     ],
   );

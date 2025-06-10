@@ -136,7 +136,7 @@ class SignUpCubit extends Cubit<SignUpState> {
   }
 
   bool _isValidEmail(String email) {
-    return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
+    return RegExp(r'^[\w-]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
   }
 
   // Method to retry signup in case of failure
@@ -163,62 +163,94 @@ class SignUpCubit extends Cubit<SignUpState> {
       );
 
       if (result is DataSuccess) {
-        emit(state.copyWith(
-          status: FormzSubmissionStatus.success,
-          successMessage: result.data?.message ?? 'Inscription réussie!',
-        ));
+        emit(
+          state.copyWith(
+            status: FormzSubmissionStatus.success,
+            successMessage: result.data?.message ?? 'Inscription réussie!',
+          ),
+        );
 
         if (context.mounted) {
           context.goNamed(AppRouteName.accountVerification);
         }
       } else {
-        emit(state.copyWith(
-          status: FormzSubmissionStatus.failure,
-          errorMessage: result.error ?? 'Une erreur est survenue lors de l\'inscription',
-        ));
+        emit(
+          state.copyWith(
+            status: FormzSubmissionStatus.failure,
+            errorMessage:
+                result.error ??
+                'Une erreur est survenue lors de l\'inscription',
+          ),
+        );
       }
     } catch (e) {
-      emit(state.copyWith(
-        status: FormzSubmissionStatus.failure,
-        errorMessage: 'Erreur de connexion. Veuillez vérifier votre connexion internet.',
-      ));
+      emit(
+        state.copyWith(
+          status: FormzSubmissionStatus.failure,
+          errorMessage:
+              'Erreur de connexion. Veuillez vérifier votre connexion internet.',
+        ),
+      );
     }
   }
 
   Future<void> activateAccount() async {
-    emit(state.copyWith(status: FormzSubmissionStatus.inProgress, errorMessage: null));
-
-    final result = await _authRepository.activateAccount(
-      ActivateAccountCredentials(
-        email: state.email,
-        code: state.otpCode,
+    emit(
+      state.copyWith(
+        status: FormzSubmissionStatus.inProgress,
+        errorMessage: null,
       ),
     );
 
+    final result = await _authRepository.activateAccount(
+      ActivateAccountCredentials(email: state.email, code: state.otpCode),
+    );
+
     if (result is DataSuccess) {
-      emit(state.copyWith(
-        status: FormzSubmissionStatus.success,
-        successMessage: result.data?.message ?? 'Account activated!',
-      ));
+      emit(
+        state.copyWith(
+          status: FormzSubmissionStatus.success,
+          successMessage: result.data?.message ?? 'Account activated!',
+        ),
+      );
     } else {
-      emit(state.copyWith(
-        status: FormzSubmissionStatus.failure,
-        errorMessage: result.error ?? 'Activation failed',
-      ));
+      emit(
+        state.copyWith(
+          status: FormzSubmissionStatus.failure,
+          errorMessage: result.error ?? 'Activation failed',
+        ),
+      );
     }
   }
 
   Future<void> resendOtpCode(BuildContext context) async {
-    emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
+    emit(
+      state.copyWith(
+        status: FormzSubmissionStatus.inProgress,
+        errorMessage: null,
+        successMessage: null,
+      ),
+    );
 
-    // Simulate OTP resend process
-    await Future.delayed(const Duration(seconds: 2));
+    final result = await _authRepository.resendActivation(state.email);
 
-    // Start the resend timer
-    startResendTimer();
-
-    // Emit success state
-    emit(state.copyWith(status: FormzSubmissionStatus.success));
+    if (result is DataSuccess) {
+      emit(
+        state.copyWith(
+          status: FormzSubmissionStatus.success,
+          successMessage:
+              result.data?.message ?? 'Le code a été renvoyé avec succès.',
+        ),
+      );
+      startResendTimer();
+    } else {
+      emit(
+        state.copyWith(
+          status: FormzSubmissionStatus.failure,
+          errorMessage: result.error ?? 'Échec de l\'envoi du code.',
+        ),
+      );
+    }
   }
 
   Timer? _timer;
@@ -242,52 +274,3 @@ class SignUpCubit extends Cubit<SignUpState> {
     return super.close();
   }
 }
-
-/*
-    }*/
-
-/*
- Future<void> signUpWithCredentials(BuildContext context) async {
-    // Clear any existing errors
-    emit(state.copyWith(errorMessage: null));
-
-    // Validate form
-    if (!_isFormValid()) {
-      return;
-    }
-
-    // Set loading state
-    emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
-
-    try {
-      final result = await _authRepository.signUp(
-        SignUpCredentials(
-          username: state.username.trim(),
-          email: state.email.trim(),
-          password: state.password,
-        ),
-      );
-
-      if (result is DataSuccess) {
-        emit(state.copyWith(
-          status: FormzSubmissionStatus.success,
-          successMessage: result.data?.message ?? 'Inscription réussie!',
-        ));
-
-        if (context.mounted) {
-          context.goNamed(AppRouteName.accountVerification);
-        }
-      } else {
-        emit(state.copyWith(
-          status: FormzSubmissionStatus.failure,
-          errorMessage: result.error ?? 'Une erreur est survenue lors de l\'inscription',
-        ));
-      }
-    } catch (e) {
-      emit(state.copyWith(
-        status: FormzSubmissionStatus.failure,
-        errorMessage: 'Erreur de connexion. Veuillez vérifier votre connexion internet.',
-      ));
-    }
-  }
-*/

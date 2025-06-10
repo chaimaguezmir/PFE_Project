@@ -1,4 +1,4 @@
-import '../../../domain/entities/auth/sign_up_credentials.dart';
+import '../../../../domain/entities/auth/sign_up_credentials.dart';
 
 class SignUpRequestModel {
   SignUpRequestModel({

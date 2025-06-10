@@ -3,5 +3,5 @@ class ApiEndpoints {
   static const String signUp = '$baseurl/auth/signup';
   static const String signIn = '$baseurl/auth/signin';
   static const String activateAccount = '$baseurl/auth/activate';
-  static const String resendcOTP = '$baseurl/auth/resendActivation';
+  static const String resendOTP = '$baseurl/auth/resendActivation';
 }
