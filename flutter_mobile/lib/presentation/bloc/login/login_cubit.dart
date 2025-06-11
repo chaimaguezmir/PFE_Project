@@ -105,34 +105,6 @@ class LoginCubit extends Cubit<LoginState> {
     }
   }
 
-  Future<void> forgotPassword(BuildContext context) async {
-    if (state.email.trim().isEmpty) {
-      emit(state.copyWith(errorMessage: 'Veuillez entrer votre adresse e-mail'));
-      return;
-    }
-
-    if (!_isValidEmail(state.email)) {
-      emit(state.copyWith(errorMessage: 'Adresse e-mail invalide'));
-      return;
-    }
-
-    emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
-
-    try {
-      // TODO: Implement forgot password API call
-      await Future.delayed(const Duration(seconds: 1));
-
-      emit(state.copyWith(
-        status: FormzSubmissionStatus.success,
-        successMessage: 'Instructions de réinitialisation envoyées à votre e-mail',
-      ));
-    } catch (e) {
-      emit(state.copyWith(
-        status: FormzSubmissionStatus.failure,
-        errorMessage: 'Erreur lors de l\'envoi de l\'e-mail de réinitialisation',
-      ));
-    }
-  }
 
   Future<void> retryLogin(BuildContext context) async {
     await signInWithCredentials(context);

@@ -1,5 +1,6 @@
 import 'package:flutter_mobile/core/resources/data_state.dart';
 import 'package:flutter_mobile/domain/entities/auth/activate_account_credentials.dart';
+import 'package:flutter_mobile/domain/entities/auth/forgot_password_result_entity.dart';
 import 'package:flutter_mobile/domain/entities/auth/login_credentials.dart';
 import 'package:flutter_mobile/domain/entities/auth/login_result_entity.dart';
 import 'package:flutter_mobile/domain/entities/auth/resend_activation_entity.dart';
@@ -14,4 +15,5 @@ abstract class AuthRepository {
 
   Future<DataState<ResendActivationEntity>> resendActivation(String email);
   Future<DataState<LoginResultEntity>> login(LoginCredentials credentials);
+  Future<DataState<ForgotPasswordResultEntity>> forgotPassword(String email);
 }

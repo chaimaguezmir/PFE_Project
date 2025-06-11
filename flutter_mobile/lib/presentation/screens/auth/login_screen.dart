@@ -305,7 +305,7 @@ class _ForgotPasswordLink extends StatelessWidget {
             onTap: state.isLoading
                 ? null
                 : () {
-                    _showForgotPasswordDialog(context);
+                    context.pushNamed(AppRouteName.forgotPasswordEmailScreen);
                   },
             child: Text(
               'Mot de passe oublié ?',
@@ -318,59 +318,6 @@ class _ForgotPasswordLink extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-
-  void _showForgotPasswordDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text('Mot de passe oublié', style: TextStyle(fontSize: 50.sp)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Un e-mail de réinitialisation sera envoyé à votre adresse e-mail.',
-              style: TextStyle(fontSize: 40.sp),
-            ),
-            SizedBox(height: 40.h),
-            BlocBuilder<LoginCubit, LoginState>(
-              buildWhen: (previous, current) =>
-                  previous.isLoading != current.isLoading,
-              builder: (context, state) {
-                return CustomLoadingButton(
-                  isLoading: state.isLoading,
-                  loadingText: "Envoi...",
-                  onPressed: () {
-                    context.read<LoginCubit>().forgotPassword(context);
-                    Navigator.of(dialogContext).pop();
-                  },
-                  child: Text(
-                    'Envoyer',
-                    style: TextStyle(
-                      fontSize: 40.sp,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(),
-            child: Text(
-              'Annuler',
-              style: TextStyle(
-                fontSize: 40.sp,
-                color: theme().colorScheme.primary,
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

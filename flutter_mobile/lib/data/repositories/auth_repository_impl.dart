@@ -4,9 +4,11 @@ import 'package:flutter_mobile/core/resources/data_state.dart';
 import 'package:flutter_mobile/core/constants/api_endpoint.dart';
 import 'package:flutter_mobile/data/model/auth/activate_account/activate_account_request_model.dart';
 import 'package:flutter_mobile/data/model/auth/activate_account/resend_activation_model.dart';
+import 'package:flutter_mobile/data/model/auth/forgot_password/forgot_password_result_model.dart';
 import 'package:flutter_mobile/data/model/auth/login/login_request_model.dart';
 import 'package:flutter_mobile/data/model/auth/login/login_result_model.dart';
 import 'package:flutter_mobile/domain/entities/auth/activate_account_credentials.dart';
+import 'package:flutter_mobile/domain/entities/auth/forgot_password_result_entity.dart';
 import 'package:flutter_mobile/domain/entities/auth/login_credentials.dart';
 import 'package:flutter_mobile/domain/entities/auth/login_result_entity.dart';
 import 'package:flutter_mobile/domain/entities/auth/resend_activation_entity.dart';
@@ -103,6 +105,26 @@ class AuthRepositoryImpl implements AuthRepository {
       }
     } catch (e) {
       return DataError('An error occurred: $e');
+    }
+  }
+
+  @override
+  Future<DataState<ForgotPasswordResultEntity>> forgotPassword(String email) async {
+    try {
+      final response = await _dio.post(
+        ApiEndpoints.forgotPassword,
+        data: jsonEncode({'email': email}),
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
+
+      if (response.statusCode == 200) {
+        final model = ForgotPasswordResultModel.fromJson(response.data);
+        return DataSuccess(model.toEntity());
+      } else {
+        return DataError('Erreur lors de l\'envoi de l\'e-mail de réinitialisation');
+      }
+    } catch (e) {
+      return DataError('Erreur lors de l\'envoi de l\'e-mail: $e');
     }
   }
 }

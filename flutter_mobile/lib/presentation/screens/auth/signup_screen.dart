@@ -58,49 +58,7 @@ class _SignUpForm extends StatelessWidget {
       children: [
         const _TitleWidget(),
         const _SubtitleWidget(),
-
-        // Error Display Section
-        BlocBuilder<SignUpCubit, SignUpState>(
-          buildWhen: (previous, current) =>
-              previous.errorMessage != current.errorMessage,
-          builder: (context, state) {
-            if (state.hasError) {
-              return Container(
-                margin: EdgeInsets.only(bottom: 40.h),
-                padding: EdgeInsets.all(30.w),
-                decoration: BoxDecoration(
-                  color: Colors.red.shade50,
-                  borderRadius: BorderRadius.circular(20.r),
-                  border: Border.all(color: Colors.red.shade200),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.error_outline, color: Colors.red, size: 50.w),
-                    SizedBox(width: 20.w),
-                    Expanded(
-                      child: Text(
-                        state.errorMessage!,
-                        style: TextStyle(
-                          color: Colors.red.shade700,
-                          fontSize: 38.sp,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        context.read<SignUpCubit>().clearError();
-                      },
-                      icon: Icon(Icons.close, color: Colors.red, size: 45.w),
-                    ),
-                  ],
-                ),
-              );
-            }
-            return const SizedBox.shrink();
-          },
-        ),
-
+        const _ErrorDisplaySection(),
         _InputFields(),
         SizedBox(height: 40.h),
         const _GenderSelection(),
@@ -650,6 +608,54 @@ class _BottomTextWithLink extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _ErrorDisplaySection extends StatelessWidget {
+  const _ErrorDisplaySection({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<SignUpCubit, SignUpState>(
+      buildWhen: (previous, current) =>
+          previous.errorMessage != current.errorMessage,
+      builder: (context, state) {
+        if (state.hasError) {
+          return Container(
+            margin: EdgeInsets.only(bottom: 40.h),
+            padding: EdgeInsets.all(30.w),
+            decoration: BoxDecoration(
+              color: Colors.red.shade50,
+              borderRadius: BorderRadius.circular(20.r),
+              border: Border.all(color: Colors.red.shade200),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.error_outline, color: Colors.red, size: 50.w),
+                SizedBox(width: 20.w),
+                Expanded(
+                  child: Text(
+                    state.errorMessage!,
+                    style: TextStyle(
+                      color: Colors.red.shade700,
+                      fontSize: 38.sp,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+                IconButton(
+                  onPressed: () {
+                    context.read<SignUpCubit>().clearError();
+                  },
+                  icon: Icon(Icons.close, color: Colors.red, size: 45.w),
+                ),
+              ],
+            ),
+          );
+        }
+        return const SizedBox.shrink();
+      },
     );
   }
 }

@@ -1,9 +1,14 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_mobile/config/router/app_route_constants.dart';
 import 'package:flutter_mobile/injection_container.dart';
+import 'package:flutter_mobile/presentation/bloc/forgot_password/forgot_password_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/login/login_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/signup/signup_cubit.dart';
 import 'package:flutter_mobile/presentation/screens/auth/account_verification_screen.dart';
+import 'package:flutter_mobile/presentation/screens/auth/forgot_password/forgot_password_code_screen.dart';
+import 'package:flutter_mobile/presentation/screens/auth/forgot_password/forgot_password_email_screen.dart';
+import 'package:flutter_mobile/presentation/screens/auth/forgot_password/forgot_password_new_password_screen.dart';
+import 'package:flutter_mobile/presentation/screens/auth/forgot_password/forgot_password_success_screen.dart';
 import 'package:flutter_mobile/presentation/screens/auth/signup_screen.dart';
 import 'package:flutter_mobile/presentation/screens/home/home_screen.dart';
 import 'package:flutter_mobile/presentation/screens/onboarding/onboarding_screen.dart';
@@ -18,7 +23,7 @@ class AppRouter {
 
   String get initialLocation {
     if (_hasSeenOnboarding) {
-      return AppRoutePath.signIn;
+      return AppRoutePath.forgotPasswordCodeScreen;
     } else {
       return AppRoutePath.onboarding;
     }
@@ -29,6 +34,7 @@ class AppRouter {
   late final GoRouter _router = GoRouter(
     initialLocation: initialLocation,
     routes: [
+      // Onboarding Flow
       ShellRoute(
         builder: (context, state, child) =>
             BlocProvider(create: (context) => sl<SignUpCubit>(), child: child),
@@ -51,6 +57,7 @@ class AppRouter {
           ),
         ],
       ),
+      // Login Flow
       ShellRoute(
         builder: (context, state, child) =>
             BlocProvider(create: (context) => sl<LoginCubit>(), child: child),
@@ -62,10 +69,40 @@ class AppRouter {
           ),
         ],
       ),
+      // Home Flow
       GoRoute(
         path: AppRoutePath.home,
         name: AppRouteName.home,
         builder: (_, _) => const HomeScreen(),
+      ),
+      // Forgot Password Flow
+      ShellRoute(
+        builder: (context, state, child) => BlocProvider(
+          create: (context) => sl<ForgotPasswordCubit>(),
+          child: child,
+        ),
+        routes: [
+          GoRoute(
+            path: AppRoutePath.forgotPasswordEmailScreen,
+            name: AppRouteName.forgotPasswordEmailScreen,
+            builder: (_, _) => const ForgotPasswordEmailScreen(),
+          ),
+          GoRoute(
+            path: AppRoutePath.forgotPasswordCodeScreen,
+            name: AppRouteName.forgotPasswordCodeScreen,
+            builder: (_, _) => const ForgotPasswordCodeScreen(),
+          ),
+          GoRoute(
+            path: AppRoutePath.forgotPasswordNewPasswordScreen,
+            name: AppRouteName.forgotPasswordNewPasswordScreen,
+            builder: (_, _) => const ForgotPasswordNewPasswordScreen(),
+          ),
+          GoRoute(
+            path: AppRoutePath.forgotPasswordSuccessScreen,
+            name: AppRouteName.forgotPasswordSuccessScreen,
+            builder: (_, _) => const ForgotPasswordSuccessScreen(),
+          ),
+        ],
       ),
     ],
   );

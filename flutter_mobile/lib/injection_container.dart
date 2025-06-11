@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_mobile/data/repositories/auth_repository_impl.dart';
 import 'package:flutter_mobile/domain/repositories/auth_repository.dart';
+import 'package:flutter_mobile/presentation/bloc/forgot_password/forgot_password_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/login/login_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/onboarding/auth_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/signup/signup_cubit.dart';
@@ -15,7 +16,7 @@ Future<void> initInjectionContainer() async {
 
   // Register SharedPreferences
   final SharedPreferences sharedPreferences =
-  await SharedPreferences.getInstance();
+      await SharedPreferences.getInstance();
   sl.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
 
   // Register Repositories
@@ -25,4 +26,5 @@ Future<void> initInjectionContainer() async {
   sl.registerFactory<SignUpCubit>(() => SignUpCubit(sl()));
   sl.registerFactory<LoginCubit>(() => LoginCubit(sl()));
   sl.registerFactory<AuthCubit>(() => AuthCubit(sl()));
+  sl.registerFactory<ForgotPasswordCubit>(() => ForgotPasswordCubit(sl()));
 }

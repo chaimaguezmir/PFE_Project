@@ -3,8 +3,11 @@ class AppRouteName {
   static const String onboarding = 'onboarding';
   static const String signUp = 'signup';
   static const String signIn = 'signin';
-  static const String accountVerification = 'accountverification';
-  static const String forgotPassword = 'forgotpassword';
+  static const String accountVerification = 'accountVerification';
+  static const String forgotPasswordEmailScreen = 'forgotPasswordEmailScreen';
+  static const String forgotPasswordCodeScreen = 'forgotPasswordCodeScreen';
+  static const String forgotPasswordNewPasswordScreen = 'forgotPasswordNewPasswordScreen';
+  static const String forgotPasswordSuccessScreen = 'forgotPasswordSuccessScreen';
   // home related screens
   static const String home = 'home';
 }
@@ -15,7 +18,10 @@ class AppRoutePath {
   static const String signUp = '/signUp';
   static const String signIn = '/signIn';
   static const String accountVerification = '/accountverification';
-  static const String forgotPassword = '/forgotPassword';
+  static const String forgotPasswordEmailScreen = '/forgotPasswordEmailScreen';
+  static const String forgotPasswordCodeScreen = '/forgotPasswordCodeScreen';
+  static const String forgotPasswordNewPasswordScreen = '/forgotPasswordNewPasswordScreen';
+  static const String forgotPasswordSuccessScreen = '/forgotPasswordSuccessScreen';
   // home related screens
   static const String home = '/home';
 }

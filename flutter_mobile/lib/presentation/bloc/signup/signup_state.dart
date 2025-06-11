@@ -97,6 +97,7 @@ class SignUpState extends Equatable {
     errorMessage,
     successMessage,
     otpResendCounter,
+    isButtonEnabled,
 
   ];
 }

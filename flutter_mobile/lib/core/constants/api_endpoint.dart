@@ -4,4 +4,5 @@ class ApiEndpoints {
   static const String signIn = '$baseurl/auth/signin';
   static const String activateAccount = '$baseurl/auth/activate';
   static const String resendOTP = '$baseurl/auth/resendActivation';
+  static const String forgotPassword = '$baseurl/auth/forgot-password';
 }
