@@ -9,7 +9,6 @@ class SignUpCredentials extends Equatable {
 
   final String username;
   final String email;
-
   final String password;
 
   @override
