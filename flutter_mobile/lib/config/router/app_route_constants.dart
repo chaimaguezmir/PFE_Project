@@ -13,7 +13,7 @@ class AppRouteName {
   static const String getStartedScreen = 'getStartedScreen';
 
   // home related screens
-  static const String home = 'home';
+  static const String mainScreen = 'mainScreen';
 }
 
 class AppRoutePath {
@@ -31,5 +31,5 @@ class AppRoutePath {
   static const String getStartedScreen = '/getStartedScreen';
 
   // home related screens
-  static const String home = '/home';
+  static const String mainScreen = '/mainScreen';
 }

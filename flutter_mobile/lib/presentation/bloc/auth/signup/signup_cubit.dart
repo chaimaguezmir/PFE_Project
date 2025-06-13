@@ -6,11 +6,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_mobile/config/router/app_route_constants.dart';
 import 'package:flutter_mobile/core/resources/data_state.dart';
 import 'package:flutter_mobile/domain/entities/auth/activate_account_credentials.dart';
+import 'package:flutter_mobile/domain/entities/auth/sign_up_credentials.dart';
 import 'package:flutter_mobile/domain/repositories/auth_repository.dart';
 import 'package:formz/formz.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../domain/entities/auth/sign_up_credentials.dart';
+
 
 part 'signup_state.dart';
 

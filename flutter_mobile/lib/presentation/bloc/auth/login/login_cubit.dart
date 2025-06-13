@@ -79,7 +79,7 @@ class LoginCubit extends Cubit<LoginState> {
           ),
         );
         if (context.mounted) {
-          context.goNamed(AppRouteName.home);
+          context.goNamed(AppRouteName.mainScreen);
         }
       } else {
         emit(
