@@ -21,9 +21,13 @@ class LoginState extends Equatable {
 
   // Computed properties
   bool get isLoading => status == FormzSubmissionStatus.inProgress;
+
   bool get isSuccess => status == FormzSubmissionStatus.success;
+
   bool get isFailure => status == FormzSubmissionStatus.failure;
+
   bool get hasError => errorMessage != null;
+
   bool get hasSuccess => successMessage != null;
 
   LoginState copyWith({

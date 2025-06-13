@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_mobile/config/router/app_route_constants.dart';
 import 'package:flutter_mobile/config/theme/theme_data_config.dart';
 import 'package:flutter_mobile/presentation/bloc/forgot_password/forgot_password_cubit.dart';
-import 'package:flutter_mobile/presentation/bloc/signup/signup_cubit.dart';
 import 'package:flutter_mobile/presentation/widgets/base_widgets/costom_eleveted_button.dart';
 import 'package:flutter_mobile/presentation/widgets/base_widgets/snackbar_helper.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
-
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 
 class ForgotPasswordCodeScreen extends StatelessWidget {
   const ForgotPasswordCodeScreen({super.key});
@@ -69,10 +65,10 @@ class _AccountVerificationForm extends StatelessWidget {
             return CustomElevatedButton(
               enabled: state.isButtonEnabled,
               onPressed: () {
-                context.read<SignUpCubit>().activateAccount();
+                context.read<ForgotPasswordCubit>().checkResetCode(context);
               },
               child: Text(
-                'Envoyer',
+                'Confirmer',
                 style: TextStyle(
                   fontSize: 40.sp,
                   fontWeight: FontWeight.w500,
@@ -88,7 +84,7 @@ class _AccountVerificationForm extends StatelessWidget {
 }
 
 class _OtpWithResend extends StatelessWidget {
-  const _OtpWithResend({super.key});
+  const _OtpWithResend();
 
   @override
   Widget build(BuildContext context) {
@@ -112,7 +108,9 @@ class _OtpWithResend extends StatelessWidget {
                 return GestureDetector(
                   onTap: () {
                     if (state.otpResendCounter == 0) {
-                      context.read<ForgotPasswordCubit>().resendOtpCode(context);
+                      context.read<ForgotPasswordCubit>().resendOtpCode(
+                        context,
+                      );
                     }
                   },
                   child: Text(
@@ -164,15 +162,8 @@ class _CustomOtpTextField extends StatelessWidget {
             context.read<ForgotPasswordCubit>().otpCodeChanged(code);
           },
           onSubmit: (String verificationCode) {
-            context.read<SignUpCubit>().otpCodeChanged(verificationCode);
-            showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  title: const Text("Verification Code"),
-                  content: Text('Code entered is $verificationCode'),
-                );
-              },
+            context.read<ForgotPasswordCubit>().otpCodeChanged(
+              verificationCode,
             );
           }, // end onSubmit
         );

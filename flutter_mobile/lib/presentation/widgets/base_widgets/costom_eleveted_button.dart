@@ -2,11 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobile/config/theme/theme_data_config.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-
-
-
 class CustomElevatedButton extends StatelessWidget {
-
   const CustomElevatedButton({
     super.key,
     required this.onPressed,
@@ -18,6 +14,7 @@ class CustomElevatedButton extends StatelessWidget {
     this.icon,
     this.enabled = true,
   });
+
   final VoidCallback? onPressed;
   final Widget child;
   final double? height;
@@ -44,6 +41,7 @@ class CustomElevatedButton extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
+            if (icon != null) ...[icon!, SizedBox(width: 20.w)],
             child,
             if (isLoading) ...[
               SizedBox(width: 20.w),
@@ -55,9 +53,6 @@ class CustomElevatedButton extends StatelessWidget {
                   strokeWidth: 3,
                 ),
               ),
-            ] else if (icon != null) ...[
-              SizedBox(width: 20.w),
-              icon!,
             ],
           ],
         ),

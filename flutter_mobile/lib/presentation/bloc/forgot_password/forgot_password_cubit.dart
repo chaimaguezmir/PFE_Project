@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_mobile/config/router/app_route_constants.dart';
 import 'package:flutter_mobile/core/resources/data_state.dart';
 import 'package:flutter_mobile/domain/repositories/auth_repository.dart';
@@ -20,15 +20,40 @@ class ForgotPasswordCubit extends Cubit<ForgotPasswordState> {
   void emailChanged(String value) {
     emit(state.copyWith(email: value, errorMessage: null));
   }
+
+  void passwordChanged(String value) {
+    emit(
+      state.copyWith(
+        password: value,
+        isButtonEnabled: value.isNotEmpty && value.length >= 6,
+        errorMessage: null,
+      ),
+    );
+  }
+
+  void confirmPasswordChanged(String value) {
+    emit(
+      state.copyWith(
+        confirmPassword: value,
+        isButtonEnabled: value.isNotEmpty && value == state.password,
+        errorMessage: null,
+      ),
+    );
+  }
+
   void otpCodeChanged(String value) {
     emit(
       state.copyWith(
         otpCode: value,
         isButtonEnabled:
-        value.length == 6 && RegExp(r'^\d{6}$').hasMatch(value),
+            value.length == 6 && RegExp(r'^\d{6}$').hasMatch(value),
         errorMessage: null,
       ),
     );
+  }
+
+  void togglePasswordVisibility() {
+    emit(state.copyWith(isPasswordVisible: !state.isPasswordVisible));
   }
 
   void clearError() {
@@ -53,7 +78,57 @@ class ForgotPasswordCubit extends Cubit<ForgotPasswordState> {
     return true;
   }
 
-  Future<void> submit(BuildContext context) async {
+  Future<void> checkResetCode(BuildContext context) async {
+    emit(state.copyWith(errorMessage: null));
+
+    if (state.otpCode.isEmpty || state.otpCode.length != 6) {
+      emit(
+        state.copyWith(errorMessage: 'Le code de réinitialisation est requis'),
+      );
+      return;
+    }
+
+    emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
+
+    try {
+      final result = await _authRepository.checkResetCode(
+        state.email.trim(),
+        state.otpCode.trim(),
+      );
+
+      if (result is DataSuccess && result.data != null) {
+        emit(
+          state.copyWith(
+            status: FormzSubmissionStatus.success,
+            successMessage: result.data!.message,
+          ),
+        );
+        if (context.mounted) {
+          context.pushReplacementNamed(
+            AppRouteName.forgotPasswordNewPasswordScreen,
+          );
+        }
+      } else {
+        emit(
+          state.copyWith(
+            status: FormzSubmissionStatus.failure,
+            errorMessage:
+                result.error ?? "Erreur lors de la vérification du code.",
+          ),
+        );
+      }
+    } catch (e) {
+      emit(
+        state.copyWith(
+          status: FormzSubmissionStatus.failure,
+          errorMessage:
+              "Erreur lors de la vérification du code. Veuillez vérifier votre connexion internet.",
+        ),
+      );
+    }
+  }
+
+  Future<void> sendOTP(BuildContext context) async {
     emit(state.copyWith(errorMessage: null));
 
     if (!_isFormValid()) {
@@ -73,7 +148,7 @@ class ForgotPasswordCubit extends Cubit<ForgotPasswordState> {
           ),
         );
         if (context.mounted) {
-          context.goNamed(AppRouteName.forgotPasswordCodeScreen);
+          context.pushReplacementNamed(AppRouteName.forgotPasswordCodeScreen);
         }
       } else {
         emit(
@@ -102,18 +177,18 @@ class ForgotPasswordCubit extends Cubit<ForgotPasswordState> {
         successMessage: null,
       ),
     );
+    startResendTimer();
 
-    final result = await _authRepository.resendActivation(state.email);
+    final result = await _authRepository.forgotPassword(state.email);
 
     if (result is DataSuccess) {
       emit(
         state.copyWith(
           status: FormzSubmissionStatus.success,
           successMessage:
-          result.data?.message ?? 'Le code a été renvoyé avec succès.',
+              result.data?.message ?? 'Le code a été renvoyé avec succès.',
         ),
       );
-      startResendTimer();
     } else {
       emit(
         state.copyWith(
@@ -123,6 +198,7 @@ class ForgotPasswordCubit extends Cubit<ForgotPasswordState> {
       );
     }
   }
+
   Timer? _timer;
 
   void startResendTimer() {
@@ -142,5 +218,68 @@ class ForgotPasswordCubit extends Cubit<ForgotPasswordState> {
   Future<void> close() {
     _timer?.cancel();
     return super.close();
+  }
+
+  Future<void> submit(BuildContext context) async {
+    emit(state.copyWith(errorMessage: null));
+
+    if (state.password.isEmpty) {
+      emit(state.copyWith(errorMessage: 'Le mot de passe est requis'));
+      return;
+    }
+    if (state.confirmPassword.isEmpty) {
+      emit(
+        state.copyWith(
+          errorMessage: 'La confirmation du mot de passe est requise',
+        ),
+      );
+      return;
+    }
+
+    if (state.password != state.confirmPassword) {
+      emit(
+        state.copyWith(errorMessage: 'Les mots de passe ne correspondent pas'),
+      );
+      return;
+    }
+
+    emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
+
+    try {
+      final result = await _authRepository.resetPassword(
+        state.email.trim(),
+        state.otpCode.trim(),
+        state.password.trim(),
+      );
+
+      if (result is DataSuccess && result.data != null) {
+        emit(
+          state.copyWith(
+            status: FormzSubmissionStatus.success,
+            successMessage: result.data!.message,
+          ),
+        );
+        if (context.mounted) {
+          context.goNamed(AppRouteName.forgotPasswordSuccessScreen);
+        }
+      } else {
+        emit(
+          state.copyWith(
+            status: FormzSubmissionStatus.failure,
+            errorMessage:
+                result.error ??
+                "Erreur lors de la réinitialisation du mot de passe.",
+          ),
+        );
+      }
+    } catch (e) {
+      emit(
+        state.copyWith(
+          status: FormzSubmissionStatus.failure,
+          errorMessage:
+              "Erreur lors de la réinitialisation du mot de passe. Veuillez vérifier votre connexion internet.",
+        ),
+      );
+    }
   }
 }

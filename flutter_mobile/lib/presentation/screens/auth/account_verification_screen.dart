@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_mobile/config/router/app_route_constants.dart';
 import 'package:flutter_mobile/config/theme/theme_data_config.dart';
 import 'package:flutter_mobile/presentation/bloc/signup/signup_cubit.dart';
 import 'package:flutter_mobile/presentation/widgets/base_widgets/costom_eleveted_button.dart';
 import 'package:flutter_mobile/presentation/widgets/base_widgets/snackbar_helper.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
-
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 
 class AccountVerificationScreen extends StatelessWidget {
   const AccountVerificationScreen({super.key});
@@ -63,12 +60,12 @@ class _AccountVerificationForm extends StatelessWidget {
         SizedBox(height: 150.h),
         BlocBuilder<SignUpCubit, SignUpState>(
           buildWhen: (previous, current) =>
-          previous.isButtonEnabled != current.isButtonEnabled,
+              previous.isButtonEnabled != current.isButtonEnabled,
           builder: (context, state) {
             return CustomElevatedButton(
               enabled: state.isButtonEnabled,
               onPressed: () {
-                context.read<SignUpCubit>().activateAccount();
+                context.read<SignUpCubit>().activateAccount(context);
               },
               child: Text(
                 'Envoyer',
@@ -87,7 +84,7 @@ class _AccountVerificationForm extends StatelessWidget {
 }
 
 class _OtpWithResend extends StatelessWidget {
-  const _OtpWithResend({super.key});
+  const _OtpWithResend();
 
   @override
   Widget build(BuildContext context) {
@@ -106,7 +103,7 @@ class _OtpWithResend extends StatelessWidget {
             ),
             BlocBuilder<SignUpCubit, SignUpState>(
               buildWhen: (previous, current) =>
-              previous.otpResendCounter != current.otpResendCounter,
+                  previous.otpResendCounter != current.otpResendCounter,
               builder: (context, state) {
                 return GestureDetector(
                   onTap: () {
@@ -117,9 +114,7 @@ class _OtpWithResend extends StatelessWidget {
                   child: Text(
                     state.otpResendCounter == 0
                         ? 'Resend'
-                        : 'Resend in 00:${state.otpResendCounter
-                        .toString()
-                        .padLeft(2, '0')}  ',
+                        : 'Resend in 00:${state.otpResendCounter.toString().padLeft(2, '0')}  ',
 
                     style: TextStyle(
                       fontSize: 38.sp,
@@ -143,7 +138,7 @@ class _OtpWithResend extends StatelessWidget {
 }
 
 class _CustomOtpTextField extends StatelessWidget {
-  const _CustomOtpTextField({super.key});
+  const _CustomOtpTextField();
 
   @override
   Widget build(BuildContext context) {
@@ -166,15 +161,6 @@ class _CustomOtpTextField extends StatelessWidget {
           },
           onSubmit: (String verificationCode) {
             context.read<SignUpCubit>().otpCodeChanged(verificationCode);
-            showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  title: const Text("Verification Code"),
-                  content: Text('Code entered is $verificationCode'),
-                );
-              },
-            );
           }, // end onSubmit
         );
       },

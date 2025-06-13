@@ -1,12 +1,11 @@
 import 'dart:async';
 
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_mobile/config/router/app_route_constants.dart';
 import 'package:flutter_mobile/core/resources/data_state.dart';
 import 'package:flutter_mobile/domain/entities/auth/activate_account_credentials.dart';
-import 'package:flutter_mobile/domain/entities/auth/sign_up_result_entity.dart';
 import 'package:flutter_mobile/domain/repositories/auth_repository.dart';
 import 'package:formz/formz.dart';
 import 'package:go_router/go_router.dart';
@@ -194,7 +193,7 @@ class SignUpCubit extends Cubit<SignUpState> {
     }
   }
 
-  Future<void> activateAccount() async {
+  Future<void> activateAccount(BuildContext context) async {
     emit(
       state.copyWith(
         status: FormzSubmissionStatus.inProgress,
@@ -220,6 +219,10 @@ class SignUpCubit extends Cubit<SignUpState> {
           errorMessage: result.error ?? 'Activation failed',
         ),
       );
+    }
+    // If activation is successful, navigate to the home screen
+    if (context.mounted) {
+      context.goNamed(AppRouteName.signIn);
     }
   }
 

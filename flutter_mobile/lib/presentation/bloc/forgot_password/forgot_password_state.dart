@@ -9,6 +9,9 @@ class ForgotPasswordState extends Equatable {
     this.status = FormzSubmissionStatus.initial,
     this.isButtonEnabled = false,
     this.otpResendCounter = 0,
+    this.password = '',
+    this.confirmPassword = '',
+    this.isPasswordVisible = false,
   });
 
   final String email;
@@ -18,6 +21,10 @@ class ForgotPasswordState extends Equatable {
   final FormzSubmissionStatus status;
   final bool isButtonEnabled;
   final int otpResendCounter;
+  final String password;
+
+  final String confirmPassword;
+  final bool isPasswordVisible;
 
   ForgotPasswordState copyWith({
     String? email,
@@ -27,6 +34,9 @@ class ForgotPasswordState extends Equatable {
     FormzSubmissionStatus? status,
     bool? isButtonEnabled,
     int? otpResendCounter,
+    String? password,
+    String? confirmPassword,
+    bool? isPasswordVisible,
   }) {
     return ForgotPasswordState(
       email: email ?? this.email,
@@ -36,14 +46,21 @@ class ForgotPasswordState extends Equatable {
       status: status ?? this.status,
       isButtonEnabled: isButtonEnabled ?? this.isButtonEnabled,
       otpResendCounter: otpResendCounter ?? this.otpResendCounter,
+      password: password ?? this.password,
+      confirmPassword: confirmPassword ?? this.confirmPassword,
+      isPasswordVisible: isPasswordVisible ?? this.isPasswordVisible,
     );
   }
 
   // Computed properties for better UX
   bool get isLoading => status == FormzSubmissionStatus.inProgress;
+
   bool get isSuccess => status == FormzSubmissionStatus.success;
+
   bool get isFailure => status == FormzSubmissionStatus.failure;
+
   bool get hasError => errorMessage != null;
+
   bool get hasSuccess => successMessage != null;
 
   @override
@@ -55,5 +72,8 @@ class ForgotPasswordState extends Equatable {
     status,
     isButtonEnabled,
     otpResendCounter,
+    password,
+    confirmPassword,
+    isPasswordVisible,
   ];
 }

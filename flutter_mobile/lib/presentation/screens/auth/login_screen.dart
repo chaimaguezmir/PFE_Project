@@ -419,6 +419,7 @@ class _SocialLoginButton extends StatelessWidget {
     this.backgroundColor = Colors.white,
     this.textColor = Colors.black,
   });
+
   final String label;
   final Color backgroundColor;
   final Color textColor;

@@ -78,7 +78,7 @@ class ForgotPasswordEmailScreen extends StatelessWidget {
 }
 
 class _ForgotPasswordForm extends StatelessWidget {
-  const _ForgotPasswordForm({super.key});
+  const _ForgotPasswordForm();
 
   @override
   Widget build(BuildContext context) {
@@ -166,10 +166,10 @@ class _CustomLoadingElevatedButton extends StatelessWidget {
           onPressed: state.isLoading
               ? null
               : () {
-                  context.read<ForgotPasswordCubit>().submit(context);
+                  context.read<ForgotPasswordCubit>().sendOTP(context);
                 },
           child: Text(
-            "Confirmez votre adresse e-mail",
+            "Confirmer votre adresse e-mail",
             style: TextStyle(
               fontSize: 45.sp,
               color: Colors.white,

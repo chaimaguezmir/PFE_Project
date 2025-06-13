@@ -6,6 +6,7 @@ class ForgotPasswordResultModel {
   factory ForgotPasswordResultModel.fromJson(Map<String, dynamic> json) {
     return ForgotPasswordResultModel(message: json['message'] ?? '');
   }
+
   final String message;
 
   ForgotPasswordResultEntity toEntity() =>

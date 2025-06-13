@@ -1,5 +1,6 @@
 abstract class DataState<T> {
   DataState({this.data, this.error});
+
   final T? data;
   final String? error;
 }

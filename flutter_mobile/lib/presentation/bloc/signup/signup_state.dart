@@ -17,7 +17,7 @@ class SignUpState extends Equatable {
     this.status = FormzSubmissionStatus.initial,
     this.errorMessage,
     this.successMessage,
-    this.otpResendCounter=0,
+    this.otpResendCounter = 0,
     this.isButtonEnabled = false,
   });
 
@@ -34,14 +34,19 @@ class SignUpState extends Equatable {
   final FormzSubmissionStatus status;
   final String? errorMessage;
   final String? successMessage;
-  final int? otpResendCounter ;
+  final int? otpResendCounter;
+
   final bool isButtonEnabled;
 
   // Computed properties for better UX
   bool get isLoading => status == FormzSubmissionStatus.inProgress;
+
   bool get isSuccess => status == FormzSubmissionStatus.success;
+
   bool get isFailure => status == FormzSubmissionStatus.failure;
+
   bool get hasError => errorMessage != null;
+
   bool get hasSuccess => successMessage != null;
 
   SignUpState copyWith({
@@ -60,7 +65,6 @@ class SignUpState extends Equatable {
     String? successMessage,
     int? otpResendCounter,
     bool? isButtonEnabled,
-
   }) {
     return SignUpState(
       username: username ?? this.username,
@@ -98,7 +102,6 @@ class SignUpState extends Equatable {
     successMessage,
     otpResendCounter,
     isButtonEnabled,
-
   ];
 }
 

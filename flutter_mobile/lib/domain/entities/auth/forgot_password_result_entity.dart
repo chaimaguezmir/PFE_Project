@@ -1,4 +1,5 @@
 class ForgotPasswordResultEntity {
-  final String message;
   ForgotPasswordResultEntity({required this.message});
+
+  final String message;
 }

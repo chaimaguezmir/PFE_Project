@@ -1,7 +1,6 @@
 import 'package:flutter_mobile/domain/entities/auth/login_result_entity.dart';
 
 class LoginResultModel {
-
   LoginResultModel({
     required this.token,
     required this.type,
@@ -31,6 +30,7 @@ class LoginResultModel {
       deviceId: json['deviceId'],
     );
   }
+
   final String token;
   final String type;
   final String refreshToken;

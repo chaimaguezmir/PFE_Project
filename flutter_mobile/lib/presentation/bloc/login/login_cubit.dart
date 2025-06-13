@@ -1,15 +1,12 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_mobile/config/router/app_route_constants.dart';
 import 'package:flutter_mobile/core/resources/data_state.dart';
 import 'package:flutter_mobile/domain/entities/auth/login_credentials.dart';
-
 import 'package:flutter_mobile/domain/repositories/auth_repository.dart';
 import 'package:formz/formz.dart';
 import 'package:go_router/go_router.dart';
-
-
 part 'login_state.dart';
 
 class LoginCubit extends Cubit<LoginState> {
@@ -18,17 +15,11 @@ class LoginCubit extends Cubit<LoginState> {
   final AuthRepository _authRepository;
 
   void emailChanged(String value) {
-    emit(state.copyWith(
-      email: value,
-      errorMessage: null,
-    ));
+    emit(state.copyWith(email: value, errorMessage: null));
   }
 
   void passwordChanged(String value) {
-    emit(state.copyWith(
-      password: value,
-      errorMessage: null,
-    ));
+    emit(state.copyWith(password: value, errorMessage: null));
   }
 
   void togglePasswordVisibility() {
@@ -77,34 +68,37 @@ class LoginCubit extends Cubit<LoginState> {
 
     try {
       final result = await _authRepository.login(
-        LoginCredentials(
-          email: state.email.trim(),
-          password: state.password,
-        ),
+        LoginCredentials(email: state.email.trim(), password: state.password),
       );
 
       if (result is DataSuccess) {
-        emit(state.copyWith(
-          status: FormzSubmissionStatus.success,
-          successMessage: 'Connexion réussie!',
-        ));
+        emit(
+          state.copyWith(
+            status: FormzSubmissionStatus.success,
+            successMessage: 'Connexion réussie!',
+          ),
+        );
         if (context.mounted) {
-           context.goNamed(AppRouteName.home);
+          context.goNamed(AppRouteName.home);
         }
       } else {
-        emit(state.copyWith(
-          status: FormzSubmissionStatus.failure,
-          errorMessage: result.error ?? 'Identifiants incorrects',
-        ));
+        emit(
+          state.copyWith(
+            status: FormzSubmissionStatus.failure,
+            errorMessage: result.error ?? 'Identifiants incorrects',
+          ),
+        );
       }
     } catch (e) {
-      emit(state.copyWith(
-        status: FormzSubmissionStatus.failure,
-        errorMessage: 'Erreur de connexion. Veuillez vérifier votre connexion internet.',
-      ));
+      emit(
+        state.copyWith(
+          status: FormzSubmissionStatus.failure,
+          errorMessage:
+              'Erreur de connexion. Veuillez vérifier votre connexion internet.',
+        ),
+      );
     }
   }
-
 
   Future<void> retryLogin(BuildContext context) async {
     await signInWithCredentials(context);

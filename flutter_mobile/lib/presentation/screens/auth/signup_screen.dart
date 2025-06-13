@@ -10,7 +10,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../config/theme/theme_data_config.dart';
-import '../../../injection_container.dart';
 
 class SignUpScreen extends StatelessWidget {
   const SignUpScreen({super.key});
@@ -74,6 +73,7 @@ class _SignUpForm extends StatelessWidget {
 
 class _InputFields extends StatelessWidget {
   _InputFields();
+
   final TextEditingController birthdateController = TextEditingController();
 
   Future<void> selectDate(BuildContext context) async {
@@ -337,6 +337,7 @@ class _PhoneNumberTextField extends StatelessWidget {
 
 class _BirthdateField extends StatelessWidget {
   const _BirthdateField(this.controller, this.onTap);
+
   final TextEditingController controller;
   final VoidCallback onTap;
 
@@ -613,7 +614,7 @@ class _BottomTextWithLink extends StatelessWidget {
 }
 
 class _ErrorDisplaySection extends StatelessWidget {
-  const _ErrorDisplaySection({super.key});
+  const _ErrorDisplaySection();
 
   @override
   Widget build(BuildContext context) {

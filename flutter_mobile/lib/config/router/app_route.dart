@@ -9,12 +9,12 @@ import 'package:flutter_mobile/presentation/screens/auth/forgot_password/forgot_
 import 'package:flutter_mobile/presentation/screens/auth/forgot_password/forgot_password_email_screen.dart';
 import 'package:flutter_mobile/presentation/screens/auth/forgot_password/forgot_password_new_password_screen.dart';
 import 'package:flutter_mobile/presentation/screens/auth/forgot_password/forgot_password_success_screen.dart';
+import 'package:flutter_mobile/presentation/screens/auth/get_started_screen.dart';
+import 'package:flutter_mobile/presentation/screens/auth/login_screen.dart';
 import 'package:flutter_mobile/presentation/screens/auth/signup_screen.dart';
 import 'package:flutter_mobile/presentation/screens/home/home_screen.dart';
 import 'package:flutter_mobile/presentation/screens/onboarding/onboarding_screen.dart';
 import 'package:go_router/go_router.dart';
-
-import 'package:flutter_mobile/presentation/screens/auth/login_screen.dart';
 
 class AppRouter {
   AppRouter(this._hasSeenOnboarding);
@@ -23,7 +23,7 @@ class AppRouter {
 
   String get initialLocation {
     if (_hasSeenOnboarding) {
-      return AppRoutePath.forgotPasswordCodeScreen;
+      return AppRoutePath.getStartedScreen;
     } else {
       return AppRoutePath.onboarding;
     }
@@ -57,6 +57,11 @@ class AppRouter {
           ),
         ],
       ),
+      GoRoute(
+        path: AppRoutePath.getStartedScreen,
+        name: AppRouteName.getStartedScreen,
+        builder: (_, _) => const GetStartedScreen(),
+      ),
       // Login Flow
       ShellRoute(
         builder: (context, state, child) =>
@@ -69,12 +74,7 @@ class AppRouter {
           ),
         ],
       ),
-      // Home Flow
-      GoRoute(
-        path: AppRoutePath.home,
-        name: AppRouteName.home,
-        builder: (_, _) => const HomeScreen(),
-      ),
+
       // Forgot Password Flow
       ShellRoute(
         builder: (context, state, child) => BlocProvider(
@@ -103,6 +103,12 @@ class AppRouter {
             builder: (_, _) => const ForgotPasswordSuccessScreen(),
           ),
         ],
+      ),
+      // Home Flow
+      GoRoute(
+        path: AppRoutePath.home,
+        name: AppRouteName.home,
+        builder: (_, _) => const HomeScreen(),
       ),
     ],
   );

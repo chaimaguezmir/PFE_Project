@@ -39,29 +39,29 @@ class CustomLoadingButton extends StatelessWidget {
         onPressed: (enabled && !isLoading) ? onPressed : null,
         child: isLoading
             ? Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: 50.w,
-              height: 50.w,
-              child: const CircularProgressIndicator(
-                color: Colors.white,
-                strokeWidth: 3,
-              ),
-            ),
-            if (loadingText != null) ...[
-              SizedBox(width: 30.w),
-              Text(
-                loadingText!,
-                style: TextStyle(
-                  fontSize: 45.sp,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ],
-        )
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: 50.w,
+                    height: 50.w,
+                    child: const CircularProgressIndicator(
+                      color: Colors.white,
+                      strokeWidth: 3,
+                    ),
+                  ),
+                  if (loadingText != null) ...[
+                    SizedBox(width: 30.w),
+                    Text(
+                      loadingText!,
+                      style: TextStyle(
+                        fontSize: 45.sp,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ],
+              )
             : child,
       ),
     );

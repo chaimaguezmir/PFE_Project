@@ -5,4 +5,6 @@ class ApiEndpoints {
   static const String activateAccount = '$baseurl/auth/activate';
   static const String resendOTP = '$baseurl/auth/resendActivation';
   static const String forgotPassword = '$baseurl/auth/forgot-password';
+  static const String checkResetCode = '$baseurl/auth/check-reset-code';
+  static const String resetPassword = '$baseurl/auth/reset-password';
 }

@@ -1,5 +1,4 @@
 class LoginResultEntity {
-
   LoginResultEntity({
     required this.token,
     required this.type,
@@ -13,6 +12,7 @@ class LoginResultEntity {
     required this.deviceName,
     required this.deviceId,
   });
+
   final String token;
   final String type;
   final String refreshToken;
