@@ -12,7 +12,7 @@ import 'package:flutter_mobile/presentation/screens/auth/forgot_password/forgot_
 import 'package:flutter_mobile/presentation/screens/auth/get_started_screen.dart';
 import 'package:flutter_mobile/presentation/screens/auth/login_screen.dart';
 import 'package:flutter_mobile/presentation/screens/auth/signup_screen.dart';
-import 'package:flutter_mobile/presentation/screens/home/main_screen.dart';
+import 'package:flutter_mobile/presentation/screens/main_screen.dart';
 import 'package:flutter_mobile/presentation/screens/onboarding/onboarding_screen.dart';
 import 'package:go_router/go_router.dart';
 

@@ -1,9 +1,17 @@
 // app theme configuration
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-const Color primaryColor = Color(0xFF245960); // Main brand color (dark teal)
+const Color primaryColor = Color(0xFF245960);
 const Color secondaryColor = Color(0xff249689);
-const ternaryColor = Color(0xffE5E7EB); // Light grey for tertiary elements
+const Color ternaryColor = Color(0xffE5E7EB);
+const Color onPrimaryColor = Colors.black;
+const Color onSecondaryColor = Colors.white;
+const Color onTertiaryColor = Colors.grey;
+const Color surfaceColor = Colors.white;
+const Color onSurfaceColor = Colors.black;
+const Color errorColor = Colors.red;
+const Color onErrorColor = Colors.white;
 // Returns the main ThemeData for the app
 ThemeData theme() {
   return ThemeData(
@@ -13,14 +21,13 @@ ThemeData theme() {
       primary: primaryColor,
       secondary: secondaryColor,
       tertiary: ternaryColor,
-      onPrimary: Colors.black,
-      // Text/icon color on primary
-      onSecondary: Colors.white,
-      onTertiary: Colors.grey,
-      surface: Colors.white,
-      onSurface: Colors.black,
-      error: Colors.red,
-      onError: Colors.white,
+      onPrimary: onPrimaryColor,
+      onSecondary: onSecondaryColor,
+      onTertiary: onTertiaryColor,
+      surface: surfaceColor,
+      onSurface: onSurfaceColor,
+      error: errorColor,
+      onError: onErrorColor,
     ),
     inputDecorationTheme: InputDecorationTheme(
       border: OutlineInputBorder(
@@ -37,6 +44,25 @@ ThemeData theme() {
       backgroundColor: primaryColor,
       foregroundColor: Colors.white,
       elevation: 0,
+    ),
+    bottomNavigationBarTheme: BottomNavigationBarThemeData(
+      backgroundColor: Colors.white,
+      elevation: 2.0,
+      selectedItemColor: secondaryColor,
+      unselectedItemColor: onTertiaryColor,
+      selectedIconTheme:  IconThemeData(size: 40.sp),
+      unselectedIconTheme:  IconThemeData(size: 40.sp),
+      selectedLabelStyle:  TextStyle(
+        fontWeight: FontWeight.w400,
+        fontSize: 35.sp,
+      ),
+      unselectedLabelStyle:  TextStyle(
+        fontWeight: FontWeight.w400,
+        fontSize: 35.sp,
+      ),
+      showUnselectedLabels: true,
+      type: BottomNavigationBarType.fixed,
+
     ),
   );
 }
