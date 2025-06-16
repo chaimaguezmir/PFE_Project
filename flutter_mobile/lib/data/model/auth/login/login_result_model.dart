@@ -9,11 +9,26 @@ class LoginResultModel {
     required this.username,
     required this.email,
     required this.roles,
-    required this.firstName,
-    required this.lastName,
+    this.firstName,
+    this.lastName,
     required this.deviceName,
     required this.deviceId,
   });
+  factory LoginResultModel.fromEntity(LoginResultEntity entity) {
+    return LoginResultModel(
+      token: entity.token,
+      type: entity.type,
+      refreshToken: entity.refreshToken,
+      id: entity.id,
+      username: entity.username,
+      email: entity.email,
+      roles: entity.roles,
+      firstName: entity.firstName,
+      lastName: entity.lastName,
+      deviceName: entity.deviceName,
+      deviceId: entity.deviceId,
+    );
+  }
 
   factory LoginResultModel.fromJson(Map<String, dynamic> json) {
     return LoginResultModel(
@@ -38,8 +53,8 @@ class LoginResultModel {
   final String username;
   final String email;
   final List<String> roles;
-  final String firstName;
-  final String lastName;
+  final String? firstName;
+  final String? lastName;
   final String deviceName;
   final String deviceId;
 

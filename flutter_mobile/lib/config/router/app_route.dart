@@ -4,6 +4,7 @@ import 'package:flutter_mobile/injection_container.dart';
 import 'package:flutter_mobile/presentation/bloc/auth/forgot_password/forgot_password_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/auth/login/login_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/auth/signup/signup_cubit.dart';
+import 'package:flutter_mobile/presentation/bloc/group/group_cubit.dart';
 import 'package:flutter_mobile/presentation/screens/auth/account_verification_screen.dart';
 import 'package:flutter_mobile/presentation/screens/auth/forgot_password/forgot_password_code_screen.dart';
 import 'package:flutter_mobile/presentation/screens/auth/forgot_password/forgot_password_email_screen.dart';
@@ -12,18 +13,23 @@ import 'package:flutter_mobile/presentation/screens/auth/forgot_password/forgot_
 import 'package:flutter_mobile/presentation/screens/auth/get_started_screen.dart';
 import 'package:flutter_mobile/presentation/screens/auth/login_screen.dart';
 import 'package:flutter_mobile/presentation/screens/auth/signup_screen.dart';
+import 'package:flutter_mobile/presentation/screens/group/group_membe_screen.dart';
+import 'package:flutter_mobile/presentation/screens/group/group_screen.dart';
 import 'package:flutter_mobile/presentation/screens/main_screen.dart';
 import 'package:flutter_mobile/presentation/screens/onboarding/onboarding_screen.dart';
 import 'package:go_router/go_router.dart';
 
 class AppRouter {
-  AppRouter(this._hasSeenOnboarding);
+  AppRouter(this._hasSeenOnboarding, this._isAuthenticated);
 
   final bool _hasSeenOnboarding;
+  final bool _isAuthenticated;
 
   String get initialLocation {
-    if (_hasSeenOnboarding) {
+    if (_isAuthenticated) {
       return AppRoutePath.mainScreen;
+    } else if (_hasSeenOnboarding) {
+      return AppRoutePath.getStartedScreen;
     } else {
       return AppRoutePath.onboarding;
     }
@@ -109,6 +115,22 @@ class AppRouter {
         path: AppRoutePath.mainScreen,
         name: AppRouteName.mainScreen,
         builder: (_, _) => const MainScreen(),
+      ),
+
+      ShellRoute(
+        builder: (context, state, child) =>
+            BlocProvider(create: (context) => sl<GroupCubit>(), child: child),
+        routes: [
+          GoRoute(
+            path: AppRoutePath.groupMembersScreen,
+            name: AppRouteName.groupMembersScreen,
+            builder: (context, state) {
+              final selectedGroupId =
+                  state.pathParameters['selectedGroupId'] ?? '';
+              return GroupMembersScreen(selectedGroupId: selectedGroupId);
+            },
+          ),
+        ],
       ),
     ],
   );

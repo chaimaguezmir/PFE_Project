@@ -32,7 +32,9 @@ class MyApp extends StatelessWidget {
     //sl<SharedPreferences>().setBool('hasSeenOnboarding', false);
     final bool hasSeenOnboarding =
         sl<SharedPreferences>().getBool('hasSeenOnboarding') ?? false;
-    final GoRouter route = AppRouter(hasSeenOnboarding).router;
+    final token = sl<SharedPreferences>().getString('token');
+    final bool isAuthenticated = token != null && token.isNotEmpty;
+    final GoRouter route = AppRouter(hasSeenOnboarding, isAuthenticated).router;
     return ScreenUtilInit(
       designSize: const Size(1080, 2400), // Set to your design's size
       minTextAdapt: true,

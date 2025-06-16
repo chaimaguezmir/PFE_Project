@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter_mobile/core/constants/api_endpoint.dart';
 import 'package:flutter_mobile/core/resources/data_state.dart';
+import 'package:flutter_mobile/data/data_sources/auth_remote_datasource.dart';
 import 'package:flutter_mobile/data/model/auth/activate_account/activate_account_request_model.dart';
 import 'package:flutter_mobile/data/model/auth/activate_account/resend_activation_model.dart';
 import 'package:flutter_mobile/data/model/auth/forgot_password/check_reset_code_result_model.dart';
@@ -20,79 +21,53 @@ import 'package:flutter_mobile/domain/entities/auth/resend_activation_entity.dar
 import 'package:flutter_mobile/domain/entities/auth/sign_up_credentials.dart';
 import 'package:flutter_mobile/domain/entities/auth/sign_up_result_entity.dart';
 import 'package:flutter_mobile/domain/repositories/auth_repository.dart';
-
+/// Implementation of [AuthRepository] using remote data source
 class AuthRepositoryImpl implements AuthRepository {
-  AuthRepositoryImpl(this._dio);
+  AuthRepositoryImpl(this._remoteDataSource);
 
-  final Dio _dio;
+  final AuthRemoteDataSource _remoteDataSource;
 
   @override
   Future<DataState<SignUpResultEntity>> signUp(
-    SignUpCredentials credentials,
-  ) async {
+      SignUpCredentials credentials,
+      ) async {
     try {
       final requestModel = SignUpRequestModel.fromCredentials(credentials);
-      final response = await _dio.post(
-        ApiEndpoints.signUp,
-        data: jsonEncode(requestModel.toJson()),
-        options: Options(headers: {'Content-Type': 'application/json'}),
-      );
-
-      if (response.statusCode == 200) {
-        final result = SignUpResultModel.fromJson(response.data);
-        return DataSuccess(result);
-      } else {
-        return DataError('Failed to sign up: ${response.statusMessage}');
-      }
+      final result = await _remoteDataSource.signUp(requestModel);
+      return DataSuccess(result);
+    } on DioException catch (e) {
+      return DataError(_handleDioError(e));
     } catch (e) {
-      return DataError('An error occurred: $e');
+      return DataError('An unexpected error occurred: $e');
     }
   }
 
   @override
   Future<DataState<SignUpResultEntity>> activateAccount(
-    ActivateAccountCredentials credentials,
-  ) async {
+      ActivateAccountCredentials credentials,
+      ) async {
     try {
       final requestModel = ActivateAccountRequestModel.fromCredentials(
         credentials,
       );
-      final response = await _dio.post(
-        ApiEndpoints.activateAccount,
-        data: jsonEncode(requestModel.toJson()),
-        options: Options(headers: {'Content-Type': 'application/json'}),
-      );
-
-      if (response.statusCode == 200) {
-        final result = SignUpResultModel.fromJson(response.data);
-        return DataSuccess(result);
-      } else {
-        return DataError(
-          'Failed to activate account: ${response.statusMessage}',
-        );
-      }
+      final result = await _remoteDataSource.activateAccount(requestModel);
+      return DataSuccess(result);
+    } on DioException catch (e) {
+      return DataError(_handleDioError(e));
     } catch (e) {
-      return DataError('An error occurred: $e');
+      return DataError('An unexpected error occurred: $e');
     }
   }
 
   @override
   Future<DataState<ResendActivationEntity>> resendActivation(
-    String email,
-  ) async {
+      String email,
+      ) async {
     try {
-      final response = await _dio.post(
-        ApiEndpoints.resendOTP,
-        data: jsonEncode({'email': email}),
-        options: Options(headers: {'Content-Type': 'application/json'}),
-      );
-
-      if (response.statusCode == 200) {
-        final model = ResendActivationModel.fromJson(response.data);
-        return DataSuccess(model.toEntity());
-      } else {
-        return DataError('Erreur lors de la réinitialisation du code');
-      }
+      final result = await _remoteDataSource.resendActivation(email);
+      return DataSuccess(result.toEntity());
+    } on DioException catch (e) {
+      return DataError(_handleDioError(e, 'Erreur lors de la réinitialisation du code'));
     } catch (e) {
       return DataError('Erreur lors de la réinitialisation du code: $e');
     }
@@ -100,46 +75,29 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<DataState<LoginResultEntity>> login(
-    LoginCredentials credentials,
-  ) async {
+      LoginCredentials credentials,
+      ) async {
     try {
       final requestModel = LoginRequestModel.fromCredentials(credentials);
-      final response = await _dio.post(
-        ApiEndpoints.signIn,
-        data: jsonEncode(requestModel.toJson()),
-        options: Options(headers: {'Content-Type': 'application/json'}),
-      );
+      final result = await _remoteDataSource.signIn(requestModel);
+      return DataSuccess(result.toEntity());
+    } on DioException catch (e) {
 
-      if (response.statusCode == 200) {
-        final result = LoginResultModel.fromJson(response.data);
-        return DataSuccess(result.toEntity());
-      } else {
-        return DataError('Failed to login: ${response.statusMessage}');
-      }
+      return DataError(_handleDioError(e));
     } catch (e) {
-      return DataError('An error occurred: $e');
+      return DataError('An unexpected error occurred: $e');
     }
   }
 
   @override
   Future<DataState<ForgotPasswordResultEntity>> forgotPassword(
-    String email,
-  ) async {
+      String email,
+      ) async {
     try {
-      final response = await _dio.post(
-        ApiEndpoints.forgotPassword,
-        data: jsonEncode({'email': email}),
-        options: Options(headers: {'Content-Type': 'application/json'}),
-      );
-
-      if (response.statusCode == 200) {
-        final model = ForgotPasswordResultModel.fromJson(response.data);
-        return DataSuccess(model.toEntity());
-      } else {
-        return DataError(
-          'Erreur lors de l\'envoi de l\'e-mail de réinitialisation',
-        );
-      }
+      final result = await _remoteDataSource.forgotPassword(email);
+      return DataSuccess(result.toEntity());
+    } on DioException catch (e) {
+      return DataError(_handleDioError(e, 'Erreur lors de l\'envoi de l\'e-mail de réinitialisation'));
     } catch (e) {
       return DataError('Erreur lors de l\'envoi de l\'e-mail: $e');
     }
@@ -147,22 +105,14 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<DataState<CheckResetCodeResultEntity>> checkResetCode(
-    String email,
-    String otp,
-  ) async {
+      String email,
+      String otp,
+      ) async {
     try {
-      final response = await _dio.post(
-        ApiEndpoints.checkResetCode,
-        data: jsonEncode({'email': email, 'code': otp}),
-        options: Options(headers: {'Content-Type': 'application/json'}),
-      );
-
-      if (response.statusCode == 200) {
-        final model = CheckResetCodeResultModel.fromJson(response.data);
-        return DataSuccess(model.toEntity());
-      } else {
-        return DataError('Code invalide');
-      }
+      final result = await _remoteDataSource.checkResetCode(email, otp);
+      return DataSuccess(result.toEntity());
+    } on DioException catch (e) {
+      return DataError(_handleDioError(e, 'Code invalide'));
     } catch (e) {
       return DataError('Erreur lors de la vérification du code: $e');
     }
@@ -170,31 +120,49 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<DataState<ForgotPasswordResultEntity>> resetPassword(
-    String email,
-    String otp,
-    String password,
-  ) async {
+      String email,
+      String otp,
+      String password,
+      ) async {
     try {
-      final response = await _dio.post(
-        ApiEndpoints.resetPassword,
-        data: jsonEncode({
-          'email': email,
-          'code': otp,
-          'newPassword': password,
-        }),
-        options: Options(headers: {'Content-Type': 'application/json'}),
-      );
-
-      if (response.statusCode == 200) {
-        final model = ForgotPasswordResultModel.fromJson(response.data);
-        return DataSuccess(model.toEntity());
-      } else {
-        return DataError('Erreur lors de la réinitialisation du mot de passe');
-      }
+      final result = await _remoteDataSource.resetPassword(email, otp, password);
+      return DataSuccess(result.toEntity());
+    } on DioException catch (e) {
+      return DataError(_handleDioError(e, 'Erreur lors de la réinitialisation du mot de passe'));
     } catch (e) {
-      return DataError(
-        'Erreur lors de la réinitialisation du mot de passe: $e',
-      );
+      return DataError('Erreur lors de la réinitialisation du mot de passe: $e');
+    }
+  }
+
+  /// Handles DioException and returns appropriate error message
+  String _handleDioError(DioException error, [String? defaultMessage]) {
+    switch (error.type) {
+      case DioExceptionType.connectionTimeout:
+      case DioExceptionType.sendTimeout:
+      case DioExceptionType.receiveTimeout:
+        return 'Délai de connexion dépassé. Vérifiez votre connexion internet.';
+
+      case DioExceptionType.connectionError:
+        return 'Erreur de connexion. Vérifiez votre connexion internet.';
+
+      case DioExceptionType.badResponse:
+        if (error.response?.statusCode == 400) {
+          return 'Données invalides. Veuillez vérifier vos informations.';
+        } else if (error.response?.statusCode == 401) {
+          return 'Identifiants incorrects.';
+        } else if (error.response?.statusCode == 404) {
+          return 'Service non disponible.';
+        } else if (error.response?.statusCode == 500) {
+          return 'Erreur du serveur. Veuillez réessayer plus tard.';
+        }
+        return defaultMessage ?? 'Erreur de réponse du serveur.';
+
+      case DioExceptionType.cancel:
+        return 'Opération annulée.';
+
+      case DioExceptionType.unknown:
+      default:
+        return defaultMessage ?? 'Une erreur inattendue s\'est produite.';
     }
   }
 }

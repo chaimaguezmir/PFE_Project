@@ -1,16 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobile/config/router/app_route_constants.dart';
+import 'package:flutter_mobile/core/utils/shared_prefs_utils.dart';
+import 'package:go_router/go_router.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
+  Future<void> _handleLogout(BuildContext context) async {
+    await logout();
+    context.goNamed(AppRouteName.signIn);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       body: SafeArea(
         child: Center(
-          child: Text(
-            'Profile Screen',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          child: ElevatedButton(
+            onPressed: () => _handleLogout(context),
+            child: const Text('Disconnect'),
           ),
         ),
       ),
