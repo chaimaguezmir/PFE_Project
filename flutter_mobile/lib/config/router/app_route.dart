@@ -13,6 +13,7 @@ import 'package:flutter_mobile/presentation/screens/auth/forgot_password/forgot_
 import 'package:flutter_mobile/presentation/screens/auth/get_started_screen.dart';
 import 'package:flutter_mobile/presentation/screens/auth/login_screen.dart';
 import 'package:flutter_mobile/presentation/screens/auth/signup_screen.dart';
+import 'package:flutter_mobile/presentation/screens/group/add_member_screen.dart';
 import 'package:flutter_mobile/presentation/screens/group/group_membe_screen.dart';
 import 'package:flutter_mobile/presentation/screens/group/group_screen.dart';
 import 'package:flutter_mobile/presentation/screens/main_screen.dart';
@@ -129,6 +130,11 @@ class AppRouter {
                   state.pathParameters['selectedGroupId'] ?? '';
               return GroupMembersScreen(selectedGroupId: selectedGroupId);
             },
+          ),
+          GoRoute(
+            path: AppRoutePath.addMemberScreen,
+            name: AppRouteName.addMemberScreen,
+            builder: (_, _) => const AddMemberScreen(),
           ),
         ],
       ),
