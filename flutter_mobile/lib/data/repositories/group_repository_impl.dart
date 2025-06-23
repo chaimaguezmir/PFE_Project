@@ -14,9 +14,9 @@ class GroupRepositoryImpl implements GroupRepository {
   final GroupRemoteDataSource _remoteDataSource;
 
   @override
-  Future<DataState<List<GroupEntity>>> getUserGroups(String token) async {
+  Future<DataState<List<GroupEntity>>> getUserGroups() async {
     try {
-      final result = await _remoteDataSource.getUserGroups(token);
+      final result = await _remoteDataSource.getUserGroups();
       return DataSuccess(result);
     } catch (e) {
       return DataError('Failed to fetch groups: $e');
@@ -24,12 +24,9 @@ class GroupRepositoryImpl implements GroupRepository {
   }
 
   @override
-  Future<DataState<List<MemberEntity>>> getGroupMembers(
-    String token,
-    String groupId,
-  ) async {
+  Future<DataState<List<MemberEntity>>> getGroupMembers(String groupId) async {
     try {
-      final result = await _remoteDataSource.getGroupMembers(token, groupId);
+      final result = await _remoteDataSource.getGroupMembers(groupId);
       return DataSuccess(result);
     } catch (e) {
       return DataError('Failed to fetch group members: $e');
@@ -38,12 +35,11 @@ class GroupRepositoryImpl implements GroupRepository {
 
   @override
   Future<DataState<AddMemberEntity>> addMember(
-    String token,
     String groupId,
     String email,
   ) async {
     try {
-      final result = await _remoteDataSource.addMember(token, groupId, email);
+      final result = await _remoteDataSource.addMember(groupId, email);
       return DataSuccess(result);
     } on DioException catch (e) {
       print('Errrrrrrrrrrrrrrrrrrr: $e');
@@ -64,30 +60,25 @@ class GroupRepositoryImpl implements GroupRepository {
 
   @override
   Future<DataState<ToggleRoleEntity>> toggleRole(
-    String token,
+
     String groupId,
     String targetUserId,
   ) async {
     try {
-      final result = await _remoteDataSource.toggleRole(
-        token,
-        groupId,
-        targetUserId,
-      );
+      final result = await _remoteDataSource.toggleRole(groupId, targetUserId);
       return DataSuccess(result);
     } catch (e) {
       return DataError('Failed to toggle role: $e');
     }
   }
+
   @override
   Future<DataState<RemoveMemberEntity>> removeMember(
-      String token,
-      String groupId,
-      String memberId,
-
-      ) async {
+    String groupId,
+    String memberId,
+  ) async {
     try {
-      final result = await _remoteDataSource.removeMember(token, groupId, memberId);
+      final result = await _remoteDataSource.removeMember(groupId, memberId);
       return DataSuccess(result);
     } catch (e) {
       return DataError('Failed to remove member: $e');

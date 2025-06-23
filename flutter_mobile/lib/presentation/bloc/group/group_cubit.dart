@@ -1,6 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_mobile/core/resources/data_state.dart';
+import 'package:flutter_mobile/core/utils/DialogService.dart';
 import 'package:flutter_mobile/domain/entities/group/add_member_entity.dart';
 import 'package:flutter_mobile/domain/entities/group/group_entity.dart';
 import 'package:flutter_mobile/domain/entities/group/member_entity.dart';
@@ -16,8 +18,27 @@ class GroupCubit extends Cubit<GroupState> {
 
   final GroupRepository _groupRepository;
 
-  void selectedGroupIdChanged(String value) {
-    emit(state.copyWith(selectedGroupId: value, errorMessage: null));
+  void selectedMemberIdChanged(String value) {
+    emit(state.copyWith(selectedMemberId: value, errorMessage: null));
+  }
+  void currentGroupIdChanged(String value) {
+    emit(state.copyWith(currentGroupId: value, errorMessage: null));
+  }
+
+  void selectedMemberRoleChanged(String value) {
+    emit(state.copyWith(selectedMemberRole: value, errorMessage: null));
+  }
+
+  void selectedMemberUsernameChanged(String value) {
+    emit(state.copyWith(selectedMemberUsername: value, errorMessage: null));
+  }
+
+  void currentGroupNameChanged(String? value) {
+    emit(state.copyWith(currentGroupName: value, errorMessage: null));
+  }
+
+  void currentGroupUserRoleChanged(String value) {
+    emit(state.copyWith(currentGroupUserRole: value, errorMessage: null));
   }
 
   void toggleIconSelected() {
@@ -38,7 +59,7 @@ class GroupCubit extends Cubit<GroupState> {
       return false;
     }
 
-    if (!_isValidEmail(state.email)) {
+    if (!_isValidEmail(state.email.trim())) {
       emit(state.copyWith(errorMessage: 'Adresse e-mail invalide'));
       return false;
     }
@@ -49,14 +70,14 @@ class GroupCubit extends Cubit<GroupState> {
     return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
   }
 
-  Future<void> fetchGroups(String token) async {
+  Future<void> fetchGroups() async {
     emit(
       state.copyWith(
         status: FormzSubmissionStatus.inProgress,
         errorMessage: null,
       ),
     );
-    final result = await _groupRepository.getUserGroups(token);
+    final result = await _groupRepository.getUserGroups();
     if (result is DataSuccess<List<GroupEntity>>) {
       emit(
         state.copyWith(
@@ -75,18 +96,27 @@ class GroupCubit extends Cubit<GroupState> {
     }
   }
 
-  Future<void> fetchGroupMembers(String token, String groupId) async {
+  Future<void> fetchGroupMembers() async {
     emit(
       state.copyWith(
         status: FormzSubmissionStatus.inProgress,
         errorMessage: null,
       ),
     );
-    final result = await _groupRepository.getGroupMembers(token, groupId);
+    final result = await _groupRepository.getGroupMembers(
+      state.currentGroupId,
+    );
+    final sortedMembers = List<MemberEntity>.from(result.data ?? [])
+      ..sort((a, b) {
+        const roleOrder = {'MANAGER': 0, 'RESPONSIBLE': 1, 'MEMBER': 2};
+        return (roleOrder[a.role.toUpperCase()] ?? 3).compareTo(
+          roleOrder[b.role.toUpperCase()] ?? 3,
+        );
+      });
     if (result is DataSuccess<List<MemberEntity>>) {
       emit(
         state.copyWith(
-          members: result.data ?? [],
+          members: sortedMembers,
           status: FormzSubmissionStatus.success,
           errorMessage: null,
         ),
@@ -101,7 +131,7 @@ class GroupCubit extends Cubit<GroupState> {
     }
   }
 
-  Future<void> addMember(String token, String groupId, String email) async {
+  Future<void> addMember() async {
     emit(state.copyWith(errorMessage: null));
 
     if (!_isFormValid()) {
@@ -109,8 +139,9 @@ class GroupCubit extends Cubit<GroupState> {
     }
 
     emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
-    final result = await _groupRepository.addMember(token, groupId, email);
+    final result = await _groupRepository.addMember(state.currentGroupId, state.email);
     if (result is DataSuccess) {
+      fetchGroupMembers();
       emit(
         state.copyWith(
           status: FormzSubmissionStatus.success,
@@ -129,71 +160,90 @@ class GroupCubit extends Cubit<GroupState> {
   }
 
   Future<void> toggleRole(
-    String token,
-    String groupId,
-    String targetUserId,
+    BuildContext context,
+
+
   ) async {
-    emit(
-      state.copyWith(
-        errorMessage: null,
-        status: FormzSubmissionStatus.inProgress,
-      ),
+    DialogService.showRemoveMemberDialog(
+      context: context,
+      avatarPath: 'lib/config/assets/images/default_avatar.jpg',
+      message: state.selectedMemberRole == 'MEMBER'
+          ? 'Êtes-vous sûr de vouloir Assigner ${state.selectedMemberUsername} responsable du groupe ?'
+          : 'Êtes-vous sûr de vouloir désassigner ${state.selectedMemberUsername} du rôle de responsable du groupe ?',
+      groupName: state.currentGroupName,
+      onConfirm: () async {
+        emit(
+          state.copyWith(
+            errorMessage: null,
+            status: FormzSubmissionStatus.inProgress,
+          ),
+        );
+        final result = await _groupRepository.toggleRole(state.currentGroupId, state.selectedMemberId);
+        if (result is DataSuccess) {
+          fetchGroupMembers();
+
+          emit(
+            state.copyWith(
+              status: FormzSubmissionStatus.success,
+              errorMessage: null,
+              successMessage:
+                  result.data?.message ?? 'Role toggled successfully',
+            ),
+          );
+        } else {
+          emit(
+            state.copyWith(
+              status: FormzSubmissionStatus.failure,
+              errorMessage: result.error ?? 'Failed to toggle role',
+            ),
+          );
+        }
+      },
     );
-    final result = await _groupRepository.toggleRole(
-      token,
-      groupId,
-      targetUserId,
-    );
-    if (result is DataSuccess) {
-      emit(
-        state.copyWith(
-          status: FormzSubmissionStatus.success,
-          errorMessage: null,
-          successMessage: result.data?.message ?? 'Role toggled successfully',
-        ),
-      );
-    } else {
-      emit(
-        state.copyWith(
-          status: FormzSubmissionStatus.failure,
-          errorMessage: result.error ?? 'Failed to toggle role',
-        ),
-      );
-    }
   }
 
   Future<void> removeMember(
-      String token,
-      String groupId,
-      String memberId,
-      ) async {
-    emit(
-      state.copyWith(
-        errorMessage: null,
-        status: FormzSubmissionStatus.inProgress,
-      ),
+    BuildContext context,
+
+
+  ) async {
+    if (!context.mounted)
+      return; // Check if context is mounted before showing dialog
+
+    DialogService.showRemoveMemberDialog(
+      context: context,
+      avatarPath: 'lib/config/assets/images/default_avatar.jpg',
+      message:
+          'Êtes-vous sûr de vouloir retirer ${state.selectedMemberUsername} du groupe ?',
+      groupName: state.currentGroupName,
+      onConfirm: () async {
+        emit(
+          state.copyWith(
+            errorMessage: null,
+            status: FormzSubmissionStatus.inProgress,
+          ),
+        );
+
+        final result = await _groupRepository.removeMember(state.currentGroupId, state.selectedMemberId);
+
+        if (result is DataSuccess) {
+          await fetchGroupMembers();
+          emit(
+            state.copyWith(
+              status: FormzSubmissionStatus.success,
+              errorMessage: null,
+            ),
+          );
+        } else {
+          emit(
+            state.copyWith(
+              status: FormzSubmissionStatus.failure,
+              errorMessage: result.error ?? 'Failed to remove member',
+            ),
+          );
+        }
+      },
     );
-    final result = await _groupRepository.removeMember(
-      token,
-      groupId,
-      memberId,
-    );
-    if (result is DataSuccess) {
-      emit(
-        state.copyWith(
-          status: FormzSubmissionStatus.success,
-          errorMessage: null,
-          successMessage: result.data?.message ?? 'User removed successfully',
-        ),
-      );
-    } else {
-      emit(
-        state.copyWith(
-          status: FormzSubmissionStatus.failure,
-          errorMessage: result.error ?? 'Failed to remove member',
-        ),
-      );
-    }
   }
 
   void clearError() {

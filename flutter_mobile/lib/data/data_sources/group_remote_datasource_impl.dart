@@ -12,77 +12,50 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
   final Dio _dio;
 
   @override
-  Future<List<GroupModel>> getUserGroups(String token) async {
-    final response = await _dio.get(
-      '${ApiEndpoints.baseurl}/groups',
-      options: Options(
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
-      ),
-    );
+  Future<List<GroupModel>> getUserGroups() async {
+    final response = await _dio.get('${ApiEndpoints.baseurl}/groups');
 
     final data = response.data as List;
     return data.map((json) => GroupModel.fromJson(json)).toList();
   }
 
   @override
-  Future<List<MemberModel>> getGroupMembers(
-    String token,
-    String groupId,
-  ) async {
+  Future<List<MemberModel>> getGroupMembers(String groupId) async {
     final response = await _dio.get(
       '${ApiEndpoints.baseurl}/groups/$groupId/members',
-      options: Options(
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
-      ),
     );
     final data = response.data as List;
     return data.map((json) => MemberModel.fromJson(json)).toList();
   }
 
   @override
-  Future<AddMemberModel> addMember(
-    String token,
-    String groupId,
-    String email,
-  ) async {
+  Future<AddMemberModel> addMember(String groupId, String email) async {
     final response = await _dio.post(
       '${ApiEndpoints.baseurl}/groups/$groupId/members',
       data: {'email': email},
-      options: Options(headers: {'Authorization': 'Bearer $token'}),
     );
     return AddMemberModel.fromJson(response.data);
   }
 
   @override
   Future<ToggleRoleModel> toggleRole(
-    String token,
     String groupId,
     String targetUserId,
   ) async {
     final response = await _dio.put(
       '${ApiEndpoints.baseurl}/groups/members/toggle-role',
       data: {'groupId': groupId, 'targetUserId': targetUserId},
-      options: Options(headers: {'Authorization': 'Bearer $token'}),
     );
     return ToggleRoleModel.fromJson(response.data);
   }
 
   @override
   Future<RemoveMemberModel> removeMember(
-    String token,
     String groupId,
     String memberId,
   ) async {
     final response = await _dio.delete(
       '${ApiEndpoints.baseurl}/groups/$groupId/members/$memberId',
-
-      options: Options(headers: {'Authorization': 'Bearer $token'}),
     );
     return RemoveMemberModel.fromJson(response.data);
   }

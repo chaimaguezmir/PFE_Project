@@ -18,16 +18,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   final Dio _dio;
 
-  /// Common headers for all requests
-  Map<String, String> get _headers => {'Content-Type': 'application/json'};
-
   @override
   Future<SignUpResultModel> signUp(SignUpRequestModel request) async {
     try {
       final response = await _dio.post(
         ApiEndpoints.signUp,
         data: jsonEncode(request.toJson()),
-        options: Options(headers: _headers),
       );
 
       if (response.statusCode == 200) {
@@ -57,7 +53,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final response = await _dio.post(
         ApiEndpoints.activateAccount,
         data: jsonEncode(request.toJson()),
-        options: Options(headers: _headers),
       );
 
       if (response.statusCode == 200) {
@@ -85,7 +80,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final response = await _dio.post(
         ApiEndpoints.resendOTP,
         data: jsonEncode({'email': email}),
-        options: Options(headers: _headers),
       );
 
       if (response.statusCode == 200) {
@@ -113,7 +107,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final response = await _dio.post(
         ApiEndpoints.signIn,
         data: jsonEncode(request.toJson()),
-        options: Options(headers: _headers),
       );
 
       print('Login response: ${response.data}'); // Add this line
@@ -146,7 +139,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final response = await _dio.post(
         ApiEndpoints.forgotPassword,
         data: jsonEncode({'email': email}),
-        options: Options(headers: _headers),
       );
 
       if (response.statusCode == 200) {
@@ -177,7 +169,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final response = await _dio.post(
         ApiEndpoints.checkResetCode,
         data: jsonEncode({'email': email, 'code': code}),
-        options: Options(headers: _headers),
       );
 
       if (response.statusCode == 200) {
@@ -213,7 +204,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           'code': code,
           'newPassword': newPassword,
         }),
-        options: Options(headers: _headers),
       );
 
       if (response.statusCode == 200) {

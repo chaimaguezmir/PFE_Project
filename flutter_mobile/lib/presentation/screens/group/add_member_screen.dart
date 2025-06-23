@@ -12,7 +12,6 @@ class AddMemberScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String token = sl<SharedPreferences>().getString('token') ?? '';
     return Scaffold(
       backgroundColor:
           theme().colorScheme.onSecondary, // Match your app bar color
@@ -144,7 +143,7 @@ class AddMemberScreen extends StatelessWidget {
                       ),
                     ),
                     onPressed: () {
-                       context.read<GroupCubit>().addMember(token, context.read<GroupCubit>().state.selectedGroupId, context.read<GroupCubit>().state.email);
+                      context.read<GroupCubit>().addMember();
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -191,7 +190,7 @@ class _EmailField extends StatelessWidget {
           style: TextStyle(color: theme().colorScheme.onPrimary),
           keyboardType: TextInputType.emailAddress,
           onChanged: (value) {
-           context.read<GroupCubit>().emailChanged(value);
+            context.read<GroupCubit>().emailChanged(value);
           },
           decoration: InputDecoration(
             prefixIcon: Icon(
@@ -220,7 +219,6 @@ class _EmailField extends StatelessWidget {
             filled: true,
             fillColor: Colors.grey.shade50,
             errorText: state.errorMessage,
-
           ),
         );
       },

@@ -43,7 +43,7 @@ class LoginCubit extends Cubit<LoginState> {
       return false;
     }
 
-    if (!_isValidEmail(state.email)) {
+    if (!_isValidEmail(state.email.trim())) {
       emit(state.copyWith(errorMessage: 'Adresse e-mail invalide'));
       return false;
     }
@@ -90,7 +90,7 @@ class LoginCubit extends Cubit<LoginState> {
         final model = LoginResultModel.fromEntity(result.data!);
         await saveLoginResult(model);
         if (context.mounted) {
-          context.goNamed(AppRouteName.mainScreen);
+          context.goNamed(AppRouteName.groupScreen);
         }
       } else {
         emit(

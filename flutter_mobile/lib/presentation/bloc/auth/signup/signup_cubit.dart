@@ -89,7 +89,7 @@ class SignUpCubit extends Cubit<SignUpState> {
       return false;
     }
 
-    if (!_isValidEmail(state.email)) {
+    if (!_isValidEmail(state.email.trim())) {
       emit(state.copyWith(errorMessage: 'Adresse e-mail invalide'));
       return false;
     }
@@ -136,7 +136,7 @@ class SignUpCubit extends Cubit<SignUpState> {
   }
 
   bool _isValidEmail(String email) {
-    return RegExp(r'^[\w-]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
+    return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
   }
 
   // Method to retry signup in case of failure
