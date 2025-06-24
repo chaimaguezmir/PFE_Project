@@ -2,7 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_mobile/config/router/app_route_constants.dart';
-import 'package:flutter_mobile/presentation/bloc/signup/signup_cubit.dart';
+import 'package:flutter_mobile/presentation/bloc/auth/signup/signup_cubit.dart';
 import 'package:flutter_mobile/presentation/widgets/base_widgets/custom_loading_button.dart';
 import 'package:flutter_mobile/presentation/widgets/base_widgets/loading_overlay.dart';
 import 'package:flutter_mobile/presentation/widgets/base_widgets/snackbar_helper.dart';

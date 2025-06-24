@@ -1,9 +1,11 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_mobile/config/router/app_route_constants.dart';
 import 'package:flutter_mobile/injection_container.dart';
-import 'package:flutter_mobile/presentation/bloc/forgot_password/forgot_password_cubit.dart';
-import 'package:flutter_mobile/presentation/bloc/login/login_cubit.dart';
-import 'package:flutter_mobile/presentation/bloc/signup/signup_cubit.dart';
+import 'package:flutter_mobile/presentation/bloc/auth/forgot_password/forgot_password_cubit.dart';
+import 'package:flutter_mobile/presentation/bloc/auth/login/login_cubit.dart';
+import 'package:flutter_mobile/presentation/bloc/auth/signup/signup_cubit.dart';
+import 'package:flutter_mobile/presentation/bloc/group/group_cubit.dart';
+import 'package:flutter_mobile/presentation/bloc/profile/profile_cubit.dart';
 import 'package:flutter_mobile/presentation/screens/auth/account_verification_screen.dart';
 import 'package:flutter_mobile/presentation/screens/auth/forgot_password/forgot_password_code_screen.dart';
 import 'package:flutter_mobile/presentation/screens/auth/forgot_password/forgot_password_email_screen.dart';
@@ -12,17 +14,31 @@ import 'package:flutter_mobile/presentation/screens/auth/forgot_password/forgot_
 import 'package:flutter_mobile/presentation/screens/auth/get_started_screen.dart';
 import 'package:flutter_mobile/presentation/screens/auth/login_screen.dart';
 import 'package:flutter_mobile/presentation/screens/auth/signup_screen.dart';
-import 'package:flutter_mobile/presentation/screens/home/home_screen.dart';
+import 'package:flutter_mobile/presentation/screens/home/welcome_screen.dart';
+import 'package:flutter_mobile/presentation/screens/main_screen.dart';
+
 import 'package:flutter_mobile/presentation/screens/onboarding/onboarding_screen.dart';
+import 'package:flutter_mobile/presentation/screens/profile/profile_screen.dart';
+import 'package:flutter_mobile/presentation/screens/services/services_screen.dart';
 import 'package:go_router/go_router.dart';
 
+import 'app_route_constants.dart';
+import 'groupe_shell_route.dart';
+
+final _routeNavigatorKey = GlobalKey<NavigatorState>(
+  debugLabel: 'AppRouteNavigatorKey',
+);
+
 class AppRouter {
-  AppRouter(this._hasSeenOnboarding);
+  AppRouter(this._hasSeenOnboarding, this._isAuthenticated);
 
   final bool _hasSeenOnboarding;
+  final bool _isAuthenticated;
 
   String get initialLocation {
-    if (_hasSeenOnboarding) {
+    if (_isAuthenticated) {
+      return '/accueil';
+    } else if (_hasSeenOnboarding) {
       return AppRoutePath.getStartedScreen;
     } else {
       return AppRoutePath.onboarding;
@@ -30,30 +46,87 @@ class AppRouter {
   }
 
   GoRouter get router => _router;
-
   late final GoRouter _router = GoRouter(
-    initialLocation: initialLocation,
+    navigatorKey: _routeNavigatorKey,
+    initialLocation: initialLocation, // Start with onboarding
     routes: [
-      // Onboarding Flow
       ShellRoute(
         builder: (context, state, child) =>
             BlocProvider(create: (context) => sl<SignUpCubit>(), child: child),
         routes: [
+          // Auth flow routes (onboarding, signup, login)
           GoRoute(
             path: AppRoutePath.onboarding,
             name: AppRouteName.onboarding,
-            builder: (_, _) => const OnboardingScreen(),
+            builder: (context, state) => const OnboardingScreen(),
           ),
-
           GoRoute(
             path: AppRoutePath.signUp,
             name: AppRouteName.signUp,
-            builder: (_, _) => const SignUpScreen(),
+            builder: (context, state) => const SignUpScreen(),
           ),
           GoRoute(
             path: AppRoutePath.accountVerification,
             name: AppRouteName.accountVerification,
-            builder: (_, _) => const AccountVerificationScreen(),
+            builder: (context, state) => const AccountVerificationScreen(),
+          ),
+        ],
+      ),
+      // Main app with bottom navigation (after login)
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) =>
+            MainScreen(navigationShell: navigationShell),
+        branches: [
+          // Branch 1: Second tab (replace with your actual screen)
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/accueil', // Update with your actual path
+                name: 'accueil', // Update with your actual name
+                builder: (context, state) => const WelcomeScreen(),
+              ),
+            ],
+          ),
+
+          // Branch 2: Third tab
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                  path: '/services',
+                  name: 'services',
+                  builder: (context, state) => const ServicesScreen()
+
+              ),
+            ],
+          ),
+          // Branch 3: Groups tab - GroupShell handles internal navigation
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutePath.groupScreen, // Main groups screen
+                name: AppRouteName.groupScreen,
+                builder: (context, state) =>
+                    BlocProvider(
+                      create: (context) => sl<GroupCubit>(),
+                      child: const GroupShell(),
+                    ),
+              ),
+            ],
+          ),
+
+          // Branch 4: Fourth tab
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/profile',
+                name: 'profile',
+                builder: (context, state) =>
+                    BlocProvider(
+                      create: (context) => sl<ProfileCubit>(),
+                      child: const ProfileScreen(),
+                    ),
+              ),
+            ],
           ),
         ],
       ),
@@ -62,7 +135,6 @@ class AppRouter {
         name: AppRouteName.getStartedScreen,
         builder: (_, _) => const GetStartedScreen(),
       ),
-      // Login Flow
       ShellRoute(
         builder: (context, state, child) =>
             BlocProvider(create: (context) => sl<LoginCubit>(), child: child),
@@ -77,10 +149,11 @@ class AppRouter {
 
       // Forgot Password Flow
       ShellRoute(
-        builder: (context, state, child) => BlocProvider(
-          create: (context) => sl<ForgotPasswordCubit>(),
-          child: child,
-        ),
+        builder: (context, state, child) =>
+            BlocProvider(
+              create: (context) => sl<ForgotPasswordCubit>(),
+              child: child,
+            ),
         routes: [
           GoRoute(
             path: AppRoutePath.forgotPasswordEmailScreen,
@@ -104,12 +177,8 @@ class AppRouter {
           ),
         ],
       ),
+
       // Home Flow
-      GoRoute(
-        path: AppRoutePath.home,
-        name: AppRouteName.home,
-        builder: (_, _) => const HomeScreen(),
-      ),
     ],
   );
 }

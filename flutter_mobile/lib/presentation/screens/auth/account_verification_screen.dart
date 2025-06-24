@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_mobile/config/theme/theme_data_config.dart';
-import 'package:flutter_mobile/presentation/bloc/signup/signup_cubit.dart';
+import 'package:flutter_mobile/presentation/bloc/auth/signup/signup_cubit.dart';
 import 'package:flutter_mobile/presentation/widgets/base_widgets/costom_eleveted_button.dart';
 import 'package:flutter_mobile/presentation/widgets/base_widgets/snackbar_helper.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';

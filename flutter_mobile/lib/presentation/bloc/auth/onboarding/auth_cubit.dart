@@ -20,7 +20,7 @@ class AuthCubit extends Cubit<AuthState> {
     //print('has seen onboarding $hasSeenOnboarding'); // Debug print
     //print('AuthCubit: Setting onboarding done'); // Debug print
     _sharedPreferences.setBool('hasSeenOnboarding', true);
-    context.goNamed(AppRouteName.signIn);
+    context.goNamed(AppRouteName.getStartedScreen);
   }
 
   void isOnboardingDone() {}

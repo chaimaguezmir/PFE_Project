@@ -7,8 +7,8 @@ class LoginResultEntity {
     required this.username,
     required this.email,
     required this.roles,
-    required this.firstName,
-    required this.lastName,
+    this.firstName,
+    this.lastName,
     required this.deviceName,
     required this.deviceId,
   });
@@ -20,8 +20,8 @@ class LoginResultEntity {
   final String username;
   final String email;
   final List<String> roles;
-  final String firstName;
-  final String lastName;
+  final String? firstName;
+  final String? lastName;
   final String deviceName;
   final String deviceId;
 }

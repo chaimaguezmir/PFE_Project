@@ -1,3 +1,4 @@
+
 class AppRouteName {
   // auth related screens
   static const String onboarding = 'onboarding';
@@ -12,8 +13,12 @@ class AppRouteName {
       'forgotPasswordSuccessScreen';
   static const String getStartedScreen = 'getStartedScreen';
 
+
   // home related screens
-  static const String home = 'home';
+  static const String mainScreen = 'mainScreen';
+  static const String groupScreen = 'groupScreen';
+  static const String groupMembersScreen = 'groupMembersScreen';
+  static const String addMemberScreen = 'addMemberScreen';
 }
 
 class AppRoutePath {
@@ -31,5 +36,9 @@ class AppRoutePath {
   static const String getStartedScreen = '/getStartedScreen';
 
   // home related screens
-  static const String home = '/home';
+  static const String mainScreen = '/mainScreen';
+  static const String groupScreen = '/groupScreen';
+  static const String groupMembersScreen = '/groupMembersScreen';
+  static const String addMemberScreen = '/addMemberScreen';
+
 }

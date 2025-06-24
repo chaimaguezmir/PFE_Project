@@ -3,6 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_mobile/config/router/app_route_constants.dart';
 import 'package:flutter_mobile/core/resources/data_state.dart';
+import 'package:flutter_mobile/core/utils/device_utils.dart';
+import 'package:flutter_mobile/core/utils/shared_prefs_utils.dart';
+import 'package:flutter_mobile/data/model/auth/login/login_result_model.dart';
 import 'package:flutter_mobile/domain/entities/auth/login_credentials.dart';
 import 'package:flutter_mobile/domain/repositories/auth_repository.dart';
 import 'package:formz/formz.dart';
@@ -40,7 +43,7 @@ class LoginCubit extends Cubit<LoginState> {
       return false;
     }
 
-    if (!_isValidEmail(state.email)) {
+    if (!_isValidEmail(state.email.trim())) {
       emit(state.copyWith(errorMessage: 'Adresse e-mail invalide'));
       return false;
     }
@@ -67,8 +70,14 @@ class LoginCubit extends Cubit<LoginState> {
     emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
 
     try {
+      final deviceInfo = await getDeviceInfo();
       final result = await _authRepository.login(
-        LoginCredentials(email: state.email.trim(), password: state.password),
+        LoginCredentials(
+          email: state.email.trim(),
+          password: state.password,
+          deviceId: deviceInfo['deviceId'] ?? '',
+          deviceName: deviceInfo['deviceName'] ?? '',
+        ),
       );
 
       if (result is DataSuccess) {
@@ -78,8 +87,10 @@ class LoginCubit extends Cubit<LoginState> {
             successMessage: 'Connexion réussie!',
           ),
         );
+        final model = LoginResultModel.fromEntity(result.data!);
+        await saveLoginResult(model);
         if (context.mounted) {
-          context.goNamed(AppRouteName.home);
+          context.goNamed(AppRouteName.groupScreen);
         }
       } else {
         emit(
