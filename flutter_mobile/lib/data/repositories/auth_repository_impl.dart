@@ -10,6 +10,7 @@ import 'package:flutter_mobile/data/model/auth/forgot_password/check_reset_code_
 import 'package:flutter_mobile/data/model/auth/forgot_password/forgot_password_result_model.dart';
 import 'package:flutter_mobile/data/model/auth/login/login_request_model.dart';
 import 'package:flutter_mobile/data/model/auth/login/login_result_model.dart';
+import 'package:flutter_mobile/data/model/auth/sign_out_request_model.dart';
 import 'package:flutter_mobile/data/model/auth/signup/sign_up_request_model.dart';
 import 'package:flutter_mobile/data/model/auth/signup/sign_up_result_model.dart';
 import 'package:flutter_mobile/domain/entities/auth/activate_account_credentials.dart';
@@ -21,6 +22,7 @@ import 'package:flutter_mobile/domain/entities/auth/resend_activation_entity.dar
 import 'package:flutter_mobile/domain/entities/auth/sign_up_credentials.dart';
 import 'package:flutter_mobile/domain/entities/auth/sign_up_result_entity.dart';
 import 'package:flutter_mobile/domain/repositories/auth_repository.dart';
+
 /// Implementation of [AuthRepository] using remote data source
 class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl(this._remoteDataSource);
@@ -29,8 +31,8 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<DataState<SignUpResultEntity>> signUp(
-      SignUpCredentials credentials,
-      ) async {
+    SignUpCredentials credentials,
+  ) async {
     try {
       final requestModel = SignUpRequestModel.fromCredentials(credentials);
       final result = await _remoteDataSource.signUp(requestModel);
@@ -44,8 +46,8 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<DataState<SignUpResultEntity>> activateAccount(
-      ActivateAccountCredentials credentials,
-      ) async {
+    ActivateAccountCredentials credentials,
+  ) async {
     try {
       final requestModel = ActivateAccountRequestModel.fromCredentials(
         credentials,
@@ -61,13 +63,15 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<DataState<ResendActivationEntity>> resendActivation(
-      String email,
-      ) async {
+    String email,
+  ) async {
     try {
       final result = await _remoteDataSource.resendActivation(email);
       return DataSuccess(result.toEntity());
     } on DioException catch (e) {
-      return DataError(_handleDioError(e, 'Erreur lors de la réinitialisation du code'));
+      return DataError(
+        _handleDioError(e, 'Erreur lors de la réinitialisation du code'),
+      );
     } catch (e) {
       return DataError('Erreur lors de la réinitialisation du code: $e');
     }
@@ -75,14 +79,13 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<DataState<LoginResultEntity>> login(
-      LoginCredentials credentials,
-      ) async {
+    LoginCredentials credentials,
+  ) async {
     try {
       final requestModel = LoginRequestModel.fromCredentials(credentials);
       final result = await _remoteDataSource.signIn(requestModel);
       return DataSuccess(result.toEntity());
     } on DioException catch (e) {
-
       return DataError(_handleDioError(e));
     } catch (e) {
       return DataError('An unexpected error occurred: $e');
@@ -91,13 +94,18 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<DataState<ForgotPasswordResultEntity>> forgotPassword(
-      String email,
-      ) async {
+    String email,
+  ) async {
     try {
       final result = await _remoteDataSource.forgotPassword(email);
       return DataSuccess(result.toEntity());
     } on DioException catch (e) {
-      return DataError(_handleDioError(e, 'Erreur lors de l\'envoi de l\'e-mail de réinitialisation'));
+      return DataError(
+        _handleDioError(
+          e,
+          'Erreur lors de l\'envoi de l\'e-mail de réinitialisation',
+        ),
+      );
     } catch (e) {
       return DataError('Erreur lors de l\'envoi de l\'e-mail: $e');
     }
@@ -105,9 +113,9 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<DataState<CheckResetCodeResultEntity>> checkResetCode(
-      String email,
-      String otp,
-      ) async {
+    String email,
+    String otp,
+  ) async {
     try {
       final result = await _remoteDataSource.checkResetCode(email, otp);
       return DataSuccess(result.toEntity());
@@ -120,17 +128,28 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<DataState<ForgotPasswordResultEntity>> resetPassword(
-      String email,
-      String otp,
-      String password,
-      ) async {
+    String email,
+    String otp,
+    String password,
+  ) async {
     try {
-      final result = await _remoteDataSource.resetPassword(email, otp, password);
+      final result = await _remoteDataSource.resetPassword(
+        email,
+        otp,
+        password,
+      );
       return DataSuccess(result.toEntity());
     } on DioException catch (e) {
-      return DataError(_handleDioError(e, 'Erreur lors de la réinitialisation du mot de passe'));
+      return DataError(
+        _handleDioError(
+          e,
+          'Erreur lors de la réinitialisation du mot de passe',
+        ),
+      );
     } catch (e) {
-      return DataError('Erreur lors de la réinitialisation du mot de passe: $e');
+      return DataError(
+        'Erreur lors de la réinitialisation du mot de passe: $e',
+      );
     }
   }
 
@@ -163,6 +182,18 @@ class AuthRepositoryImpl implements AuthRepository {
       case DioExceptionType.unknown:
       default:
         return defaultMessage ?? 'Une erreur inattendue s\'est produite.';
+    }
+  }
+
+  @override
+  Future<DataState<void>> signOut(SignOutRequestModel credentials) async {
+    try {
+      await _remoteDataSource.signOut(credentials);
+      return DataSuccess(null);
+    } on DioException catch (e) {
+      return DataError(_handleDioError(e, 'Failed to sign out'));
+    } catch (e) {
+      return DataError('An unexpected error occurred: $e');
     }
   }
 }

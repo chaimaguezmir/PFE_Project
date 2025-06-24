@@ -5,6 +5,7 @@ import 'package:flutter_mobile/presentation/bloc/auth/forgot_password/forgot_pas
 import 'package:flutter_mobile/presentation/bloc/auth/login/login_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/auth/signup/signup_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/group/group_cubit.dart';
+import 'package:flutter_mobile/presentation/bloc/profile/profile_cubit.dart';
 import 'package:flutter_mobile/presentation/screens/auth/account_verification_screen.dart';
 import 'package:flutter_mobile/presentation/screens/auth/forgot_password/forgot_password_code_screen.dart';
 import 'package:flutter_mobile/presentation/screens/auth/forgot_password/forgot_password_email_screen.dart';
@@ -91,9 +92,9 @@ class AppRouter {
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: '/services',
-                name: 'services',
-                builder: (context, state) => const ServicesScreen()
+                  path: '/services',
+                  name: 'services',
+                  builder: (context, state) => const ServicesScreen()
 
               ),
             ],
@@ -104,10 +105,11 @@ class AppRouter {
               GoRoute(
                 path: AppRoutePath.groupScreen, // Main groups screen
                 name: AppRouteName.groupScreen,
-                builder: (context, state) => BlocProvider(
-                  create: (context) => sl<GroupCubit>(),
-                  child: const GroupShell(),
-                ),
+                builder: (context, state) =>
+                    BlocProvider(
+                      create: (context) => sl<GroupCubit>(),
+                      child: const GroupShell(),
+                    ),
               ),
             ],
           ),
@@ -119,7 +121,10 @@ class AppRouter {
                 path: '/profile',
                 name: 'profile',
                 builder: (context, state) =>
-                    const ProfileScreen(),
+                    BlocProvider(
+                      create: (context) => sl<ProfileCubit>(),
+                      child: const ProfileScreen(),
+                    ),
               ),
             ],
           ),
@@ -144,10 +149,11 @@ class AppRouter {
 
       // Forgot Password Flow
       ShellRoute(
-        builder: (context, state, child) => BlocProvider(
-          create: (context) => sl<ForgotPasswordCubit>(),
-          child: child,
-        ),
+        builder: (context, state, child) =>
+            BlocProvider(
+              create: (context) => sl<ForgotPasswordCubit>(),
+              child: child,
+            ),
         routes: [
           GoRoute(
             path: AppRoutePath.forgotPasswordEmailScreen,

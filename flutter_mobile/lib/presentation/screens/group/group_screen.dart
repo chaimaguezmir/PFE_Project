@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_mobile/config/router/app_route_constants.dart';
-
 import 'package:flutter_mobile/presentation/widgets/base_widgets/custom_app_bar.dart';
 import 'package:formz/formz.dart';
-
-
 import '../../bloc/group/group_cubit.dart';
 
 class GroupScreen extends StatelessWidget {
@@ -61,7 +58,8 @@ class GroupScreen extends StatelessWidget {
                       context,
                     ).pushNamed(AppRouteName.groupMembersScreen);
                   },
-                  title: Text(group.role),
+                  title: Text(group.name),
+                  subtitle: Text(group.role),
                 );
               },
             ),

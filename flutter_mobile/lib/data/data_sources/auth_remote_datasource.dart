@@ -4,6 +4,7 @@ import 'package:flutter_mobile/data/model/auth/forgot_password/check_reset_code_
 import 'package:flutter_mobile/data/model/auth/forgot_password/forgot_password_result_model.dart';
 import 'package:flutter_mobile/data/model/auth/login/login_request_model.dart';
 import 'package:flutter_mobile/data/model/auth/login/login_result_model.dart';
+import 'package:flutter_mobile/data/model/auth/sign_out_request_model.dart';
 import 'package:flutter_mobile/data/model/auth/signup/sign_up_request_model.dart';
 import 'package:flutter_mobile/data/model/auth/signup/sign_up_result_model.dart';
 
@@ -28,4 +29,5 @@ abstract class AuthRemoteDataSource {
     String code,
     String newPassword,
   );
+  Future<void> signOut(SignOutRequestModel credentials);
 }

@@ -4,7 +4,6 @@ class GroupState extends Equatable {
   const GroupState({
     this.groups = const [],
     this.members = const [],
-
     this.email = '',
     this.status = FormzSubmissionStatus.initial,
     this.errorMessage,

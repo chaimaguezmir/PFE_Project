@@ -9,6 +9,7 @@ import 'package:flutter_mobile/data/model/auth/forgot_password/check_reset_code_
 import 'package:flutter_mobile/data/model/auth/forgot_password/forgot_password_result_model.dart';
 import 'package:flutter_mobile/data/model/auth/login/login_request_model.dart';
 import 'package:flutter_mobile/data/model/auth/login/login_result_model.dart';
+import 'package:flutter_mobile/data/model/auth/sign_out_request_model.dart';
 import 'package:flutter_mobile/data/model/auth/signup/sign_up_request_model.dart';
 import 'package:flutter_mobile/data/model/auth/signup/sign_up_result_model.dart';
 
@@ -220,6 +221,30 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     } catch (e) {
       throw DioException(
         requestOptions: RequestOptions(path: ApiEndpoints.resetPassword),
+        message: 'An unexpected error occurred: $e',
+      );
+    }
+  }
+
+  @override
+  Future<void> signOut(SignOutRequestModel credentials) async {
+    try {
+      final response = await _dio.post(
+        ApiEndpoints.signOut,
+        data: credentials.toJson(),
+      );
+      if (response.statusCode != 200) {
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          message: 'Failed to sign out: ${response.statusMessage}',
+        );
+      }
+    } on DioException {
+      rethrow;
+    } catch (e) {
+      throw DioException(
+        requestOptions: RequestOptions(path: ApiEndpoints.signOut),
         message: 'An unexpected error occurred: $e',
       );
     }

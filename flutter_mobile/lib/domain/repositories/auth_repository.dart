@@ -1,4 +1,5 @@
 import 'package:flutter_mobile/core/resources/data_state.dart';
+import 'package:flutter_mobile/data/model/auth/sign_out_request_model.dart';
 import 'package:flutter_mobile/domain/entities/auth/activate_account_credentials.dart';
 import 'package:flutter_mobile/domain/entities/auth/check_reset_code_result_entity.dart';
 import 'package:flutter_mobile/domain/entities/auth/forgot_password_result_entity.dart';
@@ -32,4 +33,5 @@ abstract class AuthRepository {
     String otp,
     String newPassword,
   );
+  Future<DataState<void>> signOut(SignOutRequestModel credentials);
 }

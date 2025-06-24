@@ -14,6 +14,7 @@ import 'package:flutter_mobile/presentation/bloc/auth/onboarding/auth_cubit.dart
 import 'package:flutter_mobile/presentation/bloc/auth/signup/signup_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/group/group_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/main_screen/main_screen_cubit.dart';
+import 'package:flutter_mobile/presentation/bloc/profile/profile_cubit.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -50,6 +51,7 @@ Future<void> initInjectionContainer() async {
   sl.registerLazySingleton<GroupRepository>(() => GroupRepositoryImpl(sl()));
 
   // BLoCs / Cubits
+  sl.registerFactory<ProfileCubit>(() => ProfileCubit(sl()));
   sl.registerFactory<SignUpCubit>(() => SignUpCubit(sl()));
   sl.registerFactory<LoginCubit>(() => LoginCubit(sl()));
   sl.registerFactory<AuthCubit>(() => AuthCubit(sl()));
@@ -58,5 +60,5 @@ Future<void> initInjectionContainer() async {
   sl.registerFactory<GroupCubit>(() => GroupCubit(sl()));
 
   // Autres services
-  sl.registerLazySingleton<NetworkController>(() => NetworkController());
+  //sl.registerLazySingleton<NetworkController>(() => NetworkController());
 }
