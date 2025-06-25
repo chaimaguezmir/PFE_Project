@@ -9,6 +9,7 @@ import 'package:flutter_mobile/presentation/widgets/base_widgets/custom_app_bar.
 import 'package:flutter_mobile/presentation/widgets/base_widgets/snackbar_helper.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:formz/formz.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class GroupMembersScreen extends StatelessWidget {
@@ -362,8 +363,7 @@ class _CustomGroupPopUpMenuButton extends StatelessWidget {
             // Handle action
             if (value == 'add') {
               // Handle edit action
-
-              Navigator.of(context).pushNamed(AppRouteName.addMemberScreen);
+              context.pushNamed(AppRouteName.addMemberScreen);
             }
           },
           itemBuilder: (context) => [
