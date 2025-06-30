@@ -13,7 +13,7 @@ import 'package:flutter_mobile/presentation/bloc/auth/login/login_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/auth/onboarding/auth_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/auth/signup/signup_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/group/group_cubit.dart';
-import 'package:flutter_mobile/presentation/bloc/main_screen/main_screen_cubit.dart';
+
 import 'package:flutter_mobile/presentation/bloc/profile/profile_cubit.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -31,7 +31,7 @@ Future<void> initInjectionContainer() async {
 
   // Interceptor (registre avant de l’utiliser)
   sl.registerLazySingleton<Interceptor>(
-    () => AuthInterceptor(sl<SharedPreferences>()),
+    () => AuthInterceptor(sl(),sl()),
   );
 
   // Dio avec Interceptor
@@ -56,7 +56,7 @@ Future<void> initInjectionContainer() async {
   sl.registerFactory<LoginCubit>(() => LoginCubit(sl()));
   sl.registerFactory<AuthCubit>(() => AuthCubit(sl()));
   sl.registerFactory<ForgotPasswordCubit>(() => ForgotPasswordCubit(sl()));
-  sl.registerFactory<MainScreenCubit>(() => MainScreenCubit());
+
   sl.registerFactory<GroupCubit>(() => GroupCubit(sl()));
 
   // Autres services
