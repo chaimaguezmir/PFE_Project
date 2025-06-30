@@ -10,9 +10,11 @@ import lombok.Setter;
 public class ResetPasswordRequest {
 
 	@NotBlank
+	private String email;
+
+	@NotBlank
 	private String code;
 
 	@NotBlank
 	private String newPassword;
-
 }

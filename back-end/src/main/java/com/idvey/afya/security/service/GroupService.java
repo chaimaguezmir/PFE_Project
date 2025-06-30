@@ -1,9 +1,11 @@
 package com.idvey.afya.security.service;
 
+import com.idvey.afya.advice.UnauthorizedException;
 import com.idvey.afya.models.User;
 import com.idvey.afya.models.groupe.Group;
 import com.idvey.afya.models.groupe.GroupMember;
 import com.idvey.afya.models.groupe.GroupRole;
+import com.idvey.afya.payload.request.group.ToggleGroupRoleRequest;
 import com.idvey.afya.payload.response.GroupResponse;
 import com.idvey.afya.repository.GroupMemberRepository;
 import com.idvey.afya.repository.GroupRepository;
@@ -57,13 +59,12 @@ public class GroupService {
 	}
 
 	@Transactional
-	public List<GroupMember> getMembers(UUID groupId) {
-		System.out.println("[Service] getMembers called for group " + groupId);
-		List<GroupMember> members = memberRepo.findByGroup_Id(groupId);
+	public List<GroupMember> fetchGroupMembers(UUID groupId) {
+		System.out.println("[Service] fetchGroupMembers called for group " + groupId);
+		List<GroupMember> members = memberRepo.findAllByGroupIdWithUser(groupId);
 		System.out.println("[Service] Retrieved " + members.size() + " members for group " + groupId);
 		return members;
 	}
-
 	@Transactional
 	public void addUserToGroup(UUID groupId, UUID actorId, String usernameToAdd) {
 		System.out.println("[Service] addUserToGroup called by user " + actorId + " to add '" + usernameToAdd
@@ -193,8 +194,54 @@ public class GroupService {
 		groupRepo.deleteById(groupId);
 		System.out.println("[Service] Group " + groupId + " deleted by manager " + actorId);
 
-		userIds.forEach(uid -> recreateDefaultIfNone(uid));
+		userIds.forEach(this::recreateDefaultIfNone);
 	}
+	@Transactional
+	public void addUserToGroupByEmail(UUID groupId, UUID actorId, String email) {
+		GroupMember actor = memberRepo.findByGroup_IdAndUser_Id(groupId, actorId)
+				.orElseThrow(() -> new NoSuchElementException("You are not a member of this group"));
+		if (actor.getRole() != GroupRole.MANAGER) {
+			throw new AccessDeniedException("Only the manager can add members");
+		}
+		User newUser = userRepo.findByEmail(email)
+				.orElseThrow(() -> new NoSuchElementException("User with email '" + email + "' not found"));
+		GroupMember.Key key = new GroupMember.Key();
+		key.setGroupId(groupId);
+		key.setUserId(newUser.getId());
+		if (memberRepo.existsById(key)) {
+			throw new IllegalStateException("User is already in the group");
+		}
+		Group group = groupRepo.findById(groupId).orElseThrow(() -> new NoSuchElementException("Group not found"));
+		GroupMember gm = GroupMember.builder().id(key).group(group).user(newUser).role(GroupRole.MEMBER).build();
+		memberRepo.save(gm);
+	}
+	@Transactional
+	public void toggleRole(UUID currentUserId, UUID groupId, UUID targetUserId) {
+		GroupMember currentMember = memberRepo
+				.findByGroup_IdAndUser_Id(groupId, currentUserId)
+				.orElseThrow(() -> new UnauthorizedException("You are not a member of this group."));
+
+		if (currentMember.getRole() != GroupRole.MANAGER) {
+			throw new AccessDeniedException("Only the MANAGER can change roles.");
+		}
+
+		GroupMember targetMember = memberRepo
+				.findByGroup_IdAndUser_Id(groupId, targetUserId)
+				.orElseThrow(() -> new NoSuchElementException("Target user not in group."));
+
+		if (targetMember.getRole() == GroupRole.MANAGER) {
+			throw new AccessDeniedException("Cannot modify MANAGER role.");
+		}
+
+		switch (targetMember.getRole()) {
+			case MEMBER -> targetMember.setRole(GroupRole.RESPONSIBLE);
+			case RESPONSIBLE -> targetMember.setRole(GroupRole.MEMBER);
+			default -> throw new IllegalStateException("Unsupported role transition.");
+		}
+
+		memberRepo.save(targetMember);
+	}
+
 
 	private void recreateDefaultIfNone(UUID userId) {
 		if (memberRepo.findByUser_Id(userId).isEmpty()) {

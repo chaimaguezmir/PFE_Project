@@ -48,13 +48,16 @@ public class ActivationCodeService {
 		return ac;
 	}
 
-	@Transactional
-	public void activate(UUID userId, String code) {
-		ActivationCode ac = codeRepo.findByCode(code)
-			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid activation code"));
-		User user = ac.getUser();
 
-		if (!user.getId().equals(userId)) {
+
+	@Transactional
+	public void activateByEmail(String email, String code) {
+		User user = userRepo.findByEmail(email)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+		ActivationCode ac = codeRepo.findByCode(code)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid activation code"));
+
+		if (!user.getId().equals(ac.getUser().getId())) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Activation code does not match user");
 		}
 		if (ac.getExpiryDate().before(new Date())) {
