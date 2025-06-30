@@ -13,7 +13,7 @@ class GetStartedScreen extends StatelessWidget {
       body: SafeArea(
         child: Container(
           width: double.infinity,
-          padding: EdgeInsets.symmetric(horizontal: 80.w, vertical: 100.w),
+          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 25.w),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -21,37 +21,37 @@ class GetStartedScreen extends StatelessWidget {
               Image.asset(
                 'lib/config/assets/images/logo.png',
                 // Update with your logo path
-                height: 600.h,
+                height: 250.h,
               ),
-              SizedBox(height: 100.h),
+              SizedBox(height: 25.h),
               Text(
                 "C’est parti !",
                 style: TextStyle(
-                  fontSize: 70.sp,
+                  fontSize: 30.sp,
                   fontWeight: FontWeight.bold,
                   color: theme().colorScheme.onPrimary,
                 ),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: 40.h),
+              SizedBox(height: 20.h),
               Text(
-                "Organisez vos traitements, retrouvez votre \n équilibre",
+                "Organisez vos traitements, retrouvez votre équilibre",
                 style: TextStyle(
-                  fontSize: 45.sp,
+                  fontSize: 18.sp,
                   color: theme().colorScheme.onTertiary,
                   fontWeight: FontWeight.w400,
                 ),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: 120.h),
+              SizedBox(height: 50.h),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 100.0.w),
+                padding: EdgeInsets.symmetric(horizontal: 40.0.w),
                 child: SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: theme().colorScheme.primary,
-                      padding: EdgeInsets.symmetric(vertical: 50.h),
+                      padding: EdgeInsets.symmetric(vertical: 15.h),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(100.r),
                       ),
@@ -62,7 +62,7 @@ class GetStartedScreen extends StatelessWidget {
                     child: Text(
                       "Se connecter",
                       style: TextStyle(
-                        fontSize: 45.sp,
+                        fontSize: 18.sp,
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
@@ -70,18 +70,18 @@ class GetStartedScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(height: 40.h),
+              SizedBox(height: 20.h),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 100.0.w),
+                padding: EdgeInsets.symmetric(horizontal: 40.0.w),
                 child: SizedBox(
                   width: double.infinity,
                   child: OutlinedButton(
                     style: OutlinedButton.styleFrom(
                       side: BorderSide(
                         color: theme().colorScheme.secondary,
-                        width: 3.w,
+                        width: 1.w,
                       ),
-                      padding: EdgeInsets.symmetric(vertical: 50.h),
+                      padding: EdgeInsets.symmetric(vertical: 15.h),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(100.r),
                       ),
@@ -92,7 +92,7 @@ class GetStartedScreen extends StatelessWidget {
                     child: Text(
                       "S'inscrire",
                       style: TextStyle(
-                        fontSize: 45.sp,
+                        fontSize: 18.sp,
                         color: theme().colorScheme.secondary,
                         fontWeight: FontWeight.bold,
                       ),

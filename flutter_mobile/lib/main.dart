@@ -43,7 +43,7 @@ class MyAppView extends StatelessWidget {
   Widget build(BuildContext context) {
     //TODO: Remove this line when you want to reset the onboarding state
 
-    sl<SharedPreferences>().setBool('hasSeenOnboarding', false);
+    //sl<SharedPreferences>().setBool('hasSeenOnboarding', false);
     final bool hasSeenOnboarding =
         sl<SharedPreferences>().getBool('hasSeenOnboarding') ?? false;
     final token = sl<SharedPreferences>().getString('token');
