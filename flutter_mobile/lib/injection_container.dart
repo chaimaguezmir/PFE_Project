@@ -1,3 +1,4 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_mobile/core/network/network_controller.dart';
 import 'package:flutter_mobile/data/data_sources/auth_remote_datasource.dart';
@@ -8,6 +9,7 @@ import 'package:flutter_mobile/data/repositories/auth_repository_impl.dart';
 import 'package:flutter_mobile/data/repositories/group_repository_impl.dart';
 import 'package:flutter_mobile/domain/repositories/auth_repository.dart';
 import 'package:flutter_mobile/domain/repositories/group_repository.dart';
+import 'package:flutter_mobile/presentation/bloc/auth/auth/auth_bloc.dart';
 import 'package:flutter_mobile/presentation/bloc/auth/forgot_password/forgot_password_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/auth/login/login_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/auth/onboarding/auth_cubit.dart';
@@ -59,6 +61,8 @@ Future<void> initInjectionContainer() async {
   sl.registerFactory<MainScreenCubit>(() => MainScreenCubit());
   sl.registerFactory<GroupCubit>(() => GroupCubit(sl()));
 
-  // Autres services
-  //sl.registerLazySingleton<NetworkController>(() => NetworkController());
+  //
+  sl.registerLazySingleton<AuthBloc>(() => AuthBloc(sl(),sl()));
+  // Network Controller
+  sl.registerLazySingleton<Connectivity>(() => Connectivity());
 }

@@ -55,20 +55,29 @@ public class PasswordResetService {
 	}
 
 	@Transactional
-	public void resetPassword(String code, String newPassword) {
-		PasswordResetToken prt = tokenRepo.findByCode(code)
-			.orElseThrow(() -> new IllegalArgumentException("Invalid reset code"));
+	public void resetPassword(String email, String code, String newPassword) {
+		User user = userRepository.findByEmail(email)
+				.orElseThrow(() -> new UsernameNotFoundException("Email not found"));
+
+		PasswordResetToken prt = tokenRepo.findByUser_Id(user.getId())
+				.filter(token -> token.getCode().equals(code))
+				.orElseThrow(() -> new IllegalArgumentException("Invalid reset code"));
 
 		if (prt.getExpiryDate().isBefore(Instant.now())) {
 			throw new IllegalArgumentException("Reset code expired");
 		}
 
-		User user = prt.getUser();
 		user.setPassword(passwordEncoder.encode(newPassword));
 		userRepository.save(user);
 
-		// clean up
 		tokenRepo.delete(prt);
+	}
+
+	public boolean isResetCodeValid(String email, String code) {
+		return userRepository.findByEmail(email)
+				.flatMap(user -> tokenRepo.findByUser_Id(user.getId()))
+				.filter(token -> token.getCode().equals(code) && token.getExpiryDate().isAfter(Instant.now()))
+				.isPresent();
 	}
 
 }

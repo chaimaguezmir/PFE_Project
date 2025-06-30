@@ -38,7 +38,7 @@ class AppRoutePath {
   // home related screens
   static const String mainScreen = '/mainScreen';
   static const String groupScreen = '/groupScreen';
-  static const String groupMembersScreen = '/groupMembersScreen';
+  static const String groupMembersScreen = '/groupScreen/groupMembersScreen';
   static const String addMemberScreen = '/addMemberScreen';
 
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobile/injection_container.dart';
+import 'package:flutter_mobile/presentation/widgets/base_widgets/custom_app_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class WelcomeScreen extends StatelessWidget {
@@ -7,8 +8,14 @@ class WelcomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    return  const Scaffold(
+    return const Scaffold(
+      appBar: CustomAppBar(
+        title: "Groupes",
+        username: "Walid Zaroui",
+        email: "zarwi.walid@gmail.com",
+        avatarPath: "lib/config/assets/images/default_avatar.jpg",
+        showLeading: false,
+      ),
       body: SafeArea(
         child: Center(
           child: Text(

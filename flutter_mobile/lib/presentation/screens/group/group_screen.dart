@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_mobile/config/router/app_route_constants.dart';
 import 'package:flutter_mobile/presentation/widgets/base_widgets/custom_app_bar.dart';
 import 'package:formz/formz.dart';
+import 'package:go_router/go_router.dart';
 import '../../bloc/group/group_cubit.dart';
 
 class GroupScreen extends StatelessWidget {
@@ -10,6 +11,10 @@ class GroupScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    print(screenSize);
+
+
     return Scaffold(
       appBar: const CustomAppBar(
         title: "Groupes",
@@ -18,19 +23,20 @@ class GroupScreen extends StatelessWidget {
         avatarPath: "lib/config/assets/images/default_avatar.jpg",
         showLeading: false,
       ),
+
       body: BlocBuilder<GroupCubit, GroupState>(
         builder: (context, state) {
-          if (state.status.isInitial &&
-              state.status != FormzSubmissionStatus.inProgress) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              context.read<GroupCubit>().fetchGroups();
-            });
-          }
+          // if (state.status.isInitial &&
+          //     state.status != FormzSubmissionStatus.inProgress) {
+          //   WidgetsBinding.instance.addPostFrameCallback((_) {
+          //     context.read<GroupCubit>().fetchGroups();
+          //   });
+          // }
 
-          if (state.status == FormzSubmissionStatus.inProgress) {
+          if (state.status.isInProgress) {
             return const Center(child: CircularProgressIndicator());
           }
-          if (state.status == FormzSubmissionStatus.failure) {
+          if (state.status.isFailure) {
             return Center(child: Text(state.errorMessage ?? 'Error'));
           }
           if (state.groups.isEmpty) {
@@ -54,9 +60,7 @@ class GroupScreen extends StatelessWidget {
                       group.name,
                     );
 
-                    Navigator.of(
-                      context,
-                    ).pushNamed(AppRouteName.groupMembersScreen);
+                   context.pushNamed(AppRouteName.groupMembersScreen);
                   },
                   title: Text(group.name),
                   subtitle: Text(group.role),
