@@ -36,7 +36,7 @@ class SignUpScreen extends StatelessWidget {
                 isLoading: state.isLoading,
                 message: 'Création de votre compte...',
                 child: Container(
-                  padding: EdgeInsets.only(top: 150.h, left: 50.w, right: 50.w),
+                  padding: EdgeInsets.only(top: 50.w, left: 20.h, right: 20.w),
                   child: const SingleChildScrollView(child: _SignUpForm()),
                 ),
               );
@@ -59,12 +59,13 @@ class _SignUpForm extends StatelessWidget {
         const _SubtitleWidget(),
         const _ErrorDisplaySection(),
         _InputFields(),
-        SizedBox(height: 40.h),
+        SizedBox(height: 30.h),
         const _GenderSelection(),
+        SizedBox(height: 10.h),
         const _TermsAndConditions(),
-        SizedBox(height: 70.h),
+        SizedBox(height: 30.h),
         const _CustomLoadingElevatedButton(),
-        SizedBox(height: 50.h),
+        SizedBox(height: 30.h),
         const _BottomTextWithLink(),
       ],
     );
@@ -98,13 +99,13 @@ class _InputFields extends StatelessWidget {
       child: Column(
         children: [
           const _UsernameField(),
-          SizedBox(height: 50.h),
+          SizedBox(height: 15.h),
           const _EmailTextField(),
-          SizedBox(height: 50.h),
+          SizedBox(height: 15.h),
           const _PasswordField(),
-          SizedBox(height: 50.h),
+          SizedBox(height: 15.h),
           const _PhoneNumberTextField(),
-          SizedBox(height: 50.h),
+          SizedBox(height: 15.h),
           _BirthdateField(birthdateController, () => selectDate(context)),
         ],
       ),
@@ -122,7 +123,7 @@ class _TitleWidget extends StatelessWidget {
       child: Text(
         'Créer votre compte',
         style: TextStyle(
-          fontSize: 60.sp,
+          fontSize: 30.sp,
           fontWeight: FontWeight.bold,
           color: theme().colorScheme.onPrimary,
         ),
@@ -137,11 +138,11 @@ class _SubtitleWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 30.h),
+      padding: EdgeInsets.symmetric(vertical: 16.h),
       alignment: const Alignment(-0.9, 0),
       child: Text(
         'Inscrivez-vous pour commencer.',
-        style: TextStyle(fontSize: 45.sp, color: Colors.grey.shade600),
+        style: TextStyle(fontSize: 18.sp, color: Colors.grey.shade600),
       ),
     );
   }
@@ -175,7 +176,7 @@ class _UsernameField extends StatelessWidget {
               borderRadius: BorderRadius.circular(75.r),
               borderSide: BorderSide(
                 color: theme().colorScheme.tertiary,
-                width: 2,
+                width: 1.w,
               ),
             ),
             focusColor: theme().colorScheme.primary,
@@ -183,7 +184,7 @@ class _UsernameField extends StatelessWidget {
             fillColor: Colors.white,
 
             errorText: state.hasError && state.username.isEmpty
-                ? 'Nom requis'
+                ? 'Nom d\'utilisateur est requis'
                 : null,
           ),
         );
@@ -219,7 +220,7 @@ class _EmailTextField extends StatelessWidget {
               borderRadius: BorderRadius.circular(75.r),
               borderSide: BorderSide(
                 color: theme().colorScheme.tertiary,
-                width: 2,
+                width: 1.w,
               ),
             ),
             focusColor: theme().colorScheme.primary,
@@ -264,7 +265,7 @@ class _PasswordField extends StatelessWidget {
               borderRadius: BorderRadius.circular(75.r),
               borderSide: BorderSide(
                 color: theme().colorScheme.tertiary,
-                width: 2,
+                width: 1.w,
               ),
             ),
             focusColor: theme().colorScheme.primary,
@@ -319,7 +320,7 @@ class _PhoneNumberTextField extends StatelessWidget {
               borderRadius: BorderRadius.circular(75.r),
               borderSide: BorderSide(
                 color: theme().colorScheme.tertiary,
-                width: 2,
+                width: 1.w,
               ),
             ),
             focusColor: theme().colorScheme.primary,
@@ -363,14 +364,14 @@ class _BirthdateField extends StatelessWidget {
               borderRadius: BorderRadius.circular(75.r),
               borderSide: BorderSide(
                 color: theme().colorScheme.tertiary,
-                width: 2,
+                width: 1.w,
               ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(75.r),
               borderSide: BorderSide(
                 color: theme().colorScheme.tertiary, // Set your color here
-                width: 2,
+                width: 1.w,
               ),
             ),
             focusColor: theme().colorScheme.primary,
@@ -408,13 +409,13 @@ class _GenderSelection extends StatelessWidget {
                   color: state.hasError && state.gender == Gender.none
                       ? Colors.red
                       : theme().colorScheme.onTertiary,
-                  fontSize: 45.sp,
+                  fontSize: 18.sp,
                   fontWeight: FontWeight.w500,
                 ),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 40).w,
+              padding: const EdgeInsets.only(left: 10).w,
               child: Row(
                 children: [
                   Radio<Gender>(
@@ -427,11 +428,11 @@ class _GenderSelection extends StatelessWidget {
                   Text(
                     'Homme',
                     style: TextStyle(
-                      fontSize: 45.sp,
+                      fontSize: 16.sp,
                       fontWeight: FontWeight.w400,
                     ),
                   ),
-                  SizedBox(width: 40.w),
+                  SizedBox(width: 20.w),
                   Radio<Gender>(
                     value: Gender.female,
                     groupValue: state.gender,
@@ -442,7 +443,7 @@ class _GenderSelection extends StatelessWidget {
                   Text(
                     'Femme',
                     style: TextStyle(
-                      fontSize: 45.sp,
+                      fontSize: 16.sp,
                       fontWeight: FontWeight.w400,
                     ),
                   ),
@@ -452,10 +453,10 @@ class _GenderSelection extends StatelessWidget {
             if (state.hasError && state.gender == Gender.none)
               Container(
                 alignment: const Alignment(-1, 0),
-                margin: EdgeInsets.only(top: 10.h),
+                margin: EdgeInsets.only(top: 5.h),
                 child: Text(
                   'Veuillez sélectionner votre genre',
-                  style: TextStyle(color: Colors.red, fontSize: 35.sp),
+                  style: TextStyle(color: Colors.red, fontSize: 16.sp),
                 ),
               ),
           ],
@@ -488,7 +489,7 @@ class _TermsAndConditions extends StatelessWidget {
                     color: state.hasError && !state.isTermsAccepted
                         ? Colors.red
                         : theme().colorScheme.onTertiary,
-                    width: 3.w,
+                    width: 2.w,
                   ),
                   onChanged: (checked) => context
                       .read<SignUpCubit>()
@@ -498,7 +499,7 @@ class _TermsAndConditions extends StatelessWidget {
                   child: RichText(
                     text: TextSpan(
                       style: TextStyle(
-                        fontSize: 40.sp,
+                        fontSize: 16.sp,
                         color: Colors.black,
                         fontFamily: 'Roboto',
                       ),
@@ -536,10 +537,10 @@ class _TermsAndConditions extends StatelessWidget {
             if (state.hasError && !state.isTermsAccepted)
               Container(
                 alignment: const Alignment(-1, 0),
-                margin: EdgeInsets.only(top: 10.h),
+                margin: EdgeInsets.only(top: 5.h),
                 child: Text(
                   'Vous devez accepter les conditions d\'utilisation',
-                  style: TextStyle(color: Colors.red, fontSize: 35.sp),
+                  style: TextStyle(color: Colors.red, fontSize: 16.sp),
                 ),
               ),
           ],
@@ -568,7 +569,7 @@ class _CustomLoadingElevatedButton extends StatelessWidget {
           child: Text(
             "S'inscrire",
             style: TextStyle(
-              fontSize: 45.sp,
+              fontSize: 18.sp,
               color: Colors.white,
               fontWeight: FontWeight.bold,
             ),
@@ -590,7 +591,7 @@ class _BottomTextWithLink extends StatelessWidget {
         Text(
           "Vous avez déjà un compte ? ",
           style: TextStyle(
-            fontSize: 38.sp,
+            fontSize: 16.sp,
             color: theme().colorScheme.onTertiary,
           ),
         ),
@@ -598,7 +599,7 @@ class _BottomTextWithLink extends StatelessWidget {
           text: TextSpan(
             text: "Se connecter",
             style: TextStyle(
-              fontSize: 38.sp,
+              fontSize: 16.sp,
               color: theme().colorScheme.secondary,
               decoration: TextDecoration.none,
             ),
@@ -624,8 +625,8 @@ class _ErrorDisplaySection extends StatelessWidget {
       builder: (context, state) {
         if (state.hasError) {
           return Container(
-            margin: EdgeInsets.only(bottom: 40.h),
-            padding: EdgeInsets.all(30.w),
+            margin: EdgeInsets.only(bottom: 10.h),
+            padding: EdgeInsets.all(10.w),
             decoration: BoxDecoration(
               color: Colors.red.shade50,
               borderRadius: BorderRadius.circular(20.r),
@@ -633,14 +634,14 @@ class _ErrorDisplaySection extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Icon(Icons.error_outline, color: Colors.red, size: 50.w),
-                SizedBox(width: 20.w),
+                Icon(Icons.error_outline, color: Colors.red, size: 20.sp),
+                SizedBox(width: 10.w),
                 Expanded(
                   child: Text(
                     state.errorMessage!,
                     style: TextStyle(
                       color: Colors.red.shade700,
-                      fontSize: 38.sp,
+                      fontSize: 16.sp,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -649,7 +650,7 @@ class _ErrorDisplaySection extends StatelessWidget {
                   onPressed: () {
                     context.read<SignUpCubit>().clearError();
                   },
-                  icon: Icon(Icons.close, color: Colors.red, size: 45.w),
+                  icon: Icon(Icons.close, color: Colors.red, size: 20.sp),
                 ),
               ],
             ),

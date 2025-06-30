@@ -60,7 +60,7 @@ class _LoginForm extends StatelessWidget {
         // Error Display Section
         BlocBuilder<LoginCubit, LoginState>(
           buildWhen: (previous, current) =>
-              previous.errorMessage != current.errorMessage,
+          previous.errorMessage != current.errorMessage,
           builder: (context, state) {
             if (state.hasError) {
               return Container(
@@ -187,7 +187,7 @@ class _EmailField extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<LoginCubit, LoginState>(
       buildWhen: (previous, current) =>
-          previous.email != current.email ||
+      previous.email != current.email ||
           previous.errorMessage != current.errorMessage,
       builder: (context, state) {
         return TextField(
@@ -236,7 +236,7 @@ class _PasswordField extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<LoginCubit, LoginState>(
       buildWhen: (previous, current) =>
-          previous.password != current.password ||
+      previous.password != current.password ||
           previous.isPasswordVisible != current.isPasswordVisible ||
           previous.errorMessage != current.errorMessage,
       builder: (context, state) {
@@ -303,8 +303,8 @@ class _ForgotPasswordLink extends StatelessWidget {
             onTap: state.isLoading
                 ? null
                 : () {
-                    context.pushNamed(AppRouteName.forgotPasswordEmailScreen);
-                  },
+              context.pushNamed(AppRouteName.forgotPasswordEmailScreen);
+            },
             child: Text(
               'Mot de passe oublié ?',
               style: TextStyle(
@@ -336,8 +336,8 @@ class _LoginButton extends StatelessWidget {
             onPressed: state.isLoading
                 ? null
                 : () {
-                    context.read<LoginCubit>().signInWithCredentials(context);
-                  },
+              context.read<LoginCubit>().signInWithCredentials(context);
+            },
             child: Text(
               'Se Connecter',
               style: TextStyle(
