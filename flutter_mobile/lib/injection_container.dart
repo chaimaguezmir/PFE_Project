@@ -28,24 +28,26 @@ final dio = Dio();
 Future<void> initInjectionContainer() async {
   // Shared Preferences
   final SharedPreferences sharedPreferences =
-      await SharedPreferences.getInstance();
+  await SharedPreferences.getInstance();
   sl.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
 
-  // Interceptor (registre avant de l’utiliser)
+  // Dio (register first)
+  sl.registerLazySingleton<Dio>(() => dio);
+
+  // Interceptor (register after Dio)
   sl.registerLazySingleton<Interceptor>(
-    () => AuthInterceptor(sl(),sl()),
+        () => AuthInterceptor(sl(), sl()),
   );
 
-  // Dio avec Interceptor
+  // Add Interceptor to Dio
   dio.interceptors.add(sl<Interceptor>());
-  sl.registerLazySingleton<Dio>(() => dio);
 
   // Data Sources
   sl.registerLazySingleton<AuthRemoteDataSource>(
-    () => AuthRemoteDataSourceImpl(sl()),
+        () => AuthRemoteDataSourceImpl(sl()),
   );
   sl.registerLazySingleton<GroupRemoteDataSource>(
-    () => GroupRemoteDataSourceImpl(sl()),
+        () => GroupRemoteDataSourceImpl(sl()),
   );
 
   // Repositories
@@ -58,11 +60,10 @@ Future<void> initInjectionContainer() async {
   sl.registerFactory<LoginCubit>(() => LoginCubit(sl()));
   sl.registerFactory<AuthCubit>(() => AuthCubit(sl()));
   sl.registerFactory<ForgotPasswordCubit>(() => ForgotPasswordCubit(sl()));
-
   sl.registerFactory<GroupCubit>(() => GroupCubit(sl()));
 
-  //
-  sl.registerLazySingleton<AuthBloc>(() => AuthBloc(sl(),sl()));
+  sl.registerLazySingleton<AuthBloc>(() => AuthBloc(sl(), sl()));
+
   // Network Controller
   sl.registerLazySingleton<Connectivity>(() => Connectivity());
 }

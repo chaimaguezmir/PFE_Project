@@ -43,14 +43,14 @@ class MyAppView extends StatelessWidget {
   Widget build(BuildContext context) {
     //TODO: Remove this line when you want to reset the onboarding state
 
-    //sl<SharedPreferences>().setBool('hasSeenOnboarding', false);
+    sl<SharedPreferences>().setBool('hasSeenOnboarding', false);
     final bool hasSeenOnboarding =
         sl<SharedPreferences>().getBool('hasSeenOnboarding') ?? false;
     final token = sl<SharedPreferences>().getString('token');
     final bool isAuthenticated = token != null && token.isNotEmpty;
     final GoRouter route = AppRouter(hasSeenOnboarding, isAuthenticated).router;
     return ScreenUtilInit(
-      designSize: const Size(1080, 2400),
+      designSize: const Size(411.4, 914.3),
       minTextAdapt: true,
       builder: (context, child) {
 

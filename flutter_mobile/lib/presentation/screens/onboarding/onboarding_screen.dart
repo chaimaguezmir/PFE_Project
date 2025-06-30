@@ -83,8 +83,8 @@ class _SmoothPageIndicator extends StatelessWidget {
       controller: pageController,
       count: 3,
       effect: WormEffect(
-        dotHeight: 10.w,
-        dotWidth: 40.w,
+        dotHeight: 5.w,
+        dotWidth: 10.w,
         activeDotColor: theme().colorScheme.primary,
         dotColor: Colors.grey,
       ),
@@ -150,7 +150,7 @@ class _IntroScreen extends StatelessWidget {
               },
               child: Text(
                 "skip",
-                style: TextStyle(fontSize: 40.sp, color: Colors.green),
+                style: TextStyle(fontSize: 18.sp, color: theme().colorScheme.primary),
               ),
             ),
           ),
@@ -175,19 +175,19 @@ class _IntroScreen extends StatelessWidget {
         Expanded(
           flex: 3,
           child: Container(
-            width: 1000.w,
+            width: double.infinity,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(80.r),
+              borderRadius: BorderRadius.circular(30.r),
               gradient: appGradient,
             ),
             child: Padding(
-              padding: const EdgeInsets.all(20.0),
+              padding:  EdgeInsets.only(left: 20.w,right:20.w ,top: 40.w),
               child: Text(
                 maxLines: 3,
                 description,
                 style: TextStyle(
                   color: theme().colorScheme.onPrimary,
-                  fontSize: 70.sp,
+                  fontSize: 25.sp,
                   fontWeight: FontWeight.bold,
                 ),
               ),
