@@ -4,6 +4,7 @@ import com.idvey.afya.models.groupe.GroupMember;
 import com.idvey.afya.payload.request.group.AddMemberRequest;
 import com.idvey.afya.payload.request.group.CreateGroupRequest;
 import com.idvey.afya.payload.request.group.RenameGroupRequest;
+import com.idvey.afya.payload.request.group.ToggleGroupRoleRequest;
 import com.idvey.afya.payload.response.GroupMemberResponse;
 import com.idvey.afya.payload.response.GroupResponse;
 import com.idvey.afya.payload.response.MessageResponse;
@@ -42,9 +43,10 @@ public class GroupController {
 	}
 
 	@GetMapping("/{groupId}/members")
-	public ResponseEntity<List<GroupMemberResponse>> listMembers(@AuthenticationPrincipal UserDetailsImpl currentUser,
-																 @PathVariable UUID groupId) {
-		List<GroupMember> members = groupService.getMembers(groupId);
+	public ResponseEntity<List<GroupMemberResponse>> listMembers(
+			@AuthenticationPrincipal UserDetailsImpl currentUser,
+			@PathVariable UUID groupId) {
+		List<GroupMember> members = groupService.fetchGroupMembers(groupId);
 		List<GroupMemberResponse> resp = members.stream()
 				.map(m -> new GroupMemberResponse(m.getUser().getId(), m.getUser().getUsername(), m.getRole()))
 				.collect(Collectors.toList());
@@ -54,9 +56,10 @@ public class GroupController {
 	@PostMapping("/{groupId}/members")
 	public ResponseEntity<MessageResponse> addMember(@AuthenticationPrincipal UserDetailsImpl currentUser,
 													 @PathVariable UUID groupId, @Valid @RequestBody AddMemberRequest req) throws AccessDeniedException {
-		groupService.addUserToGroup(groupId, currentUser.getId(), req.getUsername());
+		groupService.addUserToGroupByEmail(groupId, currentUser.getId(), req.getEmail());
 		return ResponseEntity.ok(new MessageResponse("User added to group successfully"));
 	}
+
 
 	@PatchMapping("/{groupId}")
 	public ResponseEntity<MessageResponse> renameGroup(@AuthenticationPrincipal UserDetailsImpl currentUser,
@@ -86,5 +89,10 @@ public class GroupController {
 		groupService.deleteGroup(groupId, currentUser.getId());
 		return ResponseEntity.ok(new MessageResponse("Group deleted successfully"));
 	}
-
+	@PutMapping("/members/toggle-role")
+	public ResponseEntity<?> toggleGroupRole(@AuthenticationPrincipal UserDetailsImpl currentUser,
+											 @Valid @RequestBody ToggleGroupRoleRequest req) {
+		groupService.toggleRole(currentUser.getId(), req.getGroupId(), req.getTargetUserId());
+		return ResponseEntity.ok(new MessageResponse("Group role toggled successfully"));
+	}
 }

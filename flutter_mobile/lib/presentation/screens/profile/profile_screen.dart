@@ -4,6 +4,7 @@ import 'package:flutter_mobile/config/router/app_route_constants.dart';
 
 import 'package:flutter_mobile/injection_container.dart';
 import 'package:flutter_mobile/presentation/bloc/profile/profile_cubit.dart';
+import 'package:flutter_mobile/presentation/widgets/base_widgets/custom_app_bar.dart';
 import 'package:formz/formz.dart';
 import 'package:go_router/go_router.dart';
 
@@ -32,6 +33,13 @@ class ProfileScreen extends StatelessWidget {
         }
       },
       child: Scaffold(
+        appBar: const CustomAppBar(
+          title: "Groupes",
+          username: "Walid Zaroui",
+          email: "zarwi.walid@gmail.com",
+          avatarPath: "lib/config/assets/images/default_avatar.jpg",
+          showLeading: false,
+        ),
         body: SafeArea(
           child: Center(
             child: ElevatedButton(

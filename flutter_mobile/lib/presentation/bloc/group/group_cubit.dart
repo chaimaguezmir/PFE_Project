@@ -21,6 +21,7 @@ class GroupCubit extends Cubit<GroupState> {
   void selectedMemberIdChanged(String value) {
     emit(state.copyWith(selectedMemberId: value, errorMessage: null));
   }
+
   void currentGroupIdChanged(String value) {
     emit(state.copyWith(currentGroupId: value, errorMessage: null));
   }
@@ -103,9 +104,7 @@ class GroupCubit extends Cubit<GroupState> {
         errorMessage: null,
       ),
     );
-    final result = await _groupRepository.getGroupMembers(
-      state.currentGroupId,
-    );
+    final result = await _groupRepository.getGroupMembers(state.currentGroupId);
     final sortedMembers = List<MemberEntity>.from(result.data ?? [])
       ..sort((a, b) {
         const roleOrder = {'MANAGER': 0, 'RESPONSIBLE': 1, 'MEMBER': 2};
@@ -139,7 +138,10 @@ class GroupCubit extends Cubit<GroupState> {
     }
 
     emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
-    final result = await _groupRepository.addMember(state.currentGroupId, state.email);
+    final result = await _groupRepository.addMember(
+      state.currentGroupId,
+      state.email,
+    );
     if (result is DataSuccess) {
       fetchGroupMembers();
       emit(
@@ -159,11 +161,7 @@ class GroupCubit extends Cubit<GroupState> {
     }
   }
 
-  Future<void> toggleRole(
-    BuildContext context,
-
-
-  ) async {
+  Future<void> toggleRole(BuildContext context) async {
     DialogService.showRemoveMemberDialog(
       context: context,
       avatarPath: 'lib/config/assets/images/default_avatar.jpg',
@@ -178,7 +176,10 @@ class GroupCubit extends Cubit<GroupState> {
             status: FormzSubmissionStatus.inProgress,
           ),
         );
-        final result = await _groupRepository.toggleRole(state.currentGroupId, state.selectedMemberId);
+        final result = await _groupRepository.toggleRole(
+          state.currentGroupId,
+          state.selectedMemberId,
+        );
         if (result is DataSuccess) {
           fetchGroupMembers();
 
@@ -202,11 +203,7 @@ class GroupCubit extends Cubit<GroupState> {
     );
   }
 
-  Future<void> removeMember(
-    BuildContext context,
-
-
-  ) async {
+  Future<void> removeMember(BuildContext context) async {
     if (!context.mounted)
       return; // Check if context is mounted before showing dialog
 
@@ -224,7 +221,10 @@ class GroupCubit extends Cubit<GroupState> {
           ),
         );
 
-        final result = await _groupRepository.removeMember(state.currentGroupId, state.selectedMemberId);
+        final result = await _groupRepository.removeMember(
+          state.currentGroupId,
+          state.selectedMemberId,
+        );
 
         if (result is DataSuccess) {
           await fetchGroupMembers();

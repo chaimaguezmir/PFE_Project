@@ -1,4 +1,4 @@
-/*import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:get/get.dart';
 
 class NetworkController { // Add this line
@@ -14,4 +14,4 @@ class NetworkController { // Add this line
     onConnectionChanged?.call(isConnected);
   }
 }
-*/
+

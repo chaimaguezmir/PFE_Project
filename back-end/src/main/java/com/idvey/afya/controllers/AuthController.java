@@ -1,17 +1,22 @@
 package com.idvey.afya.controllers;
 
+import com.idvey.afya.advice.UnauthorizedException;
 import com.idvey.afya.exception.TokenRefreshException;
 import com.idvey.afya.models.*;
 import com.idvey.afya.payload.request.*;
+
+import com.idvey.afya.payload.request.group.CheckOTPRequest;
 import com.idvey.afya.payload.response.JwtResponse;
 import com.idvey.afya.payload.response.MessageResponse;
 import com.idvey.afya.payload.response.TokenRefreshResponse;
+import com.idvey.afya.repository.RefreshTokenRepository;
 import com.idvey.afya.repository.RoleRepository;
 import com.idvey.afya.repository.UserRepository;
 import com.idvey.afya.security.jwt.JwtUtils;
 import com.idvey.afya.security.service.*;
 import com.idvey.afya.docs.AuthenticationDocs;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,9 +30,11 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.nio.file.AccessDeniedException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -72,22 +79,29 @@ public class AuthController {
 
 	@Autowired
 	private GroupService groupService;
+    @Autowired
+    private RefreshTokenRepository refreshTokenRepository;
 
 	@AuthenticationDocs.SignIn
 	@PostMapping("/signin")
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-
-		User user = userRepository.findByUsername(loginRequest.getUsername())
-				.orElseThrow(
-						() -> new UsernameNotFoundException("User Not Found with username: " + loginRequest.getUsername()));
+		String identifier = loginRequest.getEmail();
+		User user;
+		if (identifier.contains("@")) {
+			user = userRepository.findByEmail(identifier)
+					.orElseThrow(() -> new UsernameNotFoundException("User Not Found with email: " + identifier));
+		} else {
+			user = userRepository.findByUsername(identifier)
+					.orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + identifier));
+		}
 
 		if (!user.isEnabled()) {
 			return ResponseEntity.status(HttpStatus.FORBIDDEN)
-					.body(new MessageResponse(
-							"Error: Account not activated. Please check your email for the activation code."));
+					.body(new MessageResponse("Error: Account not activated. Please check your email for the activation code."));
 		}
+
 		Authentication authentication = authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+				new UsernamePasswordAuthenticationToken(user.getUsername(), loginRequest.getPassword()));
 
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 
@@ -129,7 +143,7 @@ public class AuthController {
 		}
 
 	}
-
+	@Transactional
 	@AuthenticationDocs.SignUp
 	@PostMapping("/signup")
 	public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
@@ -210,37 +224,48 @@ public class AuthController {
 
 		return refreshTokenService.findByToken(requestRefreshToken)
 				.map(refreshTokenService::verifyExpiration)
-				.map(RefreshToken::getUser)
-				.map(user -> {
+				.map(refreshToken -> {
+					UUID userId = refreshToken.getUser().getId();
+					User user = userRepository.findById(userId)
+							.orElseThrow(() -> new TokenRefreshException(requestRefreshToken, "User not found"));
+
 					String token = jwtUtils.generateTokenFromUsername(user.getUsername());
 					System.out.println("User with ID " + user.getId() + " refreshed token successfully!");
 					return ResponseEntity.ok(new TokenRefreshResponse(token, requestRefreshToken));
 				})
 				.orElseThrow(() -> new TokenRefreshException(requestRefreshToken, "Refresh token is not in database!"));
-
 	}
-
-	@AuthenticationDocs.SignOut
 	@PostMapping("/signout")
-	public ResponseEntity<?> logoutUser() {
-		UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
-				.getAuthentication()
-				.getPrincipal();
-		UUID userId = userDetails.getId();
-		refreshTokenService.deleteByUserId(userId);
-		System.out.println("User with ID " + userId + " Log out successful!");
-		return ResponseEntity.ok(new MessageResponse("Log out successful!"));
+	public ResponseEntity<?> logoutUser(@AuthenticationPrincipal UserDetailsImpl currentUser,
+										@Valid @RequestBody LogoutDeviceRequest request) {
+		UUID userId = currentUser.getId();
 
+		RefreshToken refreshToken = refreshTokenRepository
+				.findByToken(request.getRefreshToken())
+				.orElseThrow(() -> new UnauthorizedException("Invalid refresh token."));
+
+		if (!refreshToken.getUser().getId().equals(userId)) {
+			throw new UnauthorizedException("Token does not belong to the authenticated user.");
+		}
+
+		if (!refreshToken.getDeviceId().equals(request.getDeviceId())) {
+			throw new UnauthorizedException("Device ID mismatch.");
+		}
+		if (!refreshToken.getDeviceName().equals(request.getDeviceName())) {
+			throw new UnauthorizedException("Device Name mismatch.");
+		}
+
+		refreshTokenRepository.delete(refreshToken);
+
+		return ResponseEntity.ok(new MessageResponse("Logged out successfully from device " + request.getDeviceName()));
 	}
 
 	@PostMapping("/activate")
 	public ResponseEntity<?> activate(@Valid @RequestBody ActivationRequest req) {
 		try {
-			activationCodeService.activate(req.getUserId(), req.getCode());
+			activationCodeService.activateByEmail(req.getEmail(), req.getCode());
 			return ResponseEntity.ok(new MessageResponse("Account activated! You can now sign in."));
-		}
-		catch (ResponseStatusException ex) {
-			// this will give you both status (400/403) and the exact reason
+		} catch (ResponseStatusException ex) {
 			return ResponseEntity.status(ex.getStatusCode()).body(new MessageResponse(ex.getReason()));
 		}
 	}
@@ -275,8 +300,18 @@ public class AuthController {
 
 	@PostMapping("/reset-password")
 	public ResponseEntity<MessageResponse> resetPassword(@Valid @RequestBody ResetPasswordRequest req) {
-		passwordResetService.resetPassword(req.getCode(), req.getNewPassword());
+		passwordResetService.resetPassword(req.getEmail(), req.getCode(), req.getNewPassword());
 		return ResponseEntity.ok(new MessageResponse("Password has been reset successfully"));
+	}
+
+	@PostMapping("/check-reset-code")
+	public ResponseEntity<MessageResponse> checkResetCode(@RequestBody CheckOTPRequest req) {
+		boolean valid = passwordResetService.isResetCodeValid(req.getEmail(), req.getCode());
+		if (valid) {
+			return ResponseEntity.ok(new MessageResponse("Code is valid"));
+		} else {
+			return ResponseEntity.badRequest().body(new MessageResponse("Invalid or expired code"));
+		}
 	}
 
 }

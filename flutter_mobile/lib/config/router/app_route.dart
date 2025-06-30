@@ -14,6 +14,9 @@ import 'package:flutter_mobile/presentation/screens/auth/forgot_password/forgot_
 import 'package:flutter_mobile/presentation/screens/auth/get_started_screen.dart';
 import 'package:flutter_mobile/presentation/screens/auth/login_screen.dart';
 import 'package:flutter_mobile/presentation/screens/auth/signup_screen.dart';
+import 'package:flutter_mobile/presentation/screens/group/add_member_screen.dart';
+import 'package:flutter_mobile/presentation/screens/group/group_membe_screen.dart';
+import 'package:flutter_mobile/presentation/screens/group/group_screen.dart';
 import 'package:flutter_mobile/presentation/screens/home/welcome_screen.dart';
 import 'package:flutter_mobile/presentation/screens/main_screen.dart';
 
@@ -23,11 +26,6 @@ import 'package:flutter_mobile/presentation/screens/services/services_screen.dar
 import 'package:go_router/go_router.dart';
 
 import 'app_route_constants.dart';
-import 'groupe_shell_route.dart';
-
-final _routeNavigatorKey = GlobalKey<NavigatorState>(
-  debugLabel: 'AppRouteNavigatorKey',
-);
 
 class AppRouter {
   AppRouter(this._hasSeenOnboarding, this._isAuthenticated);
@@ -37,7 +35,7 @@ class AppRouter {
 
   String get initialLocation {
     if (_isAuthenticated) {
-      return '/accueil';
+      return AppRoutePath.groupScreen;
     } else if (_hasSeenOnboarding) {
       return AppRoutePath.getStartedScreen;
     } else {
@@ -47,7 +45,6 @@ class AppRouter {
 
   GoRouter get router => _router;
   late final GoRouter _router = GoRouter(
-    navigatorKey: _routeNavigatorKey,
     initialLocation: initialLocation, // Start with onboarding
     routes: [
       ShellRoute(
@@ -72,54 +69,74 @@ class AppRouter {
           ),
         ],
       ),
-      // Main app with bottom navigation (after login)
+
       StatefulShellRoute.indexedStack(
-        builder: (context, state, navigationShell) =>
-            MainScreen(navigationShell: navigationShell),
-        branches: [
-          // Branch 1: Second tab (replace with your actual screen)
+        builder:
+            (BuildContext context,
+            GoRouterState state,
+            StatefulNavigationShell navigationShell,) {
+          // Return the widget that implements the custom shell (in this case
+          // using a BottomNavigationBar). The StatefulNavigationShell is passed
+          // to be able access the state of the shell and to navigate to other
+          // branches in a stateful way.
+          return MainScreen(navigationShell: navigationShell);
+        },
+        branches: <StatefulShellBranch>[
           StatefulShellBranch(
-            routes: [
+            routes: <RouteBase>[
               GoRoute(
-                path: '/accueil', // Update with your actual path
-                name: 'accueil', // Update with your actual name
+                name: 'accueil',
+                path: '/accueil',
                 builder: (context, state) => const WelcomeScreen(),
               ),
             ],
           ),
-
-          // Branch 2: Third tab
           StatefulShellBranch(
-            routes: [
+            routes: <RouteBase>[
               GoRoute(
-                  path: '/services',
-                  name: 'services',
-                  builder: (context, state) => const ServicesScreen()
-
+                name: 'services',
+                path: '/services',
+                builder: (context, state) => const ServicesScreen(),
               ),
             ],
           ),
-          // Branch 3: Groups tab - GroupShell handles internal navigation
           StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: AppRoutePath.groupScreen, // Main groups screen
-                name: AppRouteName.groupScreen,
-                builder: (context, state) =>
-                    BlocProvider(
-                      create: (context) => sl<GroupCubit>(),
-                      child: const GroupShell(),
-                    ),
+
+            routes: <RouteBase>[
+              ShellRoute(
+                builder: (context, state, child) =>
+                    BlocProvider(create: (context) =>
+                    sl<GroupCubit>()
+                      ..fetchGroups(), child: child),
+                routes: [
+                  // Auth flow routes (onboarding, signup, login)
+                  GoRoute(
+                    name: AppRouteName.groupScreen,
+                    path: AppRoutePath.groupScreen,
+                    builder: (context, state) => const GroupScreen(),
+                  ),
+                  GoRoute(
+                    name: AppRouteName.groupMembersScreen,
+                    path: AppRoutePath.groupMembersScreen,
+                    builder: (context, state) => const GroupMembersScreen(),
+                  ),
+                  GoRoute(
+                    name: AppRouteName.addMemberScreen,
+                    path: AppRoutePath.addMemberScreen,
+                    builder: (context, state) => const AddMemberScreen(),
+                  ),
+
+                ],
               ),
+
+
             ],
           ),
-
-          // Branch 4: Fourth tab
           StatefulShellBranch(
-            routes: [
+            routes: <RouteBase>[
               GoRoute(
-                path: '/profile',
                 name: 'profile',
+                path: '/profile',
                 builder: (context, state) =>
                     BlocProvider(
                       create: (context) => sl<ProfileCubit>(),
@@ -130,6 +147,8 @@ class AppRouter {
           ),
         ],
       ),
+
+      // Main app with bottom navigation (after login)
       GoRoute(
         path: AppRoutePath.getStartedScreen,
         name: AppRouteName.getStartedScreen,
