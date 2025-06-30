@@ -34,14 +34,14 @@ class LoadingOverlay extends StatelessWidget {
                   children: [
                     CircularProgressIndicator(
                       color: theme().colorScheme.primary,
-                      strokeWidth: 8.w,
+                      strokeWidth: 2.w,
                     ),
                     if (message != null) ...[
-                      SizedBox(height: 40.h),
+                      SizedBox(height: 20.h),
                       Text(
                         message!,
                         style: TextStyle(
-                          fontSize: 42.sp,
+                          fontSize: 20.sp,
                           fontWeight: FontWeight.w500,
                           color: theme().colorScheme.onSurface,
                         ),
