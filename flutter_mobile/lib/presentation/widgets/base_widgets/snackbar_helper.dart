@@ -36,13 +36,13 @@ mixin SnackBarHelper {
       SnackBar(
         content: Row(
           children: [
-            Icon(Icons.check_circle_outline, color: Colors.white, size: 50.w),
-            SizedBox(width: 30.w),
+            Icon(Icons.check_circle_outline, color: Colors.white, size: 30.w),
+            SizedBox(width: 10.w),
             Expanded(
               child: Text(
                 message,
                 style: TextStyle(
-                  fontSize: 40.sp,
+                  fontSize: 16.sp,
                   color: Colors.white,
                   fontWeight: FontWeight.w500,
                 ),
@@ -54,7 +54,7 @@ mixin SnackBarHelper {
         duration: const Duration(seconds: 3),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-        margin: EdgeInsets.all(40.w),
+        margin: EdgeInsets.all(10.w),
       ),
     );
   }
@@ -64,13 +64,13 @@ mixin SnackBarHelper {
       SnackBar(
         content: Row(
           children: [
-            Icon(Icons.info_outline, color: Colors.white, size: 50.w),
-            SizedBox(width: 30.w),
+            Icon(Icons.info_outline, color: Colors.white, size: 30.w),
+            SizedBox(width: 10.w),
             Expanded(
               child: Text(
                 message,
                 style: TextStyle(
-                  fontSize: 40.sp,
+                  fontSize: 16.sp,
                   color: Colors.white,
                   fontWeight: FontWeight.w500,
                 ),
@@ -82,7 +82,7 @@ mixin SnackBarHelper {
         duration: const Duration(seconds: 3),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-        margin: EdgeInsets.all(40.w),
+        margin: EdgeInsets.all(10.w),
       ),
     );
   }

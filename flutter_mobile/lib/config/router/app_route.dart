@@ -37,7 +37,7 @@ class AppRouter {
     if (_isAuthenticated) {
       return AppRoutePath.groupScreen;
     } else if (_hasSeenOnboarding) {
-      return AppRoutePath.accountVerification;
+      return AppRoutePath.getStartedScreen;
     } else {
       return AppRoutePath.onboarding;
     }

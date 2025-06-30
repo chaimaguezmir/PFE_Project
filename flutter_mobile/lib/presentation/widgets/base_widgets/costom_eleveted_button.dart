@@ -28,12 +28,12 @@ class CustomElevatedButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: width ?? double.infinity,
-      height: height ?? 130.h,
+      height: height ?? 50.h,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: backgroundColor ?? theme().colorScheme.primary,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(25),
+            borderRadius: BorderRadius.circular(25.r),
           ),
         ),
         onPressed: (enabled && !isLoading) ? onPressed : null,
@@ -46,8 +46,8 @@ class CustomElevatedButton extends StatelessWidget {
             if (isLoading) ...[
               SizedBox(width: 20.w),
               SizedBox(
-                width: 40.w,
-                height: 40.w,
+                width: 10.w,
+                height: 10.w,
                 child: const CircularProgressIndicator(
                   color: Colors.white,
                   strokeWidth: 3,
