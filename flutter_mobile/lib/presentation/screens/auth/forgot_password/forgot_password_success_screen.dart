@@ -14,7 +14,7 @@ class ForgotPasswordSuccessScreen extends StatelessWidget {
       body: SafeArea(
         child: Container(
           width: double.infinity,
-          padding: EdgeInsets.only(left: 80.w, right: 80.w, top: 300.w),
+          padding: EdgeInsets.only(left: 20.w, right: 20.w, top: 200.h),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -24,22 +24,22 @@ class ForgotPasswordSuccessScreen extends StatelessWidget {
                 'Opération réussie',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 60.sp,
+                  fontSize: 30.sp,
                   fontWeight: FontWeight.bold,
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
-              SizedBox(height: 130.h),
+              SizedBox(height: 50.h),
               Text(
-                'Votre mot de passe a été modifié \navec succès.',
+                'Votre mot de passe a été modifié avec succès.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 45.sp,
+                  fontSize: 18.sp,
                   fontWeight: FontWeight.w400,
                   color: theme().colorScheme.onTertiary,
                 ),
               ),
-              SizedBox(height: 70.h),
+              SizedBox(height: 50.h),
               CustomLoadingButton(
                 loadingText: "Inscription...",
                 onPressed: () {
@@ -48,7 +48,7 @@ class ForgotPasswordSuccessScreen extends StatelessWidget {
                 child: Text(
                   "Retour à la connexion",
                   style: TextStyle(
-                    fontSize: 45.sp,
+                    fontSize: 18.sp,
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
