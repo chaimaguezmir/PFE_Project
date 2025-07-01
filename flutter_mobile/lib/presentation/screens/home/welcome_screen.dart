@@ -10,7 +10,7 @@ class WelcomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Scaffold(
       appBar: CustomAppBar(
-        title: "Groupes",
+        title: "Accueil",
         username: "Walid Zaroui",
         email: "zarwi.walid@gmail.com",
         avatarPath: "lib/config/assets/images/default_avatar.jpg",

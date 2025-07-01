@@ -17,6 +17,7 @@ import 'package:flutter_mobile/presentation/bloc/auth/signup/signup_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/group/group_cubit.dart';
 
 import 'package:flutter_mobile/presentation/bloc/profile/profile_cubit.dart';
+import 'package:flutter_mobile/presentation/bloc/services/services_cubit.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -28,26 +29,24 @@ final dio = Dio();
 Future<void> initInjectionContainer() async {
   // Shared Preferences
   final SharedPreferences sharedPreferences =
-  await SharedPreferences.getInstance();
+      await SharedPreferences.getInstance();
   sl.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
 
   // Dio (register first)
   sl.registerLazySingleton<Dio>(() => dio);
 
   // Interceptor (register after Dio)
-  sl.registerLazySingleton<Interceptor>(
-        () => AuthInterceptor(sl(), sl()),
-  );
+  sl.registerLazySingleton<Interceptor>(() => AuthInterceptor(sl(), sl()));
 
   // Add Interceptor to Dio
   dio.interceptors.add(sl<Interceptor>());
 
   // Data Sources
   sl.registerLazySingleton<AuthRemoteDataSource>(
-        () => AuthRemoteDataSourceImpl(sl()),
+    () => AuthRemoteDataSourceImpl(sl()),
   );
   sl.registerLazySingleton<GroupRemoteDataSource>(
-        () => GroupRemoteDataSourceImpl(sl()),
+    () => GroupRemoteDataSourceImpl(sl()),
   );
 
   // Repositories
@@ -61,6 +60,7 @@ Future<void> initInjectionContainer() async {
   sl.registerFactory<AuthCubit>(() => AuthCubit(sl()));
   sl.registerFactory<ForgotPasswordCubit>(() => ForgotPasswordCubit(sl()));
   sl.registerFactory<GroupCubit>(() => GroupCubit(sl()));
+  sl.registerFactory<ServicesCubit>(() => ServicesCubit());
 
   sl.registerLazySingleton<AuthBloc>(() => AuthBloc(sl(), sl()));
 

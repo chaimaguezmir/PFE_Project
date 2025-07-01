@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_mobile/config/router/app_route_constants.dart';
+import 'package:flutter_mobile/presentation/bloc/services/services_cubit.dart';
+import 'package:flutter_mobile/presentation/widgets/base_widgets/custom_app_bar.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 
 // Data model for box items from database
-class BoxData {
-  const BoxData({required this.title, required this.count});
-  final String title;
-  final String count;
-}
 
 // Main screen content widget
 class ServicesScreen extends StatelessWidget {
@@ -13,37 +14,74 @@ class ServicesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => ServicesCubit(),
+      child: const ServicesScreenView(),
+    );
+  }
+}
+
+class ServicesScreenView extends StatelessWidget {
+  const ServicesScreenView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
     final List<BoxData> boxes = [
-      const BoxData(title: 'Boite 1', count: '12'),
-      const BoxData(title: 'Boite 2', count: '8'),
-      const BoxData(title: 'Boite 3', count: '15'),
-      const BoxData(title: 'Boite 1', count: '12'),
-      const BoxData(title: 'Boite 2', count: '8'),
-      const BoxData(title: 'Boite 3', count: '15'),
-      const BoxData(title: 'Boite 1', count: '12'),
-      const BoxData(title: 'Boite 2', count: '8'),
-      const BoxData(title: 'Boite 3', count: '15'),
-      const BoxData(title: 'Boite 1', count: '12'),
-      const BoxData(title: 'Boite 2', count: '8'),
-      const BoxData(title: 'Boite 3', count: '15'),
-      const BoxData(title: 'Boite 1', count: '12'),
-      const BoxData(title: 'Boite 2', count: '8'),
-      const BoxData(title: 'Boite 3', count: '15'),
-
-      // ... more from database
+      const BoxData(title: 'Boite 11', count: '12'),
+      const BoxData(title: 'Boite 24', count: '8'),
+      const BoxData(title: 'Boite 13', count: '15'),
+      const BoxData(title: 'Boite 15', count: '12'),
+      const BoxData(title: 'Boite 28', count: '8'),
+      const BoxData(title: 'Boite 377', count: '15'),
+      const BoxData(title: 'Boite 174', count: '12'),
+      const BoxData(title: 'Boite 217', count: '8'),
+      const BoxData(title: 'Boite 317', count: '15'),
+      const BoxData(title: 'Boite 114', count: '12'),
+      const BoxData(title: 'Boite 217', count: '8'),
+      const BoxData(title: 'Boite 317141', count: '15'),
+      const BoxData(title: 'Boite 14174', count: '12'),
+      const BoxData(title: 'Boite 21417', count: '8'),
+      const BoxData(title: 'Boite 311471', count: '15'),
+      const BoxData(title: 'Boite 11417', count: '12'),
+      const BoxData(title: 'Boite 21714', count: '8'),
+      const BoxData(title: 'Boite 31417', count: '15'),
+      const BoxData(title: 'Boite 114147', count: '12'),
+      const BoxData(title: 'Boite 214555', count: '8'),
+      const BoxData(title: 'Boite 44434', count: '15'),
+      const BoxData(title: 'Boite 174', count: '12'),
+      const BoxData(title: 'Boite 42', count: '8'),
+      const BoxData(title: 'Boite 43', count: '15'),
+      const BoxData(title: 'Boite 184', count: '12'),
+      const BoxData(title: 'Boite 28', count: '8'),
+      const BoxData(title: 'Boite 83', count: '15'),
+      const BoxData(title: 'Boite 91', count: '12'),
+      const BoxData(title: 'Boite 29', count: '8'),
+      const BoxData(title: 'Boite 39', count: '15'),
     ];
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Search bar
-          const SearchBarWidget(),
-          const SizedBox(height: 24),
 
-          // Grid of boxes
-          Expanded(child: BoxGridWidget(boxes: boxes)),
-        ],
+    // Initialize the cubit with all boxes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ServicesCubit>().initializeBoxes(boxes);
+    });
+
+    return Scaffold(
+      appBar: const CustomAppBar(
+        title: "Services",
+        username: "Walid Zaroui",
+        email: "zarwi.walid@gmail.com",
+        avatarPath: "lib/config/assets/images/default_avatar.jpg",
+        showLeading: false,
+      ),
+      body: Padding(
+        padding: EdgeInsets.only(left:16.w ,right:16.w ,top: 20.h),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SearchBarWidget(allBoxes: boxes),
+            SizedBox(height: 24.h),
+            const FilteredBoxGrid(),
+          ],
+        ),
       ),
     );
   }
@@ -51,23 +89,81 @@ class ServicesScreen extends StatelessWidget {
 
 // Search bar widget
 class SearchBarWidget extends StatelessWidget {
-  const SearchBarWidget({super.key});
+  const SearchBarWidget({super.key, required this.allBoxes});
+  final List<BoxData> allBoxes;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.grey[100],
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r),
         border: Border.all(color: Colors.grey[300]!),
       ),
-      child: const TextField(
+      child: TextField(
+        onChanged: (value) {
+          context.read<ServicesCubit>().searchBoxes(value, allBoxes);
+        },
         decoration: InputDecoration(
           hintText: 'Votre recherche ici',
-          hintStyle: TextStyle(color: Colors.grey),
-          prefixIcon: Icon(Icons.search, color: Colors.grey),
+          hintStyle: TextStyle(color: Colors.grey, fontSize: 14.sp),
+          prefixIcon: Icon(Icons.search, color: Colors.grey, size: 20.sp),
           border: InputBorder.none,
-          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: 16.w,
+            vertical: 12.h,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// Filtered box grid widget
+class FilteredBoxGrid extends StatelessWidget {
+  const FilteredBoxGrid({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<ServicesCubit, ServicesState>(
+      builder: (context, state) {
+        if (state.filteredBoxes.isEmpty) {
+          return const NoBoxesFoundWidget();
+        }
+
+        return Expanded(child: BoxGridWidget(boxes: state.filteredBoxes));
+      },
+    );
+  }
+}
+
+// No boxes found widget
+class NoBoxesFoundWidget extends StatelessWidget {
+  const NoBoxesFoundWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.search_off, size: 64.sp, color: Colors.grey[400]),
+            SizedBox(height: 16.h),
+            Text(
+              'Aucune boite trouvée',
+              style: TextStyle(
+                fontSize: 18.sp,
+                color: Colors.grey[600],
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            SizedBox(height: 8.h),
+            Text(
+              'Essayez une autre recherche',
+              style: TextStyle(fontSize: 14.sp, color: Colors.grey[500]),
+            ),
+          ],
         ),
       ),
     );
@@ -76,11 +172,9 @@ class SearchBarWidget extends StatelessWidget {
 
 // Grid widget for boxes
 class BoxGridWidget extends StatelessWidget {
-
   const BoxGridWidget({super.key, required this.boxes});
   final List<BoxData> boxes;
 
-  // Predefined UI styles that cycle through the boxes
   static const List<Color> _colors = [
     Color(0xFF5FBEAA), // Teal
     Color(0xFFE8B4CB), // Pink
@@ -98,16 +192,15 @@ class BoxGridWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2, // 4 columns on large screens, 2 on small
+        crossAxisSpacing: 16.w,
+        mainAxisSpacing: 16.h,
         childAspectRatio: 0.8,
       ),
       itemCount: boxes.length,
       itemBuilder: (context, index) {
         final box = boxes[index];
-        // Use modulo to cycle through predefined styles - works for any number of items
         final styleIndex = index % _colors.length;
 
         return BoxCardWidget(
@@ -123,7 +216,6 @@ class BoxGridWidget extends StatelessWidget {
 
 // Individual box card widget
 class BoxCardWidget extends StatelessWidget {
-
   const BoxCardWidget({
     super.key,
     required this.color,
@@ -138,24 +230,38 @@ class BoxCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Top row with icon and arrow
-            BoxCardHeaderWidget(icon: icon),
+    return GestureDetector(
+      onTap: () {
+        // Show snackbar with box title
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Box sélectionnée: $title'),
+            duration: const Duration(seconds: 2),
+          ),
 
-            const Spacer(),
+        );
 
-            // Bottom content
-            BoxCardContentWidget(title: title, count: count),
-          ],
+        // Navigate to another page (replace 'boxDetailsScreen' with your route name)
+        context.pushNamed(
+          AppRouteName.pharmacyBox,
+          extra: {'title': title, 'count': count},
+        );
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(16.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              BoxCardHeaderWidget(icon: icon),
+              const Spacer(),
+              BoxCardContentWidget(title: title, count: count),
+            ],
+          ),
         ),
       ),
     );
@@ -164,7 +270,6 @@ class BoxCardWidget extends StatelessWidget {
 
 // Box card header (icon and arrow)
 class BoxCardHeaderWidget extends StatelessWidget {
-
   const BoxCardHeaderWidget({super.key, required this.icon});
   final IconData icon;
 
@@ -174,14 +279,14 @@ class BoxCardHeaderWidget extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Container(
-          padding: const EdgeInsets.all(8),
+          padding: EdgeInsets.all(8.w),
           decoration: BoxDecoration(
             color: Colors.white.withOpacity(0.2),
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(8.r),
           ),
-          child: Icon(icon, color: Colors.white, size: 20),
+          child: Icon(icon, color: Colors.white, size: 20.sp),
         ),
-        const Icon(Icons.arrow_forward, color: Colors.white, size: 20),
+        Icon(Icons.arrow_forward, color: Colors.white, size: 20.sp),
       ],
     );
   }
@@ -189,7 +294,6 @@ class BoxCardHeaderWidget extends StatelessWidget {
 
 // Box card content (title and count)
 class BoxCardContentWidget extends StatelessWidget {
-
   const BoxCardContentWidget({
     super.key,
     required this.title,
@@ -205,18 +309,19 @@ class BoxCardContentWidget extends StatelessWidget {
       children: [
         Text(
           title,
-          style: const TextStyle(
+          style: TextStyle(
             color: Colors.white,
-            fontSize: 16,
+            fontSize: 14.sp,
             fontWeight: FontWeight.w500,
           ),
+          overflow: TextOverflow.ellipsis,
         ),
-        const SizedBox(height: 4),
+        SizedBox(height: 4.h),
         Text(
           count,
-          style: const TextStyle(
+          style: TextStyle(
             color: Colors.white,
-            fontSize: 24,
+            fontSize: 20.sp,
             fontWeight: FontWeight.bold,
           ),
         ),
