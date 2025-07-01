@@ -23,32 +23,48 @@ class LoadingOverlay extends StatelessWidget {
           Container(
             color: Colors.black.withOpacity(0.5),
             child: Center(
-              child: Container(
-                padding: EdgeInsets.only(top:40.sp,left: 20.w, right: 20.w, bottom: 20.h),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(30.r),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    CircularProgressIndicator(
-                      color: theme().colorScheme.primary,
-                      strokeWidth: 2.w,
-                    ),
-                    if (message != null) ...[
-                      SizedBox(height: 20.h),
-                      Text(
-                        message!,
-                        style: TextStyle(
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.w500,
-                          color: theme().colorScheme.onSurface,
-                        ),
-                        textAlign: TextAlign.center,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 40.w),
+                child: Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.only(
+                    top: 20.sp,
+                    left: 20.w,
+                    right: 20.w,
+                    bottom: 20.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16.r),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
                       ),
                     ],
-                  ],
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CircularProgressIndicator(
+                        color: theme().colorScheme.primary,
+                        strokeWidth: 3.0,
+                      ),
+                      if (message != null) ...[
+                        SizedBox(height: 16.h),
+                        Text(
+                          message!,
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w500,
+                            color: theme().colorScheme.onSurface,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ],
+                  ),
                 ),
               ),
             ),

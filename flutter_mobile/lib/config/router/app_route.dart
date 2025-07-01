@@ -35,7 +35,7 @@ class AppRouter {
 
   String get initialLocation {
     if (_isAuthenticated) {
-      return AppRoutePath.addMemberScreen;
+      return AppRoutePath.groupScreen;
     } else if (_hasSeenOnboarding) {
       return AppRoutePath.getStartedScreen;
     } else {
