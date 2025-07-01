@@ -50,11 +50,11 @@ class CustomLoadingButton extends StatelessWidget {
                     ),
                   ),
                   if (loadingText != null) ...[
-                    SizedBox(width: 30.w),
+                    SizedBox(width: 10.w),
                     Text(
                       loadingText!,
                       style: TextStyle(
-                        fontSize: 18.sp,
+                        fontSize: 16.sp,
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),

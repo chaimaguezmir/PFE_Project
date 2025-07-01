@@ -111,21 +111,7 @@ class _LoginForm extends StatelessWidget {
         SizedBox(height: 60.h),
         const _CustomDivider(),
         SizedBox(height: 40.h),
-        _SocialLoginButton(
-          label: "Se connecter avec Facebook",
-          icon: Image.asset(
-            'lib/config/assets/icons/facebook.png',
-            height: 20.h,
-            width: 20.w,
-          ),
-          backgroundColor: Colors.white,
-          textColor: Colors.black,
-          onPressed: () {
-            // Handle Google login
-          },
-        ),
 
-        SizedBox(height: 20.h),
 
         _SocialLoginButton(
           label: "Se connecter avec Google",
@@ -140,6 +126,22 @@ class _LoginForm extends StatelessWidget {
             // Handle Facebook login
           },
         ),
+        SizedBox(height: 20.h),
+        _SocialLoginButton(
+          label: "Se connecter avec Facebook",
+          icon: Image.asset(
+            'lib/config/assets/icons/facebook.png',
+            height: 20.h,
+            width: 20.w,
+          ),
+          backgroundColor: Colors.white,
+          textColor: Colors.black,
+          onPressed: () {
+            // Handle Google login
+          },
+        ),
+
+
 
       ],
     );
@@ -397,12 +399,12 @@ class _CustomDivider extends StatelessWidget {
       children: [
         Expanded(child: Divider(color: Colors.grey.shade300, thickness: 2.w)),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.w),
+          padding: EdgeInsets.symmetric(horizontal: 12.w),
           child: Text(
             'OU',
             style: TextStyle(
               color: Colors.grey.shade500,
-              fontSize: 18.sp,
+              fontSize: 14.sp,
               fontWeight: FontWeight.w400,
             ),
           ),

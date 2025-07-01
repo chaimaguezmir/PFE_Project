@@ -6,6 +6,7 @@ import 'package:flutter_mobile/presentation/widgets/base_widgets/custom_loading_
 import 'package:flutter_mobile/presentation/widgets/base_widgets/loading_overlay.dart';
 import 'package:flutter_mobile/presentation/widgets/base_widgets/snackbar_helper.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 
 class ForgotPasswordEmailScreen extends StatelessWidget {
   const ForgotPasswordEmailScreen({super.key});
@@ -27,22 +28,20 @@ class ForgotPasswordEmailScreen extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: theme().colorScheme.onSecondary,
-          centerTitle: true,
+
           leading: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: EdgeInsets.all(8.0.w),
             child: SizedBox(
-              width: 48.w,
-              height: 48.w,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.r),
+                    borderRadius: BorderRadius.circular(10.r),
                   ),
                   elevation: 4,
                   backgroundColor: theme().colorScheme.onSecondary,
                   padding: EdgeInsets.zero,
                 ),
-                onPressed: () => Navigator.of(context).pop(),
+                onPressed: () => context.pop(),
                 child: Icon(
                   Icons.arrow_back,
                   color: theme().colorScheme.onPrimary,
@@ -58,11 +57,7 @@ class ForgotPasswordEmailScreen extends StatelessWidget {
                 isLoading: state.isLoading,
                 message: 'Envoi du lien de réinitialisation...',
                 child: Container(
-                  padding: EdgeInsets.only(
-                    top: 150.w,
-                    left: 100.h,
-                    right: 100.w,
-                  ),
+                  padding: EdgeInsets.only(top: 50.w, left: 20.h, right: 20.w),
 
                   child: const SingleChildScrollView(
                     child: _ForgotPasswordForm(),
@@ -84,21 +79,21 @@ class _ForgotPasswordForm extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const Text(
+        Text(
           'Entrez votre  E-mail',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 24.sp, fontWeight: FontWeight.bold),
         ),
-        SizedBox(height: 20.h),
+        SizedBox(height: 10.h),
         const _ErrorDisplaySection(),
-        SizedBox(height: 80.h),
-        const Text(
+        SizedBox(height: 30.h),
+         Text(
           'Vous recevrez un lien de confirmation du changement de mot de passe à l\'adresse E-mail fournie',
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 16, color: Colors.grey),
+          style: TextStyle(fontSize: 16.sp, color: Colors.grey),
         ),
-        SizedBox(height: 80.h),
+        SizedBox(height: 40.h),
         const _EmailTextField(),
-        SizedBox(height: 100.h),
+        SizedBox(height: 50.h),
         const _CustomLoadingElevatedButton(),
 
         // Here you can add the email input field and submit button
@@ -171,7 +166,7 @@ class _CustomLoadingElevatedButton extends StatelessWidget {
           child: Text(
             "Confirmer votre adresse e-mail",
             style: TextStyle(
-              fontSize: 45.sp,
+              fontSize: 18.sp,
               color: Colors.white,
               fontWeight: FontWeight.bold,
             ),
@@ -187,15 +182,13 @@ class _ErrorDisplaySection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return // Error Display Section
-    BlocBuilder<ForgotPasswordCubit, ForgotPasswordState>(
+    return BlocBuilder<ForgotPasswordCubit, ForgotPasswordState>(
       buildWhen: (previous, current) =>
           previous.errorMessage != current.errorMessage,
       builder: (context, state) {
         if (state.hasError) {
           return Container(
-            margin: EdgeInsets.only(bottom: 40.h),
-            padding: EdgeInsets.all(30.w),
+            padding: EdgeInsets.all(10.w),
             decoration: BoxDecoration(
               color: Colors.red.shade50,
               borderRadius: BorderRadius.circular(20.r),
@@ -203,14 +196,14 @@ class _ErrorDisplaySection extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Icon(Icons.error_outline, color: Colors.red, size: 50.w),
-                SizedBox(width: 20.w),
+                Icon(Icons.error_outline, color: Colors.red, size: 20.sp),
+                SizedBox(width: 10.w),
                 Expanded(
                   child: Text(
                     state.errorMessage!,
                     style: TextStyle(
                       color: Colors.red.shade700,
-                      fontSize: 38.sp,
+                      fontSize: 16.sp,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -219,7 +212,7 @@ class _ErrorDisplaySection extends StatelessWidget {
                   onPressed: () {
                     context.read<ForgotPasswordCubit>().clearError();
                   },
-                  icon: Icon(Icons.close, color: Colors.red, size: 45.w),
+                  icon: Icon(Icons.close, color: Colors.red, size: 20.sp),
                 ),
               ],
             ),

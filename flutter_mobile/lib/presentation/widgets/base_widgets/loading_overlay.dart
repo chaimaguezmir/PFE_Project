@@ -24,7 +24,7 @@ class LoadingOverlay extends StatelessWidget {
             color: Colors.black.withOpacity(0.5),
             child: Center(
               child: Container(
-                padding: EdgeInsets.all(60.w),
+                padding: EdgeInsets.only(top:40.sp,left: 20.w, right: 20.w, bottom: 20.h),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(30.r),
@@ -41,7 +41,7 @@ class LoadingOverlay extends StatelessWidget {
                       Text(
                         message!,
                         style: TextStyle(
-                          fontSize: 20.sp,
+                          fontSize: 18.sp,
                           fontWeight: FontWeight.w500,
                           color: theme().colorScheme.onSurface,
                         ),

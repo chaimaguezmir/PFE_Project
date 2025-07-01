@@ -37,7 +37,7 @@ class AppRouter {
     if (_isAuthenticated) {
       return AppRoutePath.groupScreen;
     } else if (_hasSeenOnboarding) {
-      return AppRoutePath.getStartedScreen;
+      return AppRoutePath.forgotPasswordEmailScreen;
     } else {
       return AppRoutePath.onboarding;
     }
