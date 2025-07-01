@@ -36,8 +36,9 @@ Future<void> initInjectionContainer() async {
   sl.registerLazySingleton<Dio>(() => dio);
 
   // Interceptor (register after Dio)
-  sl.registerLazySingleton<Interceptor>(() => AuthInterceptor(sl(), sl()));
-
+  sl.registerLazySingleton<Interceptor>(
+    () => AuthInterceptor(sl<Dio>(), sl<SharedPreferences>()),
+  );
   // Add Interceptor to Dio
   dio.interceptors.add(sl<Interceptor>());
 

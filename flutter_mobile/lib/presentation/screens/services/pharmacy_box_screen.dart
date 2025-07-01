@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobile/presentation/widgets/base_widgets/simple_custom_appbar.dart';
 
 class PharmacyBoxScreen extends StatelessWidget {
   const PharmacyBoxScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Pharmacie'), centerTitle: true),
-      body: const Center(
+    return const Scaffold(
+      appBar: SimpleCustomAppBar(title: "Your Title"),
+      body: Center(
         child: Padding(
           padding: EdgeInsets.all(16.0),
           child: Column(
