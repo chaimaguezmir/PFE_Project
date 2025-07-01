@@ -18,7 +18,7 @@ import 'package:flutter_mobile/presentation/screens/group/add_member_screen.dart
 import 'package:flutter_mobile/presentation/screens/group/group_membe_screen.dart';
 import 'package:flutter_mobile/presentation/screens/group/group_screen.dart';
 import 'package:flutter_mobile/presentation/screens/home/welcome_screen.dart';
-import 'package:flutter_mobile/presentation/screens/main_screen.dart';
+import 'package:flutter_mobile/presentation/screens/bottom_bar.dart';
 
 import 'package:flutter_mobile/presentation/screens/onboarding/onboarding_screen.dart';
 import 'package:flutter_mobile/presentation/screens/profile/profile_screen.dart';
@@ -79,7 +79,7 @@ class AppRouter {
           // using a BottomNavigationBar). The StatefulNavigationShell is passed
           // to be able access the state of the shell and to navigate to other
           // branches in a stateful way.
-          return MainScreen(navigationShell: navigationShell);
+          return BottomBar(navigationShell: navigationShell);
         },
         branches: <StatefulShellBranch>[
           StatefulShellBranch(

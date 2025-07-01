@@ -3,8 +3,8 @@ import 'package:flutter_mobile/config/theme/theme_data_config.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart' show StatefulNavigationShell;
 
-class MainScreen extends StatelessWidget {
-  const MainScreen({super.key, required this.navigationShell});
+class BottomBar extends StatelessWidget {
+  const BottomBar({super.key, required this.navigationShell});
 
   final StatefulNavigationShell navigationShell;
 
@@ -15,9 +15,9 @@ class MainScreen extends StatelessWidget {
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         selectedItemColor: Theme.of(context).colorScheme.secondary,
-
-        selectedFontSize: 35.sp,
-        unselectedFontSize: 35.sp,
+        unselectedItemColor: Theme.of(context).colorScheme.onTertiary,
+        selectedFontSize: 14.sp,
+        unselectedFontSize: 14.sp,
         selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500),
         unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500),
         currentIndex: navigationShell.currentIndex,
@@ -32,8 +32,8 @@ class MainScreen extends StatelessWidget {
               color: navigationShell.currentIndex == 0
                   ? theme().colorScheme.secondary
                   : theme().colorScheme.onTertiary,
-              width: 70.sp,
-              height: 70.sp,
+              width: 24.sp,
+              height: 24.sp,
             ),
             label: 'Accueil',
           ),
@@ -43,8 +43,8 @@ class MainScreen extends StatelessWidget {
               color: navigationShell.currentIndex == 1
                   ? theme().colorScheme.secondary
                   : theme().colorScheme.onTertiary,
-              width: 70.sp,
-              height: 70.sp,
+              width: 24.sp,
+              height: 24.sp,
             ),
             label: 'Services',
           ),
@@ -54,8 +54,8 @@ class MainScreen extends StatelessWidget {
               color: navigationShell.currentIndex == 2
                   ? theme().colorScheme.secondary
                   : theme().colorScheme.onTertiary,
-              width: 70.sp,
-              height: 70.sp,
+              width: 24.sp,
+              height: 24.sp,
             ),
             label: 'Groupes',
           ),
@@ -65,8 +65,8 @@ class MainScreen extends StatelessWidget {
               color: navigationShell.currentIndex == 3
                   ? theme().colorScheme.secondary
                   : theme().colorScheme.onTertiary,
-              width: 70.sp,
-              height: 70.sp,
+              width: 24.sp,
+              height: 24.sp,
             ),
             label: 'Profile',
           ),
