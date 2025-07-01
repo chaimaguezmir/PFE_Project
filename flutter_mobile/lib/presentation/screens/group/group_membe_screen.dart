@@ -43,7 +43,11 @@ class GroupMembersScreen extends StatelessWidget {
         ),
         body: SafeArea(
           child: Container(
-            padding: EdgeInsets.only(left: 70.w, right: 70.w, top: 50.w),
+            padding: EdgeInsets.only(
+              left: 20.w,
+              right: 20.w,
+              top: 20.h,
+            ), // Reduced from 70.w, 70.w, 50.w
             width: double.infinity,
             child: const _GroupMemberBody(),
           ),
@@ -61,8 +65,7 @@ class _GroupMemberBody extends StatelessWidget {
     return Column(
       children: [
         const _GroupNameComponent(),
-        SizedBox(height: 40.h),
-
+        SizedBox(height: 20.h), // Reduced from 40.h
         const _MembersList(),
       ],
     );
@@ -80,7 +83,7 @@ class _GroupNameComponent extends StatelessWidget {
         Text(
           context.read<GroupCubit>().state.currentGroupName,
           style: TextStyle(
-            fontSize: 47.sp,
+            fontSize: 20.sp, // Reduced from 47.sp
             color: theme().colorScheme.onPrimary,
             fontWeight: FontWeight.bold,
           ),
@@ -121,18 +124,21 @@ class _MembersList extends StatelessWidget {
                 return Column(
                   children: [
                     ElevatedButton(
+
                       onPressed: () {},
                       style: ElevatedButton.styleFrom(
+                        elevation: 0,
                         shape: RoundedRectangleBorder(
                           side: BorderSide(
                             color: theme().colorScheme.tertiary,
-                            width: 2.w,
+                            width: 1.w, // Reduced from 2.w
                           ),
-                          borderRadius: BorderRadius.circular(20.r),
+                          borderRadius: BorderRadius.circular(
+                            12.r,
+                          ), // Reduced from 20.r
                         ),
-                        padding: EdgeInsets.all(30.0.w),
+                        padding: EdgeInsets.all(10.w), // Reduced from 30.0.w
                       ),
-
                       child: _MemberItem(
                         memberId: member.userId,
                         imagePath:
@@ -141,7 +147,7 @@ class _MembersList extends StatelessWidget {
                         memberRole: member.role,
                       ),
                     ),
-                    SizedBox(height: 30.h),
+                    SizedBox(height: 16.h), // Reduced from 30.h
                   ],
                 );
               }
@@ -171,8 +177,8 @@ class _MemberItem extends StatelessWidget {
     return Row(
       children: [
         Container(
-          width: 120.w,
-          height: 120.w,
+          width: 50.sp, // Reduced from 120.w
+          height: 50.sp, // Reduced from 120.w
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             image: DecorationImage(
@@ -182,7 +188,7 @@ class _MemberItem extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(width: 30.w),
+        SizedBox(width: 16.w), // Reduced from 30.w
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -190,7 +196,7 @@ class _MemberItem extends StatelessWidget {
               Text(
                 memberName,
                 style: TextStyle(
-                  fontSize: 45.sp,
+                  fontSize: 16.sp, // Reduced from 45.sp
                   color: theme().colorScheme.onPrimary,
                   fontWeight: FontWeight.bold,
                 ),
@@ -198,8 +204,8 @@ class _MemberItem extends StatelessWidget {
               Text(
                 memberRole,
                 style: TextStyle(
-                  fontSize: 30.sp,
-                  color: theme().colorScheme.onPrimary.withOpacity(0.8),
+                  fontSize: 12.sp, // Reduced from 30.sp
+                  color: theme().colorScheme.onPrimary.withOpacity(0.6),
                 ),
               ),
             ],
@@ -257,17 +263,21 @@ class _CustomPopUpMenuButtonForMembers extends StatelessWidget {
     return PopupMenuItem(
       value: value,
       child: Padding(
-        padding: EdgeInsets.all(20.0.sp),
+        padding: EdgeInsets.all(12.sp), // Reduced from 20.0.sp
         child: Row(
           children: [
-            Image.asset(iconPath, width: 70.w, height: 70.h),
-            SizedBox(width: 20.w),
+            Image.asset(
+              iconPath,
+              width: 24.w,
+              height: 24.h,
+            ), // Reduced from 70.w, 70.h
+            SizedBox(width: 12.w), // Reduced from 20.w
             Expanded(
               child: Text(
                 text,
                 maxLines: 2,
                 style: TextStyle(
-                  fontSize: 35.sp,
+                  fontSize: 14.sp, // Reduced from 35.sp
                   color: theme().colorScheme.onPrimary.withOpacity(0.6),
                 ),
               ),
@@ -335,9 +345,9 @@ class _CustomGroupPopUpMenuButton extends StatelessWidget {
                     BlendMode.srcIn,
                   ),
                   child: Image.asset(
-                    'lib/config/assets/icons/UserCircleGear.png', // your asset path
-                    width: 60.w,
-                    height: 60.w,
+                    'lib/config/assets/icons/UserCircleGear.png',
+                    width: 24.w, // Reduced from 60.w
+                    height: 24.w, // Reduced from 60.w
                   ),
                 )
               : ColorFiltered(
@@ -346,9 +356,9 @@ class _CustomGroupPopUpMenuButton extends StatelessWidget {
                     BlendMode.srcIn,
                   ),
                   child: Image.asset(
-                    'lib/config/assets/icons/UserCircleGear.png', // your asset path
-                    width: 60.w,
-                    height: 60.w,
+                    'lib/config/assets/icons/UserCircleGear.png',
+                    width: 24.w, // Reduced from 60.w
+                    height: 24.w, // Reduced from 60.w
                   ),
                 ),
           onOpened: () {
@@ -369,24 +379,22 @@ class _CustomGroupPopUpMenuButton extends StatelessWidget {
           itemBuilder: (context) => [
             PopupMenuItem(
               value: 'add',
-
-              // set your desired width
               child: Padding(
-                padding: EdgeInsets.all(20.0.sp),
+                padding: EdgeInsets.all(12.0.sp), // Reduced from 20.0.sp
                 child: Row(
                   children: [
                     Image.asset(
                       'lib/config/assets/icons/addUsers.png',
-                      width: 70.w,
-                      height: 70.h,
+                      width: 24.w, // Reduced from 70.w
+                      height: 24.h, // Reduced from 70.h
                     ),
-                    SizedBox(width: 20.w),
+                    SizedBox(width: 12.w), // Reduced from 20.w
                     Expanded(
                       child: Text(
                         'Ajouter un membre',
                         maxLines: 2,
                         style: TextStyle(
-                          fontSize: 35.sp,
+                          fontSize: 14.sp, // Reduced from 35.sp
                           color: theme().colorScheme.onPrimary.withOpacity(0.6),
                         ),
                       ),
