@@ -28,12 +28,12 @@ class CustomLoadingButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: width ?? double.infinity,
-      height: height ?? 130.h,
+      height: height ?? 50.h,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: backgroundColor ?? theme().colorScheme.primary,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(25),
+            borderRadius: BorderRadius.circular(25.r),
           ),
         ),
         onPressed: (enabled && !isLoading) ? onPressed : null,
@@ -42,19 +42,19 @@ class CustomLoadingButton extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   SizedBox(
-                    width: 50.w,
-                    height: 50.w,
+                    width: 1.w,
+                    height: 1.w,
                     child: const CircularProgressIndicator(
                       color: Colors.white,
                       strokeWidth: 3,
                     ),
                   ),
                   if (loadingText != null) ...[
-                    SizedBox(width: 30.w),
+                    SizedBox(width: 10.w),
                     Text(
                       loadingText!,
                       style: TextStyle(
-                        fontSize: 45.sp,
+                        fontSize: 16.sp,
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),

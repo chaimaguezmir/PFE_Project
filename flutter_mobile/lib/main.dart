@@ -50,7 +50,7 @@ class MyAppView extends StatelessWidget {
     final bool isAuthenticated = token != null && token.isNotEmpty;
     final GoRouter route = AppRouter(hasSeenOnboarding, isAuthenticated).router;
     return ScreenUtilInit(
-      designSize: const Size(1080, 2400),
+      designSize: const Size(411.4, 914.3),
       minTextAdapt: true,
       builder: (context, child) {
 

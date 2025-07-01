@@ -54,11 +54,11 @@ ThemeData theme() {
       unselectedIconTheme:  IconThemeData(size: 40.sp),
       selectedLabelStyle:  TextStyle(
         fontWeight: FontWeight.w400,
-        fontSize: 35.sp,
+        fontSize: 24.sp,
       ),
       unselectedLabelStyle:  TextStyle(
         fontWeight: FontWeight.w400,
-        fontSize: 35.sp,
+        fontSize: 24.sp,
       ),
       showUnselectedLabels: true,
       type: BottomNavigationBarType.fixed,

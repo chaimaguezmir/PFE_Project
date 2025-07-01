@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   const CustomAppBar({
@@ -11,8 +9,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.email,
     required this.avatarPath,
     this.onBack,
-    this.showLeading = true, // Default: show leading button
+    this.showLeading = true,
   });
+
   final String title;
   final String username;
   final String email;
@@ -21,7 +20,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool showLeading;
 
   @override
-  Size get preferredSize => Size.fromHeight(350.h);
+  Size get preferredSize => Size.fromHeight(150.h); // Reduced from 350.h
 
   @override
   Widget build(BuildContext context) {
@@ -32,48 +31,47 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       foregroundColor: theme.colorScheme.onSecondary,
       shadowColor: theme.colorScheme.onSecondary,
       surfaceTintColor: theme.colorScheme.onSecondary,
-
       centerTitle: true,
       automaticallyImplyLeading: false,
-      toolbarHeight: 130.h,
+      toolbarHeight: 55.h,
       leading: showLeading
           ? Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: ElevatedButton(
-                onPressed: onBack ?? () => Navigator.of(context).pop(),
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.r),
-                  ),
-                  backgroundColor: theme.colorScheme.onSecondary,
-                  padding: EdgeInsets.zero,
-                  elevation: 4,
-                ),
-                child: Icon(
-                  Icons.arrow_back,
-                  color: theme.colorScheme.onPrimary,
-                ),
-              ),
-            )
+        padding:  EdgeInsets.all(8.0.w), // Reduced padding
+        child: ElevatedButton(
+          onPressed: onBack ?? () => Navigator.of(context).pop(),
+          style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.r), // Slightly smaller radius
+            ),
+            backgroundColor: theme.colorScheme.onSecondary,
+            padding: EdgeInsets.zero,
+            elevation: 4,
+          ),
+          child: Icon(
+            Icons.arrow_back,
+            color: theme.colorScheme.onPrimary,
+            size: 18.sp, // Added explicit size
+          ),
+        ),
+      )
           : null,
       title: Text(
         title,
         style: TextStyle(
           color: theme.colorScheme.onPrimary,
-          fontSize: 45.sp,
-          fontWeight: FontWeight.w600,
+          fontSize: 20.sp, // Reduced from 45.sp
+          fontWeight: FontWeight.w500,
         ),
       ),
       bottom: PreferredSize(
-        preferredSize: Size.fromHeight(60.h),
+        preferredSize: Size.fromHeight(60.h), // Adjusted to fit content
         child: Padding(
-          padding: EdgeInsets.only(left: 16.w, right: 16.w, bottom: 10.h),
+          padding: EdgeInsets.only(left: 16.w, right: 16.w, bottom: 16.h),
           child: Row(
             children: [
-              SizedBox(width: 20.w),
               Container(
-                width: 150.w,
-                height: 150.w,
+                width: 50.w, // Reduced from 150.w
+                height: 50.w, // Reduced from 150.w
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   image: DecorationImage(
@@ -83,24 +81,32 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   ),
                 ),
               ),
-              SizedBox(width: 30.w),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    username,
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      color: theme.colorScheme.onPrimary,
-                      fontWeight: FontWeight.bold,
+              SizedBox(width: 16.w), // Reduced spacing
+              Expanded( // Added Expanded to prevent overflow
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      username,
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        color: theme.colorScheme.onPrimary,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16.sp, // Added explicit size
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                  Text(
-                    email,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onPrimary.withOpacity(0.7),
+                    SizedBox(height: 4.h), // Added spacing between texts
+                    Text(
+                      email,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onPrimary.withOpacity(0.7),
+                        fontSize: 14.sp, // Added explicit size
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),

@@ -35,11 +35,7 @@ class LoginScreen extends StatelessWidget {
                 isLoading: state.isLoading,
                 message: 'Connexion en cours...',
                 child: Container(
-                  padding: EdgeInsets.only(
-                    top: 150.w,
-                    left: 100.h,
-                    right: 100.w,
-                  ),
+                  padding: EdgeInsets.only(top: 50.w, left: 20.h, right: 20.w),
                   child: const SingleChildScrollView(child: _LoginForm()),
                 ),
               );
@@ -59,17 +55,17 @@ class _LoginForm extends StatelessWidget {
     return Column(
       children: [
         const _TitleWidget(),
-        SizedBox(height: 80.h),
+        SizedBox(height: 15.h),
 
         // Error Display Section
         BlocBuilder<LoginCubit, LoginState>(
           buildWhen: (previous, current) =>
-              previous.errorMessage != current.errorMessage,
+          previous.errorMessage != current.errorMessage,
           builder: (context, state) {
             if (state.hasError) {
               return Container(
-                margin: EdgeInsets.only(bottom: 40.h),
-                padding: EdgeInsets.all(30.w),
+                margin: EdgeInsets.only(bottom: 10.h),
+                padding: EdgeInsets.all(10.w),
                 decoration: BoxDecoration(
                   color: Colors.red.shade50,
                   borderRadius: BorderRadius.circular(20.r),
@@ -77,14 +73,14 @@ class _LoginForm extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.error_outline, color: Colors.red, size: 50.w),
-                    SizedBox(width: 20.w),
+                    Icon(Icons.error_outline, color: Colors.red, size: 20.sp),
+                    SizedBox(width: 10.w),
                     Expanded(
                       child: Text(
                         state.errorMessage!,
                         style: TextStyle(
                           color: Colors.red.shade700,
-                          fontSize: 38.sp,
+                          fontSize: 16.sp,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -93,7 +89,7 @@ class _LoginForm extends StatelessWidget {
                       onPressed: () {
                         context.read<LoginCubit>().clearError();
                       },
-                      icon: Icon(Icons.close, color: Colors.red, size: 45.w),
+                      icon: Icon(Icons.close, color: Colors.red, size: 20.sp),
                     ),
                   ],
                 ),
@@ -102,24 +98,41 @@ class _LoginForm extends StatelessWidget {
             return const SizedBox.shrink();
           },
         ),
+        SizedBox(height: 15.h),
 
         const _InputFieldsSection(),
-        SizedBox(height: 30.h),
+        SizedBox(height: 20.h),
         const _ForgotPasswordLink(),
-        SizedBox(height: 80.h),
+        SizedBox(height: 30.h),
         const _LoginButton(),
 
-        SizedBox(height: 60.h),
+        SizedBox(height: 30.h),
         const _SignUpLink(),
-        SizedBox(height: 100.h),
+        SizedBox(height: 60.h),
         const _CustomDivider(),
-        SizedBox(height: 100.h),
+        SizedBox(height: 40.h),
+
+
+        _SocialLoginButton(
+          label: "Se connecter avec Google",
+          icon: Image.asset(
+            'lib/config/assets/icons/google.png',
+            height: 20.h,
+            width: 20.w,
+          ),
+          backgroundColor: Colors.white,
+          textColor: Colors.black,
+          onPressed: () {
+            // Handle Facebook login
+          },
+        ),
+        SizedBox(height: 20.h),
         _SocialLoginButton(
           label: "Se connecter avec Facebook",
           icon: Image.asset(
             'lib/config/assets/icons/facebook.png',
-            height: 70.h,
-            width: 70.w,
+            height: 20.h,
+            width: 20.w,
           ),
           backgroundColor: Colors.white,
           textColor: Colors.black,
@@ -128,21 +141,8 @@ class _LoginForm extends StatelessWidget {
           },
         ),
 
-        SizedBox(height: 70.h),
 
-        _SocialLoginButton(
-          label: "Se connecter avec Google",
-          icon: Image.asset(
-            'lib/config/assets/icons/google.png',
-            height: 70.h,
-            width: 70.w,
-          ),
-          backgroundColor: Colors.white,
-          textColor: Colors.black,
-          onPressed: () {
-            // Handle Facebook login
-          },
-        ),
+
       ],
     );
   }
@@ -158,7 +158,7 @@ class _TitleWidget extends StatelessWidget {
       child: Text(
         'Se Connecter',
         style: TextStyle(
-          fontSize: 60.sp,
+          fontSize: 30.sp,
           fontWeight: FontWeight.bold,
           color: theme().colorScheme.onPrimary,
         ),
@@ -175,7 +175,7 @@ class _InputFieldsSection extends StatelessWidget {
     return Column(
       children: [
         const _EmailField(),
-        SizedBox(height: 50.h),
+        SizedBox(height: 20.h),
         const _PasswordField(),
       ],
     );
@@ -189,7 +189,7 @@ class _EmailField extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<LoginCubit, LoginState>(
       buildWhen: (previous, current) =>
-          previous.email != current.email ||
+      previous.email != current.email ||
           previous.errorMessage != current.errorMessage,
       builder: (context, state) {
         return TextField(
@@ -238,7 +238,7 @@ class _PasswordField extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<LoginCubit, LoginState>(
       buildWhen: (previous, current) =>
-          previous.password != current.password ||
+      previous.password != current.password ||
           previous.isPasswordVisible != current.isPasswordVisible ||
           previous.errorMessage != current.errorMessage,
       builder: (context, state) {
@@ -305,13 +305,13 @@ class _ForgotPasswordLink extends StatelessWidget {
             onTap: state.isLoading
                 ? null
                 : () {
-                    context.pushNamed(AppRouteName.forgotPasswordEmailScreen);
-                  },
+              context.pushNamed(AppRouteName.forgotPasswordEmailScreen);
+            },
             child: Text(
               'Mot de passe oublié ?',
               style: TextStyle(
                 color: theme().colorScheme.secondary,
-                fontSize: 40.sp,
+                fontSize: 16.sp,
                 decoration: TextDecoration.none,
               ),
             ),
@@ -330,20 +330,23 @@ class _LoginButton extends StatelessWidget {
     return BlocBuilder<LoginCubit, LoginState>(
       buildWhen: (previous, current) => previous.isLoading != current.isLoading,
       builder: (context, state) {
-        return CustomLoadingButton(
-          isLoading: state.isLoading,
-          loadingText: "Connexion...",
-          onPressed: state.isLoading
-              ? null
-              : () {
-                  context.read<LoginCubit>().signInWithCredentials(context);
-                },
-          child: Text(
-            'Se Connecter',
-            style: TextStyle(
-              fontSize: 45.sp,
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
+          child: CustomLoadingButton(
+            isLoading: state.isLoading,
+            loadingText: "Connexion...",
+            onPressed: state.isLoading
+                ? null
+                : () {
+              context.read<LoginCubit>().signInWithCredentials(context);
+            },
+            child: Text(
+              'Se Connecter',
+              style: TextStyle(
+                fontSize: 18.sp,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         );
@@ -363,7 +366,7 @@ class _SignUpLink extends StatelessWidget {
         Text(
           "Vous n'avez pas de compte ? ",
           style: TextStyle(
-            fontSize: 40.sp,
+            fontSize: 16.sp,
             color: theme().colorScheme.onTertiary,
           ),
         ),
@@ -371,9 +374,10 @@ class _SignUpLink extends StatelessWidget {
           text: TextSpan(
             text: "S'inscrire",
             style: TextStyle(
-              fontSize: 40.sp,
+              fontSize: 16.sp,
+
               color: theme().colorScheme.secondary,
-              decoration: TextDecoration.underline,
+              decoration: TextDecoration.none,
             ),
             recognizer: TapGestureRecognizer()
               ..onTap = () {
@@ -393,19 +397,19 @@ class _CustomDivider extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Expanded(child: Divider(color: Colors.grey.shade300, thickness: 2.0)),
+        Expanded(child: Divider(color: Colors.grey.shade300, thickness: 2.w)),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          padding: EdgeInsets.symmetric(horizontal: 12.w),
           child: Text(
             'OU',
             style: TextStyle(
               color: Colors.grey.shade500,
-              fontSize: 38.sp,
+              fontSize: 14.sp,
               fontWeight: FontWeight.w400,
             ),
           ),
         ),
-        Expanded(child: Divider(color: Colors.grey.shade300, thickness: 2.0)),
+        Expanded(child: Divider(color: Colors.grey.shade300, thickness: 2.w)),
       ],
     );
   }
@@ -429,28 +433,28 @@ class _SocialLoginButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 130.h,
+      height: 60.h,
       width: double.infinity,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: backgroundColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(100.r),
-            side: BorderSide(color: theme().colorScheme.tertiary, width: 4.w),
+            side: BorderSide(color: theme().colorScheme.tertiary, width: 1.w),
           ),
 
-          elevation: 1,
+          elevation: 0,
         ),
         onPressed: onPressed,
         child: Row(
           children: [
-            SizedBox(width: 10.w),
+            SizedBox(width: 1.w),
             icon,
-            SizedBox(width: 50.w),
+            SizedBox(width: 25.w),
             Text(
               label,
               style: TextStyle(
-                fontSize: 42.sp,
+                fontSize: 18.sp,
                 color: textColor,
                 fontWeight: FontWeight.w500,
               ),

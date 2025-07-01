@@ -28,7 +28,7 @@ class AccountVerificationScreen extends StatelessWidget {
         resizeToAvoidBottomInset: false,
         body: SafeArea(
           child: Container(
-            padding: EdgeInsets.only(left: 80.w, right: 80.w, top: 150.w),
+            padding: EdgeInsets.only(top: 50.w, left: 20.h, right: 20.w),
             child: const _AccountVerificationForm(),
           ),
         ),
@@ -46,18 +46,18 @@ class _AccountVerificationForm extends StatelessWidget {
       children: [
         Text(
           'OTP Verification',
-          style: TextStyle(fontSize: 60.sp, fontWeight: FontWeight.w700),
+          style: TextStyle(fontSize: 30.sp, fontWeight: FontWeight.w700),
         ),
-        SizedBox(height: 130.h),
+        SizedBox(height: 50.h),
         Text(
           textAlign: TextAlign.center,
           'Entrez le code de vérification que nous venons d\'envoyer à votre adresse e-mail',
-          style: TextStyle(fontSize: 40.sp, color: Colors.grey[600]),
+          style: TextStyle(fontSize: 18.sp, color: Colors.grey[600]),
         ),
-        SizedBox(height: 80.h),
+        SizedBox(height: 40.h),
         const _OtpWithResend(),
 
-        SizedBox(height: 150.h),
+        SizedBox(height: 50.h),
         BlocBuilder<SignUpCubit, SignUpState>(
           buildWhen: (previous, current) =>
               previous.isButtonEnabled != current.isButtonEnabled,
@@ -70,7 +70,7 @@ class _AccountVerificationForm extends StatelessWidget {
               child: Text(
                 'Envoyer',
                 style: TextStyle(
-                  fontSize: 40.sp,
+                  fontSize: 20.sp,
                   fontWeight: FontWeight.w500,
                   color: theme().colorScheme.onSecondary,
                 ),
@@ -96,7 +96,7 @@ class _OtpWithResend extends StatelessWidget {
             Text(
               'Enter Otp Code',
               style: TextStyle(
-                fontSize: 40.sp,
+                fontSize: 17.sp,
                 fontWeight: FontWeight.w500,
                 color: theme().colorScheme.onTertiary,
               ),
@@ -117,7 +117,7 @@ class _OtpWithResend extends StatelessWidget {
                         : 'Resend in 00:${state.otpResendCounter.toString().padLeft(2, '0')}  ',
 
                     style: TextStyle(
-                      fontSize: 38.sp,
+                      fontSize: 17.sp,
                       color: state.otpResendCounter == 0
                           ? theme().colorScheme.secondary
                           : Colors.grey,
@@ -130,7 +130,7 @@ class _OtpWithResend extends StatelessWidget {
             ),
           ],
         ),
-        SizedBox(height: 50.h),
+        SizedBox(height: 20.h),
         const _CustomOtpTextField(),
       ],
     );
@@ -146,7 +146,7 @@ class _CustomOtpTextField extends StatelessWidget {
       buildWhen: (previous, current) => previous.otpCode != current.otpCode,
       builder: (context, state) {
         return OtpTextField(
-          fieldWidth: 120.w,
+          fieldWidth: 50.w,
           enabledBorderColor: theme().colorScheme.onTertiary,
           focusedBorderColor: theme().colorScheme.secondary,
 

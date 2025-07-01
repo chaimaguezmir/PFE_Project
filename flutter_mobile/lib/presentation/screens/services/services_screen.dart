@@ -1,194 +1,226 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_mobile/config/theme/theme_data_config.dart';
-import 'package:flutter_mobile/presentation/widgets/base_widgets/custom_app_bar.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+// Data model for box items from database
+class BoxData {
+  const BoxData({required this.title, required this.count});
+  final String title;
+  final String count;
+}
+
+// Main screen content widget
 class ServicesScreen extends StatelessWidget {
   const ServicesScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Sample data - in a real app, this would come from a model or API
-    final List<BoxItem> boxItems = List.generate(
-      100,
-          (index) => BoxItem(
-        id: index + 1,
-        title: 'Boite ${index + 1}',
-        count: 12 + index,
-        icon: Icons.monitor_heart_rounded,
-        color: Colors.green,
-      ),
-    );
+    final List<BoxData> boxes = [
+      const BoxData(title: 'Boite 1', count: '12'),
+      const BoxData(title: 'Boite 2', count: '8'),
+      const BoxData(title: 'Boite 3', count: '15'),
+      const BoxData(title: 'Boite 1', count: '12'),
+      const BoxData(title: 'Boite 2', count: '8'),
+      const BoxData(title: 'Boite 3', count: '15'),
+      const BoxData(title: 'Boite 1', count: '12'),
+      const BoxData(title: 'Boite 2', count: '8'),
+      const BoxData(title: 'Boite 3', count: '15'),
+      const BoxData(title: 'Boite 1', count: '12'),
+      const BoxData(title: 'Boite 2', count: '8'),
+      const BoxData(title: 'Boite 3', count: '15'),
+      const BoxData(title: 'Boite 1', count: '12'),
+      const BoxData(title: 'Boite 2', count: '8'),
+      const BoxData(title: 'Boite 3', count: '15'),
 
-    return Scaffold(
-      appBar: const CustomAppBar(
-        title: "Groupes",
-        username: "Walid Zaroui",
-        email: "zarwi.walid@gmail.com",
-        avatarPath: "lib/config/assets/images/default_avatar.jpg",
-        showLeading: false,
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 40.h),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildTitle(context),
-              SizedBox(height: 40.h),
-              _buildBoxList(boxItems),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+      // ... more from database
+    ];
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Search bar
+          const SearchBarWidget(),
+          const SizedBox(height: 24),
 
-  Widget _buildTitle(BuildContext context) {
-    return Text(
-      'Vos Boites',
-      style: TextStyle(
-        color: theme().colorScheme.onPrimary,
-        fontWeight: FontWeight.w700,
-        fontSize: 45.sp,
-      ),
-    );
-  }
-
-  Widget _buildBoxList(List<BoxItem> items) {
-    return SizedBox(
-      height: 450.h,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: items.length,
-        itemBuilder: (context, index) {
-          return Container(
-            margin: EdgeInsets.only(
-              right: index < items.length - 1 ? 30.w : 0, // No margin on last item
-              bottom: 20.h, // Bottom margin for all items
-            ),
-            child: BoxCard(item: items[index]),
-          );
-        },
+          // Grid of boxes
+          Expanded(child: BoxGridWidget(boxes: boxes)),
+        ],
       ),
     );
   }
 }
 
-class BoxCard extends StatelessWidget {
-
-  const BoxCard({
-    super.key,
-    required this.item,
-  });
-  final BoxItem item;
+// Search bar widget
+class SearchBarWidget extends StatelessWidget {
+  const SearchBarWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 300.w,
-      margin: EdgeInsets.symmetric(
-        horizontal: 10.w, // Horizontal margin around the card
-        vertical: 15.h,   // Vertical margin around the card
+      decoration: BoxDecoration(
+        color: Colors.grey[100],
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey[300]!),
       ),
-      child: ElevatedButton(
-        onPressed: () => _onBoxTapped(context),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: item.color.shade200,
-          elevation:0,
-          shadowColor: item.color.shade300,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20.r),
-          ),
-          padding: EdgeInsets.all(30.w),
+      child: const TextField(
+        decoration: InputDecoration(
+          hintText: 'Votre recherche ici',
+          hintStyle: TextStyle(color: Colors.grey),
+          prefixIcon: Icon(Icons.search, color: Colors.grey),
+          border: InputBorder.none,
+          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         ),
+      ),
+    );
+  }
+}
+
+// Grid widget for boxes
+class BoxGridWidget extends StatelessWidget {
+
+  const BoxGridWidget({super.key, required this.boxes});
+  final List<BoxData> boxes;
+
+  // Predefined UI styles that cycle through the boxes
+  static const List<Color> _colors = [
+    Color(0xFF5FBEAA), // Teal
+    Color(0xFFE8B4CB), // Pink
+    Color(0xFF8FA7FF), // Blue
+    Color(0xFFE5D5A3), // Beige
+  ];
+
+  static const List<IconData> _icons = [
+    Icons.folder_outlined,
+    Icons.favorite_outline,
+    Icons.folder_outlined,
+    Icons.favorite_outline,
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return GridView.builder(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 16,
+        mainAxisSpacing: 16,
+        childAspectRatio: 0.8,
+      ),
+      itemCount: boxes.length,
+      itemBuilder: (context, index) {
+        final box = boxes[index];
+        // Use modulo to cycle through predefined styles - works for any number of items
+        final styleIndex = index % _colors.length;
+
+        return BoxCardWidget(
+          color: _colors[styleIndex],
+          icon: _icons[styleIndex],
+          title: box.title,
+          count: box.count,
+        );
+      },
+    );
+  }
+}
+
+// Individual box card widget
+class BoxCardWidget extends StatelessWidget {
+
+  const BoxCardWidget({
+    super.key,
+    required this.color,
+    required this.icon,
+    required this.title,
+    required this.count,
+  });
+  final Color color;
+  final IconData icon;
+  final String title;
+  final String count;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildHeader(),
-            _buildFooter(),
+            // Top row with icon and arrow
+            BoxCardHeaderWidget(icon: icon),
+
+            const Spacer(),
+
+            // Bottom content
+            BoxCardContentWidget(title: title, count: count),
           ],
         ),
       ),
     );
   }
+}
 
-  Widget _buildHeader() {
+// Box card header (icon and arrow)
+class BoxCardHeaderWidget extends StatelessWidget {
+
+  const BoxCardHeaderWidget({super.key, required this.icon});
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Container(
-          padding: EdgeInsets.all(20.w),
+          padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20.r),
-            color: item.color.shade300,
+            color: Colors.white.withOpacity(0.2),
+            borderRadius: BorderRadius.circular(8),
           ),
-          child: Icon(
-            item.icon,
-            size: 60.w,
-            color: Colors.white,
-          ),
+          child: Icon(icon, color: Colors.white, size: 20),
         ),
-        Icon(
-          Icons.arrow_right_alt_outlined,
-          size: 60.w,
-          color: Colors.black54,
-        ),
+        const Icon(Icons.arrow_forward, color: Colors.white, size: 20),
       ],
     );
   }
+}
 
-  Widget _buildFooter() {
+// Box card content (title and count)
+class BoxCardContentWidget extends StatelessWidget {
+
+  const BoxCardContentWidget({
+    super.key,
+    required this.title,
+    required this.count,
+  });
+  final String title;
+  final String count;
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          item.title,
-          style: TextStyle(
-            fontSize: 32.sp,
-            fontWeight: FontWeight.w700,
-            color: Colors.black87,
+          title,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
           ),
         ),
-        SizedBox(height: 10.h),
+        const SizedBox(height: 4),
         Text(
-          '${item.count}',
-          style: TextStyle(
-            fontSize: 28.sp,
-            fontWeight: FontWeight.w600,
-            color: Colors.black54,
+          count,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
           ),
         ),
       ],
     );
   }
-
-  void _onBoxTapped(BuildContext context) {
-    // Handle box tap - navigate to detail screen or show dialog
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('${item.title} tapped!'),
-        duration: const Duration(seconds: 1),
-      ),
-    );
-  }
 }
-
-// Data model for box items
-class BoxItem {
-
-  const BoxItem({
-    required this.id,
-    required this.title,
-    required this.count,
-    required this.icon,
-    required this.color,
-  });
-  final int id;
-  final String title;
-  final int count;
-  final IconData icon;
-  final MaterialColor color;
-}
-

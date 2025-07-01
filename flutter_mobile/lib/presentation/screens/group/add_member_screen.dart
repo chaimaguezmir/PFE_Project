@@ -13,8 +13,7 @@ class AddMemberScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:
-          theme().colorScheme.onSecondary, // Match your app bar color
+      backgroundColor: theme().colorScheme.onSecondary,
       appBar: const CustomAppBar(
         title: "Ajouter Un Membre",
         username: "Walid Zaroui",
@@ -24,149 +23,204 @@ class AddMemberScreen extends StatelessWidget {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: EdgeInsets.only(left: 50.w, right: 50.w, top: 150.w),
-          child: Column(
+          padding: EdgeInsets.only(left: 20.w, right: 20.w, top: 24.w),
+          child: const Column(
             children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
+              _QRCodeSection(),
+              _ScanningSection(),
+              _QRCodeButton(),
+              _EmailSection(),
+              _AddMemberButton(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _QRCodeSection extends StatelessWidget {
+  const _QRCodeSection();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Image.asset(
+              'lib/config/assets/icons/ScanQrCode.png',
+              width: 40.w,
+              height: 40.h,
+            ),
+            SizedBox(width: 16.w),
+            Text(
+              'Scanner un QR code',
+              style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w500),
+            ),
+          ],
+        ),
+        SizedBox(height: 8.h),
+        Text(
+          'Autorisez la caméra pour scanner le QR code du membre.',
+          style: TextStyle(
+            fontSize: 14.sp,
+            color: theme().colorScheme.onPrimary.withOpacity(0.5),
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ScanningSection extends StatelessWidget {
+  const _ScanningSection();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        SizedBox(height: 32.h),
+        Image.asset(
+          'lib/config/assets/images/Scanning.png',
+          width: 100.w,
+          height: 100.h,
+        ),
+        SizedBox(height: 20.h),
+        Text(
+          'Scanning Code...',
+          style: TextStyle(
+            fontSize: 16.sp,
+            color: theme().colorScheme.onPrimary.withOpacity(0.4),
+          ),
+        ),
+        SizedBox(height: 16.h),
+        Image.asset(
+          'lib/config/assets/icons/stackScanningIcons.png',
+          width: 80.w,
+        ),
+        SizedBox(height: 40.h),
+      ],
+    );
+  }
+}
+
+class _QRCodeButton extends StatelessWidget {
+  const _QRCodeButton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 40.0.w),
+          child: SizedBox(
+            width: double.infinity,
+            child: OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(
+                  color: theme().colorScheme.secondary,
+                  width: 2.w,
+                ),
+                padding: EdgeInsets.symmetric(vertical: 16.h),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(25.r),
+                ),
+              ),
+              onPressed: () {
+                // context.goNamed(AppRouteName.signUp);
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Image.asset(
-                    'lib/config/assets/icons/ScanQrCode.png',
-                    width: 100.w,
-                    height: 100.h,
-                  ),
-                  SizedBox(width: 40.w),
                   Text(
-                    'Scanner un QR code',
+                    "Scanner QR Code",
                     style: TextStyle(
-                      fontSize: 50.sp,
+                      fontSize: 16.sp,
+                      color: theme().colorScheme.secondary,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
+                  SizedBox(width: 12.w),
+                  Icon(
+                    Icons.qr_code_scanner,
+                    color: theme().colorScheme.secondary,
+                    size: 20.w,
+                  ),
                 ],
               ),
-              SizedBox(height: 15.h),
+            ),
+          ),
+        ),
+        SizedBox(height: 32.h),
+      ],
+    );
+  }
+}
+
+class _EmailSection extends StatelessWidget {
+  const _EmailSection();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            'Identifiant utilisateur',
+            textAlign: TextAlign.left,
+            style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w500),
+          ),
+        ),
+        SizedBox(height: 12.h),
+        const _EmailField(),
+        SizedBox(height: 32.h),
+      ],
+    );
+  }
+}
+
+class _AddMemberButton extends StatelessWidget {
+  const _AddMemberButton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 40.0.w),
+      child: SizedBox(
+        width: double.infinity,
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: theme().colorScheme.secondary,
+            padding: EdgeInsets.symmetric(vertical: 16.h),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(25.r),
+            ),
+          ),
+          onPressed: () {
+            context.read<GroupCubit>().addMember();
+          },
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
               Text(
-                'Autorisez la caméra pour scanner le QR code du membre.',
+                "Ajouter au groupe",
                 style: TextStyle(
-                  fontSize: 35.sp,
-                  color: theme().colorScheme.onPrimary.withOpacity(0.5),
-                  fontWeight: FontWeight.w400,
+                  fontSize: 16.sp,
+                  color: theme().colorScheme.onSecondary,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
-              SizedBox(height: 100.h),
-              Image.asset(
-                'lib/config/assets/images/Scanning.png',
-                width: 250.w,
-                height: 250.h,
-              ),
-              SizedBox(height: 60.h),
-              Text(
-                'Scanning Code...',
-                style: TextStyle(
-                  fontSize: 30.sp,
-                  color: theme().colorScheme.onPrimary.withOpacity(0.4),
-                ),
-              ),
-              SizedBox(height: 35.h),
-              Image.asset(
-                'lib/config/assets/icons/stackScanningIcons.png',
-                width: 250.w,
-              ),
-              SizedBox(height: 150.h),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 180.0.w),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(
-                        color: theme().colorScheme.secondary,
-                        width: 3.w,
-                      ),
-                      padding: EdgeInsets.symmetric(vertical: 30.h),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(100.r),
-                      ),
-                    ),
-                    onPressed: () {
-                      // context.goNamed(AppRouteName.signUp);
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Ajouter au groupe",
-                          style: TextStyle(
-                            fontSize: 40.sp,
-                            color: theme().colorScheme.secondary,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        SizedBox(width: 30.w),
-                        Icon(
-                          Icons.add_circle_outline,
-                          color: theme().colorScheme.secondary,
-                          size: 60.w,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: 80.h),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Identifiant utilisateur',
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    fontSize: 42.sp,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-              SizedBox(height: 20.h),
-              const _EmailField(),
-              SizedBox(height: 120.h),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 180.0.w),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: theme().colorScheme.secondary,
-                      padding: EdgeInsets.symmetric(vertical: 30.h),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(100.r),
-                      ),
-                    ),
-                    onPressed: () {
-                      context.read<GroupCubit>().addMember();
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Ajouter au groupe",
-                          style: TextStyle(
-                            fontSize: 40.sp,
-                            color: theme().colorScheme.onSecondary,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        SizedBox(width: 30.w),
-                        Icon(
-                          Icons.add_circle_outline,
-                          color: theme().colorScheme.onSecondary,
-                          size: 60.w,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+              SizedBox(width: 12.w),
+              Icon(
+                Icons.add_circle_outline,
+                color: theme().colorScheme.onSecondary,
+                size: 20.w,
               ),
             ],
           ),
@@ -202,20 +256,23 @@ class _EmailField extends StatelessWidget {
             ),
             labelText: 'Entrez votre E-mail',
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(100.r)),
+              borderRadius: BorderRadius.all(
+                Radius.circular(25.r),
+              ), // Reduced from 100.r
               borderSide: BorderSide(
                 width: 2.0,
-                color: theme().colorScheme.tertiary, // default border color
+                color: theme().colorScheme.tertiary,
               ),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(100.r)),
+              borderRadius: BorderRadius.all(
+                Radius.circular(25.r),
+              ), // Reduced from 100.r
               borderSide: BorderSide(
-                color: theme().colorScheme.primary, // border color when typing
+                color: theme().colorScheme.primary,
                 width: 2.0,
               ),
             ),
-
             filled: true,
             fillColor: Colors.grey.shade50,
             errorText: state.errorMessage,
