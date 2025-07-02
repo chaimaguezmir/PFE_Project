@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:formz/formz.dart';
 
 part 'services_state.dart';
@@ -7,12 +8,14 @@ part 'services_state.dart';
 class ServicesCubit extends Cubit<ServicesState> {
   ServicesCubit() : super(const ServicesState());
 
+  //resetSearch
+  void resetSearch(List<BoxData> allBoxes) {
+    emit(state.copyWith(filteredBoxes: allBoxes, searchQuery: ''));
+  }
+
   void searchBoxes(String query, List<BoxData> allBoxes) {
     if (query.isEmpty) {
-      emit(state.copyWith(
-        filteredBoxes: allBoxes,
-        searchQuery: '',
-      ));
+      emit(state.copyWith(filteredBoxes: allBoxes, searchQuery: ''));
       return;
     }
 
@@ -20,10 +23,7 @@ class ServicesCubit extends Cubit<ServicesState> {
         .where((box) => box.title.toLowerCase().contains(query.toLowerCase()))
         .toList();
 
-    emit(state.copyWith(
-      filteredBoxes: filteredBoxes,
-      searchQuery: query,
-    ));
+    emit(state.copyWith(filteredBoxes: filteredBoxes, searchQuery: query));
   }
 
   void initializeBoxes(List<BoxData> boxes) {

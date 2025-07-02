@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_mobile/core/constants/api_endpoint.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:flutter_mobile/core/services/navigation_service.dart'; // ← si tu veux rediriger
 
 class AuthInterceptor extends Interceptor {
   AuthInterceptor(this.dio, this.prefs);
@@ -90,6 +89,5 @@ class AuthInterceptor extends Interceptor {
     await prefs.remove('refresh_token');
 
     // TODO: redirection vers la page de connexion
-
   }
 }

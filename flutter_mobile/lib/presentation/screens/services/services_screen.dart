@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_mobile/config/router/app_route_constants.dart';
+import 'package:flutter_mobile/config/theme/theme_data_config.dart';
 import 'package:flutter_mobile/presentation/bloc/services/services_cubit.dart';
 import 'package:flutter_mobile/presentation/widgets/base_widgets/custom_app_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -10,14 +11,17 @@ import 'package:go_router/go_router.dart';
 
 // Main screen content widget
 class ServicesScreen extends StatelessWidget {
-  const ServicesScreen({super.key});
+  ServicesScreen({super.key});
+
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => ServicesCubit(),
-      child: const ServicesScreenView(),
-    );
+    _searchController.addListener(() {
+      //tODO: Implement search functionality
+     // context.read<ServicesCubit>().onSearchChanged(_searchController.text);
+    });
+    return const ServicesScreenView();
   }
 }
 
@@ -73,7 +77,7 @@ class ServicesScreenView extends StatelessWidget {
         showLeading: false,
       ),
       body: Padding(
-        padding: EdgeInsets.only(left:16.w ,right:16.w ,top: 20.h),
+        padding: EdgeInsets.only(left: 16.w, right: 16.w, top: 20.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -94,21 +98,49 @@ class SearchBarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final TextEditingController searchController = TextEditingController();
     return Container(
       decoration: BoxDecoration(
         color: Colors.grey[100],
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular(50.r),
         border: Border.all(color: Colors.grey[300]!),
       ),
+
       child: TextField(
+        controller: searchController,
         onChanged: (value) {
           context.read<ServicesCubit>().searchBoxes(value, allBoxes);
         },
+
         decoration: InputDecoration(
+          suffixIcon: IconButton(
+            icon: Icon(Icons.clear, color: Colors.grey, size: 20.sp),
+            onPressed: () {
+              FocusScope.of(context).unfocus();
+              searchController.clear();
+              context.read<ServicesCubit>().resetSearch(allBoxes);
+            },
+          ),
           hintText: 'Votre recherche ici',
           hintStyle: TextStyle(color: Colors.grey, fontSize: 14.sp),
           prefixIcon: Icon(Icons.search, color: Colors.grey, size: 20.sp),
           border: InputBorder.none,
+
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(50.r),
+            borderSide: BorderSide(color: Colors.grey[300]!, width: 1.w),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(50.r),
+            borderSide: BorderSide(
+              color: theme().colorScheme.primary,
+              width: 1.w,
+            ),
+          ),
+          disabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(50.r),
+            borderSide: BorderSide(color: Colors.grey[300]!, width: 1.w),
+          ),
           contentPadding: EdgeInsets.symmetric(
             horizontal: 16.w,
             vertical: 12.h,
@@ -126,6 +158,9 @@ class FilteredBoxGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ServicesCubit, ServicesState>(
+      buildWhen: (previous, current) =>
+          previous.filteredBoxes != current.filteredBoxes ||
+          previous.searchQuery != current.searchQuery,
       builder: (context, state) {
         if (state.filteredBoxes.isEmpty) {
           return const NoBoxesFoundWidget();
@@ -238,7 +273,6 @@ class BoxCardWidget extends StatelessWidget {
             content: Text('Box sélectionnée: $title'),
             duration: const Duration(seconds: 2),
           ),
-
         );
 
         // Navigate to another page (replace 'boxDetailsScreen' with your route name)
