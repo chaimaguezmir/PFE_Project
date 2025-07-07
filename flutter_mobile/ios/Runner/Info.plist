@@ -47,5 +47,9 @@
 		<true/>
 		<key>UIStatusBarHidden</key>
 		<false/>
+		<key>NSCameraUsageDescription</key>
+        <string>Camera permission is required for barcode & QR code scanning.</string>
+        <key>NSPhotoLibraryUsageDescription</key>
+        <string>This app needs photos access to get QR code from photo library</string>
 	</dict>
 </plist>

@@ -39,7 +39,7 @@ class AppRouter {
     if (_isAuthenticated) {
       return AppRoutePath.services;
     } else if (_hasSeenOnboarding) {
-      return AppRoutePath.getStartedScreen;
+      return AppRoutePath.services;
     } else {
       return AppRoutePath.onboarding;
     }
@@ -106,7 +106,7 @@ class AppRouter {
                   GoRoute(
                     name: AppRouteName.services,
                     path: AppRoutePath.services,
-                    builder: (context, state) => const ServicesScreen(),
+                    builder: (context, state) =>  ServicesScreen(),
                   ),
                   GoRoute(
                     name: AppRouteName.pharmacyBox,

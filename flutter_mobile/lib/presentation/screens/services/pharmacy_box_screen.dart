@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:flutter_mobile/config/theme/theme_data_config.dart';
 import 'package:flutter_mobile/domain/entities/services/medicine.dart';
 import 'package:flutter_mobile/presentation/widgets/base_widgets/simple_custom_appbar.dart';
@@ -268,14 +269,14 @@ class MedicineCard extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Détails du médicament'),
+        title: const Text('Détails du médicament'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               'Nom: ${medicine.name}',
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8.h),
             Text('Description: ${medicine.description}'),
@@ -286,7 +287,7 @@ class MedicineCard extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Fermer'),
+            child: const Text('Fermer'),
           ),
         ],
       ),
@@ -297,7 +298,7 @@ class MedicineCard extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Modifier le médicament'),
+        title: const Text('Modifier le médicament'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -319,7 +320,7 @@ class MedicineCard extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Annuler'),
+            child: const Text('Annuler'),
           ),
           ElevatedButton(
             onPressed: () {
@@ -329,7 +330,7 @@ class MedicineCard extends StatelessWidget {
                 SnackBar(content: Text('${medicine.name} mis à jour')),
               );
             },
-            child: Text('Sauvegarder'),
+            child: const Text('Sauvegarder'),
           ),
         ],
       ),
@@ -340,12 +341,12 @@ class MedicineCard extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Supprimer le médicament'),
+        title: const Text('Supprimer le médicament'),
         content: Text('Êtes-vous sûr de vouloir supprimer ${medicine.name}?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Annuler'),
+            child: const Text('Annuler'),
           ),
           OutlinedButton(
             onPressed: () {
@@ -356,10 +357,10 @@ class MedicineCard extends StatelessWidget {
               );
             },
             style: OutlinedButton.styleFrom(
-              side: BorderSide(color: Colors.red),
+              side: const BorderSide(color: Colors.red),
               foregroundColor: Colors.red,
             ),
-            child: Text('Supprimer'),
+            child: const Text('Supprimer'),
           ),
         ],
       ),
@@ -385,7 +386,7 @@ class AddMedicineButton extends StatelessWidget {
           ),
         ),
         onPressed: () {
-          // context.goNamed(AppRouteName.signUp);
+          AddMedicinePopup.show(context);
         },
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -409,5 +410,201 @@ class AddMedicineButton extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class AddMedicinePopup extends StatelessWidget {
+  const AddMedicinePopup({super.key});
+
+  static Future<void> show(BuildContext context) {
+    return showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) => const AddMedicinePopup(),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
+      backgroundColor: Colors.white,
+      child: Container(
+        padding: EdgeInsets.all(24.w),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Medicine icon
+            Container(
+              width: 60.w,
+              height: 60.w,
+              decoration: BoxDecoration(
+                color: const Color(0xFF4CAF50).withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.medication_outlined,
+                size: 30.sp,
+                color: const Color(0xFF4CAF50),
+              ),
+            ),
+            SizedBox(height: 16.h),
+
+            // Title
+            Text(
+              'Ajouter un médicament\nmanuellement',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 18.sp,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+                height: 1.3,
+              ),
+            ),
+            SizedBox(height: 24.h),
+
+            // Manual entry button
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  // Navigate to manual entry screen
+                  _handleManualEntry(context);
+                },
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(
+                    color: const Color(0xFF2196F3),
+                    width: 1.5.w,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25.r),
+                  ),
+                  padding: EdgeInsets.symmetric(vertical: 16.h),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Ajouter Traitement',
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        color: const Color(0xFF2196F3),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    SizedBox(width: 12.w),
+                    Container(
+                      padding: EdgeInsets.all(4.w),
+                      decoration: const BoxDecoration(
+                        color: Color(0xFF2196F3),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(Icons.add, size: 16.sp, color: Colors.white),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: 20.h),
+
+            // Divider with "Ou"
+            Row(
+              children: [
+                Expanded(child: Divider(color: Colors.grey[300], thickness: 1)),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
+                  child: Text(
+                    'Ou',
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      color: Colors.grey[600],
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+                Expanded(child: Divider(color: Colors.grey[300], thickness: 1)),
+              ],
+            ),
+            SizedBox(height: 20.h),
+
+            // Barcode scanning text
+            Text(
+              'Scanner le code a barre\ndu médicament',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16.sp,
+                color: Colors.black87,
+                height: 1.3,
+              ),
+            ),
+            SizedBox(height: 16.h),
+
+            // Barcode scanning button
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _handleBarcodeScanning(context);
+                },
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(
+                    color: const Color(0xFF2196F3),
+                    width: 1.5.w,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25.r),
+                  ),
+                  padding: EdgeInsets.symmetric(vertical: 16.h),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Scanner Code a barre',
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        color: const Color(0xFF2196F3),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    SizedBox(width: 12.w),
+                    Icon(
+                      Icons.qr_code_scanner,
+                      size: 20.sp,
+                      color: const Color(0xFF2196F3),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _handleManualEntry(BuildContext context) {
+    // Navigate to manual medicine entry screen
+    // context.pushNamed(AppRouteName.addMedicineManually);
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Navigation vers ajout manuel')),
+    );
+  }
+
+  void _handleBarcodeScanning(BuildContext context) {
+    // Navigate to barcode scanner screen
+    // context.pushNamed(AppRouteName.barcodeScannerScreen);
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Ouverture du scanner de code-barres')),
+    );
+  }
+}
+
+// Extension to show the popup easily
+extension AddMedicinePopupExt on BuildContext {
+  Future<void> showAddMedicinePopup() {
+    return AddMedicinePopup.show(this);
   }
 }
