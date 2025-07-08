@@ -1,5 +1,6 @@
 package com.idvey.afya.models.groupe;
 
+import com.idvey.afya.models.PharmacyBox;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,15 +28,7 @@ public class Group {
 	@OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<GroupMember> members = new HashSet<>();
 
-	// convenience:
-	public void addMember(GroupMember gm) {
-		members.add(gm);
-		gm.setGroup(this);
-	}
-
-	public void removeMember(GroupMember gm) {
-		members.remove(gm);
-		gm.setGroup(null);
-	}
+	@OneToOne(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
+	private PharmacyBox pharmacyBox;
 
 }
