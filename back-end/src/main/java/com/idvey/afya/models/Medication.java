@@ -20,5 +20,9 @@ public class Medication {
     private String name;
 
     private String code;
+
     private String manufacturer;
+
+    @Column(unique = true)
+    private String barcode;
 }
