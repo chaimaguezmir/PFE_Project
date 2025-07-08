@@ -54,23 +54,6 @@ public class PharmacyBoxService {
 
 
 
-    public void delete(UUID boxId, UUID userId) {
-        getUser(userId);
-        PharmacyBox box = pharmacyBoxRepository.findById(boxId)
-                .orElseThrow(() -> new NoSuchElementException("PharmacyBox not found."));
-
-        UUID groupId = box.getGroup().getId();
-        verifyIsManager(userId, groupId);
-
-        pharmacyBoxRepository.delete(box);
-    }
-
-    private void verifyIsMember(UUID userId, UUID groupId) {
-        if (!groupMemberRepository.existsByUser_IdAndGroup_Id(userId, groupId)) {
-            throw new SecurityException("Access denied: you are not a member of this group.");
-        }
-    }
-
     private void verifyIsManager(UUID userId, UUID groupId) {
         GroupMember member = groupMemberRepository
                 .findByGroup_IdAndUser_Id(groupId, userId)
