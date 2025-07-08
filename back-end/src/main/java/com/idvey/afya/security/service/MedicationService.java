@@ -19,6 +19,10 @@ public class MedicationService {
     private final MedicationRepository medicationRepository;
 
     public MedicationResponse create(MedicationRequest request) {
+        if (medicationRepository.findByNameContainingIgnoreCase(request.getName()).stream()
+                .anyMatch(m -> m.getName().equalsIgnoreCase(request.getName()))) {
+            throw new IllegalStateException("Medication name already exists");
+        }
         if (medicationRepository.existsByBarcode(request.getBarcode())) {
             throw new IllegalStateException("A medication with this barcode already exists");
         }
@@ -73,8 +77,12 @@ public class MedicationService {
         try {
             Medication med = medicationRepository.findById(id)
                     .orElseThrow(() -> new NoSuchElementException("Medication not found"));
-
-            // Check for duplicate barcode if changed
+            // Check if the name is changing and if the new name already exists
+            if (medicationRepository.findByNameContainingIgnoreCase(request.getName()).stream()
+                    .anyMatch(m -> m.getName().equalsIgnoreCase(request.getName()))) {
+                throw new IllegalStateException("Medication name already exists");
+            }
+            // Check if the barcode is changing and if the new barcode already exists
             if (!med.getBarcode().equals(request.getBarcode()) &&
                     medicationRepository.existsByBarcode(request.getBarcode())) {
                 throw new IllegalStateException("A medication with this barcode already exists");

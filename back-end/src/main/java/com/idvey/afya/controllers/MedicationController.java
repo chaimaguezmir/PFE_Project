@@ -23,11 +23,13 @@ public class MedicationController {
     }
 
     @GetMapping
-    public ResponseEntity<List<MedicationResponse>> getAll(@RequestParam(required = false) String name) {
-        if (name != null && !name.isEmpty()) {
-            return ResponseEntity.ok(medicationService.searchByName(name));
-        }
+    public ResponseEntity<List<MedicationResponse>> getAll() {
         return ResponseEntity.ok(medicationService.getAll());
+    }
+
+    @GetMapping("/search/{name}")
+    public ResponseEntity<List<MedicationResponse>> searchByName(@PathVariable String name) {
+        return ResponseEntity.ok(medicationService.searchByName(name));
     }
 
     @GetMapping("/barcode/{barcode}")
