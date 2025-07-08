@@ -16,7 +16,7 @@ class ProfileCubit extends Cubit<ProfileState> {
 
   Future<void> logout() async {
     emit(state.copyWith(errorMessage: null));
-
+    await _sharedPrefsUtils.clearSharedPref();
     emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
     final request = await getSignOutRequestModel();
 

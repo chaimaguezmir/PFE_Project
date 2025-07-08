@@ -34,7 +34,7 @@ class ProfileScreen extends StatelessWidget {
       },
       child: Scaffold(
         appBar: const CustomAppBar(
-          title: "Groupes",
+          title: "Profile",
           username: "Walid Zaroui",
           email: "zarwi.walid@gmail.com",
           avatarPath: "lib/config/assets/images/default_avatar.jpg",

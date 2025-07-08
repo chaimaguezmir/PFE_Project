@@ -1,18 +1,12 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:flutter_mobile/core/constants/api_endpoint.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'dart:convert';
-
-import 'package:dio/dio.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 class AuthInterceptor extends Interceptor {
   AuthInterceptor(this.dio, this.prefs);
-  final SharedPreferences prefs;
+
   final Dio dio;
+  final SharedPreferences prefs;
 
   @override
   void onRequest(
@@ -37,9 +31,11 @@ class AuthInterceptor extends Interceptor {
     print(
       '[AuthInterceptor] onError: ${err.response?.statusCode} ${err.requestOptions.path}',
     );
+
     if (err.response?.statusCode == 401) {
       print('[AuthInterceptor] 401 detected, trying to refresh token');
-      final refreshToken = prefs.getString('refresh_token');
+
+      final refreshToken = prefs.getString('refreshToken');
       if (refreshToken == null) {
         print('[AuthInterceptor] No refresh token found');
         return handler.next(err);
@@ -50,12 +46,20 @@ class AuthInterceptor extends Interceptor {
           '${ApiEndpoints.baseurl}/auth/refreshtoken',
           data: {'refreshToken': refreshToken},
         );
-        print('[AuthInterceptor] Token refreshed successfully');
+
+        print('[AuthInterceptor] Refresh response: ${response.data}');
 
         final newToken = response.data['accessToken'];
-        await prefs.setString('token', newToken);
+        if (newToken == null || newToken.isEmpty) {
+          print('[AuthInterceptor] Invalid or missing accessToken');
+          await _handleLogout();
+          return handler.reject(err);
+        }
 
-        // Replay the original request with the new token
+        await prefs.setString('token', newToken);
+        print('[AuthInterceptor] Token refreshed successfully');
+
+        //  Rejouer la requête échouée avec le nouveau token
         final clonedRequest = await dio.request(
           err.requestOptions.path,
           options: Options(
@@ -72,12 +76,18 @@ class AuthInterceptor extends Interceptor {
         return handler.resolve(clonedRequest);
       } catch (e) {
         print('[AuthInterceptor] Token refresh failed: $e');
-        await prefs.remove('token');
-        await prefs.remove('refresh_token');
+        await _handleLogout();
         return handler.reject(err);
       }
     }
 
     return handler.next(err);
+  }
+
+  Future<void> _handleLogout() async {
+    await prefs.remove('token');
+    await prefs.remove('refresh_token');
+
+    // TODO: redirection vers la page de connexion
   }
 }

@@ -19,6 +19,10 @@ class AppRouteName {
   static const String groupScreen = 'groupScreen';
   static const String groupMembersScreen = 'groupMembersScreen';
   static const String addMemberScreen = 'addMemberScreen';
+
+  // services related screens
+  static const String services = 'services';
+  static const String pharmacyBox = 'pharmacyBox';
 }
 
 class AppRoutePath {
@@ -40,5 +44,9 @@ class AppRoutePath {
   static const String groupScreen = '/groupScreen';
   static const String groupMembersScreen = '/groupScreen/groupMembersScreen';
   static const String addMemberScreen = '/addMemberScreen';
+
+  //services related screens
+  static const String services = '/services';
+  static const String pharmacyBox = '/services/pharmacyBox';
 
 }

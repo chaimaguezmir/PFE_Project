@@ -1,6 +1,7 @@
 package com.idvey.afya.security.service;
 
 import com.idvey.afya.advice.UnauthorizedException;
+import com.idvey.afya.models.PharmacyBox;
 import com.idvey.afya.models.User;
 import com.idvey.afya.models.groupe.Group;
 import com.idvey.afya.models.groupe.GroupMember;
@@ -9,8 +10,10 @@ import com.idvey.afya.payload.request.group.ToggleGroupRoleRequest;
 import com.idvey.afya.payload.response.GroupResponse;
 import com.idvey.afya.repository.GroupMemberRepository;
 import com.idvey.afya.repository.GroupRepository;
+import com.idvey.afya.repository.PharmacyBoxRepository;
 import com.idvey.afya.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.security.access.AccessDeniedException;
@@ -23,6 +26,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
+@Slf4j
 public class GroupService {
 
 	@Autowired
@@ -33,6 +37,9 @@ public class GroupService {
 
 	@Autowired
 	private UserRepository userRepo;
+
+	@Autowired
+	private PharmacyBoxRepository pharmacyBoxRepository;
 
 	@Transactional
 	public UUID createGroup(UUID creatorId, String name) {
@@ -54,7 +61,13 @@ public class GroupService {
 		GroupMember gm = GroupMember.builder().id(key).group(group).user(creator).role(GroupRole.MANAGER).build();
 		memberRepo.save(gm);
 
-		System.out.println("[Service] Group created with id " + group.getId() + " by user " + creatorId);
+		PharmacyBox box = PharmacyBox.builder()
+				.group(group)
+				.build();
+		pharmacyBoxRepository.save(box);
+
+		System.out.println("[Service] Group + PharmacyBox created with id " + group.getId() + " by user " + creatorId);
+
 		return group.getId();
 	}
 
@@ -188,6 +201,13 @@ public class GroupService {
 			System.out.println("[Service] Access denied: user " + actorId + " is not manager for group " + groupId);
 			throw new AccessDeniedException("Only the manager can delete a group");
 		}
+		groupRepo.findById(groupId).ifPresent(group -> {
+			if (group.getPharmacyBox() != null) {
+				pharmacyBoxRepository.delete(group.getPharmacyBox());
+				System.out.println("[Service] PharmacyBox for group " + groupId + " deleted");
+			}
+		});
+
 
 		List<UUID> userIds = memberRepo.findByGroup_Id(groupId).stream().map(m -> m.getUser().getId()).toList();
 		memberRepo.deleteAll(memberRepo.findByGroup_Id(groupId));

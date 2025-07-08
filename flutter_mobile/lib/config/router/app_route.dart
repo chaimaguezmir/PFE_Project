@@ -6,6 +6,7 @@ import 'package:flutter_mobile/presentation/bloc/auth/login/login_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/auth/signup/signup_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/group/group_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/profile/profile_cubit.dart';
+import 'package:flutter_mobile/presentation/bloc/services/services_cubit.dart';
 import 'package:flutter_mobile/presentation/screens/auth/account_verification_screen.dart';
 import 'package:flutter_mobile/presentation/screens/auth/forgot_password/forgot_password_code_screen.dart';
 import 'package:flutter_mobile/presentation/screens/auth/forgot_password/forgot_password_email_screen.dart';
@@ -22,6 +23,7 @@ import 'package:flutter_mobile/presentation/screens/bottom_bar.dart';
 
 import 'package:flutter_mobile/presentation/screens/onboarding/onboarding_screen.dart';
 import 'package:flutter_mobile/presentation/screens/profile/profile_screen.dart';
+import 'package:flutter_mobile/presentation/screens/services/pharmacy_box_screen.dart';
 import 'package:flutter_mobile/presentation/screens/services/services_screen.dart';
 import 'package:go_router/go_router.dart';
 
@@ -35,9 +37,9 @@ class AppRouter {
 
   String get initialLocation {
     if (_isAuthenticated) {
-      return AppRoutePath.groupScreen;
+      return AppRoutePath.services;
     } else if (_hasSeenOnboarding) {
-      return AppRoutePath.getStartedScreen;
+      return AppRoutePath.services;
     } else {
       return AppRoutePath.onboarding;
     }
@@ -72,15 +74,17 @@ class AppRouter {
 
       StatefulShellRoute.indexedStack(
         builder:
-            (BuildContext context,
-            GoRouterState state,
-            StatefulNavigationShell navigationShell,) {
-          // Return the widget that implements the custom shell (in this case
-          // using a BottomNavigationBar). The StatefulNavigationShell is passed
-          // to be able access the state of the shell and to navigate to other
-          // branches in a stateful way.
-          return BottomBar(navigationShell: navigationShell);
-        },
+            (
+              BuildContext context,
+              GoRouterState state,
+              StatefulNavigationShell navigationShell,
+            ) {
+              // Return the widget that implements the custom shell (in this case
+              // using a BottomNavigationBar). The StatefulNavigationShell is passed
+              // to be able access the state of the shell and to navigate to other
+              // branches in a stateful way.
+              return BottomBar(navigationShell: navigationShell);
+            },
         branches: <StatefulShellBranch>[
           StatefulShellBranch(
             routes: <RouteBase>[
@@ -93,21 +97,33 @@ class AppRouter {
           ),
           StatefulShellBranch(
             routes: <RouteBase>[
-              GoRoute(
-                name: 'services',
-                path: '/services',
-                builder: (context, state) => const ServicesScreen(),
+              ShellRoute(
+                builder: (context, state, child) => BlocProvider(
+                  create: (context) => sl<ServicesCubit>(),
+                  child: child,
+                ),
+                routes: [
+                  GoRoute(
+                    name: AppRouteName.services,
+                    path: AppRoutePath.services,
+                    builder: (context, state) =>  ServicesScreen(),
+                  ),
+                  GoRoute(
+                    name: AppRouteName.pharmacyBox,
+                    path: AppRoutePath.pharmacyBox,
+                    builder: (context, state) => const PharmacyBoxScreen(),
+                  ),
+                ],
               ),
             ],
           ),
           StatefulShellBranch(
-
             routes: <RouteBase>[
               ShellRoute(
-                builder: (context, state, child) =>
-                    BlocProvider(create: (context) =>
-                    sl<GroupCubit>()
-                      ..fetchGroups(), child: child),
+                builder: (context, state, child) => BlocProvider(
+                  create: (context) => sl<GroupCubit>()..fetchGroups(),
+                  child: child,
+                ),
                 routes: [
                   // Auth flow routes (onboarding, signup, login)
                   GoRoute(
@@ -125,11 +141,8 @@ class AppRouter {
                     path: AppRoutePath.addMemberScreen,
                     builder: (context, state) => const AddMemberScreen(),
                   ),
-
                 ],
               ),
-
-
             ],
           ),
           StatefulShellBranch(
@@ -137,11 +150,10 @@ class AppRouter {
               GoRoute(
                 name: 'profile',
                 path: '/profile',
-                builder: (context, state) =>
-                    BlocProvider(
-                      create: (context) => sl<ProfileCubit>(),
-                      child: const ProfileScreen(),
-                    ),
+                builder: (context, state) => BlocProvider(
+                  create: (context) => sl<ProfileCubit>(),
+                  child: const ProfileScreen(),
+                ),
               ),
             ],
           ),
@@ -168,11 +180,10 @@ class AppRouter {
 
       // Forgot Password Flow
       ShellRoute(
-        builder: (context, state, child) =>
-            BlocProvider(
-              create: (context) => sl<ForgotPasswordCubit>(),
-              child: child,
-            ),
+        builder: (context, state, child) => BlocProvider(
+          create: (context) => sl<ForgotPasswordCubit>(),
+          child: child,
+        ),
         routes: [
           GoRoute(
             path: AppRoutePath.forgotPasswordEmailScreen,
