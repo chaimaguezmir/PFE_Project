@@ -1,4 +1,4 @@
-package com.idvey.afya.payload.request.group;
+package com.idvey.afya.payload.request;
 
 import lombok.Getter;
 import lombok.Setter;

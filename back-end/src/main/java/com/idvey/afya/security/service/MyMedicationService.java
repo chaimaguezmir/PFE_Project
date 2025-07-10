@@ -4,7 +4,7 @@ import com.idvey.afya.models.Medication;
 import com.idvey.afya.models.MyMedication;
 import com.idvey.afya.models.PharmacyBox;
 import com.idvey.afya.payload.request.MyMedicationUpdateRequest;
-import com.idvey.afya.payload.request.group.MyMedicationRequest;
+import com.idvey.afya.payload.request.MyMedicationRequest;
 import com.idvey.afya.payload.response.MyMedicationResponse;
 import com.idvey.afya.repository.GroupMemberRepository;
 import com.idvey.afya.repository.MedicationRepository;

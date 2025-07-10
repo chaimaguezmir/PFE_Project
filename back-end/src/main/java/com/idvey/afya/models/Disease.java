@@ -19,6 +19,5 @@ public class Disease {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @ManyToMany(mappedBy = "diseases")
-    private Set<Treatment> treatments = new HashSet<>();
+
 }

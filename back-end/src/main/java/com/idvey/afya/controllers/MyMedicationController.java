@@ -1,7 +1,7 @@
 package com.idvey.afya.controllers;
 
 import com.idvey.afya.payload.request.MyMedicationUpdateRequest;
-import com.idvey.afya.payload.request.group.MyMedicationRequest;
+import com.idvey.afya.payload.request.MyMedicationRequest;
 import com.idvey.afya.payload.response.MyMedicationResponse;
 import com.idvey.afya.security.service.MyMedicationService;
 import com.idvey.afya.security.service.UserDetailsImpl;

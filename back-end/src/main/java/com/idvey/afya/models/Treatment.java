@@ -29,6 +29,9 @@ public class Treatment {
     )
     private Set<Disease> diseases = new HashSet<>();
 
+    private Date startDate;
+    private Date endDate;
+
     @OneToMany(mappedBy = "treatment", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Prescription> prescriptions = new ArrayList<>();
 }
