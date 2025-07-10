@@ -26,7 +26,6 @@ public class PharmacyBoxService {
     private final UserRepository userRepository;
 
     public PharmacyBoxResponse create(UUID groupId, UUID userId) {
-
         User user = getUser(userId);
         Group group = getGroup(groupId);
         verifyIsManager(user.getId(), group.getId());
@@ -40,19 +39,30 @@ public class PharmacyBoxService {
                 .build();
 
         PharmacyBox saved = pharmacyBoxRepository.save(box);
-        return new PharmacyBoxResponse(saved.getId(), group.getName());
+        return toResponse(saved);
     }
+
     public List<PharmacyBoxResponse> getByUserId(UUID userId) {
         getUser(userId); // throws if user not found
 
         return groupMemberRepository.findByUser_IdWithGroupAndPharmacyBox(userId).stream()
                 .map(GroupMember::getGroup)
                 .filter(group -> group.getPharmacyBox() != null)
-                .map(group -> new PharmacyBoxResponse(group.getPharmacyBox().getId(), group.getName()))
+                .map(group -> toResponse(group.getPharmacyBox()))
                 .toList();
     }
 
-
+    private PharmacyBoxResponse toResponse(PharmacyBox box) {
+        // Ensure medications are loaded
+        PharmacyBox loadedBox = pharmacyBoxRepository.findByIdWithMedications(box.getId())
+                .orElse(box);
+        int count = (loadedBox.getMedications() != null) ? loadedBox.getMedications().size() : 0;
+        return new PharmacyBoxResponse(
+                loadedBox.getId(),
+                loadedBox.getGroup().getName(),
+                count
+        );
+    }
 
     private void verifyIsManager(UUID userId, UUID groupId) {
         GroupMember member = groupMemberRepository
@@ -68,7 +78,6 @@ public class PharmacyBoxService {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new NoSuchElementException("User not found."));
     }
-
 
     private Group getGroup(UUID groupId) {
         return groupRepository.findById(groupId)

@@ -18,7 +18,7 @@ public class MyMedication {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    private int quantity;
+    private String quantity;
     private String dosage;
     private LocalDate expirationDate;
 
@@ -29,4 +29,8 @@ public class MyMedication {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "medication_id", nullable = false)
     private Medication medication;
+
+    @ManyToOne
+    @JoinColumn(name = "prescription_id")
+    private Prescription prescription;
 }
