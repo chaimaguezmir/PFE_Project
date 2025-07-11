@@ -13,12 +13,12 @@ import java.util.UUID;
 @Repository
 public interface MyMedicationRepository extends JpaRepository<MyMedication, UUID> {
 
-    List<MyMedication> findByPharmacyBox_Id(UUID boxId);
+	List<MyMedication> findByPharmacyBox_Id(UUID boxId);
 
-    @Query("SELECT m FROM MyMedication m JOIN FETCH m.medication WHERE m.pharmacyBox.id = :boxId")
-    List<MyMedication> findByPharmacyBoxIdWithMedication(@Param("boxId") UUID boxId);
+	@Query("SELECT m FROM MyMedication m JOIN FETCH m.medication WHERE m.pharmacyBox.id = :boxId")
+	List<MyMedication> findByPharmacyBoxIdWithMedication(@Param("boxId") UUID boxId);
 
-    @Query("SELECT m FROM MyMedication m JOIN FETCH m.medication WHERE m.id = :id")
-    Optional<MyMedication> findByIdWithMedication(@Param("id") UUID id);
+	@Query("SELECT m FROM MyMedication m JOIN FETCH m.medication WHERE m.id = :id")
+	Optional<MyMedication> findByIdWithMedication(@Param("id") UUID id);
 
 }

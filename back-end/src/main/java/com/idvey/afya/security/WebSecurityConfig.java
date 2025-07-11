@@ -83,8 +83,10 @@ public class WebSecurityConfig {
 				.permitAll()
 				.requestMatchers("/api/groups/**")
 				.authenticated()
-				.requestMatchers("/api/pharmacy-box/**").authenticated()
-				.requestMatchers("/api/my-medications/**").authenticated()
+				.requestMatchers("/api/pharmacy-box/**")
+				.authenticated()
+				.requestMatchers("/api/my-medications/**")
+				.authenticated()
 				// .requestMatchers("/client/**").authenticated()
 				// .requestMatchers(HttpMethod.GET,
 				// "/api/medic/**").hasAuthority("ROLE_ADMIN")

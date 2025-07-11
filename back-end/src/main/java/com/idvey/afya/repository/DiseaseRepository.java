@@ -8,6 +8,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface DiseaseRepository extends JpaRepository<Disease, UUID> {
-    Optional<Disease> findByNameIgnoreCase(String name);
-    List<Disease> findByNameContainingIgnoreCase(String name);
+
+	Optional<Disease> findByNameIgnoreCase(String name);
+
+	List<Disease> findByNameContainingIgnoreCase(String name);
+
 }

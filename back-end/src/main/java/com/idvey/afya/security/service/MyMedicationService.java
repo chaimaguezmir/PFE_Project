@@ -22,92 +22,95 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class MyMedicationService {
 
-    private final MyMedicationRepository myMedicationRepository;
-    private final PharmacyBoxRepository pharmacyBoxRepository;
-    private final MedicationRepository medicationRepository;
-    private final GroupMemberRepository groupMemberRepository;
+	private final MyMedicationRepository myMedicationRepository;
 
-    public MyMedicationResponse create(MyMedicationRequest request, UUID userId) {
-        PharmacyBox box = pharmacyBoxRepository.findById(request.getPharmacyBoxId())
-                .orElseThrow(() -> new NoSuchElementException("PharmacyBox not found"));
+	private final PharmacyBoxRepository pharmacyBoxRepository;
 
-        UUID groupId = box.getGroup().getId();
-        if (!groupMemberRepository.existsByUser_IdAndGroup_Id(userId, groupId)) {
-            throw new SecurityException("Access denied: not a member of the group");
-        }
+	private final MedicationRepository medicationRepository;
 
-        Medication med = medicationRepository.findById(request.getMedicationId())
-                .orElseThrow(() -> new NoSuchElementException("Medication not found"));
+	private final GroupMemberRepository groupMemberRepository;
 
-        MyMedication myMed = MyMedication.builder()
-                .pharmacyBox(box)
-                .medication(med)
-                .quantity(request.getQuantity())
-                .expirationDate(request.getExpirationDate())
-                .build();
+	public MyMedicationResponse create(MyMedicationRequest request, UUID userId) {
+		PharmacyBox box = pharmacyBoxRepository.findById(request.getPharmacyBoxId())
+			.orElseThrow(() -> new NoSuchElementException("PharmacyBox not found"));
 
-        return toResponse(myMedicationRepository.save(myMed));
-    }
+		UUID groupId = box.getGroup().getId();
+		if (!groupMemberRepository.existsByUser_IdAndGroup_Id(userId, groupId)) {
+			throw new SecurityException("Access denied: not a member of the group");
+		}
 
-    public List<MyMedicationResponse> getByBox(UUID boxId, UUID userId) {
-        PharmacyBox box = pharmacyBoxRepository.findById(boxId)
-                .orElseThrow(() -> new NoSuchElementException("PharmacyBox not found"));
+		Medication med = medicationRepository.findById(request.getMedicationId())
+			.orElseThrow(() -> new NoSuchElementException("Medication not found"));
 
-        UUID groupId = box.getGroup().getId();
-        if (!groupMemberRepository.existsByUser_IdAndGroup_Id(userId, groupId)) {
-            throw new SecurityException("Access denied: not a member of the group");
-        }
+		MyMedication myMed = MyMedication.builder()
+			.pharmacyBox(box)
+			.medication(med)
+			.quantity(request.getQuantity())
+			.expirationDate(request.getExpirationDate())
+			.build();
 
-        // Use the eager fetch method here
-        return myMedicationRepository.findByPharmacyBoxIdWithMedication(boxId).stream()
-                .map(this::toResponse)
-                .toList();
-    }
-@Transactional
-    public void delete(UUID id, UUID userId) {
-        MyMedication myMed = myMedicationRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("MyMedication not found"));
+		return toResponse(myMedicationRepository.save(myMed));
+	}
 
-        UUID groupId = myMed.getPharmacyBox().getGroup().getId();
-        if (!groupMemberRepository.existsByUser_IdAndGroup_Id(userId, groupId)) {
-            throw new SecurityException("Access denied: not a member of the group");
-        }
+	public List<MyMedicationResponse> getByBox(UUID boxId, UUID userId) {
+		PharmacyBox box = pharmacyBoxRepository.findById(boxId)
+			.orElseThrow(() -> new NoSuchElementException("PharmacyBox not found"));
 
-        myMedicationRepository.deleteById(id);
-    }
-    @Transactional
-    public MyMedicationResponse update(UUID myMedicationId, UUID userId, MyMedicationUpdateRequest request) {
-        MyMedication myMedication = myMedicationRepository.findById(myMedicationId)
-                .orElseThrow(() -> new NoSuchElementException("MyMedication not found"));
+		UUID groupId = box.getGroup().getId();
+		if (!groupMemberRepository.existsByUser_IdAndGroup_Id(userId, groupId)) {
+			throw new SecurityException("Access denied: not a member of the group");
+		}
 
-        UUID groupId = myMedication.getPharmacyBox().getGroup().getId();
-        boolean isMember = groupMemberRepository.existsByUser_IdAndGroup_Id(userId, groupId);
-        if (!isMember) {
-            throw new SecurityException("You are not a member of this group");
-        }
+		// Use the eager fetch method here
+		return myMedicationRepository.findByPharmacyBoxIdWithMedication(boxId).stream().map(this::toResponse).toList();
+	}
 
-        if (request.getQuantity() != null) {
-            myMedication.setQuantity(request.getQuantity());
-        }
-        if (request.getExpirationDate() != null) {
-            myMedication.setExpirationDate(request.getExpirationDate());
-        }
+	@Transactional
+	public void delete(UUID id, UUID userId) {
+		MyMedication myMed = myMedicationRepository.findById(id)
+			.orElseThrow(() -> new NoSuchElementException("MyMedication not found"));
 
-        MyMedication saved = myMedicationRepository.save(myMedication);
-        Medication medication = saved.getMedication(); // ensure loaded in same transaction
-        return MyMedicationResponse.builder()
-                .id(saved.getId())
-                .quantity(saved.getQuantity())
-                .expirationDate(saved.getExpirationDate())
-                .medicationName(medication.getName()) // lazy-safe because inside @Transactional
-                .build();
-    }
-    private MyMedicationResponse toResponse(MyMedication med) {
-        return new MyMedicationResponse(
-                med.getId(),
-                med.getMedication().getName(),
-                med.getQuantity(),
-                med.getExpirationDate()
-        );
-    }
+		UUID groupId = myMed.getPharmacyBox().getGroup().getId();
+		if (!groupMemberRepository.existsByUser_IdAndGroup_Id(userId, groupId)) {
+			throw new SecurityException("Access denied: not a member of the group");
+		}
+
+		myMedicationRepository.deleteById(id);
+	}
+
+	@Transactional
+	public MyMedicationResponse update(UUID myMedicationId, UUID userId, MyMedicationUpdateRequest request) {
+		MyMedication myMedication = myMedicationRepository.findById(myMedicationId)
+			.orElseThrow(() -> new NoSuchElementException("MyMedication not found"));
+
+		UUID groupId = myMedication.getPharmacyBox().getGroup().getId();
+		boolean isMember = groupMemberRepository.existsByUser_IdAndGroup_Id(userId, groupId);
+		if (!isMember) {
+			throw new SecurityException("You are not a member of this group");
+		}
+
+		if (request.getQuantity() != null) {
+			myMedication.setQuantity(request.getQuantity());
+		}
+		if (request.getExpirationDate() != null) {
+			myMedication.setExpirationDate(request.getExpirationDate());
+		}
+
+		MyMedication saved = myMedicationRepository.save(myMedication);
+		Medication medication = saved.getMedication(); // ensure loaded in same
+														// transaction
+		return MyMedicationResponse.builder()
+			.id(saved.getId())
+			.quantity(saved.getQuantity())
+			.expirationDate(saved.getExpirationDate())
+			.medicationName(medication.getName()) // lazy-safe because inside
+													// @Transactional
+			.build();
+	}
+
+	private MyMedicationResponse toResponse(MyMedication med) {
+		return new MyMedicationResponse(med.getId(), med.getMedication().getName(), med.getQuantity(),
+				med.getExpirationDate());
+	}
+
 }

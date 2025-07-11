@@ -11,8 +11,13 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 public class MyMedicationResponse {
-    private UUID id;
-    private String medicationName;
-    private String quantity;
-    private LocalDate expirationDate;
+
+	private UUID id;
+
+	private String medicationName;
+
+	private String quantity;
+
+	private LocalDate expirationDate;
+
 }

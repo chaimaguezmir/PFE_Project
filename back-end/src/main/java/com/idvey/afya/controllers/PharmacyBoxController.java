@@ -17,10 +17,11 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class PharmacyBoxController {
 
-    private final PharmacyBoxService pharmacyBoxService;
+	private final PharmacyBoxService pharmacyBoxService;
 
-    @GetMapping("/mine")
-    public ResponseEntity<List<PharmacyBoxResponse>> getMyBoxes(@AuthenticationPrincipal UserDetailsImpl currentUser) {
-        return ResponseEntity.ok(pharmacyBoxService.getByUserId(currentUser.getId()));
-    }
+	@GetMapping("/mine")
+	public ResponseEntity<List<PharmacyBoxResponse>> getMyBoxes(@AuthenticationPrincipal UserDetailsImpl currentUser) {
+		return ResponseEntity.ok(pharmacyBoxService.getByUserId(currentUser.getId()));
+	}
+
 }

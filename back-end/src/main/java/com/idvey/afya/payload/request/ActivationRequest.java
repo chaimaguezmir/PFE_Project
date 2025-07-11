@@ -12,9 +12,13 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ActivationRequest {
+
 	@NotBlank
 	private String email;
+
 	@NotBlank
 	private String code;
+
 	// getters and setters
+
 }

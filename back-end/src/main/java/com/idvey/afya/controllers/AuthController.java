@@ -79,8 +79,9 @@ public class AuthController {
 
 	@Autowired
 	private GroupService groupService;
-    @Autowired
-    private RefreshTokenRepository refreshTokenRepository;
+
+	@Autowired
+	private RefreshTokenRepository refreshTokenRepository;
 
 	@AuthenticationDocs.SignIn
 	@PostMapping("/signin")
@@ -89,19 +90,21 @@ public class AuthController {
 		User user;
 		if (identifier.contains("@")) {
 			user = userRepository.findByEmail(identifier)
-					.orElseThrow(() -> new UsernameNotFoundException("User Not Found with email: " + identifier));
-		} else {
+				.orElseThrow(() -> new UsernameNotFoundException("User Not Found with email: " + identifier));
+		}
+		else {
 			user = userRepository.findByUsername(identifier)
-					.orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + identifier));
+				.orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + identifier));
 		}
 
 		if (!user.isEnabled()) {
 			return ResponseEntity.status(HttpStatus.FORBIDDEN)
-					.body(new MessageResponse("Error: Account not activated. Please check your email for the activation code."));
+				.body(new MessageResponse(
+						"Error: Account not activated. Please check your email for the activation code."));
 		}
 
-		Authentication authentication = authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(user.getUsername(), loginRequest.getPassword()));
+		Authentication authentication = authenticationManager
+			.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), loginRequest.getPassword()));
 
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 
@@ -115,26 +118,26 @@ public class AuthController {
 		String jwt = jwtUtils.generateJwtToken(userDetails);
 
 		List<String> roles = userDetails.getAuthorities()
-				.stream()
-				.map(GrantedAuthority::getAuthority)
-				.collect(Collectors.toList());
+			.stream()
+			.map(GrantedAuthority::getAuthority)
+			.collect(Collectors.toList());
 		try {
 			RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId(),
 					loginRequest.getDeviceId(), loginRequest.getDeviceName());
 			System.out.println(" logged in successfully!");
 			JwtResponse jtr = JwtResponse.builder()
-					.token(jwt)
-					.refreshToken(refreshToken.getToken())
-					.id(userDetails.getId())
-					.username(userDetails.getUsername())
-					.email(userDetails.getEmail())
-					.firstName(userDetails.getFirstName())
-					.LastName(userDetails.getLastName())
-					.deviceName(refreshToken.getDeviceName())
-					.deviceId(refreshToken.getDeviceId())
-					.roles(roles)
-					.type("Bearer")
-					.build();
+				.token(jwt)
+				.refreshToken(refreshToken.getToken())
+				.id(userDetails.getId())
+				.username(userDetails.getUsername())
+				.email(userDetails.getEmail())
+				.firstName(userDetails.getFirstName())
+				.LastName(userDetails.getLastName())
+				.deviceName(refreshToken.getDeviceName())
+				.deviceId(refreshToken.getDeviceId())
+				.roles(roles)
+				.type("Bearer")
+				.build();
 			return ResponseEntity.ok(jtr);
 
 		}
@@ -143,6 +146,7 @@ public class AuthController {
 		}
 
 	}
+
 	@Transactional
 	@AuthenticationDocs.SignUp
 	@PostMapping("/signup")
@@ -159,48 +163,48 @@ public class AuthController {
 
 		// Create new user's account
 		User user = User.builder()
-				.username(signUpRequest.getUsername())
-				.email(signUpRequest.getEmail())
-				.password(encoder.encode(signUpRequest.getPassword()))
-				.firstName(signUpRequest.getFirstName())
-				.lastName(signUpRequest.getLastName())
-				.phoneNumber(signUpRequest.getPhoneNumber())
-				.weight(signUpRequest.getWeight())
-				.height(signUpRequest.getHeight())
-				.bloodGroup(signUpRequest.getBloodGroup())
-				.gender(signUpRequest.getGender())
-				.birthDate(signUpRequest.getBirthDate())
-				.smokingStatus(signUpRequest.isSmokingStatus())
-				.alcoholConsumption(signUpRequest.isAlcoholConsumption())
-				.exerciseRegularly(signUpRequest.isExerciseRegularly())
-				.familyHistoryHeartDisease(signUpRequest.isFamilyHistoryHeartDisease())
-				.hypertensionHistory(signUpRequest.isHypertensionHistory())
-				.heartDisease(signUpRequest.isHeartDisease())
-				.diabetes(signUpRequest.isDiabetes())
-				.cholesterol(signUpRequest.isCholesterol())
-				.allergies(signUpRequest.isAllergies())
-				.build();
+			.username(signUpRequest.getUsername())
+			.email(signUpRequest.getEmail())
+			.password(encoder.encode(signUpRequest.getPassword()))
+			.firstName(signUpRequest.getFirstName())
+			.lastName(signUpRequest.getLastName())
+			.phoneNumber(signUpRequest.getPhoneNumber())
+			.weight(signUpRequest.getWeight())
+			.height(signUpRequest.getHeight())
+			.bloodGroup(signUpRequest.getBloodGroup())
+			.gender(signUpRequest.getGender())
+			.birthDate(signUpRequest.getBirthDate())
+			.smokingStatus(signUpRequest.isSmokingStatus())
+			.alcoholConsumption(signUpRequest.isAlcoholConsumption())
+			.exerciseRegularly(signUpRequest.isExerciseRegularly())
+			.familyHistoryHeartDisease(signUpRequest.isFamilyHistoryHeartDisease())
+			.hypertensionHistory(signUpRequest.isHypertensionHistory())
+			.heartDisease(signUpRequest.isHeartDisease())
+			.diabetes(signUpRequest.isDiabetes())
+			.cholesterol(signUpRequest.isCholesterol())
+			.allergies(signUpRequest.isAllergies())
+			.build();
 
 		Set<String> strRoles = signUpRequest.getRole();
 		Set<Role> roles = new HashSet<>();
 
 		if (strRoles == null) {
 			Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-					.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+				.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 			roles.add(userRole);
 		} /*
-		 * else { strRoles.forEach(role -> { switch (role) { case "admin": Role
-		 * adminRole = roleRepository.findByName(ERole.ROLE_ADMIN) .orElseThrow(() ->
-		 * new RuntimeException("Error: Role is not found.")); roles.add(adminRole);
-		 *
-		 * break; case "mod": Role modRole =
-		 * roleRepository.findByName(ERole.ROLE_CLIENT) .orElseThrow(() -> new
-		 * RuntimeException("Error: Role is not found.")); roles.add(modRole);
-		 *
-		 * break; default: Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-		 * .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-		 * roles.add(userRole); } }); }
-		 */
+			 * else { strRoles.forEach(role -> { switch (role) { case "admin": Role
+			 * adminRole = roleRepository.findByName(ERole.ROLE_ADMIN) .orElseThrow(() ->
+			 * new RuntimeException("Error: Role is not found.")); roles.add(adminRole);
+			 *
+			 * break; case "mod": Role modRole =
+			 * roleRepository.findByName(ERole.ROLE_CLIENT) .orElseThrow(() -> new
+			 * RuntimeException("Error: Role is not found.")); roles.add(modRole);
+			 *
+			 * break; default: Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+			 * .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+			 * roles.add(userRole); } }); }
+			 */
 
 		user.setRoles(roles);
 		userRepository.save(user);
@@ -223,26 +227,26 @@ public class AuthController {
 		String requestRefreshToken = request.getRefreshToken();
 
 		return refreshTokenService.findByToken(requestRefreshToken)
-				.map(refreshTokenService::verifyExpiration)
-				.map(refreshToken -> {
-					UUID userId = refreshToken.getUser().getId();
-					User user = userRepository.findById(userId)
-							.orElseThrow(() -> new TokenRefreshException(requestRefreshToken, "User not found"));
+			.map(refreshTokenService::verifyExpiration)
+			.map(refreshToken -> {
+				UUID userId = refreshToken.getUser().getId();
+				User user = userRepository.findById(userId)
+					.orElseThrow(() -> new TokenRefreshException(requestRefreshToken, "User not found"));
 
-					String token = jwtUtils.generateTokenFromUsername(user.getUsername());
-					System.out.println("User with ID " + user.getId() + " refreshed token successfully!");
-					return ResponseEntity.ok(new TokenRefreshResponse(token, requestRefreshToken));
-				})
-				.orElseThrow(() -> new TokenRefreshException(requestRefreshToken, "Refresh token is not in database!"));
+				String token = jwtUtils.generateTokenFromUsername(user.getUsername());
+				System.out.println("User with ID " + user.getId() + " refreshed token successfully!");
+				return ResponseEntity.ok(new TokenRefreshResponse(token, requestRefreshToken));
+			})
+			.orElseThrow(() -> new TokenRefreshException(requestRefreshToken, "Refresh token is not in database!"));
 	}
+
 	@PostMapping("/signout")
 	public ResponseEntity<?> logoutUser(@AuthenticationPrincipal UserDetailsImpl currentUser,
-										@Valid @RequestBody LogoutDeviceRequest request) {
+			@Valid @RequestBody LogoutDeviceRequest request) {
 		UUID userId = currentUser.getId();
 
-		RefreshToken refreshToken = refreshTokenRepository
-				.findByToken(request.getRefreshToken())
-				.orElseThrow(() -> new UnauthorizedException("Invalid refresh token."));
+		RefreshToken refreshToken = refreshTokenRepository.findByToken(request.getRefreshToken())
+			.orElseThrow(() -> new UnauthorizedException("Invalid refresh token."));
 
 		if (!refreshToken.getUser().getId().equals(userId)) {
 			throw new UnauthorizedException("Token does not belong to the authenticated user.");
@@ -265,7 +269,8 @@ public class AuthController {
 		try {
 			activationCodeService.activateByEmail(req.getEmail(), req.getCode());
 			return ResponseEntity.ok(new MessageResponse("Account activated! You can now sign in."));
-		} catch (ResponseStatusException ex) {
+		}
+		catch (ResponseStatusException ex) {
 			return ResponseEntity.status(ex.getStatusCode()).body(new MessageResponse(ex.getReason()));
 		}
 	}
@@ -274,7 +279,7 @@ public class AuthController {
 	public ResponseEntity<?> resend(@Valid @RequestBody ResendActivationRequest req) {
 		String email = req.getEmail();
 		User user = userRepository.findByEmail(email)
-				.orElseThrow(() -> new IllegalArgumentException("Email not found"));
+			.orElseThrow(() -> new IllegalArgumentException("Email not found"));
 		if (user.isEnabled()) {
 			return ResponseEntity.badRequest().body(new MessageResponse("Account already activated."));
 		}
@@ -286,7 +291,7 @@ public class AuthController {
 	@PostMapping("/change-password")
 	@PreAuthorize("isAuthenticated()")
 	public ResponseEntity<MessageResponse> changePassword(@AuthenticationPrincipal UserDetailsImpl currentUser,
-														  @Valid @RequestBody ChangePasswordRequest req) {
+			@Valid @RequestBody ChangePasswordRequest req) {
 
 		userService.changePassword(currentUser.getId(), req);
 		return ResponseEntity.ok(new MessageResponse("Password changed successfully"));
@@ -309,7 +314,8 @@ public class AuthController {
 		boolean valid = passwordResetService.isResetCodeValid(req.getEmail(), req.getCode());
 		if (valid) {
 			return ResponseEntity.ok(new MessageResponse("Code is valid"));
-		} else {
+		}
+		else {
 			return ResponseEntity.badRequest().body(new MessageResponse("Invalid or expired code"));
 		}
 	}

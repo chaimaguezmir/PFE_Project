@@ -1,6 +1,5 @@
 package com.idvey.afya.payload.response;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,9 +12,15 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 public class TreatmentResponse {
-    private UUID id;
-    private String name;
-    private Date startDate;
-    private Date endDate;
-    private List<String> diseaseNames;
+
+	private UUID id;
+
+	private String name;
+
+	private Date startDate;
+
+	private Date endDate;
+
+	private List<String> diseaseNames;
+
 }

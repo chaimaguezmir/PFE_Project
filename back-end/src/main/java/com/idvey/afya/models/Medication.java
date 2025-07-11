@@ -12,17 +12,18 @@ import java.util.UUID;
 @Builder
 public class Medication {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.UUID)
+	private UUID id;
 
-    @Column(nullable = false, unique = true)
-    private String name;
+	@Column(nullable = false, unique = true)
+	private String name;
 
-    private String code;
+	private String code;
 
-    private String manufacturer;
+	private String manufacturer;
 
-    @Column(unique = true)
-    private String barcode;
+	@Column(unique = true)
+	private String barcode;
+
 }

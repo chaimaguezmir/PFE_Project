@@ -10,6 +10,9 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 public class DiseaseResponse {
-    private UUID id;
-    private String name;
+
+	private UUID id;
+
+	private String name;
+
 }

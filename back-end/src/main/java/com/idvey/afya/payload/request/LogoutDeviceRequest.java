@@ -7,16 +7,14 @@ import lombok.Setter;
 @Getter
 @Setter
 public class LogoutDeviceRequest {
-    @NotBlank
-    private String refreshToken;
-    @NotBlank
-    private String deviceId;
-    @NotBlank
-    private String deviceName;
 
+	@NotBlank
+	private String refreshToken;
 
+	@NotBlank
+	private String deviceId;
 
-
-
+	@NotBlank
+	private String deviceName;
 
 }

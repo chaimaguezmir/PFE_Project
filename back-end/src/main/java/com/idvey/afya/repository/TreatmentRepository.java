@@ -7,5 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface TreatmentRepository extends JpaRepository<Treatment, UUID> {
-    List<Treatment> findByUser_Id(UUID userId);
+
+	List<Treatment> findByUser_Id(UUID userId);
+
 }

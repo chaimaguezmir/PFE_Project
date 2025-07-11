@@ -1,7 +1,5 @@
 package com.idvey.afya.models;
 
-
-
 import com.idvey.afya.models.groupe.Group;
 import jakarta.persistence.*;
 import lombok.*;
@@ -17,14 +15,15 @@ import java.util.UUID;
 @Builder
 public class PharmacyBox {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.UUID)
+	private UUID id;
 
-    @OneToOne
-    @JoinColumn(name = "group_id", nullable = false, unique = true)
-    private Group group;
+	@OneToOne
+	@JoinColumn(name = "group_id", nullable = false, unique = true)
+	private Group group;
 
-    @OneToMany(mappedBy = "pharmacyBox", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MyMedication> medications;
+	@OneToMany(mappedBy = "pharmacyBox", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<MyMedication> medications;
+
 }

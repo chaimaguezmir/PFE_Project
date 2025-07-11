@@ -19,7 +19,7 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshToken, UUID
 
 	/** NEW: lookup a refresh token for this user + device */
 	Optional<RefreshToken> findByUserIdAndDeviceId(UUID userId, String deviceId);
-	Optional<RefreshToken> findByTokenAndDeviceIdAndDeviceName(String token, String deviceId, String deviceName);
 
+	Optional<RefreshToken> findByTokenAndDeviceIdAndDeviceName(String token, String deviceId, String deviceName);
 
 }

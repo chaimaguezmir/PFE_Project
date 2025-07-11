@@ -1,9 +1,9 @@
 package com.idvey.afya.models;
+
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.*;
-
 
 @Entity
 @Data
@@ -12,26 +12,25 @@ import java.util.*;
 @Builder
 public class Treatment {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.UUID)
+	private UUID id;
 
-    @ManyToOne(optional = false)
-    private User user;
+	@ManyToOne(optional = false)
+	private User user;
 
-    private String name;
+	private String name;
 
-    @ManyToMany
-    @JoinTable(
-            name = "treatment_disease",
-            joinColumns = @JoinColumn(name = "treatment_id"),
-            inverseJoinColumns = @JoinColumn(name = "disease_id")
-    )
-    private Set<Disease> diseases = new HashSet<>();
+	@ManyToMany
+	@JoinTable(name = "treatment_disease", joinColumns = @JoinColumn(name = "treatment_id"),
+			inverseJoinColumns = @JoinColumn(name = "disease_id"))
+	private Set<Disease> diseases = new HashSet<>();
 
-    private Date startDate;
-    private Date endDate;
+	private Date startDate;
 
-    @OneToMany(mappedBy = "treatment", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Prescription> prescriptions = new ArrayList<>();
+	private Date endDate;
+
+	@OneToMany(mappedBy = "treatment", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Prescription> prescriptions = new ArrayList<>();
+
 }

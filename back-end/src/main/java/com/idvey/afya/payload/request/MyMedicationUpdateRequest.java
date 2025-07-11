@@ -8,6 +8,9 @@ import java.time.LocalDate;
 @Getter
 @Setter
 public class MyMedicationUpdateRequest {
-    private String quantity;
-    private LocalDate expirationDate;
+
+	private String quantity;
+
+	private LocalDate expirationDate;
+
 }

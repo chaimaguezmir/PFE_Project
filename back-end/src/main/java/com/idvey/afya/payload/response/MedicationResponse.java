@@ -10,10 +10,15 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 public class MedicationResponse {
-    private UUID id;
-    private String barcode;
-    private String name;
-    private String code;
-    private String manufacturer;
+
+	private UUID id;
+
+	private String barcode;
+
+	private String name;
+
+	private String code;
+
+	private String manufacturer;
 
 }

@@ -57,11 +57,11 @@ public class PasswordResetService {
 	@Transactional
 	public void resetPassword(String email, String code, String newPassword) {
 		User user = userRepository.findByEmail(email)
-				.orElseThrow(() -> new UsernameNotFoundException("Email not found"));
+			.orElseThrow(() -> new UsernameNotFoundException("Email not found"));
 
 		PasswordResetToken prt = tokenRepo.findByUser_Id(user.getId())
-				.filter(token -> token.getCode().equals(code))
-				.orElseThrow(() -> new IllegalArgumentException("Invalid reset code"));
+			.filter(token -> token.getCode().equals(code))
+			.orElseThrow(() -> new IllegalArgumentException("Invalid reset code"));
 
 		if (prt.getExpiryDate().isBefore(Instant.now())) {
 			throw new IllegalArgumentException("Reset code expired");
@@ -75,9 +75,9 @@ public class PasswordResetService {
 
 	public boolean isResetCodeValid(String email, String code) {
 		return userRepository.findByEmail(email)
-				.flatMap(user -> tokenRepo.findByUser_Id(user.getId()))
-				.filter(token -> token.getCode().equals(code) && token.getExpiryDate().isAfter(Instant.now()))
-				.isPresent();
+			.flatMap(user -> tokenRepo.findByUser_Id(user.getId()))
+			.filter(token -> token.getCode().equals(code) && token.getExpiryDate().isAfter(Instant.now()))
+			.isPresent();
 	}
 
 }

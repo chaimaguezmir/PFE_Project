@@ -11,7 +11,10 @@ import java.util.UUID;
 @AllArgsConstructor
 public class PharmacyBoxResponse {
 
-        private UUID id;
-        private String groupName;
-        private int medicationCount;
-    }
+	private UUID id;
+
+	private String groupName;
+
+	private int medicationCount;
+
+}

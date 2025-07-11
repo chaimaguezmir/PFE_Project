@@ -9,8 +9,13 @@ import java.util.UUID;
 @Setter
 @Getter
 public class MyMedicationRequest {
-    private UUID pharmacyBoxId;
-    private UUID medicationId;
-    private String quantity;
-    private LocalDate expirationDate;
+
+	private UUID pharmacyBoxId;
+
+	private UUID medicationId;
+
+	private String quantity;
+
+	private LocalDate expirationDate;
+
 }

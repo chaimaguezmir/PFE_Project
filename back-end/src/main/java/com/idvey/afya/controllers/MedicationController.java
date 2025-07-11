@@ -15,37 +15,37 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class MedicationController {
 
-    private final MedicationService medicationService;
+	private final MedicationService medicationService;
 
-    @PostMapping
-    public ResponseEntity<MedicationResponse> create(@RequestBody MedicationRequest request) {
-        return ResponseEntity.ok(medicationService.create(request));
-    }
+	@PostMapping
+	public ResponseEntity<MedicationResponse> create(@RequestBody MedicationRequest request) {
+		return ResponseEntity.ok(medicationService.create(request));
+	}
 
-    @GetMapping
-    public ResponseEntity<List<MedicationResponse>> getAll() {
-        return ResponseEntity.ok(medicationService.getAll());
-    }
+	@GetMapping
+	public ResponseEntity<List<MedicationResponse>> getAll() {
+		return ResponseEntity.ok(medicationService.getAll());
+	}
 
-    @GetMapping("/search/{name}")
-    public ResponseEntity<List<MedicationResponse>> searchByName(@PathVariable String name) {
-        return ResponseEntity.ok(medicationService.searchByName(name));
-    }
+	@GetMapping("/search/{name}")
+	public ResponseEntity<List<MedicationResponse>> searchByName(@PathVariable String name) {
+		return ResponseEntity.ok(medicationService.searchByName(name));
+	}
 
-    @GetMapping("/barcode/{barcode}")
-    public ResponseEntity<MedicationResponse> getByBarcode(@PathVariable String barcode) {
-        return ResponseEntity.ok(medicationService.getByBarcode(barcode));
-    }
+	@GetMapping("/barcode/{barcode}")
+	public ResponseEntity<MedicationResponse> getByBarcode(@PathVariable String barcode) {
+		return ResponseEntity.ok(medicationService.getByBarcode(barcode));
+	}
 
-    @PutMapping("/{id}")
-    public ResponseEntity<MedicationResponse> update(@PathVariable UUID id,
-                                                     @RequestBody MedicationRequest request) {
-        return ResponseEntity.ok(medicationService.update(id, request));
-    }
+	@PutMapping("/{id}")
+	public ResponseEntity<MedicationResponse> update(@PathVariable UUID id, @RequestBody MedicationRequest request) {
+		return ResponseEntity.ok(medicationService.update(id, request));
+	}
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable UUID id) {
-        medicationService.delete(id);
-        return ResponseEntity.noContent().build();
-    }
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Void> delete(@PathVariable UUID id) {
+		medicationService.delete(id);
+		return ResponseEntity.noContent().build();
+	}
+
 }

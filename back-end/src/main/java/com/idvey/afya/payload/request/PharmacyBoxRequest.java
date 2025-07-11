@@ -8,5 +8,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class PharmacyBoxRequest {
-    private UUID groupId;
+
+	private UUID groupId;
+
 }

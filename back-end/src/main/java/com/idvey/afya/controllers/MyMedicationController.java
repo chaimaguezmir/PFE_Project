@@ -18,30 +18,30 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class MyMedicationController {
 
-    private final MyMedicationService myMedicationService;
+	private final MyMedicationService myMedicationService;
 
-    @PostMapping
-    public ResponseEntity<MyMedicationResponse> addMedication(@AuthenticationPrincipal UserDetailsImpl currentUser,
-                                                       @RequestBody MyMedicationRequest request) {
-        return ResponseEntity.ok(myMedicationService.create(request, currentUser.getId()));
-    }
+	@PostMapping
+	public ResponseEntity<MyMedicationResponse> addMedication(@AuthenticationPrincipal UserDetailsImpl currentUser,
+			@RequestBody MyMedicationRequest request) {
+		return ResponseEntity.ok(myMedicationService.create(request, currentUser.getId()));
+	}
 
-    @GetMapping("/box/{boxId}")
-    public ResponseEntity<List<MyMedicationResponse>> getByBox(@AuthenticationPrincipal UserDetailsImpl currentUser,
-                                                               @PathVariable UUID boxId) {
-        return ResponseEntity.ok(myMedicationService.getByBox(boxId, currentUser.getId()));
-    }
+	@GetMapping("/box/{boxId}")
+	public ResponseEntity<List<MyMedicationResponse>> getByBox(@AuthenticationPrincipal UserDetailsImpl currentUser,
+			@PathVariable UUID boxId) {
+		return ResponseEntity.ok(myMedicationService.getByBox(boxId, currentUser.getId()));
+	}
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@AuthenticationPrincipal UserDetailsImpl currentUser,
-                                       @PathVariable UUID id) {
-        myMedicationService.delete(id, currentUser.getId());
-        return ResponseEntity.noContent().build();
-    }
-    @PutMapping("/{id}")
-    public ResponseEntity<MyMedicationResponse> update(@AuthenticationPrincipal UserDetailsImpl currentUser,
-                                                       @PathVariable UUID id,
-                                                       @RequestBody MyMedicationUpdateRequest request) {
-        return ResponseEntity.ok(myMedicationService.update(id, currentUser.getId(), request));
-    }
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Void> delete(@AuthenticationPrincipal UserDetailsImpl currentUser, @PathVariable UUID id) {
+		myMedicationService.delete(id, currentUser.getId());
+		return ResponseEntity.noContent().build();
+	}
+
+	@PutMapping("/{id}")
+	public ResponseEntity<MyMedicationResponse> update(@AuthenticationPrincipal UserDetailsImpl currentUser,
+			@PathVariable UUID id, @RequestBody MyMedicationUpdateRequest request) {
+		return ResponseEntity.ok(myMedicationService.update(id, currentUser.getId(), request));
+	}
+
 }

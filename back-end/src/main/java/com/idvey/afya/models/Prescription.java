@@ -13,21 +13,22 @@ import java.util.*;
 @Builder
 public class Prescription {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.UUID)
+	private UUID id;
 
-    private String doctorName;
+	private String doctorName;
 
-    private LocalDate dateIssued;
+	private LocalDate dateIssued;
 
-    @ManyToOne(optional = false)
-    private Treatment treatment;
+	@ManyToOne(optional = false)
+	private Treatment treatment;
 
-    @OneToMany(mappedBy = "prescription", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Notification> notifications = new ArrayList<>();
+	@OneToMany(mappedBy = "prescription", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Notification> notifications = new ArrayList<>();
 
-    @OneToMany
-    @JoinColumn(name = "prescription_id")
-    private List<MyMedication> myMedications = new ArrayList<>();
+	@OneToMany
+	@JoinColumn(name = "prescription_id")
+	private List<MyMedication> myMedications = new ArrayList<>();
+
 }

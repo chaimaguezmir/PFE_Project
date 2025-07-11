@@ -12,12 +12,11 @@ import java.util.*;
 @Builder
 public class Disease {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.UUID)
+	private UUID id;
 
-    @Column(nullable = false, unique = true)
-    private String name;
-
+	@Column(nullable = false, unique = true)
+	private String name;
 
 }

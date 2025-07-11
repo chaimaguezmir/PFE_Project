@@ -8,9 +8,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface MedicationRepository extends JpaRepository<Medication, UUID> {
-    List<Medication> findByNameContainingIgnoreCase(String name);
 
-    Optional<Medication> findByBarcode(String barcode);
+	List<Medication> findByNameContainingIgnoreCase(String name);
 
-    boolean existsByBarcode(String barcode);
+	Optional<Medication> findByBarcode(String barcode);
+
+	boolean existsByBarcode(String barcode);
+
 }
