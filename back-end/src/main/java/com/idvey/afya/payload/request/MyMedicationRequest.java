@@ -14,6 +14,8 @@ public class MyMedicationRequest {
 
 	private UUID medicationId;
 
+
+	private String name;
 	private String quantity;
 
 	private LocalDate expirationDate;

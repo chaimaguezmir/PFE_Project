@@ -14,5 +14,7 @@ public interface MedicationRepository extends JpaRepository<Medication, UUID> {
 	Optional<Medication> findByBarcode(String barcode);
 
 	boolean existsByBarcode(String barcode);
+	Optional<Medication> getByName(String barcode);
+
 
 }

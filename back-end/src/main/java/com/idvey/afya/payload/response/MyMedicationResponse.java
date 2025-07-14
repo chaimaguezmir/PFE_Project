@@ -14,6 +14,8 @@ public class MyMedicationResponse {
 
 	private UUID id;
 
+
+
 	private String medicationName;
 
 	private String quantity;

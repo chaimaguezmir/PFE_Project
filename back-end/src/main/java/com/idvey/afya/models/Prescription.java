@@ -17,18 +17,21 @@ public class Prescription {
 	@GeneratedValue(strategy = GenerationType.UUID)
 	private UUID id;
 
-	private String doctorName;
+	private LocalDate startDate;
+	private LocalDate endDate;
 
-	private LocalDate dateIssued;
+	private int dosagePerDay;
 
-	@ManyToOne(optional = false)
-	private Treatment treatment;
+
 
 	@OneToMany(mappedBy = "prescription", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Notification> notifications = new ArrayList<>();
 
-	@OneToMany
-	@JoinColumn(name = "prescription_id")
-	private List<MyMedication> myMedications = new ArrayList<>();
+	@ManyToOne
+	@JoinColumn(name = "treatment_id")
+	private Treatment treatment;
 
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
+	@JoinColumn(name = "medication_id", nullable = true)
+	private Medication medication;
 }

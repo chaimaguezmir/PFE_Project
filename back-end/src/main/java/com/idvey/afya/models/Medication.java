@@ -3,7 +3,7 @@ package com.idvey.afya.models;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Data
@@ -25,5 +25,9 @@ public class Medication {
 
 	@Column(unique = true)
 	private String barcode;
+
+	@OneToMany(mappedBy = "medication", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<MyMedication> myMedications =  new ArrayList<>();
+
 
 }

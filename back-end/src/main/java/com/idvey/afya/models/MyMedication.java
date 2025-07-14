@@ -19,7 +19,7 @@ public class MyMedication {
 
 	private String quantity;
 
-	private String dosage;
+	private String name;
 
 	private LocalDate expirationDate;
 
@@ -28,7 +28,7 @@ public class MyMedication {
 	private PharmacyBox pharmacyBox;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "medication_id", nullable = false)
+	@JoinColumn(name = "medication_id", nullable = true)
 	private Medication medication;
 
 	@ManyToOne
