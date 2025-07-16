@@ -106,7 +106,6 @@ public class User {
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<GroupMember> groupMemberships = new HashSet<>();
 
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Treatment> treatments = new ArrayList<>();
+
 
 }

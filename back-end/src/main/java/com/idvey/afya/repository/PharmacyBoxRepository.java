@@ -1,6 +1,5 @@
 package com.idvey.afya.repository;
 
-import com.idvey.afya.models.MyMedication;
 import com.idvey.afya.models.PharmacyBox;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

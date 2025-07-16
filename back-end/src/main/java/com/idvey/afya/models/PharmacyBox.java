@@ -23,7 +23,6 @@ public class PharmacyBox {
 	@JoinColumn(name = "group_id", nullable = false, unique = true)
 	private Group group;
 
-	@OneToMany(mappedBy = "pharmacyBox", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<MyMedication> medications;
+
 
 }
