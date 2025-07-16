@@ -85,8 +85,9 @@ public class WebSecurityConfig {
 				.authenticated()
 				.requestMatchers("/api/pharmacy-box/**")
 				.authenticated()
-				.requestMatchers("/api/my-medications/**")
-				.authenticated()
+				.requestMatchers("/api/medicines/**").authenticated()
+				.requestMatchers("/api/my-medicines/**").authenticated()
+				.requestMatchers("/api/purchase-history/**").authenticated()
 				// .requestMatchers("/client/**").authenticated()
 				// .requestMatchers(HttpMethod.GET,
 				// "/api/medic/**").hasAuthority("ROLE_ADMIN")

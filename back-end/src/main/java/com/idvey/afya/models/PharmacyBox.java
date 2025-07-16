@@ -4,7 +4,9 @@ import com.idvey.afya.models.groupe.Group;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -23,6 +25,9 @@ public class PharmacyBox {
 	@JoinColumn(name = "group_id", nullable = false, unique = true)
 	private Group group;
 
-
+	// One-to-many relationship with MyMedicine
+	@OneToMany(mappedBy = "pharmacyBox", cascade = CascadeType.ALL, orphanRemoval = true)
+	@Builder.Default
+	private Set<MyMedicine> myMedicines = new HashSet<>();
 
 }

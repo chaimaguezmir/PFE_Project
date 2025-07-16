@@ -12,6 +12,7 @@ import com.idvey.afya.repository.PharmacyBoxRepository;
 import com.idvey.afya.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -44,21 +45,22 @@ public class PharmacyBoxService {
 		return toResponse(saved);
 	}
 
+	@Transactional(readOnly = true)
 	public List<PharmacyBoxResponse> getByUserId(UUID userId) {
 		getUser(userId); // throws if user not found
 
 		return groupMemberRepository.findByUser_IdWithGroupAndPharmacyBox(userId)
-			.stream()
-			.map(GroupMember::getGroup)
-			.filter(group -> group.getPharmacyBox() != null)
-			.map(group -> toResponse(group.getPharmacyBox()))
-			.toList();
+				.stream()
+				.map(GroupMember::getGroup)
+				.filter(group -> group.getPharmacyBox() != null)
+				.map(group -> toResponse(group.getPharmacyBox()))
+				.toList();
 	}
 
 	private PharmacyBoxResponse toResponse(PharmacyBox box) {
 		// Ensure medications are loaded
 		PharmacyBox loadedBox = pharmacyBoxRepository.findByIdWithMedications(box.getId()).orElse(box);
-		int count = (loadedBox.getMedications() != null) ? loadedBox.getMedications().size() : 0;
+		int count = (loadedBox.getMyMedicines() != null) ? loadedBox.getMyMedicines().size() : 0;
 		return new PharmacyBoxResponse(loadedBox.getId(), loadedBox.getGroup().getName(), count);
 	}
 
