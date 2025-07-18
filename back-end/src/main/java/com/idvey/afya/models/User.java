@@ -106,6 +106,10 @@ public class User {
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<GroupMember> groupMemberships = new HashSet<>();
 
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	@Builder.Default
+	private Set<Prescription> prescriptions = new HashSet<>();
+
 
 
 }
