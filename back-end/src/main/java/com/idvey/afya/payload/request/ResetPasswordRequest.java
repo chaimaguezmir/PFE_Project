@@ -17,4 +17,5 @@ public class ResetPasswordRequest {
 
 	@NotBlank
 	private String newPassword;
+
 }

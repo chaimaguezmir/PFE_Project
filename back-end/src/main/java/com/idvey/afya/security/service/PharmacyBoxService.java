@@ -12,83 +12,73 @@ import com.idvey.afya.repository.PharmacyBoxRepository;
 import com.idvey.afya.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class PharmacyBoxService {
 
-    private final PharmacyBoxRepository pharmacyBoxRepository;
-    private final GroupRepository groupRepository;
-    private final GroupMemberRepository groupMemberRepository;
-    private final UserRepository userRepository;
+	private final PharmacyBoxRepository pharmacyBoxRepository;
 
-    public PharmacyBoxResponse create(UUID groupId, UUID userId) {
+	private final GroupRepository groupRepository;
 
-        User user = getUser(userId);
-        Group group = getGroup(groupId);
-        verifyIsManager(user.getId(), group.getId());
+	private final GroupMemberRepository groupMemberRepository;
 
-        if (group.getPharmacyBox() != null) {
-            throw new IllegalStateException("PharmacyBox already exists for this group.");
-        }
+	private final UserRepository userRepository;
 
-        PharmacyBox box = PharmacyBox.builder()
-                .group(group)
-                .build();
+	public PharmacyBoxResponse create(UUID groupId, UUID userId) {
+		User user = getUser(userId);
+		Group group = getGroup(groupId);
+		verifyIsManager(user.getId(), group.getId());
 
-        PharmacyBox saved = pharmacyBoxRepository.save(box);
-        return new PharmacyBoxResponse(saved.getId(), group.getName());
-    }
-    public List<PharmacyBoxResponse> getByUserId(UUID userId) {
-        getUser(userId); // throws if user not found
+		if (group.getPharmacyBox() != null) {
+			throw new IllegalStateException("PharmacyBox already exists for this group.");
+		}
 
-        return groupMemberRepository.findByUser_IdWithGroupAndPharmacyBox(userId).stream()
-                .map(GroupMember::getGroup)
-                .filter(group -> group.getPharmacyBox() != null)
-                .map(group -> new PharmacyBoxResponse(group.getPharmacyBox().getId(), group.getName()))
-                .toList();
-    }
+		PharmacyBox box = PharmacyBox.builder().group(group).build();
 
+		PharmacyBox saved = pharmacyBoxRepository.save(box);
+		return toResponse(saved);
+	}
 
+	@Transactional(readOnly = true)
+	public List<PharmacyBoxResponse> getByUserId(UUID userId) {
+		getUser(userId); // throws if user not found
 
-    public void delete(UUID boxId, UUID userId) {
-        getUser(userId);
-        PharmacyBox box = pharmacyBoxRepository.findById(boxId)
-                .orElseThrow(() -> new NoSuchElementException("PharmacyBox not found."));
+		return groupMemberRepository.findByUser_IdWithGroupAndPharmacyBox(userId)
+				.stream()
+				.map(GroupMember::getGroup)
+				.filter(group -> group.getPharmacyBox() != null)
+				.map(group -> toResponse(group.getPharmacyBox()))
+				.toList();
+	}
 
-        UUID groupId = box.getGroup().getId();
-        verifyIsManager(userId, groupId);
+	private PharmacyBoxResponse toResponse(PharmacyBox box) {
+		// Ensure medications are loaded
+		PharmacyBox loadedBox = pharmacyBoxRepository.findByIdWithMedications(box.getId()).orElse(box);
+		int count = (loadedBox.getMyMedicines() != null) ? loadedBox.getMyMedicines().size() : 0;
+		return new PharmacyBoxResponse(loadedBox.getId(), loadedBox.getGroup().getName(), count);
+	}
 
-        pharmacyBoxRepository.delete(box);
-    }
+	private void verifyIsManager(UUID userId, UUID groupId) {
+		GroupMember member = groupMemberRepository.findByGroup_IdAndUser_Id(groupId, userId)
+			.orElseThrow(() -> new SecurityException("You are not a member of this group."));
 
-    private void verifyIsMember(UUID userId, UUID groupId) {
-        if (!groupMemberRepository.existsByUser_IdAndGroup_Id(userId, groupId)) {
-            throw new SecurityException("Access denied: you are not a member of this group.");
-        }
-    }
+		if (member.getRole() != GroupRole.MANAGER) {
+			throw new SecurityException("Access denied: only MANAGER can perform this action.");
+		}
+	}
 
-    private void verifyIsManager(UUID userId, UUID groupId) {
-        GroupMember member = groupMemberRepository
-                .findByGroup_IdAndUser_Id(groupId, userId)
-                .orElseThrow(() -> new SecurityException("You are not a member of this group."));
+	private User getUser(UUID userId) {
+		return userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("User not found."));
+	}
 
-        if (member.getRole() != GroupRole.MANAGER) {
-            throw new SecurityException("Access denied: only MANAGER can perform this action.");
-        }
-    }
+	private Group getGroup(UUID groupId) {
+		return groupRepository.findById(groupId).orElseThrow(() -> new NoSuchElementException("Group not found."));
+	}
 
-    private User getUser(UUID userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new NoSuchElementException("User not found."));
-    }
-
-
-    private Group getGroup(UUID groupId) {
-        return groupRepository.findById(groupId)
-                .orElseThrow(() -> new NoSuchElementException("Group not found."));
-    }
 }

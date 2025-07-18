@@ -9,9 +9,10 @@ import lombok.Setter;
 @Setter
 public class CheckOTPRequest {
 
-    @NotBlank
-    private String email;
+	@NotBlank
+	private String email;
 
-    @NotBlank
-    private String code;
+	@NotBlank
+	private String code;
+
 }

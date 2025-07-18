@@ -10,6 +10,11 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 public class PharmacyBoxResponse {
-    private UUID id;
-    private String groupName;
+
+	private UUID id;
+
+	private String groupName;
+
+	private int medicationCount;
+
 }
