@@ -7,6 +7,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -48,4 +50,9 @@ public class Treatment {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "my_medicine_id", nullable = false)
     private MyMedicine myMedicine;
+
+    // One-to-many relationship with Reminder
+    @OneToMany(mappedBy = "treatment", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private Set<Reminder> reminders = new HashSet<>();
 }

@@ -90,7 +90,8 @@ public class WebSecurityConfig {
 				.requestMatchers("/api/purchase-history/**").authenticated()
 				.requestMatchers("/api/prescriptions/**").authenticated()
 				.requestMatchers("/api/treatments/**").authenticated()
-				.requestMatchers("/api/diseases/**").authenticated()
+				.requestMatchers("/api/treatments/**").authenticated()
+				.requestMatchers("/api/reminders/**").authenticated()
 				// .requestMatchers("/client/**").authenticated()
 				// .requestMatchers(HttpMethod.GET,
 				// "/api/medic/**").hasAuthority("ROLE_ADMIN")
