@@ -12,8 +12,12 @@ import java.util.UUID;
 @AllArgsConstructor
 public class PharmacyBoxMedicinesResponse {
 
-    private UUID pharmacyBoxId;
-    private String groupName;
-    private int totalMedicines;
-    private List<MyMedicineResponse> medicines;
+	private UUID pharmacyBoxId;
+
+	private String groupName;
+
+	private int totalMedicines;
+
+	private List<MyMedicineResponse> medicines;
+
 }

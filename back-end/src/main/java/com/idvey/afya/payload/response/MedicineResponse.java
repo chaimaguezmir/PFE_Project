@@ -11,10 +11,16 @@ import java.util.UUID;
 @AllArgsConstructor
 public class MedicineResponse {
 
-    private UUID id;
-    private String name;
-    private String manufacturer;
-    private String dosageForm;
-    private boolean requiresPrescription;
-    private String barcode;
+	private UUID id;
+
+	private String name;
+
+	private String manufacturer;
+
+	private String dosageForm;
+
+	private boolean requiresPrescription;
+
+	private String barcode;
+
 }

@@ -11,9 +11,10 @@ import java.time.LocalDate;
 @Setter
 public class UpdatePurchaseHistoryRequest {
 
-    @NotNull(message = "Quantity purchased is required")
-    @Positive(message = "Quantity must be positive")
-    private Integer quantityPurchased;
+	@NotNull(message = "Quantity purchased is required")
+	@Positive(message = "Quantity must be positive")
+	private Integer quantityPurchased;
 
-    private LocalDate expiryDate;
+	private LocalDate expiryDate;
+
 }

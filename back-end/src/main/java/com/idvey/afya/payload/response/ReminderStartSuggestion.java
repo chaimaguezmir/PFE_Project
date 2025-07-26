@@ -15,19 +15,29 @@ import java.util.List;
 @AllArgsConstructor
 public class ReminderStartSuggestion {
 
-    private LocalTime currentTime;
-    private String currentPeriod; // "morning", "afternoon", "evening", "night"
-    private List<StartOption> availableOptions;
-    private StartOption recommendedOption;
+	private LocalTime currentTime;
 
-    @Getter
-    @Setter
-    @AllArgsConstructor
-    public static class StartOption {
-        private CreateReminderRequest.StartPreference preference;
-        private String description;
-        private LocalDateTime firstReminderTime;
-        private String explanation;
-        private boolean isRecommended;
-    }
+	private String currentPeriod; // "morning", "afternoon", "evening", "night"
+
+	private List<StartOption> availableOptions;
+
+	private StartOption recommendedOption;
+
+	@Getter
+	@Setter
+	@AllArgsConstructor
+	public static class StartOption {
+
+		private CreateReminderRequest.StartPreference preference;
+
+		private String description;
+
+		private LocalDateTime firstReminderTime;
+
+		private String explanation;
+
+		private boolean isRecommended;
+
+	}
+
 }

@@ -25,58 +25,54 @@ import java.util.UUID;
 @Tag(name = "Prescriptions")
 public class PrescriptionController {
 
-    private final PrescriptionService prescriptionService;
+	private final PrescriptionService prescriptionService;
 
-    @PrescriptionDocs.CreatePrescription
-    @PostMapping
-    public ResponseEntity<PrescriptionResponse> createPrescription(
-            @AuthenticationPrincipal UserDetailsImpl currentUser,
-            @Valid @RequestBody CreatePrescriptionRequest request) {
-        PrescriptionResponse response = prescriptionService.createPrescription(currentUser.getId(), request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
+	@PrescriptionDocs.CreatePrescription
+	@PostMapping
+	public ResponseEntity<PrescriptionResponse> createPrescription(@AuthenticationPrincipal UserDetailsImpl currentUser,
+			@Valid @RequestBody CreatePrescriptionRequest request) {
+		PrescriptionResponse response = prescriptionService.createPrescription(currentUser.getId(), request);
+		return ResponseEntity.status(HttpStatus.CREATED).body(response);
+	}
 
-    @PrescriptionDocs.GetUserPrescriptions
-    @GetMapping
-    public ResponseEntity<List<PrescriptionResponse>> getUserPrescriptions(
-            @AuthenticationPrincipal UserDetailsImpl currentUser) {
-        List<PrescriptionResponse> prescriptions = prescriptionService.getUserPrescriptions(currentUser.getId());
-        return ResponseEntity.ok(prescriptions);
-    }
+	@PrescriptionDocs.GetUserPrescriptions
+	@GetMapping
+	public ResponseEntity<List<PrescriptionResponse>> getUserPrescriptions(
+			@AuthenticationPrincipal UserDetailsImpl currentUser) {
+		List<PrescriptionResponse> prescriptions = prescriptionService.getUserPrescriptions(currentUser.getId());
+		return ResponseEntity.ok(prescriptions);
+	}
 
-    @PrescriptionDocs.GetActivePrescriptions
-    @GetMapping("/active")
-    public ResponseEntity<List<PrescriptionResponse>> getActivePrescriptions(
-            @AuthenticationPrincipal UserDetailsImpl currentUser) {
-        List<PrescriptionResponse> prescriptions = prescriptionService.getActivePrescriptions(currentUser.getId());
-        return ResponseEntity.ok(prescriptions);
-    }
+	@PrescriptionDocs.GetActivePrescriptions
+	@GetMapping("/active")
+	public ResponseEntity<List<PrescriptionResponse>> getActivePrescriptions(
+			@AuthenticationPrincipal UserDetailsImpl currentUser) {
+		List<PrescriptionResponse> prescriptions = prescriptionService.getActivePrescriptions(currentUser.getId());
+		return ResponseEntity.ok(prescriptions);
+	}
 
-    @PrescriptionDocs.GetPrescriptionDetail
-    @GetMapping("/{id}")
-    public ResponseEntity<PrescriptionDetailResponse> getPrescriptionDetail(
-            @AuthenticationPrincipal UserDetailsImpl currentUser,
-            @PathVariable UUID id) {
-        PrescriptionDetailResponse response = prescriptionService.getPrescriptionDetail(currentUser.getId(), id);
-        return ResponseEntity.ok(response);
-    }
+	@PrescriptionDocs.GetPrescriptionDetail
+	@GetMapping("/{id}")
+	public ResponseEntity<PrescriptionDetailResponse> getPrescriptionDetail(
+			@AuthenticationPrincipal UserDetailsImpl currentUser, @PathVariable UUID id) {
+		PrescriptionDetailResponse response = prescriptionService.getPrescriptionDetail(currentUser.getId(), id);
+		return ResponseEntity.ok(response);
+	}
 
-    @PrescriptionDocs.UpdatePrescription
-    @PutMapping("/{id}")
-    public ResponseEntity<PrescriptionResponse> updatePrescription(
-            @AuthenticationPrincipal UserDetailsImpl currentUser,
-            @PathVariable UUID id,
-            @Valid @RequestBody UpdatePrescriptionRequest request) {
-        PrescriptionResponse response = prescriptionService.updatePrescription(currentUser.getId(), id, request);
-        return ResponseEntity.ok(response);
-    }
+	@PrescriptionDocs.UpdatePrescription
+	@PutMapping("/{id}")
+	public ResponseEntity<PrescriptionResponse> updatePrescription(@AuthenticationPrincipal UserDetailsImpl currentUser,
+			@PathVariable UUID id, @Valid @RequestBody UpdatePrescriptionRequest request) {
+		PrescriptionResponse response = prescriptionService.updatePrescription(currentUser.getId(), id, request);
+		return ResponseEntity.ok(response);
+	}
 
-    @PrescriptionDocs.DeletePrescription
-    @DeleteMapping("/{id}")
-    public ResponseEntity<MessageResponse> deletePrescription(
-            @AuthenticationPrincipal UserDetailsImpl currentUser,
-            @PathVariable UUID id) {
-        prescriptionService.deletePrescription(currentUser.getId(), id);
-        return ResponseEntity.ok(new MessageResponse("Prescription deleted successfully"));
-    }
+	@PrescriptionDocs.DeletePrescription
+	@DeleteMapping("/{id}")
+	public ResponseEntity<MessageResponse> deletePrescription(@AuthenticationPrincipal UserDetailsImpl currentUser,
+			@PathVariable UUID id) {
+		prescriptionService.deletePrescription(currentUser.getId(), id);
+		return ResponseEntity.ok(new MessageResponse("Prescription deleted successfully"));
+	}
+
 }

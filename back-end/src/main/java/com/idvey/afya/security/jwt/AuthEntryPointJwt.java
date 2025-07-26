@@ -22,12 +22,12 @@ public class AuthEntryPointJwt implements AuthenticationEntryPoint {
 
 	@Override
 	public void commence(HttpServletRequest request, HttpServletResponse response,
-						 AuthenticationException authException) throws IOException, ServletException {
+			AuthenticationException authException) throws IOException, ServletException {
 
 		// Only log at DEBUG level for unauthorized requests to prevent log spam
 		// This reduces the noise from DoS attacks and browser requests
-		logger.debug("Unauthorized access attempt from IP: {} to path: {}",
-				getClientIpAddress(request), request.getServletPath());
+		logger.debug("Unauthorized access attempt from IP: {} to path: {}", getClientIpAddress(request),
+				request.getServletPath());
 
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -46,9 +46,11 @@ public class AuthEntryPointJwt implements AuthenticationEntryPoint {
 		String xForwardedForHeader = request.getHeader("X-Forwarded-For");
 		if (xForwardedForHeader == null) {
 			return request.getRemoteAddr();
-		} else {
+		}
+		else {
 			// X-Forwarded-For can contain multiple IPs, get the first one
 			return xForwardedForHeader.split(",")[0].trim();
 		}
 	}
+
 }

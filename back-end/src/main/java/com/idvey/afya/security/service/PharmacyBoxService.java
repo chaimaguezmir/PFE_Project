@@ -50,11 +50,11 @@ public class PharmacyBoxService {
 		getUser(userId); // throws if user not found
 
 		return groupMemberRepository.findByUser_IdWithGroupAndPharmacyBox(userId)
-				.stream()
-				.map(GroupMember::getGroup)
-				.filter(group -> group.getPharmacyBox() != null)
-				.map(group -> toResponse(group.getPharmacyBox()))
-				.toList();
+			.stream()
+			.map(GroupMember::getGroup)
+			.filter(group -> group.getPharmacyBox() != null)
+			.map(group -> toResponse(group.getPharmacyBox()))
+			.toList();
 	}
 
 	private PharmacyBoxResponse toResponse(PharmacyBox box) {

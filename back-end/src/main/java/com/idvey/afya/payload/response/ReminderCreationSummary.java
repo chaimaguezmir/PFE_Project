@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-
 import java.time.LocalTime;
 import java.util.List;
 
@@ -14,16 +13,23 @@ import java.util.List;
 @AllArgsConstructor
 public class ReminderCreationSummary {
 
-    private int durationDays;
-    private String frequency; // daily, every other day, weekly
-    private List<TimeSlotSummary> timeSlots;
+	private int durationDays;
 
-    @Getter
-    @Setter
-    @AllArgsConstructor
-    public static class TimeSlotSummary {
-        private CreateReminderRequest.TimeSlot timeSlot;
-        private LocalTime time;
-        private int remindersCreated; // how many reminders created for this time slot
-    }
+	private String frequency; // daily, every other day, weekly
+
+	private List<TimeSlotSummary> timeSlots;
+
+	@Getter
+	@Setter
+	@AllArgsConstructor
+	public static class TimeSlotSummary {
+
+		private CreateReminderRequest.TimeSlot timeSlot;
+
+		private LocalTime time;
+
+		private int remindersCreated; // how many reminders created for this time slot
+
+	}
+
 }

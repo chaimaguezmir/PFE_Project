@@ -27,4 +27,5 @@ public class PharmacyBoxController {
 	public ResponseEntity<List<PharmacyBoxResponse>> getMyBoxes(@AuthenticationPrincipal UserDetailsImpl currentUser) {
 		return ResponseEntity.ok(pharmacyBoxService.getByUserId(currentUser.getId()));
 	}
+
 }
