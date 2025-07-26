@@ -16,13 +16,20 @@ import java.util.UUID;
 @AllArgsConstructor
 public class ReminderResponse {
 
-    private UUID id;
-    private LocalDateTime reminderTime;
-    private ReminderStatus status;
-    private String message;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-    private UUID treatmentId;
-    private CreateReminderRequest.TimeSlot timeSlot; // MORNING, NOON, EVENING, NIGHT
-}
+	private UUID id;
 
+	private LocalDateTime reminderTime;
+
+	private ReminderStatus status;
+
+	private String message;
+
+	private LocalDateTime createdAt;
+
+	private LocalDateTime updatedAt;
+
+	private UUID treatmentId;
+
+	private CreateReminderRequest.TimeSlot timeSlot; // MORNING, NOON, EVENING, NIGHT
+
+}

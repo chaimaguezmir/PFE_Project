@@ -13,10 +13,16 @@ import java.util.UUID;
 @AllArgsConstructor
 public class PurchaseHistoryResponse {
 
-    private UUID id;
-    private Integer quantityPurchased;
-    private LocalDate expiryDate;
-    private LocalDateTime createdAt;
-    private UUID myMedicineId;
-    private String myMedicineName;
+	private UUID id;
+
+	private Integer quantityPurchased;
+
+	private LocalDate expiryDate;
+
+	private LocalDateTime createdAt;
+
+	private UUID myMedicineId;
+
+	private String myMedicineName;
+
 }

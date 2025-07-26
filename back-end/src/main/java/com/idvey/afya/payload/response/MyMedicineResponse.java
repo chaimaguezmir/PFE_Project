@@ -12,14 +12,24 @@ import java.util.UUID;
 @AllArgsConstructor
 public class MyMedicineResponse {
 
-    private UUID id;
-    private String name;
-    private String form;
-    private UUID pharmacyBoxId;
-    private String pharmacyBoxName;
-    private MedicineResponse medicine;
-    private int totalQuantityPurchased;
-    private long purchaseHistoryCount;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+	private UUID id;
+
+	private String name;
+
+	private String form;
+
+	private UUID pharmacyBoxId;
+
+	private String pharmacyBoxName;
+
+	private MedicineResponse medicine;
+
+	private int totalQuantityPurchased;
+
+	private long purchaseHistoryCount;
+
+	private LocalDateTime createdAt;
+
+	private LocalDateTime updatedAt;
+
 }

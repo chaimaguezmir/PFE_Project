@@ -110,6 +110,4 @@ public class User {
 	@Builder.Default
 	private Set<Prescription> prescriptions = new HashSet<>();
 
-
-
 }

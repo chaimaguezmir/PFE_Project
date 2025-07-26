@@ -13,24 +13,24 @@ import java.util.UUID;
 @Repository
 public interface MedicineRepository extends JpaRepository<Medicine, UUID> {
 
-    Optional<Medicine> findByName(String name);
+	Optional<Medicine> findByName(String name);
 
-    List<Medicine> findByNameContainingIgnoreCase(String name);
+	List<Medicine> findByNameContainingIgnoreCase(String name);
 
-    List<Medicine> findByManufacturerContainingIgnoreCase(String manufacturer);
+	List<Medicine> findByManufacturerContainingIgnoreCase(String manufacturer);
 
-    Optional<Medicine> findByBarcode(String barcode);
+	Optional<Medicine> findByBarcode(String barcode);
 
-    List<Medicine> findByRequiresPrescription(boolean requiresPrescription);
+	List<Medicine> findByRequiresPrescription(boolean requiresPrescription);
 
-    List<Medicine> findByDosageForm(String dosageForm);
+	List<Medicine> findByDosageForm(String dosageForm);
 
-    @Query("SELECT m FROM Medicine m WHERE " +
-            "LOWER(m.name) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-            "LOWER(m.manufacturer) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
-    List<Medicine> searchMedicines(@Param("searchTerm") String searchTerm);
+	@Query("SELECT m FROM Medicine m WHERE " + "LOWER(m.name) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR "
+			+ "LOWER(m.manufacturer) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
+	List<Medicine> searchMedicines(@Param("searchTerm") String searchTerm);
 
-    boolean existsByBarcode(String barcode);
+	boolean existsByBarcode(String barcode);
 
-    boolean existsByName(String name);
+	boolean existsByName(String name);
+
 }

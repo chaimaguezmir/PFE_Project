@@ -14,12 +14,20 @@ import java.util.UUID;
 @AllArgsConstructor
 public class PrescriptionResponse {
 
-    private UUID id;
-    private String name;
-    private LocalDate startDate;
-    private LocalDate endDate;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-    private List<DiseaseResponse> diseases;
-    private int treatmentCount;
+	private UUID id;
+
+	private String name;
+
+	private LocalDate startDate;
+
+	private LocalDate endDate;
+
+	private LocalDateTime createdAt;
+
+	private LocalDateTime updatedAt;
+
+	private List<DiseaseResponse> diseases;
+
+	private int treatmentCount;
+
 }

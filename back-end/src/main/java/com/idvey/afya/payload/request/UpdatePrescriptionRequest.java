@@ -12,9 +12,10 @@ import java.util.UUID;
 @Setter
 public class UpdatePrescriptionRequest {
 
-    @NotBlank(message = "Prescription name is required")
-    private String name;
+	@NotBlank(message = "Prescription name is required")
+	private String name;
 
-    @NotNull(message = "Disease IDs are required")
-    private List<UUID> diseaseIds;
+	@NotNull(message = "Disease IDs are required")
+	private List<UUID> diseaseIds;
+
 }

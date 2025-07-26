@@ -8,6 +8,7 @@ import lombok.Setter;
 @Setter
 public class CreateDiseaseRequest {
 
-    @NotBlank(message = "Disease name is required")
-    private String name;
+	@NotBlank(message = "Disease name is required")
+	private String name;
+
 }

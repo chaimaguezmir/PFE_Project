@@ -12,12 +12,13 @@ import java.util.UUID;
 @Setter
 public class AddPurchaseHistoryRequest {
 
-    @NotNull(message = "My medicine ID is required")
-    private UUID myMedicineId;
+	@NotNull(message = "My medicine ID is required")
+	private UUID myMedicineId;
 
-    @NotNull(message = "Quantity purchased is required")
-    @Positive(message = "Quantity must be positive")
-    private Integer quantityPurchased;
+	@NotNull(message = "Quantity purchased is required")
+	@Positive(message = "Quantity must be positive")
+	private Integer quantityPurchased;
 
-    private LocalDate expiryDate;
+	private LocalDate expiryDate;
+
 }

@@ -10,13 +10,14 @@ import lombok.Setter;
 @Setter
 public class UpdateTreatmentRequest {
 
-    @NotBlank(message = "Dosage is required")
-    private String dosage;
+	@NotBlank(message = "Dosage is required")
+	private String dosage;
 
-    @NotBlank(message = "Frequency is required")
-    private String frequency;
+	@NotBlank(message = "Frequency is required")
+	private String frequency;
 
-    @NotNull(message = "Duration in days is required")
-    @Positive(message = "Duration must be positive")
-    private Integer durationDays;
+	@NotNull(message = "Duration in days is required")
+	@Positive(message = "Duration must be positive")
+	private Integer durationDays;
+
 }

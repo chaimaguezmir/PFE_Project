@@ -9,6 +9,7 @@ import lombok.Setter;
 @Setter
 public class UpdateReminderStatusRequest {
 
-    @NotNull(message = "Reminder status is required")
-    private ReminderStatus status;
+	@NotNull(message = "Reminder status is required")
+	private ReminderStatus status;
+
 }

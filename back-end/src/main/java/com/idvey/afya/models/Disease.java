@@ -19,15 +19,16 @@ import java.util.UUID;
 @Table(name = "diseases")
 public class Disease {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.UUID)
+	private UUID id;
 
-    @Column(nullable = false, unique = true)
-    private String name;
+	@Column(nullable = false, unique = true)
+	private String name;
 
-    // Many-to-many relationship with Prescription
-    @ManyToMany(mappedBy = "diseases", fetch = FetchType.LAZY)
-    @Builder.Default
-    private Set<Prescription> prescriptions = new HashSet<>();
+	// Many-to-many relationship with Prescription
+	@ManyToMany(mappedBy = "diseases", fetch = FetchType.LAZY)
+	@Builder.Default
+	private Set<Prescription> prescriptions = new HashSet<>();
+
 }

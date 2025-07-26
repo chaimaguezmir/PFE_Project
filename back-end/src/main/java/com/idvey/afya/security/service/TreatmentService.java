@@ -25,155 +25,138 @@ import java.util.UUID;
 @Slf4j
 public class TreatmentService {
 
-    private final TreatmentRepository treatmentRepository;
-    private final PrescriptionRepository prescriptionRepository;
-    private final MyMedicineRepository myMedicineRepository;
-    private final PrescriptionService prescriptionService;
+	private final TreatmentRepository treatmentRepository;
 
-    @Transactional
-    public TreatmentResponse createTreatment(UUID userId, CreateTreatmentRequest request) {
-        log.info("Creating treatment for prescription: {} by user: {}", request.getPrescriptionId(), userId);
+	private final PrescriptionRepository prescriptionRepository;
 
-        Prescription prescription = prescriptionRepository.findById(request.getPrescriptionId())
-                .orElseThrow(() -> new NoSuchElementException("Prescription not found"));
+	private final MyMedicineRepository myMedicineRepository;
 
-        // Verify ownership
-        if (!prescription.getUser().getId().equals(userId)) {
-            throw new IllegalArgumentException("Prescription does not belong to user");
-        }
+	private final PrescriptionService prescriptionService;
 
-        MyMedicine myMedicine = myMedicineRepository.findById(request.getMyMedicineId())
-                .orElseThrow(() -> new NoSuchElementException("MyMedicine not found"));
+	@Transactional
+	public TreatmentResponse createTreatment(UUID userId, CreateTreatmentRequest request) {
+		log.info("Creating treatment for prescription: {} by user: {}", request.getPrescriptionId(), userId);
 
-        Treatment treatment = Treatment.builder()
-                .dosage(request.getDosage())
-                .frequency(request.getFrequency())
-                .durationDays(request.getDurationDays())
-                .prescription(prescription)
-                .myMedicine(myMedicine)
-                .build();
+		Prescription prescription = prescriptionRepository.findById(request.getPrescriptionId())
+			.orElseThrow(() -> new NoSuchElementException("Prescription not found"));
 
-        Treatment saved = treatmentRepository.save(treatment);
-        log.info("Treatment created with ID: {}", saved.getId());
+		// Verify ownership
+		if (!prescription.getUser().getId().equals(userId)) {
+			throw new IllegalArgumentException("Prescription does not belong to user");
+		}
 
-        // Update prescription end date after adding treatment
-        prescriptionService.updatePrescriptionEndDate(prescription.getId());
+		MyMedicine myMedicine = myMedicineRepository.findById(request.getMyMedicineId())
+			.orElseThrow(() -> new NoSuchElementException("MyMedicine not found"));
 
-        return toResponse(saved);
-    }
+		Treatment treatment = Treatment.builder()
+			.dosage(request.getDosage())
+			.frequency(request.getFrequency())
+			.durationDays(request.getDurationDays())
+			.prescription(prescription)
+			.myMedicine(myMedicine)
+			.build();
 
-    @Transactional
-    public TreatmentResponse updateTreatment(UUID userId, UUID treatmentId, UpdateTreatmentRequest request) {
-        log.info("Updating treatment: {} by user: {}", treatmentId, userId);
+		Treatment saved = treatmentRepository.save(treatment);
+		log.info("Treatment created with ID: {}", saved.getId());
 
-        Treatment treatment = treatmentRepository.findById(treatmentId)
-                .orElseThrow(() -> new NoSuchElementException("Treatment not found"));
+		// Update prescription end date after adding treatment
+		prescriptionService.updatePrescriptionEndDate(prescription.getId());
 
-        // Verify ownership
-        if (!treatment.getPrescription().getUser().getId().equals(userId)) {
-            throw new IllegalArgumentException("Treatment does not belong to user");
-        }
+		return toResponse(saved);
+	}
 
-        treatment.setDosage(request.getDosage());
-        treatment.setFrequency(request.getFrequency());
-        treatment.setDurationDays(request.getDurationDays());
+	@Transactional
+	public TreatmentResponse updateTreatment(UUID userId, UUID treatmentId, UpdateTreatmentRequest request) {
+		log.info("Updating treatment: {} by user: {}", treatmentId, userId);
 
-        Treatment updated = treatmentRepository.save(treatment);
-        log.info("Treatment updated: {}", treatmentId);
+		Treatment treatment = treatmentRepository.findById(treatmentId)
+			.orElseThrow(() -> new NoSuchElementException("Treatment not found"));
 
-        // Update prescription end date after updating treatment
-        prescriptionService.updatePrescriptionEndDate(treatment.getPrescription().getId());
+		// Verify ownership
+		if (!treatment.getPrescription().getUser().getId().equals(userId)) {
+			throw new IllegalArgumentException("Treatment does not belong to user");
+		}
 
-        return toResponse(updated);
-    }
+		treatment.setDosage(request.getDosage());
+		treatment.setFrequency(request.getFrequency());
+		treatment.setDurationDays(request.getDurationDays());
 
-    @Transactional
-    public void deleteTreatment(UUID userId, UUID treatmentId) {
-        log.info("Deleting treatment: {} by user: {}", treatmentId, userId);
+		Treatment updated = treatmentRepository.save(treatment);
+		log.info("Treatment updated: {}", treatmentId);
 
-        Treatment treatment = treatmentRepository.findById(treatmentId)
-                .orElseThrow(() -> new NoSuchElementException("Treatment not found"));
+		// Update prescription end date after updating treatment
+		prescriptionService.updatePrescriptionEndDate(treatment.getPrescription().getId());
 
-        // Verify ownership
-        if (!treatment.getPrescription().getUser().getId().equals(userId)) {
-            throw new IllegalArgumentException("Treatment does not belong to user");
-        }
+		return toResponse(updated);
+	}
 
-        UUID prescriptionId = treatment.getPrescription().getId();
-        treatmentRepository.deleteById(treatmentId);
-        log.info("Treatment deleted: {}", treatmentId);
+	@Transactional
+	public void deleteTreatment(UUID userId, UUID treatmentId) {
+		log.info("Deleting treatment: {} by user: {}", treatmentId, userId);
 
-        // Update prescription end date after deleting treatment
-        prescriptionService.updatePrescriptionEndDate(prescriptionId);
-    }
+		Treatment treatment = treatmentRepository.findById(treatmentId)
+			.orElseThrow(() -> new NoSuchElementException("Treatment not found"));
 
-    @Transactional(readOnly = true)
-    public List<TreatmentResponse> getTreatmentsByPrescription(UUID userId, UUID prescriptionId) {
-        log.info("Fetching treatments for prescription: {} by user: {}", prescriptionId, userId);
+		// Verify ownership
+		if (!treatment.getPrescription().getUser().getId().equals(userId)) {
+			throw new IllegalArgumentException("Treatment does not belong to user");
+		}
 
-        Prescription prescription = prescriptionRepository.findById(prescriptionId)
-                .orElseThrow(() -> new NoSuchElementException("Prescription not found"));
+		UUID prescriptionId = treatment.getPrescription().getId();
+		treatmentRepository.deleteById(treatmentId);
+		log.info("Treatment deleted: {}", treatmentId);
 
-        // Verify ownership
-        if (!prescription.getUser().getId().equals(userId)) {
-            throw new IllegalArgumentException("Prescription does not belong to user");
-        }
+		// Update prescription end date after deleting treatment
+		prescriptionService.updatePrescriptionEndDate(prescriptionId);
+	}
 
-        return treatmentRepository.findByPrescriptionIdOrderByCreatedAtDesc(prescriptionId)
-                .stream()
-                .map(this::toResponse)
-                .toList();
-    }
+	@Transactional(readOnly = true)
+	public List<TreatmentResponse> getTreatmentsByPrescription(UUID userId, UUID prescriptionId) {
+		log.info("Fetching treatments for prescription: {} by user: {}", prescriptionId, userId);
 
-    @Transactional(readOnly = true)
-    public List<TreatmentResponse> getAllUserTreatments(UUID userId) {
-        log.info("Fetching all treatments for user: {}", userId);
+		Prescription prescription = prescriptionRepository.findById(prescriptionId)
+			.orElseThrow(() -> new NoSuchElementException("Prescription not found"));
 
-        return treatmentRepository.findAllByUserId(userId)
-                .stream()
-                .map(this::toResponse)
-                .toList();
-    }
+		// Verify ownership
+		if (!prescription.getUser().getId().equals(userId)) {
+			throw new IllegalArgumentException("Prescription does not belong to user");
+		}
 
-    @Transactional(readOnly = true)
-    public long getUserTreatmentCount(UUID userId) {
-        log.info("Counting treatments for user: {}", userId);
-        return treatmentRepository.countByUserId(userId);
-    }
+		return treatmentRepository.findByPrescriptionIdOrderByCreatedAtDesc(prescriptionId)
+			.stream()
+			.map(this::toResponse)
+			.toList();
+	}
 
-    private TreatmentResponse toResponse(Treatment treatment) {
-        return new TreatmentResponse(
-                treatment.getId(),
-                treatment.getDosage(),
-                treatment.getFrequency(),
-                treatment.getDurationDays(),
-                treatment.getCreatedAt(),
-                treatment.getUpdatedAt(),
-                treatment.getPrescription().getId(),
-                treatment.getPrescription().getName(),
-                toMyMedicineResponse(treatment.getMyMedicine())
-        );
-    }
+	@Transactional(readOnly = true)
+	public List<TreatmentResponse> getAllUserTreatments(UUID userId) {
+		log.info("Fetching all treatments for user: {}", userId);
 
-    private MyMedicineResponse toMyMedicineResponse(MyMedicine myMedicine) {
-        return new MyMedicineResponse(
-                myMedicine.getId(),
-                myMedicine.getName(),
-                myMedicine.getForm(),
-                myMedicine.getPharmacyBox().getId(),
-                myMedicine.getPharmacyBox().getGroup().getName(),
-                new MedicineResponse(
-                        myMedicine.getMedicine().getId(),
-                        myMedicine.getMedicine().getName(),
-                        myMedicine.getMedicine().getManufacturer(),
-                        myMedicine.getMedicine().getDosageForm(),
-                        myMedicine.getMedicine().isRequiresPrescription(),
-                        myMedicine.getMedicine().getBarcode()
-                ),
-                0, // totalQuantityPurchased - can be calculated if needed
-                0, // purchaseHistoryCount - can be calculated if needed
-                myMedicine.getCreatedAt(),
-                myMedicine.getUpdatedAt()
-        );
-    }
+		return treatmentRepository.findAllByUserId(userId).stream().map(this::toResponse).toList();
+	}
+
+	@Transactional(readOnly = true)
+	public long getUserTreatmentCount(UUID userId) {
+		log.info("Counting treatments for user: {}", userId);
+		return treatmentRepository.countByUserId(userId);
+	}
+
+	private TreatmentResponse toResponse(Treatment treatment) {
+		return new TreatmentResponse(treatment.getId(), treatment.getDosage(), treatment.getFrequency(),
+				treatment.getDurationDays(), treatment.getCreatedAt(), treatment.getUpdatedAt(),
+				treatment.getPrescription().getId(), treatment.getPrescription().getName(),
+				toMyMedicineResponse(treatment.getMyMedicine()));
+	}
+
+	private MyMedicineResponse toMyMedicineResponse(MyMedicine myMedicine) {
+		return new MyMedicineResponse(myMedicine.getId(), myMedicine.getName(), myMedicine.getForm(),
+				myMedicine.getPharmacyBox().getId(), myMedicine.getPharmacyBox().getGroup().getName(),
+				new MedicineResponse(myMedicine.getMedicine().getId(), myMedicine.getMedicine().getName(),
+						myMedicine.getMedicine().getManufacturer(), myMedicine.getMedicine().getDosageForm(),
+						myMedicine.getMedicine().isRequiresPrescription(), myMedicine.getMedicine().getBarcode()),
+				0, // totalQuantityPurchased - can be calculated if needed
+				0, // purchaseHistoryCount - can be calculated if needed
+				myMedicine.getCreatedAt(), myMedicine.getUpdatedAt());
+	}
+
 }

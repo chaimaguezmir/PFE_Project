@@ -14,7 +14,6 @@ public interface PharmacyBoxRepository extends JpaRepository<PharmacyBox, UUID> 
 
 	Optional<PharmacyBox> findByGroup_Id(UUID groupId);
 
-
 	@Query("SELECT pb FROM PharmacyBox pb LEFT JOIN FETCH pb.myMedicines WHERE pb.id = :id")
 	Optional<PharmacyBox> findByIdWithMedications(@Param("id") UUID id);
 

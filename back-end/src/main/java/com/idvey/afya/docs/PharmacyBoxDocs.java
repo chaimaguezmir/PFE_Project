@@ -12,17 +12,22 @@ import java.lang.annotation.*;
 @Tag(name = "Pharmacy Box", description = "Pharmacy box management")
 public final class PharmacyBoxDocs {
 
-    private PharmacyBoxDocs() {} // no instantiation
+	private PharmacyBoxDocs() {
+	} // no instantiation
 
-    @Target(ElementType.METHOD)
-    @Retention(RetentionPolicy.RUNTIME)
-    @Documented
-    @Operation(summary = "Get my pharmacy boxes", description = "Retrieves all pharmacy boxes accessible to the current user")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Pharmacy boxes retrieved successfully",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = com.idvey.afya.payload.response.PharmacyBoxResponse.class))),
-            @ApiResponse(responseCode = "401", description = "Unauthorized")
-    })
-    public @interface GetMyPharmacyBoxes {}
+	@Target(ElementType.METHOD)
+	@Retention(RetentionPolicy.RUNTIME)
+	@Documented
+	@Operation(summary = "Get my pharmacy boxes",
+			description = "Retrieves all pharmacy boxes accessible to the current user")
+	@ApiResponses({
+			@ApiResponse(responseCode = "200", description = "Pharmacy boxes retrieved successfully",
+					content = @Content(mediaType = "application/json",
+							schema = @Schema(
+									implementation = com.idvey.afya.payload.response.PharmacyBoxResponse.class))),
+			@ApiResponse(responseCode = "401", description = "Unauthorized") })
+	public @interface GetMyPharmacyBoxes {
+
+	}
+
 }
