@@ -22,8 +22,12 @@ public class AuthEntryPointJwt implements AuthenticationEntryPoint {
 
 	@Override
 	public void commence(HttpServletRequest request, HttpServletResponse response,
-			AuthenticationException authException) throws IOException, ServletException {
-		logger.error("Unauthorized error: {}", authException.getMessage());
+						 AuthenticationException authException) throws IOException, ServletException {
+
+		// Only log at DEBUG level for unauthorized requests to prevent log spam
+		// This reduces the noise from DoS attacks and browser requests
+		logger.debug("Unauthorized access attempt from IP: {} to path: {}",
+				getClientIpAddress(request), request.getServletPath());
 
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -31,13 +35,20 @@ public class AuthEntryPointJwt implements AuthenticationEntryPoint {
 		final Map<String, Object> body = new HashMap<>();
 		body.put("status", HttpServletResponse.SC_UNAUTHORIZED);
 		body.put("error", "Unauthorized");
-		body.put("message", authException.getMessage());
+		body.put("message", "Full authentication is required to access this resource");
 		body.put("path", request.getServletPath());
 
 		final ObjectMapper mapper = new ObjectMapper();
 		mapper.writeValue(response.getOutputStream(), body);
-
-		// response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Error: Unauthorized");
 	}
 
+	private String getClientIpAddress(HttpServletRequest request) {
+		String xForwardedForHeader = request.getHeader("X-Forwarded-For");
+		if (xForwardedForHeader == null) {
+			return request.getRemoteAddr();
+		} else {
+			// X-Forwarded-For can contain multiple IPs, get the first one
+			return xForwardedForHeader.split(",")[0].trim();
+		}
+	}
 }

@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -67,19 +68,56 @@ public class ReminderService {
 
         // Get current date and time
         LocalDateTime now = LocalDateTime.now();
-        LocalDate baseDate = calculateStartDate(now, request.getReminderTimes(), request.getStartPreference());
 
-        // For each reminder day and each time slot, create a reminder
+        // Handle START_NEXT_CYCLE with proper time slot logic
+        LocalDate baseDate;
+        List<CreateReminderRequest.ReminderTimeSlot> firstDaySlots;
+
+        if (request.getStartPreference() == CreateReminderRequest.StartPreference.START_NEXT_CYCLE) {
+            // Find the next available time slot
+            LocalTime currentTime = now.toLocalTime();
+            LocalDate today = now.toLocalDate();
+
+            // Filter time slots to find next available ones for today
+            List<CreateReminderRequest.ReminderTimeSlot> todaySlots = request.getReminderTimes().stream()
+                    .filter(slot -> slot.getTime().isAfter(currentTime))
+                    .sorted((s1, s2) -> s1.getTime().compareTo(s2.getTime()))
+                    .collect(Collectors.toList());
+
+            if (!todaySlots.isEmpty()) {
+                // Start today with remaining slots
+                baseDate = today;
+                firstDaySlots = todaySlots;
+                log.info("START_NEXT_CYCLE: Starting today with {} remaining slots", todaySlots.size());
+            } else {
+                // All slots have passed today, start tomorrow with all slots
+                baseDate = today.plusDays(1);
+                firstDaySlots = request.getReminderTimes();
+                log.info("START_NEXT_CYCLE: All slots passed today, starting tomorrow");
+            }
+        } else {
+            baseDate = calculateStartDateSimple(now, request.getStartPreference());
+            firstDaySlots = request.getReminderTimes();
+        }
+
+        // For each reminder day
         for (Integer dayOffset : reminderDays) {
             LocalDate reminderDate = baseDate.plusDays(dayOffset);
 
-            for (CreateReminderRequest.ReminderTimeSlot timeSlot : request.getReminderTimes()) {
-                // Combine date with time to create full datetime
+            // Use filtered slots for first day if START_NEXT_CYCLE, all slots for other days
+            List<CreateReminderRequest.ReminderTimeSlot> slotsToUse =
+                    (dayOffset == 0 && request.getStartPreference() == CreateReminderRequest.StartPreference.START_NEXT_CYCLE)
+                            ? firstDaySlots
+                            : request.getReminderTimes();
+
+            for (CreateReminderRequest.ReminderTimeSlot timeSlot : slotsToUse) {
                 LocalDateTime reminderDateTime = reminderDate.atTime(timeSlot.getTime());
 
-                // Apply start preference logic for the first day only
-                if (dayOffset == 0) {
-                    reminderDateTime = applyStartPreference(reminderDateTime, now, request.getStartPreference(), timeSlot);
+                // Additional check for START_NOW
+                if (request.getStartPreference() == CreateReminderRequest.StartPreference.START_NOW
+                        && dayOffset == 0 && reminderDateTime.isBefore(now)) {
+                    // Skip this reminder as it's in the past
+                    continue;
                 }
 
                 Reminder reminder = Reminder.builder()
@@ -100,48 +138,11 @@ public class ReminderService {
         return reminders;
     }
 
-    private LocalDate calculateStartDate(LocalDateTime now, List<CreateReminderRequest.ReminderTimeSlot> timeSlots,
-                                         CreateReminderRequest.StartPreference startPreference) {
-        switch (startPreference) {
-            case START_NOW:
-                return now.toLocalDate();
-            case START_TOMORROW:
-                return now.toLocalDate().plusDays(1);
-            case START_NEXT_CYCLE:
-                // Find the next occurrence of the first time slot
-                CreateReminderRequest.ReminderTimeSlot firstSlot = timeSlots.get(0);
-                LocalDateTime nextOccurrence = now.toLocalDate().atTime(firstSlot.getTime());
-                if (nextOccurrence.isBefore(now) || nextOccurrence.isEqual(now)) {
-                    return now.toLocalDate().plusDays(1);
-                }
-                return now.toLocalDate();
-            default:
-                return now.toLocalDate();
-        }
-    }
-
-    private LocalDateTime applyStartPreference(LocalDateTime reminderDateTime, LocalDateTime now,
-                                               CreateReminderRequest.StartPreference startPreference,
-                                               CreateReminderRequest.ReminderTimeSlot timeSlot) {
+    private LocalDate calculateStartDateSimple(LocalDateTime now, CreateReminderRequest.StartPreference startPreference) {
         return switch (startPreference) {
-            case START_NOW -> {
-                // If time has passed today, move to tomorrow
-                if (reminderDateTime.isBefore(now)) {
-                    yield reminderDateTime.plusDays(1);
-                }
-                yield reminderDateTime;
-            }
-            case START_TOMORROW ->
-                // Always start tomorrow
-                    reminderDateTime.plusDays(1);
-            case START_NEXT_CYCLE -> {
-                // Start from next occurrence of this time slot
-                if (reminderDateTime.isBefore(now) || reminderDateTime.isEqual(now)) {
-                    yield reminderDateTime.plusDays(1);
-                }
-                yield reminderDateTime;
-            }
-            default -> reminderDateTime;
+            case START_TOMORROW -> now.toLocalDate().plusDays(1);
+            case START_NEXT_CYCLE -> now.toLocalDate(); // Will be handled specially in generateReminders
+            default -> now.toLocalDate();
         };
     }
 
@@ -168,6 +169,7 @@ public class ReminderService {
     private List<ReminderStartSuggestion.StartOption> generateStartOptions(LocalDateTime now,
                                                                            List<CreateReminderRequest.ReminderTimeSlot> timeSlots) {
         List<ReminderStartSuggestion.StartOption> options = new ArrayList<>();
+        LocalTime currentTime = now.toLocalTime();
 
         // Option 1: START_NOW
         LocalDateTime nextAvailableTime = findNextAvailableTime(now, timeSlots);
@@ -179,13 +181,14 @@ public class ReminderService {
                 false
         ));
 
-        // Option 2: START_NEXT_CYCLE
+        // Option 2: START_NEXT_CYCLE (improved description)
         LocalDateTime nextCycleTime = findNextCycleTime(now, timeSlots);
+        String nextSlotDescription = getNextSlotDescription(currentTime, timeSlots);
         options.add(new ReminderStartSuggestion.StartOption(
                 CreateReminderRequest.StartPreference.START_NEXT_CYCLE,
-                "Start from next " + getTimeSlotName(timeSlots.get(0).getTimeSlot()),
+                "Start from next " + nextSlotDescription,
                 nextCycleTime,
-                "Begin with the next occurrence of your first reminder time",
+                "Begin with the next upcoming time slot: " + nextSlotDescription,
                 true // This is usually the recommended option
         ));
 
@@ -200,6 +203,19 @@ public class ReminderService {
         ));
 
         return options;
+    }
+
+    private String getNextSlotDescription(LocalTime currentTime, List<CreateReminderRequest.ReminderTimeSlot> timeSlots) {
+        // Find next time slot
+        for (CreateReminderRequest.ReminderTimeSlot slot : timeSlots) {
+            if (slot.getTime().isAfter(currentTime)) {
+                return getTimeSlotName(slot.getTimeSlot()) + " (" + slot.getTime() + ")";
+            }
+        }
+
+        // All slots have passed, next is tomorrow's first slot
+        CreateReminderRequest.ReminderTimeSlot firstSlot = timeSlots.get(0);
+        return "tomorrow's " + getTimeSlotName(firstSlot.getTimeSlot()) + " (" + firstSlot.getTime() + ")";
     }
 
     private LocalDateTime findNextAvailableTime(LocalDateTime now, List<CreateReminderRequest.ReminderTimeSlot> timeSlots) {
@@ -218,13 +234,18 @@ public class ReminderService {
     }
 
     private LocalDateTime findNextCycleTime(LocalDateTime now, List<CreateReminderRequest.ReminderTimeSlot> timeSlots) {
-        CreateReminderRequest.ReminderTimeSlot firstSlot = timeSlots.get(0);
-        LocalDateTime nextOccurrence = now.toLocalDate().atTime(firstSlot.getTime());
+        LocalTime currentTime = now.toLocalTime();
+        LocalDate today = now.toLocalDate();
 
-        if (nextOccurrence.isBefore(now) || nextOccurrence.isEqual(now)) {
-            return nextOccurrence.plusDays(1);
+        // Find next time slot today
+        for (CreateReminderRequest.ReminderTimeSlot slot : timeSlots) {
+            if (slot.getTime().isAfter(currentTime)) {
+                return today.atTime(slot.getTime());
+            }
         }
-        return nextOccurrence;
+
+        // All slots have passed today, return first slot tomorrow
+        return today.plusDays(1).atTime(timeSlots.get(0).getTime());
     }
 
     private ReminderStartSuggestion.StartOption findRecommendedOption(List<ReminderStartSuggestion.StartOption> options,
