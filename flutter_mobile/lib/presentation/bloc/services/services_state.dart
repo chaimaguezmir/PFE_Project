@@ -5,6 +5,7 @@ class ServicesState extends Equatable {
     this.status = FormzSubmissionStatus.initial,
     this.errorMessage,
     this.successMessage,
+    this.allBoxes = const [],
     this.filteredBoxes = const [],
     this.searchQuery = '',
   });
@@ -12,20 +13,23 @@ class ServicesState extends Equatable {
   final FormzSubmissionStatus status;
   final String? errorMessage;
   final String? successMessage;
-  final List<BoxData> filteredBoxes;
+  final List<PharmacyBoxEntity> allBoxes;
+  final List<PharmacyBoxEntity> filteredBoxes;
   final String searchQuery;
 
   ServicesState copyWith({
     FormzSubmissionStatus? status,
     String? errorMessage,
     String? successMessage,
-    List<BoxData>? filteredBoxes,
+    List<PharmacyBoxEntity>? allBoxes,
+    List<PharmacyBoxEntity>? filteredBoxes,
     String? searchQuery,
   }) {
     return ServicesState(
       status: status ?? this.status,
-      errorMessage: errorMessage ?? this.errorMessage,
-      successMessage: successMessage ?? this.successMessage,
+      errorMessage: errorMessage,
+      successMessage: successMessage,
+      allBoxes: allBoxes ?? this.allBoxes,
       filteredBoxes: filteredBoxes ?? this.filteredBoxes,
       searchQuery: searchQuery ?? this.searchQuery,
     );
@@ -33,12 +37,16 @@ class ServicesState extends Equatable {
 
   bool get hasError => errorMessage != null;
   bool get hasSuccess => successMessage != null;
+  bool get isLoading => status == FormzSubmissionStatus.inProgress;
+  bool get isSuccess => status == FormzSubmissionStatus.success;
+  bool get isFailure => status == FormzSubmissionStatus.failure;
 
   @override
   List<Object?> get props => [
     status,
     errorMessage,
     successMessage,
+    allBoxes,
     filteredBoxes,
     searchQuery,
   ];

@@ -39,7 +39,7 @@ class AppRouter {
     if (_isAuthenticated) {
       return AppRoutePath.services;
     } else if (_hasSeenOnboarding) {
-      return AppRoutePath.services;
+      return AppRoutePath.signIn;
     } else {
       return AppRoutePath.onboarding;
     }
@@ -99,14 +99,14 @@ class AppRouter {
             routes: <RouteBase>[
               ShellRoute(
                 builder: (context, state, child) => BlocProvider(
-                  create: (context) => sl<ServicesCubit>(),
+                  create: (context) => sl<ServicesCubit>()..fetchPharmacyBoxes(),
                   child: child,
                 ),
                 routes: [
                   GoRoute(
                     name: AppRouteName.services,
                     path: AppRoutePath.services,
-                    builder: (context, state) =>  ServicesScreen(),
+                    builder: (context, state) =>  const ServicesScreen(),
                   ),
                   GoRoute(
                     name: AppRouteName.pharmacyBox,
