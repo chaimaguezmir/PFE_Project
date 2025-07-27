@@ -13,23 +13,22 @@ import java.util.UUID;
 public class MyMedicineResponse {
 
 	private UUID id;
-
 	private String name;
-
 	private String form;
-
 	private UUID pharmacyBoxId;
-
 	private String pharmacyBoxName;
 
-	private MedicineResponse medicine;
+	// CHANGED: Made medicine optional
+	private MedicineResponse medicine; // Can be null for custom medicines
+
+	// ADDED: Custom medicine info
+	private boolean isCustomMedicine;
+	private String customManufacturer;
+	private String customDosageForm;
+	private Boolean customRequiresPrescription;
 
 	private int totalQuantityPurchased;
-
 	private long purchaseHistoryCount;
-
 	private LocalDateTime createdAt;
-
 	private LocalDateTime updatedAt;
-
 }

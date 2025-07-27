@@ -5,7 +5,6 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -30,6 +29,16 @@ public class MyMedicine {
 	@Column(name = "form")
 	private String form; // pill, sachet, tablet, etc. (customizable by user)
 
+	// ADDED: Custom medicine fields (when medicine is null)
+	@Column(name = "custom_manufacturer")
+	private String customManufacturer;
+
+	@Column(name = "custom_dosage_form")
+	private String customDosageForm;
+
+	@Column(name = "custom_requires_prescription")
+	private Boolean customRequiresPrescription;
+
 	@Column(name = "created_at", nullable = false, updatable = false)
 	@CreationTimestamp
 	private LocalDateTime createdAt;
@@ -43,14 +52,31 @@ public class MyMedicine {
 	@JoinColumn(name = "pharmacy_box_id", nullable = false)
 	private PharmacyBox pharmacyBox;
 
-	// Many-to-one relationship with Medicine
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "medicine_id", nullable = false)
-	private Medicine medicine;
+	// CHANGED: Made Medicine relationship optional
+	@ManyToOne(fetch = FetchType.LAZY, optional = true)
+	@JoinColumn(name = "medicine_id", nullable = true)
+	private Medicine medicine; // Can be null for custom medicines
 
 	// One-to-many relationship with MedicinePurchaseHistory
 	@OneToMany(mappedBy = "myMedicine", cascade = CascadeType.ALL, orphanRemoval = true)
 	@Builder.Default
 	private Set<MedicinePurchaseHistory> purchaseHistory = new HashSet<>();
 
+	// Helper methods to get effective values
+	public String getEffectiveManufacturer() {
+		return medicine != null ? medicine.getManufacturer() : customManufacturer;
+	}
+
+	public String getEffectiveDosageForm() {
+		return medicine != null ? medicine.getDosageForm() : customDosageForm;
+	}
+
+	public boolean getEffectiveRequiresPrescription() {
+		return medicine != null ? medicine.isRequiresPrescription() :
+				(customRequiresPrescription != null ? customRequiresPrescription : false);
+	}
+
+	public boolean isCustomMedicine() {
+		return medicine == null;
+	}
 }
