@@ -14,6 +14,7 @@ class AppRouteName {
   static const String getStartedScreen = 'getStartedScreen';
 
 
+
   // home related screens
   static const String mainScreen = 'mainScreen';
   static const String groupScreen = 'groupScreen';
@@ -23,6 +24,8 @@ class AppRouteName {
   // services related screens
   static const String services = 'services';
   static const String pharmacyBox = 'pharmacyBox';
+  static const String barcodeScanner = 'barcodeScanner';
+  static const String medicineSearchResult = 'medicineSearchResult';
 }
 
 class AppRoutePath {
@@ -48,5 +51,7 @@ class AppRoutePath {
   //services related screens
   static const String services = '/services';
   static const String pharmacyBox = '/services/pharmacyBox';
+  static const String barcodeScanner = '/services/barcodeScanner';
+  static const String medicineSearchResult = '/services/medicineSearchResult';
 
 }

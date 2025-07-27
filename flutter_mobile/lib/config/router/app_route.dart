@@ -23,7 +23,9 @@ import 'package:flutter_mobile/presentation/screens/bottom_bar.dart';
 
 import 'package:flutter_mobile/presentation/screens/onboarding/onboarding_screen.dart';
 import 'package:flutter_mobile/presentation/screens/profile/profile_screen.dart';
+import 'package:flutter_mobile/presentation/screens/services/barcode_scanner_screen.dart';
 import 'package:flutter_mobile/presentation/screens/services/pharmacy_box_screen.dart';
+import 'package:flutter_mobile/presentation/screens/services/medicine_search_result_screen.dart';
 import 'package:flutter_mobile/presentation/screens/services/services_screen.dart';
 import 'package:go_router/go_router.dart';
 
@@ -112,6 +114,16 @@ class AppRouter {
                     name: AppRouteName.pharmacyBox,
                     path: AppRoutePath.pharmacyBox,
                     builder: (context, state) => const PharmacyBoxScreen(),
+                  ),
+                  GoRoute(
+                    name: AppRouteName.barcodeScanner,
+                    path: AppRoutePath.barcodeScanner,
+                    builder: (context, state) => const BarcodeScannerScreen(),
+                  ),
+                  GoRoute(
+                    name: AppRouteName.medicineSearchResult,
+                    path: AppRoutePath.medicineSearchResult,
+                    builder: (context, state) => const MedicineSearchResultScreen(),
                   ),
                 ],
               ),

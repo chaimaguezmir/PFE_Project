@@ -279,21 +279,11 @@ class BoxCardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Box sélectionnée: $title'),
-            duration: const Duration(seconds: 2),
-          ),
-        );
-
-        context.pushNamed(
-          AppRouteName.pharmacyBox,
-          extra: {
-            'title': title,
-            'count': count,
-            'pharmacyBox': pharmacyBox,
-          },
-        );
+        // Just select the pharmacy box ID
+        context.read<ServicesCubit>().selectPharmacyBoxId(pharmacyBox.id);
+        context.read<ServicesCubit>().selectPharmacyBoxName(pharmacyBox.groupName);
+        // Navigate without passing any data
+        context.pushNamed(AppRouteName.pharmacyBox);
       },
       child: Container(
         decoration: BoxDecoration(

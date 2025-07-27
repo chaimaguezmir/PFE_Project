@@ -5,13 +5,17 @@ import 'package:flutter_mobile/data/data_sources/auth_remote_datasource.dart';
 import 'package:flutter_mobile/data/data_sources/auth_remote_datasource_impl.dart';
 import 'package:flutter_mobile/data/data_sources/group_remote_datasource.dart';
 import 'package:flutter_mobile/data/data_sources/group_remote_datasource_impl.dart';
+import 'package:flutter_mobile/data/data_sources/medicine_remote_datasource.dart';
+import 'package:flutter_mobile/data/data_sources/medicine_remote_datasource_impl.dart';
 import 'package:flutter_mobile/data/data_sources/pharmacy_remote_datasource.dart';
 import 'package:flutter_mobile/data/data_sources/pharmacy_remote_datasource_impl.dart';
 import 'package:flutter_mobile/data/repositories/auth_repository_impl.dart';
 import 'package:flutter_mobile/data/repositories/group_repository_impl.dart';
+import 'package:flutter_mobile/data/repositories/medicine_repository_impl.dart';
 import 'package:flutter_mobile/data/repositories/pharmacy_repository_impl.dart';
 import 'package:flutter_mobile/domain/repositories/auth_repository.dart';
 import 'package:flutter_mobile/domain/repositories/group_repository.dart';
+import 'package:flutter_mobile/domain/repositories/medicine_repository.dart';
 import 'package:flutter_mobile/domain/repositories/pharmacy_repository.dart';
 import 'package:flutter_mobile/presentation/bloc/auth/auth/auth_bloc.dart';
 import 'package:flutter_mobile/presentation/bloc/auth/forgot_password/forgot_password_cubit.dart';
@@ -62,11 +66,14 @@ Future<void> initInjectionContainer() async {
     () => GroupRemoteDataSourceImpl(sl()),
   );
   sl.registerLazySingleton<PharmacyRemoteDataSource>(() => PharmacyRemoteDataSourceImpl(sl()),);
+  sl.registerLazySingleton<MedicineRemoteDataSource>(() => MedicineRemoteDataSourceImpl(sl()),);
 
   // Repositories
   sl.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl(sl()));
   sl.registerLazySingleton<GroupRepository>(() => GroupRepositoryImpl(sl()));
   sl.registerLazySingleton<PharmacyRepository>(() => PharmacyRepositoryImpl(sl()),);
+  sl.registerLazySingleton<MedicineRepository>(() => MedicineRepositoryImpl(sl()),);
+
 
   // BLoCs / Cubits
   sl.registerFactory<ProfileCubit>(() => ProfileCubit(sl()));
@@ -75,7 +82,7 @@ Future<void> initInjectionContainer() async {
   sl.registerFactory<AuthCubit>(() => AuthCubit(sl()));
   sl.registerFactory<ForgotPasswordCubit>(() => ForgotPasswordCubit(sl()));
   sl.registerFactory<GroupCubit>(() => GroupCubit(sl()));
-  sl.registerFactory<ServicesCubit>(() => ServicesCubit(sl()));
+  sl.registerFactory<ServicesCubit>(() => ServicesCubit(sl(), sl()));
   sl.registerLazySingleton<AuthBloc>(() => AuthBloc(sl(), sl()));
 
   // Network Controller
