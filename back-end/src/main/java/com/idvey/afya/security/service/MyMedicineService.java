@@ -241,6 +241,22 @@ public class MyMedicineService {
 		myMedicineRepository.deleteById(id);
 		log.info("MyMedicine deleted: {} by user: {}", id, userId);
 	}
+	@Transactional(readOnly = true)
+	public MyMedicineResponse getMyMedicineByMedicineIdAndPharmacyBox(UUID userId, UUID pharmacyBoxId, UUID medicineId)
+			throws AccessDeniedException {
+		log.info("Fetching MyMedicine for medicine: {} in pharmacy box: {} by user: {}", medicineId, pharmacyBoxId, userId);
+
+		PharmacyBox pharmacyBox = pharmacyBoxRepository.findById(pharmacyBoxId)
+				.orElseThrow(() -> new NoSuchElementException("Pharmacy box not found"));
+
+		// 🔒 AUTHORIZATION CHECK
+		validateUserAccessToPharmacyBox(userId, pharmacyBox);
+
+		MyMedicine myMedicine = myMedicineRepository.findByPharmacyBoxIdAndMedicineId(pharmacyBoxId, medicineId)
+				.orElseThrow(() -> new NoSuchElementException("Medicine not found in this pharmacy box"));
+
+		return toResponse(myMedicine);
+	}
 
 	@Transactional(readOnly = true)
 	public PharmacyBoxMedicinesResponse getPharmacyBoxMedicines(UUID userId, UUID pharmacyBoxId)

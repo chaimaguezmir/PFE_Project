@@ -40,6 +40,9 @@ public interface MyMedicineRepository extends JpaRepository<MyMedicine, UUID> {
 
 	@Query("SELECT COUNT(mm) FROM MyMedicine mm WHERE mm.pharmacyBox.id = :pharmacyBoxId")
 	long countByPharmacyBoxId(@Param("pharmacyBoxId") UUID pharmacyBoxId);
+	@Query("SELECT mm FROM MyMedicine mm LEFT JOIN FETCH mm.medicine WHERE mm.pharmacyBox.id = :pharmacyBoxId AND mm.medicine.id = :medicineId")
+	Optional<MyMedicine> findByPharmacyBoxIdAndMedicineId(@Param("pharmacyBoxId") UUID pharmacyBoxId, @Param("medicineId") UUID medicineId);
+
 
 	// ADDED: Find custom medicines (where medicine is null)
 	@Query("SELECT mm FROM MyMedicine mm WHERE mm.pharmacyBox.id = :pharmacyBoxId AND mm.medicine IS NULL")
