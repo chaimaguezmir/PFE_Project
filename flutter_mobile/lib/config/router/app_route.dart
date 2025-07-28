@@ -5,6 +5,7 @@ import 'package:flutter_mobile/presentation/bloc/auth/forgot_password/forgot_pas
 import 'package:flutter_mobile/presentation/bloc/auth/login/login_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/auth/signup/signup_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/group/group_cubit.dart';
+import 'package:flutter_mobile/presentation/bloc/home/prescription_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/profile/profile_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/services/services_cubit.dart';
 import 'package:flutter_mobile/presentation/screens/auth/account_verification_screen.dart';
@@ -18,6 +19,8 @@ import 'package:flutter_mobile/presentation/screens/auth/signup_screen.dart';
 import 'package:flutter_mobile/presentation/screens/group/add_member_screen.dart';
 import 'package:flutter_mobile/presentation/screens/group/group_membe_screen.dart';
 import 'package:flutter_mobile/presentation/screens/group/group_screen.dart';
+import 'package:flutter_mobile/presentation/screens/home/prescription_detail_screen.dart';
+import 'package:flutter_mobile/presentation/screens/home/prescriptions_screen.dart';
 import 'package:flutter_mobile/presentation/screens/home/welcome_screen.dart';
 import 'package:flutter_mobile/presentation/screens/bottom_bar.dart';
 
@@ -40,7 +43,7 @@ class AppRouter {
 
   String get initialLocation {
     if (_isAuthenticated) {
-      return AppRoutePath.services;
+      return AppRoutePath.home;
     } else if (_hasSeenOnboarding) {
       return AppRoutePath.signIn;
     } else {
@@ -91,10 +94,29 @@ class AppRouter {
         branches: <StatefulShellBranch>[
           StatefulShellBranch(
             routes: <RouteBase>[
-              GoRoute(
-                name: 'accueil',
-                path: '/accueil',
-                builder: (context, state) => const WelcomeScreen(),
+              ShellRoute(
+                builder: (context, state, child) => BlocProvider(
+                  create: (context) => sl<PrescriptionCubit>(),
+                  child: child,
+                ),
+                routes: [
+                  GoRoute(
+                    name: AppRouteName.home,
+                    path: AppRoutePath.home,
+                    builder: (context, state) =>  const WelcomeScreen(),
+                  ),
+                  GoRoute(
+                    name: AppRouteName.prescription,
+                    path: AppRoutePath.prescription,
+                    builder: (context, state) =>  const PrescriptionsScreen(),
+                  ),
+                  GoRoute(
+                    name: AppRouteName.prescriptionDetail,
+                    path: AppRoutePath.prescriptionDetail,
+                    builder: (context, state) =>  const PrescriptionDetailScreen(),
+                  ),
+
+                ],
               ),
             ],
           ),

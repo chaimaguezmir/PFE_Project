@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobile/config/router/app_route_constants.dart';
 import 'package:flutter_mobile/config/theme/theme_data_config.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart' show StatefulNavigationShell;
+import 'package:go_router/go_router.dart';
 
 class BottomBar extends StatelessWidget {
   const BottomBar({super.key, required this.navigationShell});
@@ -10,8 +11,31 @@ class BottomBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isWelcomeScreen = navigationShell.currentIndex == 0;
+    final currentLocation = GoRouterState.of(context).uri.toString();
+    final isOnWelcomeRoute = currentLocation == '/home' || currentLocation == '/';
+
     return Scaffold(
       body: navigationShell,
+      floatingActionButton: (isWelcomeScreen && isOnWelcomeRoute)
+          ? SizedBox(
+        width: 48.w,
+        height: 48.h,
+        child: FloatingActionButton(
+          onPressed: () {
+            context.pushNamed(AppRouteName.prescription);
+          },
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          shape: const CircleBorder(),
+          child: Icon(
+            Icons.add,
+            size: 28.sp,
+            color: theme().colorScheme.onSecondary,
+          ),
+        ),
+      )
+          : null,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         selectedItemColor: Theme.of(context).colorScheme.secondary,
