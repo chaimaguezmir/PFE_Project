@@ -235,14 +235,8 @@ class MedicineDetailsCard extends StatelessWidget {
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () {
-                          // TODO: Implement add medicine to pharmacy box
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('${medicine.name} ajouté - À implémenter'),
-                              backgroundColor: Colors.green,
-                            ),
-                          );
-                          context.pop();
+                          // Navigate to medication tracker screen
+                          context.pushNamed(AppRouteName.medicationTracker);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: theme().colorScheme.secondary,

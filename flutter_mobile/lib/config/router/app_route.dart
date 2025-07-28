@@ -24,6 +24,7 @@ import 'package:flutter_mobile/presentation/screens/bottom_bar.dart';
 import 'package:flutter_mobile/presentation/screens/onboarding/onboarding_screen.dart';
 import 'package:flutter_mobile/presentation/screens/profile/profile_screen.dart';
 import 'package:flutter_mobile/presentation/screens/services/barcode_scanner_screen.dart';
+import 'package:flutter_mobile/presentation/screens/services/medication_tracker_screen.dart';
 import 'package:flutter_mobile/presentation/screens/services/pharmacy_box_screen.dart';
 import 'package:flutter_mobile/presentation/screens/services/medicine_search_result_screen.dart';
 import 'package:flutter_mobile/presentation/screens/services/services_screen.dart';
@@ -124,6 +125,12 @@ class AppRouter {
                     name: AppRouteName.medicineSearchResult,
                     path: AppRoutePath.medicineSearchResult,
                     builder: (context, state) => const MedicineSearchResultScreen(),
+                  ),
+
+                  GoRoute(
+                    name: AppRouteName.medicationTracker,
+                    path: AppRoutePath.medicationTracker,
+                    builder: (context, state) => const MedicationTrackerScreen(),
                   ),
                 ],
               ),

@@ -2,7 +2,12 @@ part of 'services_cubit.dart';
 
 class ServicesState extends Equatable {
   const ServicesState({
-    // Barcode Scan related - ADD THESE LINES
+    // medication tracking properties
+    this.selectedExpirationDate,
+    this.selectedQuantity = 0,
+    this.shouldClearControllers = false,
+
+    // Barcode Scan related
     this.scannedMedicine,
     this.scanStatus = FormzSubmissionStatus.initial,
     this.scanErrorMessage,
@@ -16,7 +21,7 @@ class ServicesState extends Equatable {
     this.filteredBoxes = const [],
     this.searchQuery = '',
     this.selectedPharmacyBoxId = '',
-    this.selectedPharmacyBoxName = '', // ADD THIS LINE
+    this.selectedPharmacyBoxName = '',
 
     // Medicine related
     this.medicineStatus = FormzSubmissionStatus.initial,
@@ -28,12 +33,17 @@ class ServicesState extends Equatable {
     this.currentPharmacyBoxId = '',
   });
 
+  // medication tracking properties
+  final DateTime? selectedExpirationDate;
+  final int selectedQuantity;
+  final bool shouldClearControllers;
 
   // Barcode Scan properties
   final MedicineEntity? scannedMedicine;
   final FormzSubmissionStatus scanStatus;
   final String? scanErrorMessage;
   final String scannedBarcode;
+
   // Pharmacy Box properties
   final FormzSubmissionStatus status;
   final String? errorMessage;
@@ -42,7 +52,7 @@ class ServicesState extends Equatable {
   final List<PharmacyBoxEntity> filteredBoxes;
   final String searchQuery;
   final String selectedPharmacyBoxId;
-  final String selectedPharmacyBoxName; // ADD THIS LINE
+  final String selectedPharmacyBoxName;
 
   // Medicine properties
   final FormzSubmissionStatus medicineStatus;
@@ -54,11 +64,18 @@ class ServicesState extends Equatable {
   final String currentPharmacyBoxId;
 
   ServicesState copyWith({
-    // Barcode Scan parameters - ADD THESE LINES
+    // medication tracking
+    DateTime? selectedExpirationDate,
+    int? selectedQuantity,
+    bool? shouldClearControllers,
+    bool clearScannedMedicine = false,
+
+    // Barcode Scan parameters
     MedicineEntity? scannedMedicine,
     FormzSubmissionStatus? scanStatus,
     String? scanErrorMessage,
     String? scannedBarcode,
+
     // Pharmacy Box parameters
     FormzSubmissionStatus? status,
     String? errorMessage,
@@ -67,7 +84,7 @@ class ServicesState extends Equatable {
     List<PharmacyBoxEntity>? filteredBoxes,
     String? searchQuery,
     String? selectedPharmacyBoxId,
-    String? selectedPharmacyBoxName, // ADD THIS LINE
+    String? selectedPharmacyBoxName,
 
     // Medicine parameters
     FormzSubmissionStatus? medicineStatus,
@@ -79,11 +96,17 @@ class ServicesState extends Equatable {
     String? currentPharmacyBoxId,
   }) {
     return ServicesState(
-      // Barcode Scan - ADD THESE LINES
-      scannedMedicine: scannedMedicine,
+      // medication tracking
+      selectedExpirationDate: selectedExpirationDate ?? this.selectedExpirationDate,
+      selectedQuantity: selectedQuantity ?? this.selectedQuantity,
+      shouldClearControllers: shouldClearControllers ?? this.shouldClearControllers,
+
+      // Barcode Scan - Fix the null assignment issue
+      scannedMedicine: clearScannedMedicine ? null : (scannedMedicine ?? this.scannedMedicine),
       scanStatus: scanStatus ?? this.scanStatus,
       scanErrorMessage: scanErrorMessage,
       scannedBarcode: scannedBarcode ?? this.scannedBarcode,
+
       // Pharmacy Box
       status: status ?? this.status,
       errorMessage: errorMessage,
@@ -92,7 +115,7 @@ class ServicesState extends Equatable {
       filteredBoxes: filteredBoxes ?? this.filteredBoxes,
       searchQuery: searchQuery ?? this.searchQuery,
       selectedPharmacyBoxId: selectedPharmacyBoxId ?? this.selectedPharmacyBoxId,
-      selectedPharmacyBoxName: selectedPharmacyBoxName ?? this.selectedPharmacyBoxName, // ADD THIS LINE
+      selectedPharmacyBoxName: selectedPharmacyBoxName ?? this.selectedPharmacyBoxName,
 
       // Medicine
       medicineStatus: medicineStatus ?? this.medicineStatus,
@@ -104,17 +127,26 @@ class ServicesState extends Equatable {
       currentPharmacyBoxId: currentPharmacyBoxId ?? this.currentPharmacyBoxId,
     );
   }
-  // Barcode Scan getters - ADD THESE LINES
+
+  // ============================================
+  // Convenience Getters
+  // ============================================
+
+  // Barcode Scan getters
   bool get hasScanError => scanErrorMessage != null;
   bool get isScanLoading => scanStatus == FormzSubmissionStatus.inProgress;
   bool get isScanSuccess => scanStatus == FormzSubmissionStatus.success;
   bool get isScanFailure => scanStatus == FormzSubmissionStatus.failure;
+  bool get hasMedicineScanned => scannedMedicine != null;
+
   // Pharmacy Box getters
   bool get hasError => errorMessage != null;
   bool get hasSuccess => successMessage != null;
   bool get isLoading => status == FormzSubmissionStatus.inProgress;
   bool get isSuccess => status == FormzSubmissionStatus.success;
   bool get isFailure => status == FormzSubmissionStatus.failure;
+  bool get hasPharmacyBoxes => allBoxes.isNotEmpty;
+  bool get hasSelectedPharmacyBox => selectedPharmacyBoxId.isNotEmpty;
 
   // Medicine getters
   bool get hasMedicineError => medicineErrorMessage != null;
@@ -122,14 +154,26 @@ class ServicesState extends Equatable {
   bool get isMedicineLoading => medicineStatus == FormzSubmissionStatus.inProgress;
   bool get isMedicineSuccess => medicineStatus == FormzSubmissionStatus.success;
   bool get isMedicineFailure => medicineStatus == FormzSubmissionStatus.failure;
+  bool get hasMedicines => allMedicines.isNotEmpty;
+
+  // Medication Tracking getters
+  bool get hasExpirationDate => selectedExpirationDate != null;
+  bool get hasQuantity => selectedQuantity > 0;
+  bool get canAddMedicine => hasMedicineScanned && hasExpirationDate && hasQuantity && hasSelectedPharmacyBox;
 
   @override
   List<Object?> get props => [
-    // Barcode Scan - ADD THESE LINES
+    // medication tracking
+    selectedExpirationDate,
+    selectedQuantity,
+    shouldClearControllers,
+
+    // Barcode Scan
     scannedMedicine,
     scanStatus,
     scanErrorMessage,
     scannedBarcode,
+
     // Pharmacy Box
     status,
     errorMessage,
@@ -138,7 +182,7 @@ class ServicesState extends Equatable {
     filteredBoxes,
     searchQuery,
     selectedPharmacyBoxId,
-    selectedPharmacyBoxName, // ADD THIS LINE
+    selectedPharmacyBoxName,
 
     // Medicine
     medicineStatus,
