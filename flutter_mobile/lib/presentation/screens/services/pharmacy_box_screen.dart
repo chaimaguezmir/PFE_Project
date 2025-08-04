@@ -628,9 +628,7 @@ class AddMedicineButton extends StatelessWidget {
                 child: OutlinedButton(
                     onPressed: () {
                       Navigator.pop(context);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Ajout manuel - À implémenter')),
-                      );
+                      context.pushNamed(AppRouteName.addMedicationManually);
                     },
                     style: OutlinedButton.styleFrom(
                       side: BorderSide(

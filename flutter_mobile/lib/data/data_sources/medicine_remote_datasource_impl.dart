@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_mobile/core/constants/api_endpoint.dart';
 import 'package:flutter_mobile/data/data_sources/medicine_remote_datasource.dart';
+import 'package:flutter_mobile/data/model/services/add_custom_my_medicine_request_model.dart';
 import 'package:flutter_mobile/data/model/services/add_my_medicine_request_model.dart';
 import 'package:flutter_mobile/data/model/services/add_purchase_history_request_model.dart';
 import 'package:flutter_mobile/data/model/services/medicine_model.dart';
@@ -205,6 +206,75 @@ class MedicineRemoteDataSourceImpl implements MedicineRemoteDataSource {
       print('Stack trace: ${StackTrace.current}');
       throw DioException(
         requestOptions: RequestOptions(path: ApiEndpoints.purchaseHistory),
+        message: 'An unexpected error occurred: $e',
+      );
+    }
+  }
+  @override
+  Future<List<MedicineModel>> getAllMedicines() async {
+    try {
+      print('Fetching all medicines from API');
+      final response = await _dio.get(ApiEndpoints.medicines);
+
+      if (response.statusCode == 200) {
+        final data = response.data as List;
+        print('Successfully fetched ${data.length} medicines');
+        return data.map((json) => MedicineModel.fromJson(json)).toList();
+      } else {
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          message: 'Failed to fetch medicines: ${response.statusMessage}',
+        );
+      }
+    } on DioException catch (e) {
+      print('DioException in getAllMedicines: ${e.message}');
+      print('Status code: ${e.response?.statusCode}');
+      print('Response data: ${e.response?.data}');
+      rethrow;
+    } catch (e) {
+      print('Unexpected error in getAllMedicines: $e');
+      throw DioException(
+        requestOptions: RequestOptions(path: ApiEndpoints.medicines),
+        message: 'An unexpected error occurred: $e',
+      );
+    }
+  }
+
+  @override
+  Future<MyMedicineModel> addCustomMyMedicine(AddCustomMyMedicineRequestModel request) async {
+    try {
+      print('Adding custom medicine to pharmacy box');
+      print('Request data: ${request.toJson()}');
+
+      final response = await _dio.post(
+        '${ApiEndpoints.myMedicines}/custom',
+        data: request.toJson(),
+      );
+
+      print('AddCustomMyMedicine response status: ${response.statusCode}');
+      print('AddCustomMyMedicine response data: ${response.data}');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print('Successfully added custom medicine to pharmacy box');
+        return MyMedicineModel.fromJson(response.data);
+      } else {
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          message: 'Failed to add custom medicine: ${response.statusMessage}',
+        );
+      }
+    } on DioException catch (e) {
+      print('DioException in addCustomMyMedicine: ${e.message}');
+      print('Status code: ${e.response?.statusCode}');
+      print('Response data: ${e.response?.data}');
+      print('Request data: ${e.requestOptions.data}');
+      rethrow;
+    } catch (e) {
+      print('Unexpected error in addCustomMyMedicine: $e');
+      throw DioException(
+        requestOptions: RequestOptions(path: '${ApiEndpoints.myMedicines}/custom'),
         message: 'An unexpected error occurred: $e',
       );
     }

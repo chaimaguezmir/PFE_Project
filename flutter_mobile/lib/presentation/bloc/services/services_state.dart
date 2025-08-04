@@ -31,6 +31,19 @@ class ServicesState extends Equatable {
     this.filteredMedicines = const [],
     this.medicineSearchQuery = '',
     this.currentPharmacyBoxId = '',
+    // Medicine search and auto-fill properties
+    this.allMedicinesForSearch = const [],
+    this.filteredMedicinesForSearch = const [],
+    this.medicineSearchQueryManually = '',
+    this.medicineSearchStatus = FormzSubmissionStatus.initial,
+    this.medicineSearchErrorMessage,
+    this.selectedMedicineForManualAdd,
+    this.autoFilledForm = '',
+    // Manual medication form data
+    this.manualMedicationName = '',
+    this.manualMedicationForm = '',
+    this.manualMedicationQuantity = 0,
+    this.manualMedicationExpirationDate,
   });
 
   // medication tracking properties
@@ -62,6 +75,21 @@ class ServicesState extends Equatable {
   final List<MyMedicineEntity> filteredMedicines;
   final String medicineSearchQuery;
   final String currentPharmacyBoxId;
+  // Medicine search and auto-fill properties
+  final List<MedicineEntity> allMedicinesForSearch;
+  final List<MedicineEntity> filteredMedicinesForSearch;
+  final FormzSubmissionStatus medicineSearchStatus;
+  final String medicineSearchQueryManually;
+  final String? medicineSearchErrorMessage;
+  final MedicineEntity? selectedMedicineForManualAdd;
+  final String autoFilledForm;
+
+  // Manual medication form data
+  final String manualMedicationName;
+  final String manualMedicationForm;
+  final int manualMedicationQuantity;
+  final DateTime? manualMedicationExpirationDate;
+
 
   ServicesState copyWith({
     // medication tracking
@@ -94,6 +122,19 @@ class ServicesState extends Equatable {
     List<MyMedicineEntity>? filteredMedicines,
     String? medicineSearchQuery,
     String? currentPharmacyBoxId,
+    List<MedicineEntity>? allMedicinesForSearch,
+    List<MedicineEntity>? filteredMedicinesForSearch,
+    String? medicineSearchQueryManually,
+    FormzSubmissionStatus? medicineSearchStatus,
+    String? medicineSearchErrorMessage,
+    MedicineEntity? selectedMedicineForManualAdd,
+    String? autoFilledForm,
+
+    // Manual medication form parameters
+    String? manualMedicationName,
+    String? manualMedicationForm,
+    int? manualMedicationQuantity,
+    DateTime? manualMedicationExpirationDate,
   }) {
     return ServicesState(
       // medication tracking
@@ -160,7 +201,23 @@ class ServicesState extends Equatable {
   bool get hasExpirationDate => selectedExpirationDate != null;
   bool get hasQuantity => selectedQuantity > 0;
   bool get canAddMedicine => hasMedicineScanned && hasExpirationDate && hasQuantity && hasSelectedPharmacyBox;
+  // ============================================
+  // Medicine Search Convenience Getters
+  // ============================================
+  bool get isMedicineSearchLoading => medicineSearchStatus == FormzSubmissionStatus.inProgress;
+  bool get isMedicineSearchSuccess => medicineSearchStatus == FormzSubmissionStatus.success;
+  bool get isMedicineSearchFailure => medicineSearchStatus == FormzSubmissionStatus.failure;
+  bool get hasMedicineSearchError => medicineSearchErrorMessage != null;
+  bool get hasSelectedMedicineForManualAdd => selectedMedicineForManualAdd != null;
+  bool get hasAutoFilledForm => autoFilledForm.isNotEmpty;
 
+  // Form validation
+  bool get canSubmitManualMedication =>
+      manualMedicationName.isNotEmpty &&
+          manualMedicationForm.isNotEmpty &&
+          manualMedicationQuantity > 0 &&
+          manualMedicationExpirationDate != null &&
+          selectedPharmacyBoxId.isNotEmpty;
   @override
   List<Object?> get props => [
     // medication tracking
@@ -192,5 +249,19 @@ class ServicesState extends Equatable {
     filteredMedicines,
     medicineSearchQuery,
     currentPharmacyBoxId,
+    // Medicine search props
+    allMedicinesForSearch,
+    filteredMedicinesForSearch,
+    medicineSearchQueryManually,
+    medicineSearchStatus,
+    medicineSearchErrorMessage,
+    selectedMedicineForManualAdd,
+    autoFilledForm,
+
+    // Manual medication form props
+    manualMedicationName,
+    manualMedicationForm,
+    manualMedicationQuantity,
+    manualMedicationExpirationDate,
   ];
 }

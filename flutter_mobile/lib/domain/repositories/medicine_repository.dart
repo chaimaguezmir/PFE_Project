@@ -20,4 +20,11 @@ abstract class MedicineRepository {
     required int quantityPurchased,
     required DateTime expiryDate,
   });
+  // New methods for medicine search and custom medicines
+  Future<DataState<List<MedicineEntity>>> getAllMedicines();
+  Future<DataState<MyMedicineEntity>> addCustomMyMedicine({
+    required String pharmacyBoxId,
+    required String name,
+    required String form,
+  });
 }

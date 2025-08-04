@@ -560,9 +560,11 @@ class AddToBoxButton extends StatelessWidget {
                   Expanded(
                     child: OutlinedButton(
                       onPressed: () {
-                        Navigator.pop(context);
+                        // Close dialog first
+                        context.pop();
                         context.read<ServicesCubit>().clearScannedMedicine();
-                        context.pushNamed(AppRouteName.barcodeScanner);
+                        // Then navigate to barcode scanner
+                        context.goNamed(AppRouteName.barcodeScanner);
                       },
                       style: OutlinedButton.styleFrom(
                         side: BorderSide(
@@ -588,9 +590,8 @@ class AddToBoxButton extends StatelessWidget {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.pop(context);
-                        context.read<ServicesCubit>().clearScannedMedicine();
-                        context.pushNamed(AppRouteName.pharmacyBox);
+                        context.pop();
+                        context.goNamed(AppRouteName.pharmacyBox);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: theme().colorScheme.secondary,

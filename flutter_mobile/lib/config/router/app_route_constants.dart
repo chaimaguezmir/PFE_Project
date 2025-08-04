@@ -27,6 +27,7 @@ class AppRouteName {
   static const String barcodeScanner = 'barcodeScanner';
   static const String medicineSearchResult = 'medicineSearchResult';
   static const String medicationTracker = 'medicationTracker';
+  static const String addMedicationManually = 'addMedicationManually';
 //home
   static const String home = 'home';
   static const String prescription = 'prescription';
@@ -60,6 +61,7 @@ class AppRoutePath {
   static const String barcodeScanner = '/services/barcodeScanner';
   static const String medicineSearchResult = '/services/medicineSearchResult';
   static const String medicationTracker = '/services/medicationTracker';
+  static const String addMedicationManually = '/services/addMedicationManually';
 
   //home
   static const String home = '/home';

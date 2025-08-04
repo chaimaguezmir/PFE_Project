@@ -402,4 +402,208 @@ class ServicesCubit extends Cubit<ServicesState> {
   void resetState() {
     emit(const ServicesState());
   }
+  // Add these methods to your existing ServicesCubit class
+
+// ============================================
+// Medicine Search and Auto-fill Methods
+// ============================================
+
+  /// Fetch all medicines from the server for search/autocomplete
+  Future<void> fetchAllMedicines() async {
+    emit(state.copyWith(
+      medicineSearchStatus: FormzSubmissionStatus.inProgress,
+      medicineSearchErrorMessage: null,
+    ));
+
+    try {
+      final result = await _medicineRepository.getAllMedicines();
+
+      if (result is DataSuccess<List<MedicineEntity>>) {
+        final medicines = result.data ?? [];
+        emit(state.copyWith(
+          allMedicinesForSearch: medicines,
+          filteredMedicinesForSearch: medicines,
+          medicineSearchStatus: FormzSubmissionStatus.success,
+          medicineSearchErrorMessage: null,
+        ));
+      } else {
+        emit(state.copyWith(
+          medicineSearchStatus: FormzSubmissionStatus.failure,
+          medicineSearchErrorMessage: result.error ?? 'Failed to fetch medicines',
+        ));
+      }
+    } catch (e) {
+      print('Error fetching all medicines: $e');
+      emit(state.copyWith(
+        medicineSearchStatus: FormzSubmissionStatus.failure,
+        medicineSearchErrorMessage: 'An unexpected error occurred: $e',
+      ));
+    }
+  }
+
+  /// Search medicines by name for autocomplete
+  void searchMedicinesByName(String query) {
+    if (query.isEmpty) {
+      emit(state.copyWith(
+        filteredMedicinesForSearch: state.allMedicinesForSearch,
+        medicineSearchQueryManually: query,
+      ));
+      return;
+    }
+
+    final filteredMedicines = state.allMedicinesForSearch
+        .where((medicine) =>
+        medicine.name.toLowerCase().contains(query.toLowerCase()))
+        .toList();
+
+    emit(state.copyWith(
+      filteredMedicinesForSearch: filteredMedicines,
+      medicineSearchQuery: query,
+    ));
+  }
+
+  /// Select a medicine and auto-fill form data
+  void selectMedicineForManualAdd(MedicineEntity medicine) {
+    emit(state.copyWith(
+      selectedMedicineForManualAdd: medicine,
+      autoFilledForm: medicine.dosageForm,
+    ));
+  }
+
+  /// Clear selected medicine and form data
+  void clearSelectedMedicineForManualAdd() {
+    emit(state.copyWith(
+      selectedMedicineForManualAdd: null,
+      autoFilledForm: '',
+      medicineSearchQueryManually: '',
+    ));
+  }
+
+  /// Set manual medication data (for form submission)
+  void setManualMedicationData({
+    String? name,
+    String? form,
+    int? quantity,
+    DateTime? expirationDate,
+  }) {
+    emit(state.copyWith(
+      manualMedicationName: name ?? state.manualMedicationName,
+      manualMedicationForm: form ?? state.manualMedicationForm,
+      manualMedicationQuantity: quantity ?? state.manualMedicationQuantity,
+      manualMedicationExpirationDate: expirationDate ?? state.manualMedicationExpirationDate,
+    ));
+  }
+
+  /// Add manual medication to pharmacy box
+  Future<void> addManualMedicationToPharmacyBox() async {
+    emit(state.copyWith(
+      status: FormzSubmissionStatus.inProgress,
+      errorMessage: null,
+    ));
+
+    try {
+      // Validate required fields
+      if (state.manualMedicationName.isEmpty) {
+        throw Exception('Nom du médicament requis');
+      }
+      if (state.manualMedicationForm.isEmpty) {
+        throw Exception('Forme du médicament requise');
+      }
+      if (state.manualMedicationQuantity <= 0) {
+        throw Exception('Quantité invalide');
+      }
+      if (state.manualMedicationExpirationDate == null) {
+        throw Exception('Date d\'expiration requise');
+      }
+      if (state.selectedPharmacyBoxId.isEmpty) {
+        throw Exception('Aucune boîte de pharmacie sélectionnée');
+      }
+
+      String myMedicineId;
+
+      // Check if we have a selected medicine (from search) or creating custom
+      if (state.selectedMedicineForManualAdd != null) {
+        // Medicine selected from search - check if it exists in pharmacy box
+        final checkResult = await _medicineRepository.checkMyMedicine(
+          state.selectedPharmacyBoxId,
+          state.selectedMedicineForManualAdd!.id,
+        );
+
+        if (checkResult is DataSuccess && checkResult.data != null) {
+          // Medicine already exists, use existing ID
+          myMedicineId = checkResult.data!.id;
+        } else {
+          // Medicine doesn't exist, create new MyMedicine entry
+          final addMedicineResult = await _medicineRepository.addMyMedicine(
+            pharmacyBoxId: state.selectedPharmacyBoxId,
+            medicineId: state.selectedMedicineForManualAdd!.id,
+            name: state.manualMedicationName,
+            form: state.manualMedicationForm,
+          );
+
+          if (addMedicineResult is DataSuccess) {
+            myMedicineId = addMedicineResult.data!.id;
+          } else {
+            throw Exception(addMedicineResult.error ?? 'Failed to add medicine');
+          }
+        }
+      } else {
+        // Custom medicine - create as custom medicine
+        final addMedicineResult = await _medicineRepository.addCustomMyMedicine(
+          pharmacyBoxId: state.selectedPharmacyBoxId,
+          name: state.manualMedicationName,
+          form: state.manualMedicationForm,
+        );
+
+        if (addMedicineResult is DataSuccess) {
+          myMedicineId = addMedicineResult.data!.id;
+        } else {
+          throw Exception(addMedicineResult.error ?? 'Failed to add custom medicine');
+        }
+      }
+
+      // Add purchase history
+      final purchaseHistoryResult = await _medicineRepository.addPurchaseHistory(
+        myMedicineId: myMedicineId,
+        quantityPurchased: state.manualMedicationQuantity,
+        expiryDate: state.manualMedicationExpirationDate!,
+      );
+
+      if (purchaseHistoryResult is DataSuccess) {
+        emit(state.copyWith(
+          status: FormzSubmissionStatus.success,
+          successMessage: 'Médicament ajouté avec succès',
+        ));
+
+        // Clear form data after successful addition
+        clearManualMedicationData();
+
+        // Refresh the medicines list for the current pharmacy box
+        if (state.selectedPharmacyBoxId.isNotEmpty) {
+          await fetchMedicines(state.selectedPharmacyBoxId);
+        }
+      } else {
+        throw Exception(purchaseHistoryResult.error ?? 'Failed to add purchase history');
+      }
+    } catch (e) {
+      print('Error adding manual medication to pharmacy box: $e');
+      emit(state.copyWith(
+        status: FormzSubmissionStatus.failure,
+        errorMessage: 'Erreur lors de l\'ajout du médicament: $e',
+      ));
+    }
+  }
+
+  /// Clear all manual medication form data
+  void clearManualMedicationData() {
+    emit(state.copyWith(
+      selectedMedicineForManualAdd: null,
+      autoFilledForm: '',
+      medicineSearchQueryManually: '',
+      manualMedicationName: '',
+      manualMedicationForm: '',
+      manualMedicationQuantity: 0,
+      manualMedicationExpirationDate: null,
+    ));
+  }
 }

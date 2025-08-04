@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_mobile/core/resources/data_state.dart';
 import 'package:flutter_mobile/data/data_sources/medicine_remote_datasource.dart';
+import 'package:flutter_mobile/data/model/services/add_custom_my_medicine_request_model.dart';
 import 'package:flutter_mobile/data/model/services/add_my_medicine_request_model.dart';
 import 'package:flutter_mobile/data/model/services/add_purchase_history_request_model.dart';
 import 'package:flutter_mobile/domain/entities/services/medicine_entity.dart';
@@ -89,6 +90,38 @@ class MedicineRepositoryImpl implements MedicineRepository {
       // Convert PurchaseHistoryResponseModel to PurchaseHistoryEntity
       final entity = result.toEntity();
       return DataSuccess(entity);
+    } on DioException catch (e) {
+      return DataError(_handleDioError(e));
+    } catch (e) {
+      return DataError('An unexpected error occurred: $e');
+    }
+  }
+  @override
+  Future<DataState<List<MedicineEntity>>> getAllMedicines() async {
+    try {
+      final result = await _remoteDataSource.getAllMedicines();
+      return DataSuccess(result);
+    } on DioException catch (e) {
+      return DataError(_handleDioError(e));
+    } catch (e) {
+      return DataError('An unexpected error occurred: $e');
+    }
+  }
+
+  @override
+  Future<DataState<MyMedicineEntity>> addCustomMyMedicine({
+    required String pharmacyBoxId,
+    required String name,
+    required String form,
+  }) async {
+    try {
+      final request = AddCustomMyMedicineRequestModel(
+        pharmacyBoxId: pharmacyBoxId,
+        name: name,
+        form: form,
+      );
+      final result = await _remoteDataSource.addCustomMyMedicine(request);
+      return DataSuccess(result);
     } on DioException catch (e) {
       return DataError(_handleDioError(e));
     } catch (e) {

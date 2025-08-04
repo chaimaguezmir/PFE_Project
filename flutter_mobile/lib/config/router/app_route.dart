@@ -26,6 +26,7 @@ import 'package:flutter_mobile/presentation/screens/bottom_bar.dart';
 
 import 'package:flutter_mobile/presentation/screens/onboarding/onboarding_screen.dart';
 import 'package:flutter_mobile/presentation/screens/profile/profile_screen.dart';
+import 'package:flutter_mobile/presentation/screens/services/add_medication_manually_screen.dart';
 import 'package:flutter_mobile/presentation/screens/services/barcode_scanner_screen.dart';
 import 'package:flutter_mobile/presentation/screens/services/medication_tracker_screen.dart';
 import 'package:flutter_mobile/presentation/screens/services/pharmacy_box_screen.dart';
@@ -43,7 +44,7 @@ class AppRouter {
 
   String get initialLocation {
     if (_isAuthenticated) {
-      return AppRoutePath.home;
+      return AppRoutePath.services;
     } else if (_hasSeenOnboarding) {
       return AppRoutePath.signIn;
     } else {
@@ -153,6 +154,11 @@ class AppRouter {
                     name: AppRouteName.medicationTracker,
                     path: AppRoutePath.medicationTracker,
                     builder: (context, state) => const MedicationTrackerScreen(),
+                  ),
+                  GoRoute(
+                    name: AppRouteName.addMedicationManually,
+                    path: AppRoutePath.addMedicationManually,
+                    builder: (context, state) => const AddMedicationManuallyScreen(),
                   ),
                 ],
               ),
