@@ -117,7 +117,7 @@ class SearchBarWidget extends StatelessWidget {
             onPressed: () {
               _globalController.clear();
               FocusScope.of(context).unfocus();
-              context.read<ServicesCubit>().resetSearch(allBoxes);
+              context.read<ServicesCubit>().clearBoxSearch();
             },
           ),
           hintText: 'Votre recherche ici',

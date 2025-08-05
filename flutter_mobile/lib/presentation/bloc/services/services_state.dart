@@ -2,28 +2,49 @@ part of 'services_cubit.dart';
 
 class ServicesState extends Equatable {
   const ServicesState({
-    // medication tracking properties
-    this.selectedExpirationDate,
-    this.selectedQuantity = 0,
-    this.shouldClearControllers = false,
+    // ============================================
+    // Medicine Search Properties (by name)
+    // ============================================
+    this.searchQuery = '',
+    this.searchResults = const [],
+    this.searchStatus = FormzSubmissionStatus.initial,
+    this.searchErrorMessage,
 
-    // Barcode Scan related
+    // Selected medicine from search
+    this.selectedMedicine,
+    this.selectedMedicineName = '',
+    this.selectedMedicineForm = '',
+    this.selectedQuantity = 0,
+    this.selectedExpirationDate,
+
+    // ============================================
+    // Barcode Scan Properties
+    // ============================================
     this.scannedMedicine,
     this.scanStatus = FormzSubmissionStatus.initial,
     this.scanErrorMessage,
     this.scannedBarcode = '',
 
-    // Pharmacy Box related
+    // Scanned medicine tracking
+    this.scannedMedicineQuantity = 0,
+    this.scannedMedicineExpirationDate,
+    this.shouldClearControllers = false,
+
+    // ============================================
+    // Pharmacy Box Properties
+    // ============================================
     this.status = FormzSubmissionStatus.initial,
     this.errorMessage,
     this.successMessage,
     this.allBoxes = const [],
     this.filteredBoxes = const [],
-    this.searchQuery = '',
+    this.boxSearchQuery = '',
     this.selectedPharmacyBoxId = '',
     this.selectedPharmacyBoxName = '',
 
-    // Medicine related
+    // ============================================
+    // Medicine Management Properties (in pharmacy box)
+    // ============================================
     this.medicineStatus = FormzSubmissionStatus.initial,
     this.medicineErrorMessage,
     this.medicineSuccessMessage,
@@ -31,43 +52,51 @@ class ServicesState extends Equatable {
     this.filteredMedicines = const [],
     this.medicineSearchQuery = '',
     this.currentPharmacyBoxId = '',
-    // Medicine search and auto-fill properties
-    this.allMedicinesForSearch = const [],
-    this.filteredMedicinesForSearch = const [],
-    this.medicineSearchQueryManually = '',
-    this.medicineSearchStatus = FormzSubmissionStatus.initial,
-    this.medicineSearchErrorMessage,
-    this.selectedMedicineForManualAdd,
-    this.autoFilledForm = '',
-    // Manual medication form data
-    this.manualMedicationName = '',
-    this.manualMedicationForm = '',
-    this.manualMedicationQuantity = 0,
-    this.manualMedicationExpirationDate,
   });
 
-  // medication tracking properties
-  final DateTime? selectedExpirationDate;
-  final int selectedQuantity;
-  final bool shouldClearControllers;
+  // ============================================
+  // Medicine Search Properties (by name)
+  // ============================================
+  final String searchQuery;
+  final List<MedicineEntity> searchResults;
+  final FormzSubmissionStatus searchStatus;
+  final String? searchErrorMessage;
 
-  // Barcode Scan properties
+  // Selected medicine from search
+  final MedicineEntity? selectedMedicine;
+  final String selectedMedicineName;
+  final String selectedMedicineForm;
+  final int selectedQuantity;
+  final DateTime? selectedExpirationDate;
+
+  // ============================================
+  // Barcode Scan Properties
+  // ============================================
   final MedicineEntity? scannedMedicine;
   final FormzSubmissionStatus scanStatus;
   final String? scanErrorMessage;
   final String scannedBarcode;
 
-  // Pharmacy Box properties
+  // Scanned medicine tracking
+  final int scannedMedicineQuantity;
+  final DateTime? scannedMedicineExpirationDate;
+  final bool shouldClearControllers;
+
+  // ============================================
+  // Pharmacy Box Properties
+  // ============================================
   final FormzSubmissionStatus status;
   final String? errorMessage;
   final String? successMessage;
   final List<PharmacyBoxEntity> allBoxes;
   final List<PharmacyBoxEntity> filteredBoxes;
-  final String searchQuery;
+  final String boxSearchQuery;
   final String selectedPharmacyBoxId;
   final String selectedPharmacyBoxName;
 
-  // Medicine properties
+  // ============================================
+  // Medicine Management Properties (in pharmacy box)
+  // ============================================
   final FormzSubmissionStatus medicineStatus;
   final String? medicineErrorMessage;
   final String? medicineSuccessMessage;
@@ -75,34 +104,36 @@ class ServicesState extends Equatable {
   final List<MyMedicineEntity> filteredMedicines;
   final String medicineSearchQuery;
   final String currentPharmacyBoxId;
-  // Medicine search and auto-fill properties
-  final List<MedicineEntity> allMedicinesForSearch;
-  final List<MedicineEntity> filteredMedicinesForSearch;
-  final FormzSubmissionStatus medicineSearchStatus;
-  final String medicineSearchQueryManually;
-  final String? medicineSearchErrorMessage;
-  final MedicineEntity? selectedMedicineForManualAdd;
-  final String autoFilledForm;
 
-  // Manual medication form data
-  final String manualMedicationName;
-  final String manualMedicationForm;
-  final int manualMedicationQuantity;
-  final DateTime? manualMedicationExpirationDate;
-
-
+  // ============================================
+  // Copy With Method
+  // ============================================
   ServicesState copyWith({
-    // medication tracking
-    DateTime? selectedExpirationDate,
+    // Medicine Search parameters (by name)
+    String? searchQuery,
+    List<MedicineEntity>? searchResults,
+    FormzSubmissionStatus? searchStatus,
+    String? searchErrorMessage,
+
+    // Selected medicine parameters
+    MedicineEntity? selectedMedicine,
+    String? selectedMedicineName,
+    String? selectedMedicineForm,
     int? selectedQuantity,
-    bool? shouldClearControllers,
-    bool clearScannedMedicine = false,
+    DateTime? selectedExpirationDate,
 
     // Barcode Scan parameters
     MedicineEntity? scannedMedicine,
     FormzSubmissionStatus? scanStatus,
     String? scanErrorMessage,
     String? scannedBarcode,
+    bool clearScannedMedicine = false,
+
+    // Scanned medicine tracking
+    int? scannedMedicineQuantity,
+    DateTime? scannedMedicineExpirationDate,
+    bool clearScannedMedicineExpirationDate = false, // Add this flag
+    bool? shouldClearControllers,
 
     // Pharmacy Box parameters
     FormzSubmissionStatus? status,
@@ -110,11 +141,11 @@ class ServicesState extends Equatable {
     String? successMessage,
     List<PharmacyBoxEntity>? allBoxes,
     List<PharmacyBoxEntity>? filteredBoxes,
-    String? searchQuery,
+    String? boxSearchQuery,
     String? selectedPharmacyBoxId,
     String? selectedPharmacyBoxName,
 
-    // Medicine parameters
+    // Medicine Management parameters
     FormzSubmissionStatus? medicineStatus,
     String? medicineErrorMessage,
     String? medicineSuccessMessage,
@@ -122,43 +153,45 @@ class ServicesState extends Equatable {
     List<MyMedicineEntity>? filteredMedicines,
     String? medicineSearchQuery,
     String? currentPharmacyBoxId,
-    List<MedicineEntity>? allMedicinesForSearch,
-    List<MedicineEntity>? filteredMedicinesForSearch,
-    String? medicineSearchQueryManually,
-    FormzSubmissionStatus? medicineSearchStatus,
-    String? medicineSearchErrorMessage,
-    MedicineEntity? selectedMedicineForManualAdd,
-    String? autoFilledForm,
-
-    // Manual medication form parameters
-    String? manualMedicationName,
-    String? manualMedicationForm,
-    int? manualMedicationQuantity,
-    DateTime? manualMedicationExpirationDate,
   }) {
     return ServicesState(
-      // medication tracking
-      selectedExpirationDate: selectedExpirationDate ?? this.selectedExpirationDate,
-      selectedQuantity: selectedQuantity ?? this.selectedQuantity,
-      shouldClearControllers: shouldClearControllers ?? this.shouldClearControllers,
+      // Medicine Search assignments
+      searchQuery: searchQuery ?? this.searchQuery,
+      searchResults: searchResults ?? this.searchResults,
+      searchStatus: searchStatus ?? this.searchStatus,
+      searchErrorMessage: searchErrorMessage,
 
-      // Barcode Scan - Fix the null assignment issue
+      // Selected medicine assignments
+      selectedMedicine: selectedMedicine,
+      selectedMedicineName: selectedMedicineName ?? this.selectedMedicineName,
+      selectedMedicineForm: selectedMedicineForm ?? this.selectedMedicineForm,
+      selectedQuantity: selectedQuantity ?? this.selectedQuantity,
+      selectedExpirationDate: selectedExpirationDate,
+
+      // Barcode Scan assignments
       scannedMedicine: clearScannedMedicine ? null : (scannedMedicine ?? this.scannedMedicine),
       scanStatus: scanStatus ?? this.scanStatus,
       scanErrorMessage: scanErrorMessage,
       scannedBarcode: scannedBarcode ?? this.scannedBarcode,
 
-      // Pharmacy Box
+      // Scanned medicine tracking assignments - FIXED
+      scannedMedicineQuantity: scannedMedicineQuantity ?? this.scannedMedicineQuantity,
+      scannedMedicineExpirationDate: clearScannedMedicineExpirationDate
+          ? null
+          : (scannedMedicineExpirationDate ?? this.scannedMedicineExpirationDate),
+      shouldClearControllers: shouldClearControllers ?? this.shouldClearControllers,
+
+      // Pharmacy Box assignments
       status: status ?? this.status,
       errorMessage: errorMessage,
       successMessage: successMessage,
       allBoxes: allBoxes ?? this.allBoxes,
       filteredBoxes: filteredBoxes ?? this.filteredBoxes,
-      searchQuery: searchQuery ?? this.searchQuery,
+      boxSearchQuery: boxSearchQuery ?? this.boxSearchQuery,
       selectedPharmacyBoxId: selectedPharmacyBoxId ?? this.selectedPharmacyBoxId,
       selectedPharmacyBoxName: selectedPharmacyBoxName ?? this.selectedPharmacyBoxName,
 
-      // Medicine
+      // Medicine Management assignments
       medicineStatus: medicineStatus ?? this.medicineStatus,
       medicineErrorMessage: medicineErrorMessage,
       medicineSuccessMessage: medicineSuccessMessage,
@@ -168,19 +201,38 @@ class ServicesState extends Equatable {
       currentPharmacyBoxId: currentPharmacyBoxId ?? this.currentPharmacyBoxId,
     );
   }
+  // ============================================
+  // Medicine Search Convenience Getters
+  // ============================================
+  bool get isSearching => searchStatus == FormzSubmissionStatus.inProgress;
+  bool get isSearchSuccess => searchStatus == FormzSubmissionStatus.success;
+  bool get isSearchFailure => searchStatus == FormzSubmissionStatus.failure;
+  bool get hasSearchResults => searchResults.isNotEmpty;
+  bool get hasSearchError => searchErrorMessage != null;
+  bool get hasMedicineSelected => selectedMedicine != null;
+  bool get canAddMedicine => hasMedicineSelected &&
+      selectedQuantity > 0 &&
+      selectedExpirationDate != null &&
+      selectedPharmacyBoxId.isNotEmpty;
 
   // ============================================
-  // Convenience Getters
+  // Barcode Scan Convenience Getters
   // ============================================
-
-  // Barcode Scan getters
   bool get hasScanError => scanErrorMessage != null;
   bool get isScanLoading => scanStatus == FormzSubmissionStatus.inProgress;
   bool get isScanSuccess => scanStatus == FormzSubmissionStatus.success;
   bool get isScanFailure => scanStatus == FormzSubmissionStatus.failure;
   bool get hasMedicineScanned => scannedMedicine != null;
+  bool get hasScannedExpirationDate => scannedMedicineExpirationDate != null;
+  bool get hasScannedQuantity => scannedMedicineQuantity > 0;
+  bool get canAddScannedMedicine => hasMedicineScanned &&
+      hasScannedExpirationDate &&
+      hasScannedQuantity &&
+      hasSelectedPharmacyBox;
 
-  // Pharmacy Box getters
+  // ============================================
+  // Pharmacy Box Convenience Getters
+  // ============================================
   bool get hasError => errorMessage != null;
   bool get hasSuccess => successMessage != null;
   bool get isLoading => status == FormzSubmissionStatus.inProgress;
@@ -189,7 +241,9 @@ class ServicesState extends Equatable {
   bool get hasPharmacyBoxes => allBoxes.isNotEmpty;
   bool get hasSelectedPharmacyBox => selectedPharmacyBoxId.isNotEmpty;
 
-  // Medicine getters
+  // ============================================
+  // Medicine Management Convenience Getters
+  // ============================================
   bool get hasMedicineError => medicineErrorMessage != null;
   bool get hasMedicineSuccess => medicineSuccessMessage != null;
   bool get isMedicineLoading => medicineStatus == FormzSubmissionStatus.inProgress;
@@ -197,51 +251,52 @@ class ServicesState extends Equatable {
   bool get isMedicineFailure => medicineStatus == FormzSubmissionStatus.failure;
   bool get hasMedicines => allMedicines.isNotEmpty;
 
-  // Medication Tracking getters
-  bool get hasExpirationDate => selectedExpirationDate != null;
-  bool get hasQuantity => selectedQuantity > 0;
-  bool get canAddMedicine => hasMedicineScanned && hasExpirationDate && hasQuantity && hasSelectedPharmacyBox;
   // ============================================
-  // Medicine Search Convenience Getters
+  // General Convenience Getters
   // ============================================
-  bool get isMedicineSearchLoading => medicineSearchStatus == FormzSubmissionStatus.inProgress;
-  bool get isMedicineSearchSuccess => medicineSearchStatus == FormzSubmissionStatus.success;
-  bool get isMedicineSearchFailure => medicineSearchStatus == FormzSubmissionStatus.failure;
-  bool get hasMedicineSearchError => medicineSearchErrorMessage != null;
-  bool get hasSelectedMedicineForManualAdd => selectedMedicineForManualAdd != null;
-  bool get hasAutoFilledForm => autoFilledForm.isNotEmpty;
+  bool get hasAnyLoading => isLoading || isMedicineLoading || isScanLoading || isSearching;
+  bool get hasAnyError => hasError || hasMedicineError || hasScanError || hasSearchError;
 
-  // Form validation
-  bool get canSubmitManualMedication =>
-      manualMedicationName.isNotEmpty &&
-          manualMedicationForm.isNotEmpty &&
-          manualMedicationQuantity > 0 &&
-          manualMedicationExpirationDate != null &&
-          selectedPharmacyBoxId.isNotEmpty;
+  // ============================================
+  // Equals and Props
+  // ============================================
   @override
   List<Object?> get props => [
-    // medication tracking
-    selectedExpirationDate,
-    selectedQuantity,
-    shouldClearControllers,
+    // Medicine Search props
+    searchQuery,
+    searchResults,
+    searchStatus,
+    searchErrorMessage,
 
-    // Barcode Scan
+    // Selected medicine props
+    selectedMedicine,
+    selectedMedicineName,
+    selectedMedicineForm,
+    selectedQuantity,
+    selectedExpirationDate,
+
+    // Barcode Scan props
     scannedMedicine,
     scanStatus,
     scanErrorMessage,
     scannedBarcode,
 
-    // Pharmacy Box
+    // Scanned medicine tracking props
+    scannedMedicineQuantity,
+    scannedMedicineExpirationDate,
+    shouldClearControllers,
+
+    // Pharmacy Box props
     status,
     errorMessage,
     successMessage,
     allBoxes,
     filteredBoxes,
-    searchQuery,
+    boxSearchQuery,
     selectedPharmacyBoxId,
     selectedPharmacyBoxName,
 
-    // Medicine
+    // Medicine Management props
     medicineStatus,
     medicineErrorMessage,
     medicineSuccessMessage,
@@ -249,19 +304,5 @@ class ServicesState extends Equatable {
     filteredMedicines,
     medicineSearchQuery,
     currentPharmacyBoxId,
-    // Medicine search props
-    allMedicinesForSearch,
-    filteredMedicinesForSearch,
-    medicineSearchQueryManually,
-    medicineSearchStatus,
-    medicineSearchErrorMessage,
-    selectedMedicineForManualAdd,
-    autoFilledForm,
-
-    // Manual medication form props
-    manualMedicationName,
-    manualMedicationForm,
-    manualMedicationQuantity,
-    manualMedicationExpirationDate,
   ];
 }

@@ -155,7 +155,7 @@ class MedicineSearchBar extends StatelessWidget {
             onPressed: () {
               _globalController.clear();
               FocusScope.of(context).unfocus();
-              context.read<ServicesCubit>().resetMedicineSearch(allMedicines);
+              context.read<ServicesCubit>().clearMedicineSearch();
             },
             icon: Icon(Icons.clear, color: Colors.grey[600], size: 20.sp),
           ),
@@ -598,7 +598,6 @@ class AddMedicineButton extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // ... existing icon and title ...
               Container(
                 width: 60.w,
                 height: 60.w,
@@ -618,55 +617,54 @@ class AddMedicineButton extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 16.sp,
-
                   color: Colors.black87,
                   height: 1.3,
                 ),
-              ),SizedBox(height: 20.h),
+              ),
+              SizedBox(height: 20.h),
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      context.pushNamed(AppRouteName.addMedicationManually);
-                    },
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(
-                        color: const Color(0xFF2196F3),
-                        width: 1.5.w,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(25.r),
-                      ),
-                      padding: EdgeInsets.symmetric(vertical: 16.h),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    // Navigate to manual medication screen
+                    context.pushNamed(AppRouteName.addMedicationManually);
+                  },
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(
+                      color: const Color(0xFF2196F3),
+                      width: 1.5.w,
                     ),
-                    // ... existing style ...
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Ajouter Médicament',
-                          style: TextStyle(
-                            fontSize: 16.sp,
-                            color: const Color(0xFF2196F3),
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        SizedBox(width: 12.w),
-                        Container(
-                          padding: EdgeInsets.all(4.w),
-                          decoration: const BoxDecoration(
-                            color: Color(0xFF2196F3),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(Icons.add, size: 16.sp, color: Colors.white),
-                        ),
-                      ],
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25.r),
                     ),
+                    padding: EdgeInsets.symmetric(vertical: 16.h),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Ajouter Médicament',
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          color: const Color(0xFF2196F3),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      SizedBox(width: 12.w),
+                      Container(
+                        padding: EdgeInsets.all(4.w),
+                        decoration: const BoxDecoration(
+                          color: Color(0xFF2196F3),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(Icons.add, size: 16.sp, color: Colors.white),
+                      ),
+                    ],
+                  ),
                 ),
               ),
 
-              // ... existing divider ...
               SizedBox(height: 20.h),
               Row(
                 children: [
@@ -699,41 +697,40 @@ class AddMedicineButton extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      // Navigate to barcode scanner
-                      context.pushNamed(AppRouteName.barcodeScanner);
-                    },
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(
-                        color: const Color(0xFF2196F3),
-                        width: 1.5.w,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(25.r),
-                      ),
-                      padding: EdgeInsets.symmetric(vertical: 16.h),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    // Navigate to barcode scanner
+                    context.pushNamed(AppRouteName.barcodeScanner);
+                  },
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(
+                      color: const Color(0xFF2196F3),
+                      width: 1.5.w,
                     ),
-                    // ... existing style ...
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Scanner Code a barre',
-                          style: TextStyle(
-                            fontSize: 16.sp,
-                            color: const Color(0xFF2196F3),
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        SizedBox(width: 12.w),
-                        Icon(
-                          Icons.qr_code_scanner,
-                          size: 20.sp,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25.r),
+                    ),
+                    padding: EdgeInsets.symmetric(vertical: 16.h),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Scanner Code a barre',
+                        style: TextStyle(
+                          fontSize: 16.sp,
                           color: const Color(0xFF2196F3),
+                          fontWeight: FontWeight.w500,
                         ),
-                      ],
-                    ),// ... existing scanner button content ...
+                      ),
+                      SizedBox(width: 12.w),
+                      Icon(
+                        Icons.qr_code_scanner,
+                        size: 20.sp,
+                        color: const Color(0xFF2196F3),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -742,6 +739,7 @@ class AddMedicineButton extends StatelessWidget {
       ),
     );
   }
+
 
 
 

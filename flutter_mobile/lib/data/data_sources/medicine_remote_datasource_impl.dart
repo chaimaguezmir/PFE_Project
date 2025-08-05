@@ -279,4 +279,37 @@ class MedicineRemoteDataSourceImpl implements MedicineRemoteDataSource {
       );
     }
   }
+  @override
+  Future<List<MedicineModel>> searchMedicinesByName(String query) async {
+    try {
+      print('Searching medicines by name: $query');
+      final response = await _dio.get(
+        ApiEndpoints.searchMedicines,
+        queryParameters: {'q': query},
+      );
+
+      if (response.statusCode == 200) {
+        final data = response.data as List;
+        print('Successfully found ${data.length} medicines for query: $query');
+        return data.map((json) => MedicineModel.fromJson(json)).toList();
+      } else {
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          message: 'Failed to search medicines: ${response.statusMessage}',
+        );
+      }
+    } on DioException catch (e) {
+      print('DioException in searchMedicinesByName: ${e.message}');
+      print('Status code: ${e.response?.statusCode}');
+      print('Response data: ${e.response?.data}');
+      rethrow;
+    } catch (e) {
+      print('Unexpected error in searchMedicinesByName: $e');
+      throw DioException(
+        requestOptions: RequestOptions(path: ApiEndpoints.searchMedicines),
+        message: 'An unexpected error occurred: $e',
+      );
+    }
+  }
 }

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_mobile/core/resources/data_state.dart';
@@ -11,6 +12,7 @@ import 'package:formz/formz.dart';
 part 'services_state.dart';
 
 /// ServicesCubit handles all services-related functionality including:
+/// - Medicine search by name
 /// - Barcode scanning and medicine detection
 /// - Pharmacy box management
 /// - Medicine management within pharmacy boxes
@@ -21,6 +23,174 @@ class ServicesCubit extends Cubit<ServicesState> {
 
   final PharmacyRepository _pharmacyRepository;
   final MedicineRepository _medicineRepository;
+
+  // Debounce timer for search
+  Timer? _searchTimer;
+
+  // ============================================
+  // Medicine Search Methods
+  // ============================================
+
+  /// Search medicines by name with debouncing
+  void searchMedicinesByName(String query) async {
+    // Cancel previous timer
+    _searchTimer?.cancel();
+
+    // Clear results if query is empty
+    if (query.trim().isEmpty) {
+      emit(state.copyWith(
+        searchResults: [],
+        searchQuery: '',
+        searchStatus: FormzSubmissionStatus.initial,
+        searchErrorMessage: null,
+      ));
+      return;
+    }
+
+    // Update search query immediately for UI feedback
+    emit(state.copyWith(
+      searchQuery: query,
+      searchStatus: FormzSubmissionStatus.inProgress,
+      searchErrorMessage: null,
+    ));
+
+    // Debounce the API call
+    _searchTimer = Timer(const Duration(milliseconds: 500), () async {
+      try {
+        final result = await _medicineRepository.searchMedicinesByName(query.trim());
+
+        if (result is DataSuccess<List<MedicineEntity>>) {
+          emit(state.copyWith(
+            searchResults: result.data ?? [],
+            searchStatus: FormzSubmissionStatus.success,
+            searchErrorMessage: null,
+          ));
+        } else {
+          emit(state.copyWith(
+            searchStatus: FormzSubmissionStatus.failure,
+            searchErrorMessage: result.error ?? 'Failed to search medicines',
+          ));
+        }
+      } catch (e) {
+        emit(state.copyWith(
+          searchStatus: FormzSubmissionStatus.failure,
+          searchErrorMessage: 'An error occurred during search: $e',
+        ));
+      }
+    });
+  }
+
+  /// Select a medicine from search results
+  void selectMedicineFromSearch(MedicineEntity medicine) {
+    emit(state.copyWith(
+      selectedMedicine: medicine,
+      selectedMedicineName: medicine.name,
+      selectedMedicineForm: medicine.dosageForm,
+    ));
+  }
+
+  /// Clear search results and selected medicine
+  void clearSearch() {
+    _searchTimer?.cancel();
+    emit(state.copyWith(
+      searchResults: [],
+      searchQuery: '',
+      selectedMedicine: null,
+      selectedMedicineName: '',
+      selectedMedicineForm: '',
+      selectedQuantity: 0,
+      selectedExpirationDate: null,
+      searchStatus: FormzSubmissionStatus.initial,
+      searchErrorMessage: null,
+    ));
+  }
+
+  /// Set quantity for selected medicine
+  void setSelectedQuantity(int quantity) {
+    emit(state.copyWith(selectedQuantity: quantity));
+  }
+
+  /// Set expiration date for selected medicine
+  void setSelectedExpirationDate(DateTime date) {
+    emit(state.copyWith(selectedExpirationDate: date));
+  }
+
+  /// Add selected medicine to pharmacy box
+  Future<void> addSelectedMedicineToPharmacyBox() async {
+    if (state.selectedMedicine == null ||
+        state.selectedQuantity <= 0 ||
+        state.selectedExpirationDate == null ||
+        state.selectedPharmacyBoxId.isEmpty) {
+      emit(state.copyWith(
+        status: FormzSubmissionStatus.failure,
+        errorMessage: 'Please fill all required fields',
+      ));
+      return;
+    }
+
+    emit(state.copyWith(
+      status: FormzSubmissionStatus.inProgress,
+      errorMessage: null,
+    ));
+
+    try {
+      // Check if medicine already exists in pharmacy box
+      final checkResult = await _medicineRepository.checkMyMedicine(
+        state.selectedPharmacyBoxId,
+        state.selectedMedicine!.id,
+      );
+
+      String myMedicineId;
+
+      if (checkResult is DataSuccess && checkResult.data != null) {
+        // Medicine already exists
+        myMedicineId = checkResult.data!.id;
+      } else {
+        // Create new medicine entry
+        final addMedicineResult = await _medicineRepository.addMyMedicine(
+          pharmacyBoxId: state.selectedPharmacyBoxId,
+          medicineId: state.selectedMedicine!.id,
+          name: state.selectedMedicine!.name,
+          form: state.selectedMedicine!.dosageForm,
+        );
+
+        if (addMedicineResult is DataSuccess) {
+          myMedicineId = addMedicineResult.data!.id;
+        } else {
+          throw Exception(addMedicineResult.error ?? 'Failed to add medicine');
+        }
+      }
+
+      // Add purchase history
+      final purchaseResult = await _medicineRepository.addPurchaseHistory(
+        myMedicineId: myMedicineId,
+        quantityPurchased: state.selectedQuantity,
+        expiryDate: state.selectedExpirationDate!,
+      );
+
+      if (purchaseResult is DataSuccess) {
+        emit(state.copyWith(
+          status: FormzSubmissionStatus.success,
+          successMessage: 'Medicine added successfully!',
+        ));
+
+        // Clear form after success
+        clearSearch();
+
+        // Refresh pharmacy box medicines if needed
+        if (state.selectedPharmacyBoxId.isNotEmpty) {
+          await fetchMedicines(state.selectedPharmacyBoxId);
+        }
+      } else {
+        throw Exception(purchaseResult.error ?? 'Failed to add purchase history');
+      }
+    } catch (e) {
+      emit(state.copyWith(
+        status: FormzSubmissionStatus.failure,
+        errorMessage: 'Error adding medicine: $e',
+      ));
+    }
+  }
 
   // ============================================
   // Barcode Scanning Methods
@@ -58,8 +228,9 @@ class ServicesCubit extends Cubit<ServicesState> {
       scannedBarcode: '',
       scanStatus: FormzSubmissionStatus.initial,
       scanErrorMessage: null,
-      selectedExpirationDate: null,
-      selectedQuantity: 0,
+      // Use the new flag to properly clear the expiration date
+      clearScannedMedicineExpirationDate: true,
+      scannedMedicineQuantity: 0,
       shouldClearControllers: true,
     ));
   }
@@ -70,12 +241,16 @@ class ServicesCubit extends Cubit<ServicesState> {
 
   /// Fetch all user's pharmacy boxes from the server
   Future<void> fetchPharmacyBoxes() async {
+    if (isClosed) return; // Avoid emitting if cubit is closed
+
     emit(state.copyWith(
       status: FormzSubmissionStatus.inProgress,
       errorMessage: null,
     ));
 
     final result = await _pharmacyRepository.getMyPharmacyBoxes();
+
+    if (isClosed) return; // Check again after async call
 
     if (result is DataSuccess<List<PharmacyBoxEntity>>) {
       final boxes = result.data ?? [];
@@ -132,7 +307,7 @@ class ServicesCubit extends Cubit<ServicesState> {
   /// Filter pharmacy boxes based on search query
   void searchBoxes(String query, List<PharmacyBoxEntity> allBoxes) {
     if (query.isEmpty) {
-      emit(state.copyWith(filteredBoxes: allBoxes, searchQuery: query));
+      emit(state.copyWith(filteredBoxes: allBoxes, boxSearchQuery: query));
       return;
     }
 
@@ -140,17 +315,14 @@ class ServicesCubit extends Cubit<ServicesState> {
         .where((box) => box.groupName.toLowerCase().contains(query.toLowerCase()))
         .toList();
 
-    emit(state.copyWith(filteredBoxes: filteredBoxes, searchQuery: query));
+    emit(state.copyWith(filteredBoxes: filteredBoxes, boxSearchQuery: query));
   }
 
-  /// Reset pharmacy box search to show all boxes
-  void resetSearch(List<PharmacyBoxEntity> allBoxes) {
-    emit(state.copyWith(filteredBoxes: allBoxes, searchQuery: ''));
-  }
+
 
   /// Clear pharmacy box search and reset to all boxes
-  void clearSearch() {
-    emit(state.copyWith(filteredBoxes: state.allBoxes, searchQuery: ''));
+  void clearBoxSearch() {
+    emit(state.copyWith(filteredBoxes: state.allBoxes, boxSearchQuery: ''));
   }
 
   // ============================================
@@ -203,7 +375,7 @@ class ServicesCubit extends Cubit<ServicesState> {
   }
 
   // ============================================
-  // Medicine Search Methods
+  // Medicine Search Methods (for pharmacy box)
   // ============================================
 
   /// Filter medicines based on search query (name, manufacturer, dosage form)
@@ -223,10 +395,7 @@ class ServicesCubit extends Cubit<ServicesState> {
     emit(state.copyWith(filteredMedicines: filteredMedicines, medicineSearchQuery: query));
   }
 
-  /// Reset medicine search to show all medicines
-  void resetMedicineSearch(List<MyMedicineEntity> allMedicines) {
-    emit(state.copyWith(filteredMedicines: allMedicines, medicineSearchQuery: ''));
-  }
+
 
   /// Clear medicine search and reset to all medicines
   void clearMedicineSearch() {
@@ -234,29 +403,34 @@ class ServicesCubit extends Cubit<ServicesState> {
   }
 
   // ============================================
-  // Medication Tracking Methods
+  // Medication Tracking Methods (for barcode scan)
   // ============================================
 
   /// Set expiration date for the medicine being added
   void setExpirationDate(DateTime date) {
-    emit(state.copyWith(selectedExpirationDate: date));
+    print('ServicesCubit.setExpirationDate called with: $date');
+    print('Current state before: scannedMedicineExpirationDate = ${state.scannedMedicineExpirationDate}');
+
+    emit(state.copyWith(scannedMedicineExpirationDate: date));
+
+    print('New state after: scannedMedicineExpirationDate = ${state.scannedMedicineExpirationDate}');
   }
 
-  /// Set quantity for the medicine being added - Fixed to not interfere with scanned medicine
+  /// Set quantity for the medicine being added
   void setQuantity(int quantity) {
-    emit(state.copyWith(selectedQuantity: quantity));
+    emit(state.copyWith(scannedMedicineQuantity: quantity));
   }
 
   /// Clear all medication tracking data (expiration date and quantity)
   void clearMedicationTrackingData() {
     emit(state.copyWith(
-      selectedExpirationDate: null,
-      selectedQuantity: 0,
+      clearScannedMedicineExpirationDate: true,
+      scannedMedicineQuantity: 0,
     ));
   }
 
   // ============================================
-  // Medicine Addition Methods
+  // Medicine Addition Methods (for barcode scan)
   // ============================================
 
   /// Add medicine to pharmacy box with tracking information
@@ -360,7 +534,7 @@ class ServicesCubit extends Cubit<ServicesState> {
       return;
     }
 
-    if (state.selectedExpirationDate == null) {
+    if (state.scannedMedicineExpirationDate == null) {
       emit(state.copyWith(
         status: FormzSubmissionStatus.failure,
         errorMessage: 'Date d\'expiration requise',
@@ -368,7 +542,7 @@ class ServicesCubit extends Cubit<ServicesState> {
       return;
     }
 
-    if (state.selectedQuantity <= 0) {
+    if (state.scannedMedicineQuantity <= 0) {
       emit(state.copyWith(
         status: FormzSubmissionStatus.failure,
         errorMessage: 'Quantité invalide',
@@ -378,8 +552,8 @@ class ServicesCubit extends Cubit<ServicesState> {
 
     await addMedicineToPharmacyBox(
       medicineId: state.scannedMedicine!.id,
-      quantity: state.selectedQuantity,
-      expirationDate: state.selectedExpirationDate!,
+      quantity: state.scannedMedicineQuantity,
+      expirationDate: state.scannedMedicineExpirationDate!,
       pharmacyBoxId: state.selectedPharmacyBoxId,
     );
   }
@@ -402,208 +576,10 @@ class ServicesCubit extends Cubit<ServicesState> {
   void resetState() {
     emit(const ServicesState());
   }
-  // Add these methods to your existing ServicesCubit class
 
-// ============================================
-// Medicine Search and Auto-fill Methods
-// ============================================
-
-  /// Fetch all medicines from the server for search/autocomplete
-  Future<void> fetchAllMedicines() async {
-    emit(state.copyWith(
-      medicineSearchStatus: FormzSubmissionStatus.inProgress,
-      medicineSearchErrorMessage: null,
-    ));
-
-    try {
-      final result = await _medicineRepository.getAllMedicines();
-
-      if (result is DataSuccess<List<MedicineEntity>>) {
-        final medicines = result.data ?? [];
-        emit(state.copyWith(
-          allMedicinesForSearch: medicines,
-          filteredMedicinesForSearch: medicines,
-          medicineSearchStatus: FormzSubmissionStatus.success,
-          medicineSearchErrorMessage: null,
-        ));
-      } else {
-        emit(state.copyWith(
-          medicineSearchStatus: FormzSubmissionStatus.failure,
-          medicineSearchErrorMessage: result.error ?? 'Failed to fetch medicines',
-        ));
-      }
-    } catch (e) {
-      print('Error fetching all medicines: $e');
-      emit(state.copyWith(
-        medicineSearchStatus: FormzSubmissionStatus.failure,
-        medicineSearchErrorMessage: 'An unexpected error occurred: $e',
-      ));
-    }
-  }
-
-  /// Search medicines by name for autocomplete
-  void searchMedicinesByName(String query) {
-    if (query.isEmpty) {
-      emit(state.copyWith(
-        filteredMedicinesForSearch: state.allMedicinesForSearch,
-        medicineSearchQueryManually: query,
-      ));
-      return;
-    }
-
-    final filteredMedicines = state.allMedicinesForSearch
-        .where((medicine) =>
-        medicine.name.toLowerCase().contains(query.toLowerCase()))
-        .toList();
-
-    emit(state.copyWith(
-      filteredMedicinesForSearch: filteredMedicines,
-      medicineSearchQuery: query,
-    ));
-  }
-
-  /// Select a medicine and auto-fill form data
-  void selectMedicineForManualAdd(MedicineEntity medicine) {
-    emit(state.copyWith(
-      selectedMedicineForManualAdd: medicine,
-      autoFilledForm: medicine.dosageForm,
-    ));
-  }
-
-  /// Clear selected medicine and form data
-  void clearSelectedMedicineForManualAdd() {
-    emit(state.copyWith(
-      selectedMedicineForManualAdd: null,
-      autoFilledForm: '',
-      medicineSearchQueryManually: '',
-    ));
-  }
-
-  /// Set manual medication data (for form submission)
-  void setManualMedicationData({
-    String? name,
-    String? form,
-    int? quantity,
-    DateTime? expirationDate,
-  }) {
-    emit(state.copyWith(
-      manualMedicationName: name ?? state.manualMedicationName,
-      manualMedicationForm: form ?? state.manualMedicationForm,
-      manualMedicationQuantity: quantity ?? state.manualMedicationQuantity,
-      manualMedicationExpirationDate: expirationDate ?? state.manualMedicationExpirationDate,
-    ));
-  }
-
-  /// Add manual medication to pharmacy box
-  Future<void> addManualMedicationToPharmacyBox() async {
-    emit(state.copyWith(
-      status: FormzSubmissionStatus.inProgress,
-      errorMessage: null,
-    ));
-
-    try {
-      // Validate required fields
-      if (state.manualMedicationName.isEmpty) {
-        throw Exception('Nom du médicament requis');
-      }
-      if (state.manualMedicationForm.isEmpty) {
-        throw Exception('Forme du médicament requise');
-      }
-      if (state.manualMedicationQuantity <= 0) {
-        throw Exception('Quantité invalide');
-      }
-      if (state.manualMedicationExpirationDate == null) {
-        throw Exception('Date d\'expiration requise');
-      }
-      if (state.selectedPharmacyBoxId.isEmpty) {
-        throw Exception('Aucune boîte de pharmacie sélectionnée');
-      }
-
-      String myMedicineId;
-
-      // Check if we have a selected medicine (from search) or creating custom
-      if (state.selectedMedicineForManualAdd != null) {
-        // Medicine selected from search - check if it exists in pharmacy box
-        final checkResult = await _medicineRepository.checkMyMedicine(
-          state.selectedPharmacyBoxId,
-          state.selectedMedicineForManualAdd!.id,
-        );
-
-        if (checkResult is DataSuccess && checkResult.data != null) {
-          // Medicine already exists, use existing ID
-          myMedicineId = checkResult.data!.id;
-        } else {
-          // Medicine doesn't exist, create new MyMedicine entry
-          final addMedicineResult = await _medicineRepository.addMyMedicine(
-            pharmacyBoxId: state.selectedPharmacyBoxId,
-            medicineId: state.selectedMedicineForManualAdd!.id,
-            name: state.manualMedicationName,
-            form: state.manualMedicationForm,
-          );
-
-          if (addMedicineResult is DataSuccess) {
-            myMedicineId = addMedicineResult.data!.id;
-          } else {
-            throw Exception(addMedicineResult.error ?? 'Failed to add medicine');
-          }
-        }
-      } else {
-        // Custom medicine - create as custom medicine
-        final addMedicineResult = await _medicineRepository.addCustomMyMedicine(
-          pharmacyBoxId: state.selectedPharmacyBoxId,
-          name: state.manualMedicationName,
-          form: state.manualMedicationForm,
-        );
-
-        if (addMedicineResult is DataSuccess) {
-          myMedicineId = addMedicineResult.data!.id;
-        } else {
-          throw Exception(addMedicineResult.error ?? 'Failed to add custom medicine');
-        }
-      }
-
-      // Add purchase history
-      final purchaseHistoryResult = await _medicineRepository.addPurchaseHistory(
-        myMedicineId: myMedicineId,
-        quantityPurchased: state.manualMedicationQuantity,
-        expiryDate: state.manualMedicationExpirationDate!,
-      );
-
-      if (purchaseHistoryResult is DataSuccess) {
-        emit(state.copyWith(
-          status: FormzSubmissionStatus.success,
-          successMessage: 'Médicament ajouté avec succès',
-        ));
-
-        // Clear form data after successful addition
-        clearManualMedicationData();
-
-        // Refresh the medicines list for the current pharmacy box
-        if (state.selectedPharmacyBoxId.isNotEmpty) {
-          await fetchMedicines(state.selectedPharmacyBoxId);
-        }
-      } else {
-        throw Exception(purchaseHistoryResult.error ?? 'Failed to add purchase history');
-      }
-    } catch (e) {
-      print('Error adding manual medication to pharmacy box: $e');
-      emit(state.copyWith(
-        status: FormzSubmissionStatus.failure,
-        errorMessage: 'Erreur lors de l\'ajout du médicament: $e',
-      ));
-    }
-  }
-
-  /// Clear all manual medication form data
-  void clearManualMedicationData() {
-    emit(state.copyWith(
-      selectedMedicineForManualAdd: null,
-      autoFilledForm: '',
-      medicineSearchQueryManually: '',
-      manualMedicationName: '',
-      manualMedicationForm: '',
-      manualMedicationQuantity: 0,
-      manualMedicationExpirationDate: null,
-    ));
+  @override
+  Future<void> close() {
+    _searchTimer?.cancel();
+    return super.close();
   }
 }

@@ -6,8 +6,6 @@ import 'package:flutter_mobile/domain/entities/services/purchase_history_entity.
 abstract class MedicineRepository {
   Future<DataState<List<MyMedicineEntity>>> getMyMedicines(String pharmacyBoxId);
   Future<DataState<MedicineEntity>> getMedicineByBarcode(String barcode);
-
-  // New methods
   Future<DataState<MyMedicineEntity?>> checkMyMedicine(String pharmacyBoxId, String medicineId);
   Future<DataState<MyMedicineEntity>> addMyMedicine({
     required String pharmacyBoxId,
@@ -20,11 +18,13 @@ abstract class MedicineRepository {
     required int quantityPurchased,
     required DateTime expiryDate,
   });
-  // New methods for medicine search and custom medicines
   Future<DataState<List<MedicineEntity>>> getAllMedicines();
   Future<DataState<MyMedicineEntity>> addCustomMyMedicine({
     required String pharmacyBoxId,
     required String name,
     required String form,
   });
+
+  // New search method
+  Future<DataState<List<MedicineEntity>>> searchMedicinesByName(String query);
 }

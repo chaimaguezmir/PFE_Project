@@ -170,8 +170,13 @@ class _ExpirationDateFieldState extends State<ExpirationDateField> {
     final cubit = context.read<ServicesCubit>();
     final state = cubit.state;
 
+    print('=== Date Selection Debug ===');
+    print('Current scannedMedicine: ${state.scannedMedicine?.name}');
+    print('Current scannedMedicineExpirationDate: ${state.scannedMedicineExpirationDate}');
+
     // Only allow date selection if medicine is scanned
     if (state.scannedMedicine == null) {
+      print('No medicine scanned, showing snackbar');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Veuillez d\'abord scanner un médicament'),
@@ -181,9 +186,10 @@ class _ExpirationDateFieldState extends State<ExpirationDateField> {
       return;
     }
 
+    print('Showing date picker...');
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: state.selectedExpirationDate ?? DateTime.now().add(const Duration(days: 365)),
+      initialDate: state.scannedMedicineExpirationDate ?? DateTime.now().add(const Duration(days: 365)),
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 3650)),
       builder: (context, child) {
@@ -198,9 +204,20 @@ class _ExpirationDateFieldState extends State<ExpirationDateField> {
       },
     );
 
+    print('Date picker result: $picked');
+
     if (picked != null && mounted) {
+      print('Setting expiration date: $picked');
+      // Use setExpirationDate which sets scannedMedicineExpirationDate
       cubit.setExpirationDate(picked);
+
+      // Check the state immediately after setting
+      final newState = cubit.state;
+      print('State after setting date: ${newState.scannedMedicineExpirationDate}');
+    } else {
+      print('Date picker was cancelled or no date selected');
     }
+    print('=== End Date Selection Debug ===');
   }
 
   String _formatDate(DateTime date) {
@@ -211,20 +228,42 @@ class _ExpirationDateFieldState extends State<ExpirationDateField> {
   Widget build(BuildContext context) {
     return BlocListener<ServicesCubit, ServicesState>(
       listenWhen: (previous, current) =>
-      previous.selectedExpirationDate != current.selectedExpirationDate ||
+      previous.scannedMedicineExpirationDate != current.scannedMedicineExpirationDate ||
           previous.scannedMedicine != current.scannedMedicine,
       listener: (context, state) {
-        if (state.selectedExpirationDate != null) {
-          _controller.text = _formatDate(state.selectedExpirationDate!);
+        print('=== ExpirationDateField Listener ===');
+        print('Previous date was different, updating controller');
+        print('New scannedMedicineExpirationDate: ${state.scannedMedicineExpirationDate}');
+
+        if (state.scannedMedicineExpirationDate != null) {
+          final formattedDate = _formatDate(state.scannedMedicineExpirationDate!);
+          print('Setting controller text to: $formattedDate');
+          _controller.text = formattedDate;
         } else {
+          print('Clearing controller text');
           _controller.clear();
         }
+        print('=== End ExpirationDateField Listener ===');
       },
       child: BlocBuilder<ServicesCubit, ServicesState>(
         buildWhen: (previous, current) =>
-        previous.scannedMedicine != current.scannedMedicine,
+        previous.scannedMedicine != current.scannedMedicine ||
+            previous.scannedMedicineExpirationDate != current.scannedMedicineExpirationDate,
         builder: (context, state) {
           final isEnabled = state.scannedMedicine != null;
+
+          print('=== ExpirationDateField Builder ===');
+          print('isEnabled: $isEnabled');
+          print('scannedMedicineExpirationDate: ${state.scannedMedicineExpirationDate}');
+          print('controller.text: ${_controller.text}');
+
+          // Ensure the controller is updated if there's already a date
+          if (state.scannedMedicineExpirationDate != null && _controller.text.isEmpty) {
+            final formattedDate = _formatDate(state.scannedMedicineExpirationDate!);
+            print('Builder: Setting controller text to: $formattedDate');
+            _controller.text = formattedDate;
+          }
+          print('=== End ExpirationDateField Builder ===');
 
           return TextField(
             controller: _controller,
@@ -283,6 +322,7 @@ class _ExpirationDateFieldState extends State<ExpirationDateField> {
   }
 }
 
+
 class QuantityField extends StatefulWidget {
   const QuantityField({super.key});
 
@@ -314,10 +354,21 @@ class _QuantityFieldState extends State<QuantityField> {
 
     if (value.isEmpty) {
       context.read<ServicesCubit>().setQuantity(0);
+      print('Quantity set to 0 (empty)'); // Debug print
     } else {
       final quantity = int.tryParse(value);
-      if (quantity != null && quantity >= 0) {
+      if (quantity != null && quantity >= 0 && quantity <= 9999) { // Add reasonable upper limit
         context.read<ServicesCubit>().setQuantity(quantity);
+        print('Quantity set to: $quantity'); // Debug print
+      } else {
+        // Invalid input, revert to previous valid value
+        final currentQuantity = state.scannedMedicineQuantity;
+        if (currentQuantity > 0) {
+          _controller.text = currentQuantity.toString();
+        } else {
+          _controller.clear();
+        }
+        print('Invalid quantity input: $value, reverted to: $currentQuantity'); // Debug print
       }
     }
   }
@@ -326,30 +377,35 @@ class _QuantityFieldState extends State<QuantityField> {
   Widget build(BuildContext context) {
     return BlocListener<ServicesCubit, ServicesState>(
       listenWhen: (previous, current) =>
-      previous.selectedQuantity != current.selectedQuantity ||
+      previous.scannedMedicineQuantity != current.scannedMedicineQuantity ||
           previous.scannedMedicine != current.scannedMedicine,
       listener: (context, state) {
         _isUpdatingFromState = true;
 
+        print('QuantityField listener - Quantity: ${state.scannedMedicineQuantity}'); // Debug print
+
         if (state.scannedMedicine == null) {
           _controller.clear();
-        } else if (state.selectedQuantity > 0) {
-          _controller.text = state.selectedQuantity.toString();
-        } else if (state.selectedQuantity == 0 && _controller.text.isNotEmpty) {
-          // Only clear if we explicitly want to reset, not during typing
-          final currentValue = int.tryParse(_controller.text) ?? 0;
-          if (currentValue == 0) {
-            _controller.clear();
-          }
+        } else if (state.scannedMedicineQuantity > 0) {
+          _controller.text = state.scannedMedicineQuantity.toString();
+        } else {
+          // Only clear if quantity is explicitly 0
+          _controller.clear();
         }
 
         _isUpdatingFromState = false;
       },
       child: BlocBuilder<ServicesCubit, ServicesState>(
         buildWhen: (previous, current) =>
-        previous.scannedMedicine != current.scannedMedicine,
+        previous.scannedMedicine != current.scannedMedicine ||
+            previous.scannedMedicineQuantity != current.scannedMedicineQuantity,
         builder: (context, state) {
           final isEnabled = state.scannedMedicine != null;
+
+          // Ensure the controller shows the current quantity if not empty
+          if (state.scannedMedicineQuantity > 0 && _controller.text != state.scannedMedicineQuantity.toString() && !_isUpdatingFromState) {
+            _controller.text = state.scannedMedicineQuantity.toString();
+          }
 
           return TextField(
             controller: _controller,
@@ -430,13 +486,25 @@ class AddToBoxButton extends StatelessWidget {
       },
       child: BlocBuilder<ServicesCubit, ServicesState>(
         buildWhen: (previous, current) =>
-        previous.selectedExpirationDate != current.selectedExpirationDate ||
-            previous.selectedQuantity != current.selectedQuantity ||
+        previous.scannedMedicineExpirationDate != current.scannedMedicineExpirationDate ||
+            previous.scannedMedicineQuantity != current.scannedMedicineQuantity ||
             previous.scannedMedicine != current.scannedMedicine ||
-            previous.status != current.status,
+            previous.status != current.status ||
+            previous.selectedPharmacyBoxId != current.selectedPharmacyBoxId,
         builder: (context, state) {
-          final isEnabled = state.canAddMedicine && !state.isLoading;
-          final isLoading = state.isLoading;
+          // Use the convenience getter from the state
+          final bool isEnabled = state.canAddScannedMedicine && !state.isLoading;
+
+          // Debug info using the state getters
+          print('=== Button State Debug ===');
+          print('hasMedicineScanned: ${state.hasMedicineScanned} (${state.scannedMedicine?.name})');
+          print('hasScannedExpirationDate: ${state.hasScannedExpirationDate} (${state.scannedMedicineExpirationDate})');
+          print('hasScannedQuantity: ${state.hasScannedQuantity} (${state.scannedMedicineQuantity})');
+          print('hasSelectedPharmacyBox: ${state.hasSelectedPharmacyBox} (${state.selectedPharmacyBoxId})');
+          print('isNotLoading: ${!state.isLoading}');
+          print('canAddScannedMedicine: ${state.canAddScannedMedicine}');
+          print('Final isEnabled: $isEnabled');
+          print('=========================');
 
           return Container(
             width: double.infinity,
@@ -451,7 +519,10 @@ class AddToBoxButton extends StatelessWidget {
             ),
             child: ElevatedButton(
               onPressed: isEnabled
-                  ? () => context.read<ServicesCubit>().addCurrentMedicineToCurrentBox()
+                  ? () {
+                print('Button pressed - calling addCurrentMedicineToCurrentBox');
+                context.read<ServicesCubit>().addCurrentMedicineToCurrentBox();
+              }
                   : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.transparent,
@@ -461,7 +532,7 @@ class AddToBoxButton extends StatelessWidget {
                   borderRadius: BorderRadius.circular(25.r),
                 ),
               ),
-              child: isLoading
+              child: state.isLoading
                   ? SizedBox(
                 width: 20.w,
                 height: 20.w,
@@ -546,7 +617,7 @@ class AddToBoxButton extends StatelessWidget {
               ),
               SizedBox(height: 12.h),
               Text(
-                '${state.scannedMedicine?.name ?? "Le médicament"} a été ajouté à votre boîte de pharmacie avec ${state.selectedQuantity} unité(s).',
+                '${state.scannedMedicine?.name ?? "Le médicament"} a été ajouté à votre boîte de pharmacie avec ${state.scannedMedicineQuantity} unité(s).',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 14.sp,

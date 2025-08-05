@@ -129,6 +129,18 @@ class MedicineRepositoryImpl implements MedicineRepository {
     }
   }
 
+  @override
+  Future<DataState<List<MedicineEntity>>> searchMedicinesByName(String query) async {
+    try {
+      final result = await _remoteDataSource.searchMedicinesByName(query);
+      return DataSuccess(result);
+    } on DioException catch (e) {
+      return DataError(_handleDioError(e));
+    } catch (e) {
+      return DataError('An unexpected error occurred: $e');
+    }
+  }
+
   String _formatDate(DateTime date) {
     return "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
   }
