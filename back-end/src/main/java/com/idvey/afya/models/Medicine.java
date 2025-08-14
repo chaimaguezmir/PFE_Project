@@ -23,17 +23,26 @@ public class Medicine {
 	@Column(nullable = false)
 	private String name;
 
-	@Column(name = "manufacturer")
-	private String manufacturer;
+	@Column(name = "manufacturer", nullable = false)
+	@Builder.Default
+	private String manufacturer = "Unknown";
 
-	@Column(name = "dosage_form")
-	private String dosageForm; // tablet, capsule, syrup, injection, etc.
-
-	@Column(name = "requires_prescription")
+	@Column(name = "requires_prescription", nullable = false)
+	@Builder.Default
 	private boolean requiresPrescription = false;
 
 	@Column(name = "barcode")
 	private String barcode;
+
+	// NEW FIELDS ADDED
+	@Column(name = "designation")
+	private String designation;
+
+	@Column(name = "dosage")
+	private String dosage; // Dosage with unit (e.g., "500mg", "10ml")
+
+	@Column(name = "form")
+	private String form; // tablet, capsule, syrup, injection, etc.
 
 	// One-to-many relationship with MyMedicine
 	@OneToMany(mappedBy = "medicine", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -11,12 +11,17 @@ public class CreateMedicineRequest {
 	@NotBlank(message = "Medicine name is required")
 	private String name;
 
-	private String manufacturer;
-
-	private String dosageForm; // tablet, capsule, syrup, injection, etc.
+	private String manufacturer = "Unknown";
 
 	private boolean requiresPrescription = false;
 
 	private String barcode;
+
+	// NEW FIELDS ADDED
+	private String designation;
+
+	private String dosage; // Dosage with unit (e.g., "500mg", "10ml")
+
+	private String form; // tablet, capsule, syrup, injection, etc.
 
 }

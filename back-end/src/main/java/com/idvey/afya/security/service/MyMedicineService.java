@@ -71,7 +71,7 @@ public class MyMedicineService {
 		// If it's a custom medicine (medicineId is null), set custom fields
 		if (medicine == null) {
 			builder.customManufacturer(request.getManufacturer())
-					.customDosageForm(request.getDosageForm())
+					.customForm(request.getDosage()) // FIXED: Changed from getDosageForm to getDosage
 					.customRequiresPrescription(request.isRequiresPrescription());
 		}
 
@@ -306,7 +306,7 @@ public class MyMedicineService {
 				medicineResponse,                                  // 6. medicine (can be null for custom medicines)
 				myMedicine.isCustomMedicine(),                     // 7. isCustomMedicine
 				myMedicine.getCustomManufacturer(),                // 8. customManufacturer
-				myMedicine.getCustomDosageForm(),                  // 9. customDosageForm
+				myMedicine.getCustomForm(),                  // 9. customDosageForm
 				myMedicine.getCustomRequiresPrescription(),        // 10. customRequiresPrescription
 				totalQuantity != null ? totalQuantity.intValue() : 0, // 11. totalQuantityPurchased
 				purchaseCount,                                     // 12. purchaseHistoryCount
@@ -315,14 +315,17 @@ public class MyMedicineService {
 		);
 	}
 
+	// Updated toMedicineResponse method in MyMedicineService.java
 	private MedicineResponse toMedicineResponse(Medicine medicine) {
 		return new MedicineResponse(
 				medicine.getId(),
 				medicine.getName(),
 				medicine.getManufacturer(),
-				medicine.getDosageForm(),
 				medicine.isRequiresPrescription(),
-				medicine.getBarcode()
+				medicine.getBarcode(),
+				medicine.getDesignation(),
+				medicine.getDosage(),
+				medicine.getForm()
 		);
 	}
 }

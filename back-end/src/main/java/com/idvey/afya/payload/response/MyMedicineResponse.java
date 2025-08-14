@@ -24,7 +24,7 @@ public class MyMedicineResponse {
 	// ADDED: Custom medicine info
 	private boolean isCustomMedicine;
 	private String customManufacturer;
-	private String customDosageForm;
+	private String customForm;
 	private Boolean customRequiresPrescription;
 
 	private int totalQuantityPurchased;

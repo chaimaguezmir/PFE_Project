@@ -27,7 +27,7 @@ public class MedicineController {
 	@MedicineDocs.CreateMedicine
 	@PostMapping
 	public ResponseEntity<MedicineResponse> createMedicine(@AuthenticationPrincipal UserDetailsImpl currentUser,
-			@Valid @RequestBody CreateMedicineRequest request) {
+														   @Valid @RequestBody CreateMedicineRequest request) {
 		MedicineResponse response = medicineService.createMedicine(request);
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
@@ -43,7 +43,7 @@ public class MedicineController {
 	@MedicineDocs.GetMedicineById
 	@GetMapping("/{id}")
 	public ResponseEntity<MedicineResponse> getMedicineById(@AuthenticationPrincipal UserDetailsImpl currentUser,
-			@PathVariable UUID id) {
+															@PathVariable UUID id) {
 		MedicineResponse medicine = medicineService.getMedicineById(id);
 		return ResponseEntity.ok(medicine);
 	}
@@ -51,7 +51,7 @@ public class MedicineController {
 	@MedicineDocs.SearchMedicines
 	@GetMapping("/search")
 	public ResponseEntity<List<MedicineResponse>> searchMedicines(@AuthenticationPrincipal UserDetailsImpl currentUser,
-			@RequestParam String q) {
+																  @RequestParam String q) {
 		List<MedicineResponse> medicines = medicineService.searchMedicines(q);
 		return ResponseEntity.ok(medicines);
 	}
@@ -59,7 +59,7 @@ public class MedicineController {
 	@MedicineDocs.SearchMedicines
 	@GetMapping("/search/name")
 	public ResponseEntity<List<MedicineResponse>> searchByName(@AuthenticationPrincipal UserDetailsImpl currentUser,
-			@RequestParam String name) {
+															   @RequestParam String name) {
 		List<MedicineResponse> medicines = medicineService.findByNameContaining(name);
 		return ResponseEntity.ok(medicines);
 	}
@@ -73,17 +73,17 @@ public class MedicineController {
 	}
 
 	@MedicineDocs.SearchMedicines
-	@GetMapping("/dosage-form/{dosageForm}")
-	public ResponseEntity<List<MedicineResponse>> findByDosageForm(@AuthenticationPrincipal UserDetailsImpl currentUser,
-			@PathVariable String dosageForm) {
-		List<MedicineResponse> medicines = medicineService.findByDosageForm(dosageForm);
+	@GetMapping("/form/{form}")
+	public ResponseEntity<List<MedicineResponse>> findByForm(@AuthenticationPrincipal UserDetailsImpl currentUser,
+															 @PathVariable String form) {
+		List<MedicineResponse> medicines = medicineService.findByForm(form);
 		return ResponseEntity.ok(medicines);
 	}
 
 	@MedicineDocs.GetMedicineById
 	@GetMapping("/name/{name}")
 	public ResponseEntity<MedicineResponse> findByExactName(@AuthenticationPrincipal UserDetailsImpl currentUser,
-			@PathVariable String name) {
+															@PathVariable String name) {
 		MedicineResponse medicine = medicineService.findByName(name);
 		return ResponseEntity.ok(medicine);
 	}
@@ -91,7 +91,7 @@ public class MedicineController {
 	@MedicineDocs.FindByBarcode
 	@GetMapping("/barcode/{barcode}")
 	public ResponseEntity<MedicineResponse> findByBarcode(@AuthenticationPrincipal UserDetailsImpl currentUser,
-			@PathVariable String barcode) {
+														  @PathVariable String barcode) {
 		MedicineResponse medicine = medicineService.findByBarcode(barcode);
 		return ResponseEntity.ok(medicine);
 	}

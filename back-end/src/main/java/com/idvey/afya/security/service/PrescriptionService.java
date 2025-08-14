@@ -225,6 +225,8 @@ public class PrescriptionService {
 	/**
 	 * UPDATED: Convert MyMedicine to MyMedicineResponse with proper handling for custom medicines
 	 */
+	// Updated toMyMedicineResponse method in PrescriptionService.java
+// Updated toMyMedicineResponse method in PrescriptionService.java
 	private MyMedicineResponse toMyMedicineResponse(MyMedicine myMedicine) {
 		// Handle global medicine (when medicine is not null)
 		MedicineResponse medicineResponse = null;
@@ -233,9 +235,11 @@ public class PrescriptionService {
 					myMedicine.getMedicine().getId(),
 					myMedicine.getMedicine().getName(),
 					myMedicine.getMedicine().getManufacturer(),
-					myMedicine.getMedicine().getDosageForm(),
 					myMedicine.getMedicine().isRequiresPrescription(),
-					myMedicine.getMedicine().getBarcode()
+					myMedicine.getMedicine().getBarcode(),
+					myMedicine.getMedicine().getDesignation(),
+					myMedicine.getMedicine().getDosage(),
+					myMedicine.getMedicine().getForm()
 			);
 		}
 
@@ -249,7 +253,7 @@ public class PrescriptionService {
 				medicineResponse,                                      // 6. medicine (can be null for custom medicines)
 				myMedicine.isCustomMedicine(),                         // 7. isCustomMedicine
 				myMedicine.getCustomManufacturer(),                    // 8. customManufacturer
-				myMedicine.getCustomDosageForm(),                      // 9. customDosageForm
+				myMedicine.getCustomForm(),                      // 9. customDosageForm
 				myMedicine.getCustomRequiresPrescription(),            // 10. customRequiresPrescription
 				0,                                                     // 11. totalQuantityPurchased (can be calculated if needed)
 				0,                                                     // 12. purchaseHistoryCount (can be calculated if needed)

@@ -23,7 +23,9 @@ public class CreateMyMedicineRequest {
 	private String form; // pill, sachet, tablet, etc. (customizable by user)
 
 	// Additional fields for custom medicines when medicineId is null
-	private String manufacturer;
-	private String dosageForm;
+	private String manufacturer = "Unknown";
+	private String designation;
+	private String dosage;
+	private String customForm;
 	private boolean requiresPrescription = false;
 }

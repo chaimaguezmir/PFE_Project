@@ -33,8 +33,8 @@ public class MyMedicine {
 	@Column(name = "custom_manufacturer")
 	private String customManufacturer;
 
-	@Column(name = "custom_dosage_form")
-	private String customDosageForm;
+	@Column(name = "custom_form")
+	private String customForm;
 
 	@Column(name = "custom_requires_prescription")
 	private Boolean customRequiresPrescription;
@@ -67,8 +67,8 @@ public class MyMedicine {
 		return medicine != null ? medicine.getManufacturer() : customManufacturer;
 	}
 
-	public String getEffectiveDosageForm() {
-		return medicine != null ? medicine.getDosageForm() : customDosageForm;
+	public String getEffectiveForm() {
+		return medicine != null ? medicine.getForm() : customForm;
 	}
 
 	public boolean getEffectiveRequiresPrescription() {
