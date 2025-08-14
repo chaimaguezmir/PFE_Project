@@ -102,6 +102,8 @@ class MedicineSearchResultScreen extends StatelessWidget {
   }
 }
 
+// Replace the existing MedicineDetailsCard in medicine_search_result_screen.dart
+
 class MedicineDetailsCard extends StatelessWidget {
   const MedicineDetailsCard({
     super.key,
@@ -158,8 +160,9 @@ class MedicineDetailsCard extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // Use displayName which shows designation if available
                           Text(
-                            medicine.name,
+                            medicine.displayName,
                             style: TextStyle(
                               fontSize: 20.sp,
                               fontWeight: FontWeight.bold,
@@ -179,7 +182,27 @@ class MedicineDetailsCard extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 20.h),
-                _buildDetailRow('Forme', medicine.dosageForm),
+
+                // Show original name if designation is being displayed
+                if (medicine.designation != null &&
+                    medicine.designation!.isNotEmpty &&
+                    medicine.designation != medicine.name)
+                  _buildDetailRow('Nom original', medicine.name),
+
+                // Show designation if available
+                if (medicine.designation != null && medicine.designation!.isNotEmpty)
+                  _buildDetailRow('Désignation', medicine.designation!),
+
+                // Show dosage if available
+                if (medicine.dosage != null && medicine.dosage!.isNotEmpty)
+                  _buildDetailRow('Dosage', medicine.dosage!),
+
+                // Show form information - prioritize new 'form' field
+                if (medicine.form != null && medicine.form!.isNotEmpty)
+                  _buildDetailRow('Forme', medicine.form!)
+                else if (medicine.dosageForm.isNotEmpty)
+                  _buildDetailRow('Forme', medicine.dosageForm),
+
                 _buildDetailRow('Fabricant', medicine.manufacturer),
                 _buildDetailRow('Prescription requise',
                     medicine.requiresPrescription ? 'Oui' : 'Non'),

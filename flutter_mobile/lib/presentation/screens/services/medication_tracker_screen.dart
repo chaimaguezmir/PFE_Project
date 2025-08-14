@@ -46,6 +46,8 @@ class MedicationTrackerBody extends StatelessWidget {
   }
 }
 
+// Replace the existing MedicationInfoCard in medication_tracker_screen.dart
+
 class MedicationInfoCard extends StatelessWidget {
   const MedicationInfoCard({super.key});
 
@@ -109,8 +111,9 @@ class MedicationInfoCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Use displayName which prioritizes designation over name
                     Text(
-                      medicine.name,
+                      medicine.displayName,
                       style: TextStyle(
                         fontSize: 18.sp,
                         fontWeight: FontWeight.w600,
@@ -118,14 +121,28 @@ class MedicationInfoCard extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 4.h),
-                    Text(
-                      medicine.dosageForm,
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        color: Colors.black54,
+
+                    // Show enhanced dosage and form info
+                    if (medicine.fullDosageInfo.isNotEmpty) ...[
+                      Text(
+                        medicine.fullDosageInfo,
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          color: Colors.black54,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 2.h),
+                      SizedBox(height: 2.h),
+                    ] else if (medicine.dosageForm.isNotEmpty) ...[
+                      Text(
+                        medicine.dosageForm,
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          color: Colors.black54,
+                        ),
+                      ),
+                      SizedBox(height: 2.h),
+                    ],
+
                     Text(
                       medicine.manufacturer,
                       style: TextStyle(

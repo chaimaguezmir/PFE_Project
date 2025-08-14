@@ -298,6 +298,8 @@ class SearchResultsSection extends StatelessWidget {
   }
 }
 
+// Replace the existing MedicineResultCard in add_medication_manually_screen.dart
+
 class MedicineResultCard extends StatelessWidget {
   const MedicineResultCard({super.key, required this.medicine});
   final MedicineEntity medicine;
@@ -356,8 +358,9 @@ class MedicineResultCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Use displayName which prioritizes designation over name
                     Text(
-                      medicine.name,
+                      medicine.displayName,
                       style: TextStyle(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w600,
@@ -365,13 +368,30 @@ class MedicineResultCard extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 4.h),
+
+                    // Show enhanced dosage and form information
                     Text(
-                      '${medicine.dosageForm} - ${medicine.manufacturer}',
+                      medicine.fullDosageInfo.isNotEmpty
+                          ? medicine.fullDosageInfo
+                          : '${medicine.dosageForm} - ${medicine.manufacturer}',
                       style: TextStyle(
                         fontSize: 14.sp,
                         color: Colors.grey[600],
                       ),
                     ),
+
+                    // Show manufacturer if not already shown above
+                    if (medicine.fullDosageInfo.isNotEmpty) ...[
+                      SizedBox(height: 2.h),
+                      Text(
+                        medicine.manufacturer,
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          color: Colors.grey[500],
+                        ),
+                      ),
+                    ],
+
                     if (medicine.requiresPrescription)
                       Container(
                         margin: EdgeInsets.only(top: 4.h),

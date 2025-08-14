@@ -32,6 +32,7 @@ import 'package:flutter_mobile/presentation/bloc/auth/onboarding/auth_cubit.dart
 import 'package:flutter_mobile/presentation/bloc/auth/signup/signup_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/group/group_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/home/prescription_cubit.dart';
+import 'package:flutter_mobile/presentation/bloc/home/welcome_screen_cubit.dart';
 
 import 'package:flutter_mobile/presentation/bloc/profile/profile_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/services/services_cubit.dart';
@@ -106,6 +107,7 @@ Future<void> initInjectionContainer() async {
   sl.registerFactory<ServicesCubit>(() => ServicesCubit(sl(), sl()));
   sl.registerLazySingleton<AuthBloc>(() => AuthBloc(sl(), sl()));
   sl.registerFactory<PrescriptionCubit>(() => PrescriptionCubit(sl(), sl()));
+  sl.registerFactory<WelcomeScreenCubit>(() => WelcomeScreenCubit());
 
   // Network Controller
   sl.registerLazySingleton<Connectivity>(() => Connectivity());

@@ -2,7 +2,7 @@
 abstract class ApiEndpoints {
   //
 //static const String baseurl = 'http://10.0.2.2:8081/api';
-static const String baseurl = 'https://407f7f3186f7.ngrok-free.app/api';
+static const String baseurl = 'https://eb2343d141ba.ngrok-free.app/api';
 
   // Auth endpoints
   static const String signUp = '$baseurl/auth/signup';

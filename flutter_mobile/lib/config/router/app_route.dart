@@ -6,6 +6,7 @@ import 'package:flutter_mobile/presentation/bloc/auth/login/login_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/auth/signup/signup_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/group/group_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/home/prescription_cubit.dart';
+import 'package:flutter_mobile/presentation/bloc/home/welcome_screen_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/profile/profile_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/services/services_cubit.dart';
 import 'package:flutter_mobile/presentation/screens/auth/account_verification_screen.dart';
@@ -44,7 +45,7 @@ class AppRouter {
 
   String get initialLocation {
     if (_isAuthenticated) {
-      return AppRoutePath.services;
+      return AppRoutePath.home;
     } else if (_hasSeenOnboarding) {
       return AppRoutePath.signIn;
     } else {
@@ -93,8 +94,22 @@ class AppRouter {
               return BottomBar(navigationShell: navigationShell);
             },
         branches: <StatefulShellBranch>[
+          //prescription
           StatefulShellBranch(
             routes: <RouteBase>[
+              ShellRoute(
+                builder: (context, state, child) => BlocProvider(
+                  create: (context) => sl<WelcomeScreenCubit>(),
+                  child: child,
+                ),
+                routes: [
+                  GoRoute(
+                    name: AppRouteName.home,
+                    path: AppRoutePath.home,
+                    builder: (context, state) => const WelcomeScreen(),
+                  ),
+                ],
+              ),
               ShellRoute(
                 builder: (context, state, child) => BlocProvider(
                   create: (context) => sl<PrescriptionCubit>(),
@@ -102,21 +117,16 @@ class AppRouter {
                 ),
                 routes: [
                   GoRoute(
-                    name: AppRouteName.home,
-                    path: AppRoutePath.home,
-                    builder: (context, state) =>  const WelcomeScreen(),
-                  ),
-                  GoRoute(
                     name: AppRouteName.prescription,
                     path: AppRoutePath.prescription,
-                    builder: (context, state) =>  const PrescriptionsScreen(),
+                    builder: (context, state) => const PrescriptionsScreen(),
                   ),
                   GoRoute(
                     name: AppRouteName.prescriptionDetail,
                     path: AppRoutePath.prescriptionDetail,
-                    builder: (context, state) =>  const PrescriptionDetailScreen(),
+                    builder: (context, state) =>
+                        const PrescriptionDetailScreen(),
                   ),
-
                 ],
               ),
             ],
@@ -125,14 +135,15 @@ class AppRouter {
             routes: <RouteBase>[
               ShellRoute(
                 builder: (context, state, child) => BlocProvider(
-                  create: (context) => sl<ServicesCubit>()..fetchPharmacyBoxes(),
+                  create: (context) =>
+                      sl<ServicesCubit>()..fetchPharmacyBoxes(),
                   child: child,
                 ),
                 routes: [
                   GoRoute(
                     name: AppRouteName.services,
                     path: AppRoutePath.services,
-                    builder: (context, state) =>  const ServicesScreen(),
+                    builder: (context, state) => const ServicesScreen(),
                   ),
                   GoRoute(
                     name: AppRouteName.pharmacyBox,
@@ -147,18 +158,21 @@ class AppRouter {
                   GoRoute(
                     name: AppRouteName.medicineSearchResult,
                     path: AppRoutePath.medicineSearchResult,
-                    builder: (context, state) => const MedicineSearchResultScreen(),
+                    builder: (context, state) =>
+                        const MedicineSearchResultScreen(),
                   ),
 
                   GoRoute(
                     name: AppRouteName.medicationTracker,
                     path: AppRoutePath.medicationTracker,
-                    builder: (context, state) => const MedicationTrackerScreen(),
+                    builder: (context, state) =>
+                        const MedicationTrackerScreen(),
                   ),
                   GoRoute(
                     name: AppRouteName.addMedicationManually,
                     path: AppRoutePath.addMedicationManually,
-                    builder: (context, state) => const AddMedicationManuallyScreen(),
+                    builder: (context, state) =>
+                        const AddMedicationManuallyScreen(),
                   ),
                 ],
               ),

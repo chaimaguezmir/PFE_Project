@@ -1,5 +1,3 @@
-
-
 import 'package:flutter_mobile/domain/entities/services/medicine_entity.dart';
 
 class MedicineModel extends MedicineEntity {
@@ -10,6 +8,9 @@ class MedicineModel extends MedicineEntity {
     required super.dosageForm,
     required super.requiresPrescription,
     required super.barcode,
+    super.designation,
+    super.dosage,
+    super.form,
   });
 
   factory MedicineModel.fromJson(Map<String, dynamic> json) {
@@ -17,9 +18,14 @@ class MedicineModel extends MedicineEntity {
       id: json['id'] as String,
       name: json['name'] as String,
       manufacturer: json['manufacturer'] as String,
-      dosageForm: json['dosageForm'] as String,
+      // Use 'form' field as dosageForm for backward compatibility
+      dosageForm: json['form'] as String? ?? json['dosageForm'] as String? ?? '',
       requiresPrescription: json['requiresPrescription'] as bool,
       barcode: json['barcode'] as String,
+      // New fields
+      designation: json['designation'] as String?,
+      dosage: json['dosage'] as String?,
+      form: json['form'] as String?,
     );
   }
 
@@ -30,5 +36,8 @@ class MedicineModel extends MedicineEntity {
     'dosageForm': dosageForm,
     'requiresPrescription': requiresPrescription,
     'barcode': barcode,
+    if (designation != null) 'designation': designation,
+    if (dosage != null) 'dosage': dosage,
+    if (form != null) 'form': form,
   };
 }
