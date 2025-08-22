@@ -157,19 +157,36 @@ public class TreatmentService {
 	 */
 	// Updated toMyMedicineResponse method in TreatmentService.java
 // Updated toMyMedicineResponse method in TreatmentService.java
+	// In TreatmentService.java, around line 170, replace the toMyMedicineResponse method:
+
+
+// In TreatmentService.java, around line 170, replace the toMyMedicineResponse method:
+
 	private MyMedicineResponse toMyMedicineResponse(MyMedicine myMedicine) {
 		// Handle global medicine (when medicine is not null)
 		MedicineResponse medicineResponse = null;
 		if (myMedicine.getMedicine() != null) {
 			medicineResponse = new MedicineResponse(
 					myMedicine.getMedicine().getId(),
-					myMedicine.getMedicine().getName(),
-					myMedicine.getMedicine().getManufacturer(),
-					myMedicine.getMedicine().isRequiresPrescription(),
+					myMedicine.getMedicine().getMedicationName(),      // Changed from getName() or getDesignation()
+					myMedicine.getMedicine().getDosage(),              // Updated field
+					myMedicine.getMedicine().getForm(),                // Updated field
+					myMedicine.getMedicine().getPresentation(),        // New field
+					myMedicine.getMedicine().getDci(),                 // New field
+					myMedicine.getMedicine().getTherapeuticClass(),    // New field
+					myMedicine.getMedicine().getSubClass(),            // New field
+					myMedicine.getMedicine().getLaboratory(),          // Changed from getManufacturer()
+					myMedicine.getMedicine().getAmmNumber(),           // New field
+					myMedicine.getMedicine().getAmmDate(),             // New field
+					myMedicine.getMedicine().getPrimaryPackaging(),    // New field
+					myMedicine.getMedicine().getPackagingSpecification(), // New field
+					myMedicine.getMedicine().getScheduleCategory(),    // New field
+					myMedicine.getMedicine().getShelfLife(),           // New field
+					myMedicine.getMedicine().getIndications(),         // New field
+					myMedicine.getMedicine().getMedicationType(),      // New field
+					myMedicine.getMedicine().getVeicClassification(),  // New field
 					myMedicine.getMedicine().getBarcode(),
-					myMedicine.getMedicine().getDesignation(),
-					myMedicine.getMedicine().getDosage(),
-					myMedicine.getMedicine().getForm()
+					myMedicine.getMedicine().isRequiresPrescription()
 			);
 		}
 
@@ -183,7 +200,7 @@ public class TreatmentService {
 				medicineResponse,                                      // medicine (can be null)
 				myMedicine.isCustomMedicine(),                         // isCustomMedicine
 				myMedicine.getCustomManufacturer(),                    // customManufacturer
-				myMedicine.getCustomForm(),                      // customDosageForm
+				myMedicine.getCustomForm(),                      				// customForm
 				myMedicine.getCustomRequiresPrescription(),            // customRequiresPrescription
 				0,                                                     // totalQuantityPurchased (can be calculated if needed)
 				0,                                                     // purchaseHistoryCount (can be calculated if needed)

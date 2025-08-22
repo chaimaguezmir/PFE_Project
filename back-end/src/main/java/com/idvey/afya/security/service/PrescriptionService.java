@@ -233,13 +233,25 @@ public class PrescriptionService {
 		if (myMedicine.getMedicine() != null) {
 			medicineResponse = new MedicineResponse(
 					myMedicine.getMedicine().getId(),
-					myMedicine.getMedicine().getName(),
-					myMedicine.getMedicine().getManufacturer(),
-					myMedicine.getMedicine().isRequiresPrescription(),
+					myMedicine.getMedicine().getMedicationName(),      // Changed from getName() or getDesignation()
+					myMedicine.getMedicine().getDosage(),              // Updated field
+					myMedicine.getMedicine().getForm(),                // Updated field
+					myMedicine.getMedicine().getPresentation(),        // New field
+					myMedicine.getMedicine().getDci(),                 // New field
+					myMedicine.getMedicine().getTherapeuticClass(),    // New field
+					myMedicine.getMedicine().getSubClass(),            // New field
+					myMedicine.getMedicine().getLaboratory(),          // Changed from getManufacturer()
+					myMedicine.getMedicine().getAmmNumber(),           // New field
+					myMedicine.getMedicine().getAmmDate(),             // New field
+					myMedicine.getMedicine().getPrimaryPackaging(),    // New field
+					myMedicine.getMedicine().getPackagingSpecification(), // New field
+					myMedicine.getMedicine().getScheduleCategory(),    // New field
+					myMedicine.getMedicine().getShelfLife(),           // New field
+					myMedicine.getMedicine().getIndications(),         // New field
+					myMedicine.getMedicine().getMedicationType(),      // New field
+					myMedicine.getMedicine().getVeicClassification(),  // New field
 					myMedicine.getMedicine().getBarcode(),
-					myMedicine.getMedicine().getDesignation(),
-					myMedicine.getMedicine().getDosage(),
-					myMedicine.getMedicine().getForm()
+					myMedicine.getMedicine().isRequiresPrescription()
 			);
 		}
 
@@ -253,7 +265,7 @@ public class PrescriptionService {
 				medicineResponse,                                      // 6. medicine (can be null for custom medicines)
 				myMedicine.isCustomMedicine(),                         // 7. isCustomMedicine
 				myMedicine.getCustomManufacturer(),                    // 8. customManufacturer
-				myMedicine.getCustomForm(),                      // 9. customDosageForm
+				myMedicine.getCustomForm(),                            // 9. customForm
 				myMedicine.getCustomRequiresPrescription(),            // 10. customRequiresPrescription
 				0,                                                     // 11. totalQuantityPurchased (can be calculated if needed)
 				0,                                                     // 12. purchaseHistoryCount (can be calculated if needed)

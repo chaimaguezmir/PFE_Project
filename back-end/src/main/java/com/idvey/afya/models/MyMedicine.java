@@ -63,9 +63,7 @@ public class MyMedicine {
 	private Set<MedicinePurchaseHistory> purchaseHistory = new HashSet<>();
 
 	// Helper methods to get effective values
-	public String getEffectiveManufacturer() {
-		return medicine != null ? medicine.getManufacturer() : customManufacturer;
-	}
+
 
 	public String getEffectiveForm() {
 		return medicine != null ? medicine.getForm() : customForm;

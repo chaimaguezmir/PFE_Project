@@ -319,13 +319,25 @@ public class MyMedicineService {
 	private MedicineResponse toMedicineResponse(Medicine medicine) {
 		return new MedicineResponse(
 				medicine.getId(),
-				medicine.getName(),
-				medicine.getManufacturer(),
-				medicine.isRequiresPrescription(),
+				medicine.getMedicationName(),      // Changed from getName() or getDesignation()
+				medicine.getDosage(),              // Changed from getManufacturer()
+				medicine.getForm(),                // Changed from getDosageForm()
+				medicine.getPresentation(),
+				medicine.getDci(),
+				medicine.getTherapeuticClass(),
+				medicine.getSubClass(),
+				medicine.getLaboratory(),          // Changed from getManufacturer()
+				medicine.getAmmNumber(),
+				medicine.getAmmDate(),
+				medicine.getPrimaryPackaging(),
+				medicine.getPackagingSpecification(),
+				medicine.getScheduleCategory(),
+				medicine.getShelfLife(),
+				medicine.getIndications(),
+				medicine.getMedicationType(),
+				medicine.getVeicClassification(),
 				medicine.getBarcode(),
-				medicine.getDesignation(),
-				medicine.getDosage(),
-				medicine.getForm()
+				medicine.isRequiresPrescription()
 		);
 	}
 }

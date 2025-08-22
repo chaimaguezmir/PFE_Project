@@ -2,6 +2,7 @@ package com.idvey.afya.security.service;
 
 import com.idvey.afya.models.Medicine;
 import com.idvey.afya.payload.request.CreateMedicineRequest;
+import com.idvey.afya.payload.request.UpdateMedicineBarcodeRequest;
 import com.idvey.afya.payload.response.MedicineResponse;
 import com.idvey.afya.repository.MedicineRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,66 +23,39 @@ public class MedicineService {
 
 	@Transactional
 	public MedicineResponse createMedicine(CreateMedicineRequest request) {
-		log.info("Creating medicine with name: {}", request.getName());
+		log.info("Creating medicine with name: {}", request.getMedicationName());
 
-		// Normalize inputs
-		String normalizedName = request.getName().trim();
-		String normalizedDosage = request.getDosage() != null ? request.getDosage().trim() : null;
-		String normalizedForm = request.getForm() != null ? request.getForm().trim() : null;
-
-		// ✅ PHARMACEUTICAL APPROACH: Allow same drug name with different strengths/forms
-		// But prevent exact duplicates of the complete medicine specification
-
-		// Check for exact duplicate (name + dosage + form combination)
-		if (normalizedDosage != null && normalizedForm != null) {
-			boolean exactDuplicateExists = medicineRepository.existsByNameAndDosageAndForm(
-					normalizedName, normalizedDosage, normalizedForm);
-
-			if (exactDuplicateExists) {
-				throw new IllegalStateException(
-						String.format("Medicine already exists: %s %s %s",
-								normalizedName, normalizedDosage, normalizedForm)
-				);
-			}
-		} else {
-			// If dosage or form is missing, check just by name (stricter)
-			if (medicineRepository.existsByNameIgnoreCase(normalizedName)) {
-				throw new IllegalStateException("Medicine with name '" + normalizedName + "' already exists");
-			}
+		if (medicineRepository.existsByMedicationName(request.getMedicationName())) {
+			throw new IllegalStateException("Medicine with name '" + request.getMedicationName() + "' already exists");
 		}
 
-		// ✅ BARCODE CHECK (always unique)
-		if (request.getBarcode() != null && !request.getBarcode().trim().isEmpty()) {
-			if (medicineRepository.existsByBarcode(request.getBarcode().trim())) {
-				throw new IllegalStateException("Medicine with barcode '" + request.getBarcode() + "' already exists");
-			}
-		}
-
-		// 💡 HELPFUL SUGGESTION: Find similar medicines
-		List<Medicine> similarMedicines = medicineRepository.findByNameIgnoreCase(normalizedName);
-		if (!similarMedicines.isEmpty()) {
-			log.info("ℹ️ Found {} existing medicines with similar name '{}': {}",
-					similarMedicines.size(),
-					normalizedName,
-					similarMedicines.stream()
-							.map(m -> String.format("%s %s %s", m.getName(), m.getDosage(), m.getForm()))
-							.collect(Collectors.joining(", "))
-			);
+		if (request.getBarcode() != null && medicineRepository.existsByBarcode(request.getBarcode())) {
+			throw new IllegalStateException("Medicine with barcode '" + request.getBarcode() + "' already exists");
 		}
 
 		Medicine medicine = Medicine.builder()
-				.name(normalizedName)
-				.manufacturer(request.getManufacturer() != null ? request.getManufacturer().trim() : "Unknown")
-				.requiresPrescription(request.isRequiresPrescription())
-				.barcode(request.getBarcode() != null ? request.getBarcode().trim() : null)
-				.designation(request.getDesignation() != null ? request.getDesignation().trim() : null)
-				.dosage(normalizedDosage)
-				.form(normalizedForm)
+				.medicationName(request.getMedicationName())
+				.dosage(request.getDosage())
+				.form(request.getForm())
+				.presentation(request.getPresentation())
+				.dci(request.getDci())
+				.therapeuticClass(request.getTherapeuticClass())
+				.subClass(request.getSubClass())
+				.laboratory(request.getLaboratory())
+				.ammNumber(request.getAmmNumber())
+				.ammDate(request.getAmmDate())
+				.primaryPackaging(request.getPrimaryPackaging())
+				.packagingSpecification(request.getPackagingSpecification())
+				.scheduleCategory(request.getScheduleCategory())
+				.shelfLife(request.getShelfLife())
+				.indications(request.getIndications())
+				.medicationType(request.getMedicationType())
+				.veicClassification(request.getVeicClassification())
+				.barcode(request.getBarcode())
 				.build();
 
 		Medicine saved = medicineRepository.save(medicine);
-		log.info("✅ Medicine created: {} {} {} (ID: {})",
-				saved.getName(), saved.getDosage(), saved.getForm(), saved.getId());
+		log.info("Medicine created with ID: {}", saved.getId());
 
 		return toResponse(saved);
 	}
@@ -110,13 +83,13 @@ public class MedicineService {
 	@Transactional(readOnly = true)
 	public List<MedicineResponse> findByNameContaining(String name) {
 		log.info("Finding medicines by name containing: {}", name);
-		return medicineRepository.findByNameContainingIgnoreCase(name).stream().map(this::toResponse).toList();
+		return medicineRepository.findByMedicationNameContainingIgnoreCase(name).stream().map(this::toResponse).toList();
 	}
 
 	@Transactional(readOnly = true)
-	public List<MedicineResponse> findByManufacturer(String manufacturer) {
-		log.info("Finding medicines by manufacturer: {}", manufacturer);
-		return medicineRepository.findByManufacturerContainingIgnoreCase(manufacturer)
+	public List<MedicineResponse> findByLaboratory(String laboratory) {
+		log.info("Finding medicines by laboratory: {}", laboratory);
+		return medicineRepository.findByLaboratoryContainingIgnoreCase(laboratory)
 				.stream()
 				.map(this::toResponse)
 				.toList();
@@ -131,7 +104,7 @@ public class MedicineService {
 	@Transactional(readOnly = true)
 	public MedicineResponse findByName(String name) {
 		log.info("Finding medicine by exact name: {}", name);
-		Medicine medicine = medicineRepository.findByName(name)
+		Medicine medicine = medicineRepository.findByMedicationName(name)
 				.orElseThrow(() -> new NoSuchElementException("Medicine not found with name: " + name));
 		return toResponse(medicine);
 	}
@@ -145,24 +118,110 @@ public class MedicineService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<MedicineResponse> findByRequiresPrescription(boolean requiresPrescription) {
-		log.info("Finding medicines by prescription requirement: {}", requiresPrescription);
-		return medicineRepository.findByRequiresPrescription(requiresPrescription)
+	public List<MedicineResponse> findByMedicationType(String medicationType) {
+		log.info("Finding medicines by medication type: {}", medicationType);
+		return medicineRepository.findByMedicationType(medicationType)
 				.stream()
 				.map(this::toResponse)
 				.toList();
 	}
 
+	@Transactional(readOnly = true)
+	public List<MedicineResponse> findPrescriptionMedicines() {
+		log.info("Finding prescription medicines");
+		return medicineRepository.findPrescriptionMedicines()
+				.stream()
+				.map(this::toResponse)
+				.toList();
+	}
+
+	@Transactional(readOnly = true)
+	public List<MedicineResponse> findOTCMedicines() {
+		log.info("Finding OTC medicines");
+		return medicineRepository.findOTCMedicines()
+				.stream()
+				.map(this::toResponse)
+				.toList();
+	}
+
+	@Transactional(readOnly = true)
+	public List<MedicineResponse> findByTherapeuticClass(String therapeuticClass) {
+		log.info("Finding medicines by therapeutic class: {}", therapeuticClass);
+		return medicineRepository.findByTherapeuticClass(therapeuticClass)
+				.stream()
+				.map(this::toResponse)
+				.toList();
+	}
+
+	@Transactional(readOnly = true)
+	public List<MedicineResponse> findByDci(String dci) {
+		log.info("Finding medicines by DCI: {}", dci);
+		return medicineRepository.findByDciContainingIgnoreCase(dci)
+				.stream()
+				.map(this::toResponse)
+				.toList();
+	}
+
+	@Transactional
+	public MedicineResponse updateMedicineBarcode(UUID medicineId, UpdateMedicineBarcodeRequest request) {
+		log.info("Updating barcode for medicine: {} to: {}", medicineId, request.getBarcode());
+
+		Medicine medicine = medicineRepository.findById(medicineId)
+				.orElseThrow(() -> new NoSuchElementException("Medicine not found with ID: " + medicineId));
+
+		// Check if the new barcode is already in use by another medicine
+		if (medicineRepository.existsByBarcode(request.getBarcode())) {
+			Medicine existingMedicine = medicineRepository.findByBarcode(request.getBarcode())
+					.orElse(null);
+
+			if (existingMedicine != null && !existingMedicine.getId().equals(medicineId)) {
+				throw new IllegalStateException("Barcode '" + request.getBarcode() + "' is already in use by another medicine");
+			}
+		}
+
+		medicine.setBarcode(request.getBarcode());
+		Medicine updated = medicineRepository.save(medicine);
+
+		log.info("Medicine barcode updated successfully for ID: {}", medicineId);
+		return toResponse(updated);
+	}
+
+	@Transactional
+	public MedicineResponse removeMedicineBarcode(UUID medicineId) {
+		log.info("Removing barcode for medicine: {}", medicineId);
+
+		Medicine medicine = medicineRepository.findById(medicineId)
+				.orElseThrow(() -> new NoSuchElementException("Medicine not found with ID: " + medicineId));
+
+		medicine.setBarcode(null);
+		Medicine updated = medicineRepository.save(medicine);
+
+		log.info("Medicine barcode removed successfully for ID: {}", medicineId);
+		return toResponse(updated);
+	}
+
 	private MedicineResponse toResponse(Medicine medicine) {
 		return new MedicineResponse(
 				medicine.getId(),
-				medicine.getName(),
-				medicine.getManufacturer(),
-				medicine.isRequiresPrescription(),
-				medicine.getBarcode(),
-				medicine.getDesignation(),
+				medicine.getMedicationName(),
 				medicine.getDosage(),
-				medicine.getForm()
+				medicine.getForm(),
+				medicine.getPresentation(),
+				medicine.getDci(),
+				medicine.getTherapeuticClass(),
+				medicine.getSubClass(),
+				medicine.getLaboratory(),
+				medicine.getAmmNumber(),
+				medicine.getAmmDate(),
+				medicine.getPrimaryPackaging(),
+				medicine.getPackagingSpecification(),
+				medicine.getScheduleCategory(),
+				medicine.getShelfLife(),
+				medicine.getIndications(),
+				medicine.getMedicationType(),
+				medicine.getVeicClassification(),
+				medicine.getBarcode(),
+				medicine.isRequiresPrescription()
 		);
 	}
 

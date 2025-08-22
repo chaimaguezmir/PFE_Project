@@ -13,52 +13,56 @@ import java.util.UUID;
 @Repository
 public interface MedicineRepository extends JpaRepository<Medicine, UUID> {
 
-	// ✅ EXISTING METHODS
-	Optional<Medicine> findByName(String name);
-	List<Medicine> findByNameContainingIgnoreCase(String name);
-	List<Medicine> findByManufacturerContainingIgnoreCase(String manufacturer);
+	// Find by medication name
+	Optional<Medicine> findByMedicationName(String medicationName);
+
+	// Search by medication name (case insensitive)
+	List<Medicine> findByMedicationNameContainingIgnoreCase(String medicationName);
+
+	// Search by laboratory (case insensitive)
+	List<Medicine> findByLaboratoryContainingIgnoreCase(String laboratory);
+
+	// Find by barcode
 	Optional<Medicine> findByBarcode(String barcode);
-	List<Medicine> findByRequiresPrescription(boolean requiresPrescription);
+
+	// Find by medication type
+	List<Medicine> findByMedicationType(String medicationType);
+
+	// Find by therapeutic class
+	List<Medicine> findByTherapeuticClass(String therapeuticClass);
+
+	// Find by form
 	List<Medicine> findByForm(String form);
-	List<Medicine> findByDesignationContainingIgnoreCase(String designation);
-	List<Medicine> findByDosageContainingIgnoreCase(String dosage);
-	boolean existsByBarcode(String barcode);
-	boolean existsByName(String name);
 
-	// ✅ ENHANCED DUPLICATE PREVENTION METHODS
+	// Find by DCI
+	List<Medicine> findByDciContainingIgnoreCase(String dci);
 
-	// Case-insensitive name check
-	@Query("SELECT CASE WHEN COUNT(m) > 0 THEN true ELSE false END FROM Medicine m WHERE LOWER(m.name) = LOWER(:name)")
-	boolean existsByNameIgnoreCase(@Param("name") String name);
-
-	// Find medicines by name (case-insensitive)
-	@Query("SELECT m FROM Medicine m WHERE LOWER(m.name) = LOWER(:name)")
-	List<Medicine> findByNameIgnoreCase(@Param("name") String name);
-
-	// Check exact combination of name + dosage + form
-	@Query("SELECT CASE WHEN COUNT(m) > 0 THEN true ELSE false END FROM Medicine m WHERE " +
-			"LOWER(m.name) = LOWER(:name) AND " +
-			"(m.dosage = :dosage OR (m.dosage IS NULL AND :dosage IS NULL)) AND " +
-			"(m.form = :form OR (m.form IS NULL AND :form IS NULL))")
-	boolean existsByNameAndDosageAndForm(@Param("name") String name,
-										 @Param("dosage") String dosage,
-										 @Param("form") String form);
-
-	// Find similar medicines (for suggestions)
+	// Complex search across multiple fields
 	@Query("SELECT m FROM Medicine m WHERE " +
-			"LOWER(m.name) LIKE LOWER(CONCAT('%', :name, '%')) AND " +
-			"(m.dosage = :dosage OR m.form = :form)")
-	List<Medicine> findSimilarMedicines(@Param("name") String name,
-										@Param("dosage") String dosage,
-										@Param("form") String form);
-
-	// Enhanced search across all fields
-	@Query("SELECT m FROM Medicine m WHERE " +
-			"LOWER(m.name) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-			"LOWER(m.manufacturer) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-			"LOWER(m.designation) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-			"LOWER(m.dosage) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-			"LOWER(m.form) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
+			"LOWER(m.medicationName) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+			"LOWER(m.laboratory) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+			"LOWER(m.dci) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+			"LOWER(m.therapeuticClass) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
 	List<Medicine> searchMedicines(@Param("searchTerm") String searchTerm);
+
+	// Check if barcode exists
+	boolean existsByBarcode(String barcode);
+
+	// Check if medication name exists
+	boolean existsByMedicationName(String medicationName);
+
+	// Find by AMM number
+	Optional<Medicine> findByAmmNumber(String ammNumber);
+
+	// Find by schedule category
+	List<Medicine> findByScheduleCategory(String scheduleCategory);
+
+	// Find prescription medicines
+	@Query("SELECT m FROM Medicine m WHERE LOWER(m.medicationType) LIKE '%prescription%' OR LOWER(m.medicationType) LIKE '%rx%'")
+	List<Medicine> findPrescriptionMedicines();
+
+	// Find OTC medicines
+	@Query("SELECT m FROM Medicine m WHERE LOWER(m.medicationType) LIKE '%otc%' OR LOWER(m.medicationType) LIKE '%over%counter%'")
+	List<Medicine> findOTCMedicines();
 
 }
