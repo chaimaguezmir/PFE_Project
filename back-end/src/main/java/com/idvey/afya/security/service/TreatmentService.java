@@ -26,11 +26,8 @@ import java.util.UUID;
 public class TreatmentService {
 
 	private final TreatmentRepository treatmentRepository;
-
 	private final PrescriptionRepository prescriptionRepository;
-
 	private final MyMedicineRepository myMedicineRepository;
-
 	private final PrescriptionService prescriptionService;
 
 	@Transactional
@@ -38,7 +35,7 @@ public class TreatmentService {
 		log.info("Creating treatment for prescription: {} by user: {}", request.getPrescriptionId(), userId);
 
 		Prescription prescription = prescriptionRepository.findById(request.getPrescriptionId())
-			.orElseThrow(() -> new NoSuchElementException("Prescription not found"));
+				.orElseThrow(() -> new NoSuchElementException("Prescription not found"));
 
 		// Verify ownership
 		if (!prescription.getUser().getId().equals(userId)) {
@@ -46,15 +43,15 @@ public class TreatmentService {
 		}
 
 		MyMedicine myMedicine = myMedicineRepository.findById(request.getMyMedicineId())
-			.orElseThrow(() -> new NoSuchElementException("MyMedicine not found"));
+				.orElseThrow(() -> new NoSuchElementException("MyMedicine not found"));
 
 		Treatment treatment = Treatment.builder()
-			.dosage(request.getDosage())
-			.frequency(request.getFrequency())
-			.durationDays(request.getDurationDays())
-			.prescription(prescription)
-			.myMedicine(myMedicine)
-			.build();
+				.dosage(request.getDosage())
+				.frequency(request.getFrequency())
+				.durationDays(request.getDurationDays())
+				.prescription(prescription)
+				.myMedicine(myMedicine)
+				.build();
 
 		Treatment saved = treatmentRepository.save(treatment);
 		log.info("Treatment created with ID: {}", saved.getId());
@@ -70,7 +67,7 @@ public class TreatmentService {
 		log.info("Updating treatment: {} by user: {}", treatmentId, userId);
 
 		Treatment treatment = treatmentRepository.findById(treatmentId)
-			.orElseThrow(() -> new NoSuchElementException("Treatment not found"));
+				.orElseThrow(() -> new NoSuchElementException("Treatment not found"));
 
 		// Verify ownership
 		if (!treatment.getPrescription().getUser().getId().equals(userId)) {
@@ -95,7 +92,7 @@ public class TreatmentService {
 		log.info("Deleting treatment: {} by user: {}", treatmentId, userId);
 
 		Treatment treatment = treatmentRepository.findById(treatmentId)
-			.orElseThrow(() -> new NoSuchElementException("Treatment not found"));
+				.orElseThrow(() -> new NoSuchElementException("Treatment not found"));
 
 		// Verify ownership
 		if (!treatment.getPrescription().getUser().getId().equals(userId)) {
@@ -115,7 +112,7 @@ public class TreatmentService {
 		log.info("Fetching treatments for prescription: {} by user: {}", prescriptionId, userId);
 
 		Prescription prescription = prescriptionRepository.findById(prescriptionId)
-			.orElseThrow(() -> new NoSuchElementException("Prescription not found"));
+				.orElseThrow(() -> new NoSuchElementException("Prescription not found"));
 
 		// Verify ownership
 		if (!prescription.getUser().getId().equals(userId)) {
@@ -123,9 +120,9 @@ public class TreatmentService {
 		}
 
 		return treatmentRepository.findByPrescriptionIdOrderByCreatedAtDesc(prescriptionId)
-			.stream()
-			.map(this::toResponse)
-			.toList();
+				.stream()
+				.map(this::toResponse)
+				.toList();
 	}
 
 	@Transactional(readOnly = true)
@@ -142,21 +139,73 @@ public class TreatmentService {
 	}
 
 	private TreatmentResponse toResponse(Treatment treatment) {
-		return new TreatmentResponse(treatment.getId(), treatment.getDosage(), treatment.getFrequency(),
-				treatment.getDurationDays(), treatment.getCreatedAt(), treatment.getUpdatedAt(),
-				treatment.getPrescription().getId(), treatment.getPrescription().getName(),
-				toMyMedicineResponse(treatment.getMyMedicine()));
+		return new TreatmentResponse(
+				treatment.getId(),
+				treatment.getDosage(),
+				treatment.getFrequency(),
+				treatment.getDurationDays(),
+				treatment.getCreatedAt(),
+				treatment.getUpdatedAt(),
+				treatment.getPrescription().getId(),
+				treatment.getPrescription().getName(),
+				toMyMedicineResponse(treatment.getMyMedicine())
+		);
 	}
+
+	/**
+	 * UPDATED: Convert MyMedicine to MyMedicineResponse with proper handling for custom medicines
+	 */
+	// Updated toMyMedicineResponse method in TreatmentService.java
+// Updated toMyMedicineResponse method in TreatmentService.java
+	// In TreatmentService.java, around line 170, replace the toMyMedicineResponse method:
+
+
+// In TreatmentService.java, around line 170, replace the toMyMedicineResponse method:
 
 	private MyMedicineResponse toMyMedicineResponse(MyMedicine myMedicine) {
-		return new MyMedicineResponse(myMedicine.getId(), myMedicine.getName(), myMedicine.getForm(),
-				myMedicine.getPharmacyBox().getId(), myMedicine.getPharmacyBox().getGroup().getName(),
-				new MedicineResponse(myMedicine.getMedicine().getId(), myMedicine.getMedicine().getName(),
-						myMedicine.getMedicine().getManufacturer(), myMedicine.getMedicine().getDosageForm(),
-						myMedicine.getMedicine().isRequiresPrescription(), myMedicine.getMedicine().getBarcode()),
-				0, // totalQuantityPurchased - can be calculated if needed
-				0, // purchaseHistoryCount - can be calculated if needed
-				myMedicine.getCreatedAt(), myMedicine.getUpdatedAt());
-	}
+		// Handle global medicine (when medicine is not null)
+		MedicineResponse medicineResponse = null;
+		if (myMedicine.getMedicine() != null) {
+			medicineResponse = new MedicineResponse(
+					myMedicine.getMedicine().getId(),
+					myMedicine.getMedicine().getMedicationName(),      // Changed from getName() or getDesignation()
+					myMedicine.getMedicine().getDosage(),              // Updated field
+					myMedicine.getMedicine().getForm(),                // Updated field
+					myMedicine.getMedicine().getPresentation(),        // New field
+					myMedicine.getMedicine().getDci(),                 // New field
+					myMedicine.getMedicine().getTherapeuticClass(),    // New field
+					myMedicine.getMedicine().getSubClass(),            // New field
+					myMedicine.getMedicine().getLaboratory(),          // Changed from getManufacturer()
+					myMedicine.getMedicine().getAmmNumber(),           // New field
+					myMedicine.getMedicine().getAmmDate(),             // New field
+					myMedicine.getMedicine().getPrimaryPackaging(),    // New field
+					myMedicine.getMedicine().getPackagingSpecification(), // New field
+					myMedicine.getMedicine().getScheduleCategory(),    // New field
+					myMedicine.getMedicine().getShelfLife(),           // New field
+					myMedicine.getMedicine().getIndications(),         // New field
+					myMedicine.getMedicine().getMedicationType(),      // New field
+					myMedicine.getMedicine().getVeicClassification(),  // New field
+					myMedicine.getMedicine().getBarcode(),
+					myMedicine.getMedicine().isRequiresPrescription()
+			);
+		}
 
+		// Create MyMedicineResponse with all 14 required arguments
+		return new MyMedicineResponse(
+				myMedicine.getId(),                                    // id
+				myMedicine.getName(),                                  // name
+				myMedicine.getForm(),                                  // form
+				myMedicine.getPharmacyBox().getId(),                   // pharmacyBoxId
+				myMedicine.getPharmacyBox().getGroup().getName(),      // pharmacyBoxName
+				medicineResponse,                                      // medicine (can be null)
+				myMedicine.isCustomMedicine(),                         // isCustomMedicine
+				myMedicine.getCustomManufacturer(),                    // customManufacturer
+				myMedicine.getCustomForm(),                      				// customForm
+				myMedicine.getCustomRequiresPrescription(),            // customRequiresPrescription
+				0,                                                     // totalQuantityPurchased (can be calculated if needed)
+				0,                                                     // purchaseHistoryCount (can be calculated if needed)
+				myMedicine.getCreatedAt(),                             // createdAt
+				myMedicine.getUpdatedAt()                              // updatedAt
+		);
+	}
 }

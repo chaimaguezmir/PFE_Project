@@ -5,6 +5,8 @@ import 'package:flutter_mobile/presentation/bloc/auth/forgot_password/forgot_pas
 import 'package:flutter_mobile/presentation/bloc/auth/login/login_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/auth/signup/signup_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/group/group_cubit.dart';
+import 'package:flutter_mobile/presentation/bloc/home/prescription_cubit.dart';
+import 'package:flutter_mobile/presentation/bloc/home/welcome_screen_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/profile/profile_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/services/services_cubit.dart';
 import 'package:flutter_mobile/presentation/screens/auth/account_verification_screen.dart';
@@ -18,12 +20,18 @@ import 'package:flutter_mobile/presentation/screens/auth/signup_screen.dart';
 import 'package:flutter_mobile/presentation/screens/group/add_member_screen.dart';
 import 'package:flutter_mobile/presentation/screens/group/group_membe_screen.dart';
 import 'package:flutter_mobile/presentation/screens/group/group_screen.dart';
+import 'package:flutter_mobile/presentation/screens/home/prescription_detail_screen.dart';
+import 'package:flutter_mobile/presentation/screens/home/prescriptions_screen.dart';
 import 'package:flutter_mobile/presentation/screens/home/welcome_screen.dart';
 import 'package:flutter_mobile/presentation/screens/bottom_bar.dart';
 
 import 'package:flutter_mobile/presentation/screens/onboarding/onboarding_screen.dart';
 import 'package:flutter_mobile/presentation/screens/profile/profile_screen.dart';
+import 'package:flutter_mobile/presentation/screens/services/add_medication_manually_screen.dart';
+import 'package:flutter_mobile/presentation/screens/services/barcode_scanner_screen.dart';
+import 'package:flutter_mobile/presentation/screens/services/medication_tracker_screen.dart';
 import 'package:flutter_mobile/presentation/screens/services/pharmacy_box_screen.dart';
+import 'package:flutter_mobile/presentation/screens/services/medicine_search_result_screen.dart';
 import 'package:flutter_mobile/presentation/screens/services/services_screen.dart';
 import 'package:go_router/go_router.dart';
 
@@ -37,9 +45,9 @@ class AppRouter {
 
   String get initialLocation {
     if (_isAuthenticated) {
-      return AppRoutePath.services;
+      return AppRoutePath.home;
     } else if (_hasSeenOnboarding) {
-      return AppRoutePath.services;
+      return AppRoutePath.signIn;
     } else {
       return AppRoutePath.onboarding;
     }
@@ -86,12 +94,40 @@ class AppRouter {
               return BottomBar(navigationShell: navigationShell);
             },
         branches: <StatefulShellBranch>[
+          //prescription
           StatefulShellBranch(
             routes: <RouteBase>[
-              GoRoute(
-                name: 'accueil',
-                path: '/accueil',
-                builder: (context, state) => const WelcomeScreen(),
+              ShellRoute(
+                builder: (context, state, child) => BlocProvider(
+                  create: (context) => sl<WelcomeScreenCubit>(),
+                  child: child,
+                ),
+                routes: [
+                  GoRoute(
+                    name: AppRouteName.home,
+                    path: AppRoutePath.home,
+                    builder: (context, state) => const WelcomeScreen(),
+                  ),
+                ],
+              ),
+              ShellRoute(
+                builder: (context, state, child) => BlocProvider(
+                  create: (context) => sl<PrescriptionCubit>(),
+                  child: child,
+                ),
+                routes: [
+                  GoRoute(
+                    name: AppRouteName.prescription,
+                    path: AppRoutePath.prescription,
+                    builder: (context, state) => const PrescriptionsScreen(),
+                  ),
+                  GoRoute(
+                    name: AppRouteName.prescriptionDetail,
+                    path: AppRoutePath.prescriptionDetail,
+                    builder: (context, state) =>
+                        const PrescriptionDetailScreen(),
+                  ),
+                ],
               ),
             ],
           ),
@@ -99,19 +135,44 @@ class AppRouter {
             routes: <RouteBase>[
               ShellRoute(
                 builder: (context, state, child) => BlocProvider(
-                  create: (context) => sl<ServicesCubit>(),
+                  create: (context) =>
+                      sl<ServicesCubit>()..fetchPharmacyBoxes(),
                   child: child,
                 ),
                 routes: [
                   GoRoute(
                     name: AppRouteName.services,
                     path: AppRoutePath.services,
-                    builder: (context, state) =>  ServicesScreen(),
+                    builder: (context, state) => const ServicesScreen(),
                   ),
                   GoRoute(
                     name: AppRouteName.pharmacyBox,
                     path: AppRoutePath.pharmacyBox,
                     builder: (context, state) => const PharmacyBoxScreen(),
+                  ),
+                  GoRoute(
+                    name: AppRouteName.barcodeScanner,
+                    path: AppRoutePath.barcodeScanner,
+                    builder: (context, state) => const BarcodeScannerScreen(),
+                  ),
+                  GoRoute(
+                    name: AppRouteName.medicineSearchResult,
+                    path: AppRoutePath.medicineSearchResult,
+                    builder: (context, state) =>
+                        const MedicineSearchResultScreen(),
+                  ),
+
+                  GoRoute(
+                    name: AppRouteName.medicationTracker,
+                    path: AppRoutePath.medicationTracker,
+                    builder: (context, state) =>
+                        const MedicationTrackerScreen(),
+                  ),
+                  GoRoute(
+                    name: AppRouteName.addMedicationManually,
+                    path: AppRoutePath.addMedicationManually,
+                    builder: (context, state) =>
+                        const AddMedicationManuallyScreen(),
                   ),
                 ],
               ),

@@ -5,10 +5,7 @@ import com.idvey.afya.models.ReminderStatus;
 import com.idvey.afya.payload.request.CreateReminderRequest;
 import com.idvey.afya.payload.request.ReminderStartSuggestionRequest;
 import com.idvey.afya.payload.request.UpdateReminderStatusRequest;
-import com.idvey.afya.payload.response.CreateReminderBulkResponse;
-import com.idvey.afya.payload.response.MessageResponse;
-import com.idvey.afya.payload.response.ReminderResponse;
-import com.idvey.afya.payload.response.ReminderStartSuggestion;
+import com.idvey.afya.payload.response.*;
 import com.idvey.afya.security.service.ReminderService;
 import com.idvey.afya.security.service.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -102,6 +99,14 @@ public class ReminderController {
 			@PathVariable UUID reminderId) {
 		reminderService.deleteReminder(currentUser.getId(), reminderId);
 		return ResponseEntity.ok(new MessageResponse("Reminder deleted successfully"));
+	}
+
+	@ReminderDocs.GetMedicationsWithReminders
+	@GetMapping("/medications-with-reminders")
+	public ResponseEntity<List<MedicationWithRemindersResponse>> getMedicationsWithReminders(
+			@AuthenticationPrincipal UserDetailsImpl currentUser) {
+		List<MedicationWithRemindersResponse> medications = reminderService.getMedicationsWithReminders(currentUser.getId());
+		return ResponseEntity.ok(medications);
 	}
 
 }

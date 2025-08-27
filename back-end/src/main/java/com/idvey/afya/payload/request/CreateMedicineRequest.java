@@ -4,19 +4,31 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 public class CreateMedicineRequest {
 
-	@NotBlank(message = "Medicine name is required")
-	private String name;
+	@NotBlank(message = "Medication name is required")
+	private String medicationName;
 
-	private String manufacturer;
-
-	private String dosageForm; // tablet, capsule, syrup, injection, etc.
-
-	private boolean requiresPrescription = false;
-
+	private String dosage;
+	private String form;
+	private String presentation;
+	private String dci;
+	private String therapeuticClass;
+	private String subClass;
+	private String laboratory;
+	private String ammNumber;
+	private LocalDate ammDate;
+	private String primaryPackaging;
+	private String packagingSpecification;
+	private String scheduleCategory;
+	private String shelfLife;
+	private String indications;
+	private String medicationType;
+	private String veicClassification;
 	private String barcode;
 
 }

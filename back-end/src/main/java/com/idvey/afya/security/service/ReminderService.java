@@ -1,14 +1,12 @@
 package com.idvey.afya.security.service;
 
+import com.idvey.afya.models.MyMedicine;
 import com.idvey.afya.models.Reminder;
 import com.idvey.afya.models.ReminderStatus;
 import com.idvey.afya.models.Treatment;
 import com.idvey.afya.payload.request.CreateReminderRequest;
 import com.idvey.afya.payload.request.ReminderStartSuggestionRequest;
-import com.idvey.afya.payload.response.CreateReminderBulkResponse;
-import com.idvey.afya.payload.response.ReminderCreationSummary;
-import com.idvey.afya.payload.response.ReminderResponse;
-import com.idvey.afya.payload.response.ReminderStartSuggestion;
+import com.idvey.afya.payload.response.*;
 import com.idvey.afya.repository.ReminderRepository;
 import com.idvey.afya.repository.TreatmentRepository;
 import lombok.RequiredArgsConstructor;
@@ -445,6 +443,42 @@ public class ReminderService {
 
 		reminderRepository.deleteById(reminderId);
 		log.info("Reminder deleted: {} by user: {}", reminderId, userId);
+	}
+	// Add this method to ReminderService.java
+
+	@Transactional(readOnly = true)
+	public List<MedicationWithRemindersResponse> getMedicationsWithReminders(UUID userId) {
+		log.info("Getting all medications with reminders for user: {}", userId);
+
+		// Get all distinct medications that have reminders for this user
+		List<MyMedicine> medicationsWithReminders = reminderRepository.findDistinctMedicationsWithReminders(userId);
+
+		return medicationsWithReminders.stream().map(myMedicine -> {
+			// Get all reminders for this medication
+			List<Reminder> reminders = reminderRepository.findRemindersByMyMedicineId(myMedicine.getId());
+
+			// Convert reminders to response DTOs
+			List<ReminderResponse> reminderResponses = reminders.stream()
+					.map(this::toResponse)
+					.toList();
+
+			// Get prescription info from the first reminder (all should have same prescription for same myMedicine)
+			UUID prescriptionId = null;
+			String prescriptionName = null;
+			if (!reminders.isEmpty()) {
+				prescriptionId = reminders.get(0).getTreatment().getPrescription().getId();
+				prescriptionName = reminders.get(0).getTreatment().getPrescription().getName();
+			}
+
+			return new MedicationWithRemindersResponse(
+					myMedicine.getId(),
+					myMedicine.getName(),
+					prescriptionId,
+					prescriptionName,
+					reminderResponses.size(),
+					reminderResponses
+			);
+		}).toList();
 	}
 
 	private ReminderResponse toResponse(Reminder reminder) {

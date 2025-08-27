@@ -27,11 +27,8 @@ import java.util.stream.Collectors;
 public class PrescriptionService {
 
 	private final PrescriptionRepository prescriptionRepository;
-
 	private final UserRepository userRepository;
-
 	private final DiseaseRepository diseaseRepository;
-
 	private final TreatmentRepository treatmentRepository;
 
 	@Transactional
@@ -42,19 +39,19 @@ public class PrescriptionService {
 
 		// Get diseases
 		Set<Disease> diseases = request.getDiseaseIds()
-			.stream()
-			.map(id -> diseaseRepository.findById(id)
-				.orElseThrow(() -> new NoSuchElementException("Disease not found with ID: " + id)))
-			.collect(Collectors.toSet());
+				.stream()
+				.map(id -> diseaseRepository.findById(id)
+						.orElseThrow(() -> new NoSuchElementException("Disease not found with ID: " + id)))
+				.collect(Collectors.toSet());
 
 		// Create prescription with current date as start date
 		Prescription prescription = Prescription.builder()
-			.name(request.getName())
-			.startDate(LocalDate.now()) // Always start from today
-			.endDate(null) // Will be calculated when treatments are added
-			.user(user)
-			.diseases(diseases)
-			.build();
+				.name(request.getName())
+				.startDate(LocalDate.now()) // Always start from today
+				.endDate(null) // Will be calculated when treatments are added
+				.user(user)
+				.diseases(diseases)
+				.build();
 
 		Prescription saved = prescriptionRepository.save(prescription);
 		log.info("Prescription created with ID: {}", saved.getId());
@@ -64,11 +61,11 @@ public class PrescriptionService {
 
 	@Transactional
 	public PrescriptionResponse updatePrescription(UUID userId, UUID prescriptionId,
-			UpdatePrescriptionRequest request) {
+												   UpdatePrescriptionRequest request) {
 		log.info("Updating prescription: {} for user: {}", prescriptionId, userId);
 
 		Prescription prescription = prescriptionRepository.findById(prescriptionId)
-			.orElseThrow(() -> new NoSuchElementException("Prescription not found"));
+				.orElseThrow(() -> new NoSuchElementException("Prescription not found"));
 
 		// Verify ownership
 		if (!prescription.getUser().getId().equals(userId)) {
@@ -77,10 +74,10 @@ public class PrescriptionService {
 
 		// Update diseases
 		Set<Disease> diseases = request.getDiseaseIds()
-			.stream()
-			.map(id -> diseaseRepository.findById(id)
-				.orElseThrow(() -> new NoSuchElementException("Disease not found with ID: " + id)))
-			.collect(Collectors.toSet());
+				.stream()
+				.map(id -> diseaseRepository.findById(id)
+						.orElseThrow(() -> new NoSuchElementException("Disease not found with ID: " + id)))
+				.collect(Collectors.toSet());
 
 		prescription.setName(request.getName());
 		prescription.setDiseases(diseases);
@@ -100,7 +97,7 @@ public class PrescriptionService {
 		log.info("Updating prescription end date for prescription: {}", prescriptionId);
 
 		Prescription prescription = prescriptionRepository.findById(prescriptionId)
-			.orElseThrow(() -> new NoSuchElementException("Prescription not found"));
+				.orElseThrow(() -> new NoSuchElementException("Prescription not found"));
 
 		List<Treatment> treatments = treatmentRepository.findByPrescription_Id(prescriptionId);
 
@@ -111,9 +108,9 @@ public class PrescriptionService {
 		else {
 			// Find the latest end date among all treatments
 			LocalDate latestEndDate = treatments.stream()
-				.map(this::calculateTreatmentEndDate)
-				.max(LocalDate::compareTo)
-				.orElse(prescription.getStartDate());
+					.map(this::calculateTreatmentEndDate)
+					.max(LocalDate::compareTo)
+					.orElse(prescription.getStartDate());
 
 			prescription.setEndDate(latestEndDate);
 		}
@@ -144,9 +141,9 @@ public class PrescriptionService {
 	public List<PrescriptionResponse> getActivePrescriptions(UUID userId) {
 		log.info("Fetching active prescriptions for user: {}", userId);
 		return prescriptionRepository.findActiveByUserId(userId, LocalDate.now())
-			.stream()
-			.map(this::toResponse)
-			.toList();
+				.stream()
+				.map(this::toResponse)
+				.toList();
 	}
 
 	@Transactional(readOnly = true)
@@ -154,7 +151,7 @@ public class PrescriptionService {
 		log.info("Fetching prescription detail: {} for user: {}", prescriptionId, userId);
 
 		Prescription prescription = prescriptionRepository.findByIdWithTreatments(prescriptionId)
-			.orElseThrow(() -> new NoSuchElementException("Prescription not found"));
+				.orElseThrow(() -> new NoSuchElementException("Prescription not found"));
 
 		// Verify ownership
 		if (!prescription.getUser().getId().equals(userId)) {
@@ -169,7 +166,7 @@ public class PrescriptionService {
 		log.info("Deleting prescription: {} for user: {}", prescriptionId, userId);
 
 		Prescription prescription = prescriptionRepository.findById(prescriptionId)
-			.orElseThrow(() -> new NoSuchElementException("Prescription not found"));
+				.orElseThrow(() -> new NoSuchElementException("Prescription not found"));
 
 		// Verify ownership
 		if (!prescription.getUser().getId().equals(userId)) {
@@ -181,46 +178,99 @@ public class PrescriptionService {
 	}
 
 	private PrescriptionResponse toResponse(Prescription prescription) {
-		return new PrescriptionResponse(prescription.getId(), prescription.getName(), prescription.getStartDate(),
-				prescription.getEndDate(), prescription.getCreatedAt(), prescription.getUpdatedAt(),
+		return new PrescriptionResponse(
+				prescription.getId(),
+				prescription.getName(),
+				prescription.getStartDate(),
+				prescription.getEndDate(),
+				prescription.getCreatedAt(),
+				prescription.getUpdatedAt(),
 				prescription.getDiseases()
-					.stream()
-					.map(d -> new DiseaseResponse(d.getId(), d.getName(), d.getPrescriptions().size()))
-					.toList(),
-				prescription.getTreatments().size());
+						.stream()
+						.map(d -> new DiseaseResponse(d.getId(), d.getName(), d.getPrescriptions().size()))
+						.toList(),
+				prescription.getTreatments().size()
+		);
 	}
 
 	private PrescriptionDetailResponse toDetailResponse(Prescription prescription) {
-		return new PrescriptionDetailResponse(prescription.getId(), prescription.getName(), prescription.getStartDate(),
-				prescription.getEndDate(), prescription.getCreatedAt(), prescription.getUpdatedAt(),
+		return new PrescriptionDetailResponse(
+				prescription.getId(),
+				prescription.getName(),
+				prescription.getStartDate(),
+				prescription.getEndDate(),
+				prescription.getCreatedAt(),
+				prescription.getUpdatedAt(),
 				prescription.getDiseases()
-					.stream()
-					.map(d -> new DiseaseResponse(d.getId(), d.getName(), d.getPrescriptions().size()))
-					.toList(),
+						.stream()
+						.map(d -> new DiseaseResponse(d.getId(), d.getName(), d.getPrescriptions().size()))
+						.toList(),
 				prescription.getTreatments()
-					.stream()
-					.map(t -> new TreatmentResponse(t.getId(), t.getDosage(), t.getFrequency(), t.getDurationDays(),
-							t.getCreatedAt(), t.getUpdatedAt(), t.getPrescription().getId(),
-							t.getPrescription().getName(), toMyMedicineResponse(t.getMyMedicine())))
-					.toList());
+						.stream()
+						.map(t -> new TreatmentResponse(
+								t.getId(),
+								t.getDosage(),
+								t.getFrequency(),
+								t.getDurationDays(),
+								t.getCreatedAt(),
+								t.getUpdatedAt(),
+								t.getPrescription().getId(),
+								t.getPrescription().getName(),
+								toMyMedicineResponse(t.getMyMedicine())
+						))
+						.toList()
+		);
 	}
 
+	/**
+	 * UPDATED: Convert MyMedicine to MyMedicineResponse with proper handling for custom medicines
+	 */
+	// Updated toMyMedicineResponse method in PrescriptionService.java
+// Updated toMyMedicineResponse method in PrescriptionService.java
 	private MyMedicineResponse toMyMedicineResponse(MyMedicine myMedicine) {
+		// Handle global medicine (when medicine is not null)
 		MedicineResponse medicineResponse = null;
 		if (myMedicine.getMedicine() != null) {
-			medicineResponse = new MedicineResponse(myMedicine.getMedicine().getId(),
-					myMedicine.getMedicine().getName(), myMedicine.getMedicine().getManufacturer(),
-					myMedicine.getMedicine().getDosageForm(), myMedicine.getMedicine().isRequiresPrescription(),
-					myMedicine.getMedicine().getBarcode());
+			medicineResponse = new MedicineResponse(
+					myMedicine.getMedicine().getId(),
+					myMedicine.getMedicine().getMedicationName(),      // Changed from getName() or getDesignation()
+					myMedicine.getMedicine().getDosage(),              // Updated field
+					myMedicine.getMedicine().getForm(),                // Updated field
+					myMedicine.getMedicine().getPresentation(),        // New field
+					myMedicine.getMedicine().getDci(),                 // New field
+					myMedicine.getMedicine().getTherapeuticClass(),    // New field
+					myMedicine.getMedicine().getSubClass(),            // New field
+					myMedicine.getMedicine().getLaboratory(),          // Changed from getManufacturer()
+					myMedicine.getMedicine().getAmmNumber(),           // New field
+					myMedicine.getMedicine().getAmmDate(),             // New field
+					myMedicine.getMedicine().getPrimaryPackaging(),    // New field
+					myMedicine.getMedicine().getPackagingSpecification(), // New field
+					myMedicine.getMedicine().getScheduleCategory(),    // New field
+					myMedicine.getMedicine().getShelfLife(),           // New field
+					myMedicine.getMedicine().getIndications(),         // New field
+					myMedicine.getMedicine().getMedicationType(),      // New field
+					myMedicine.getMedicine().getVeicClassification(),  // New field
+					myMedicine.getMedicine().getBarcode(),
+					myMedicine.getMedicine().isRequiresPrescription()
+			);
 		}
 
-		return new MyMedicineResponse(myMedicine.getId(), myMedicine.getName(), myMedicine.getForm(),
-				myMedicine.getPharmacyBox().getId(), myMedicine.getPharmacyBox().getGroup().getName(), medicineResponse, // Can
-																															// be
-																															// null
-				0, // totalQuantityPurchased - can be calculated if needed
-				0, // purchaseHistoryCount - can be calculated if needed
-				myMedicine.getCreatedAt(), myMedicine.getUpdatedAt());
+		// Create MyMedicineResponse with all 14 required arguments
+		return new MyMedicineResponse(
+				myMedicine.getId(),                                    // 1. id
+				myMedicine.getName(),                                  // 2. name
+				myMedicine.getForm(),                                  // 3. form
+				myMedicine.getPharmacyBox().getId(),                   // 4. pharmacyBoxId
+				myMedicine.getPharmacyBox().getGroup().getName(),      // 5. pharmacyBoxName
+				medicineResponse,                                      // 6. medicine (can be null for custom medicines)
+				myMedicine.isCustomMedicine(),                         // 7. isCustomMedicine
+				myMedicine.getCustomManufacturer(),                    // 8. customManufacturer
+				myMedicine.getCustomForm(),                            // 9. customForm
+				myMedicine.getCustomRequiresPrescription(),            // 10. customRequiresPrescription
+				0,                                                     // 11. totalQuantityPurchased (can be calculated if needed)
+				0,                                                     // 12. purchaseHistoryCount (can be calculated if needed)
+				myMedicine.getCreatedAt(),                             // 13. createdAt
+				myMedicine.getUpdatedAt()                              // 14. updatedAt
+		);
 	}
-
 }

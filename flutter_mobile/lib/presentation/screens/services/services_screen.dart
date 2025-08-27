@@ -2,26 +2,32 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_mobile/config/router/app_route_constants.dart';
 import 'package:flutter_mobile/config/theme/theme_data_config.dart';
+import 'package:flutter_mobile/domain/entities/services/PharmacyBoxEntity.dart';
 import 'package:flutter_mobile/presentation/bloc/services/services_cubit.dart';
 import 'package:flutter_mobile/presentation/widgets/base_widgets/custom_app_bar.dart';
+import 'package:flutter_mobile/presentation/widgets/base_widgets/snackbar_helper.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
-// Data model for box items from database
-
-// Main screen content widget
 class ServicesScreen extends StatelessWidget {
-  ServicesScreen({super.key});
-
-  final TextEditingController _searchController = TextEditingController();
+  const ServicesScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    _searchController.addListener(() {
-      //tODO: Implement search functionality
-     // context.read<ServicesCubit>().onSearchChanged(_searchController.text);
-    });
-    return const ServicesScreenView();
+    // Fetch data when screen loads
+
+
+    return BlocListener<ServicesCubit, ServicesState>(
+      listener: (context, state) {
+        if (state.hasError) {
+          SnackBarHelper.showError(context, state.errorMessage!);
+        }
+        if (state.hasSuccess) {
+          SnackBarHelper.showSuccess(context, state.successMessage!);
+        }
+      },
+      child: const ServicesScreenView(),
+    );
   }
 }
 
@@ -30,44 +36,6 @@ class ServicesScreenView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<BoxData> boxes = [
-      const BoxData(title: 'Boite 11', count: '12'),
-      const BoxData(title: 'Boite 24', count: '8'),
-      const BoxData(title: 'Boite 13', count: '15'),
-      const BoxData(title: 'Boite 15', count: '12'),
-      const BoxData(title: 'Boite 28', count: '8'),
-      const BoxData(title: 'Boite 377', count: '15'),
-      const BoxData(title: 'Boite 174', count: '12'),
-      const BoxData(title: 'Boite 217', count: '8'),
-      const BoxData(title: 'Boite 317', count: '15'),
-      const BoxData(title: 'Boite 114', count: '12'),
-      const BoxData(title: 'Boite 217', count: '8'),
-      const BoxData(title: 'Boite 317141', count: '15'),
-      const BoxData(title: 'Boite 14174', count: '12'),
-      const BoxData(title: 'Boite 21417', count: '8'),
-      const BoxData(title: 'Boite 311471', count: '15'),
-      const BoxData(title: 'Boite 11417', count: '12'),
-      const BoxData(title: 'Boite 21714', count: '8'),
-      const BoxData(title: 'Boite 31417', count: '15'),
-      const BoxData(title: 'Boite 114147', count: '12'),
-      const BoxData(title: 'Boite 214555', count: '8'),
-      const BoxData(title: 'Boite 44434', count: '15'),
-      const BoxData(title: 'Boite 174', count: '12'),
-      const BoxData(title: 'Boite 42', count: '8'),
-      const BoxData(title: 'Boite 43', count: '15'),
-      const BoxData(title: 'Boite 184', count: '12'),
-      const BoxData(title: 'Boite 28', count: '8'),
-      const BoxData(title: 'Boite 83', count: '15'),
-      const BoxData(title: 'Boite 91', count: '12'),
-      const BoxData(title: 'Boite 29', count: '8'),
-      const BoxData(title: 'Boite 39', count: '15'),
-    ];
-
-    // Initialize the cubit with all boxes
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<ServicesCubit>().initializeBoxes(boxes);
-    });
-
     return Scaffold(
       appBar: const CustomAppBar(
         title: "Services",
@@ -76,56 +44,86 @@ class ServicesScreenView extends StatelessWidget {
         avatarPath: "lib/config/assets/images/default_avatar.jpg",
         showLeading: false,
       ),
-      body: Padding(
-        padding: EdgeInsets.only(left: 16.w, right: 16.w, top: 20.h),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SearchBarWidget(allBoxes: boxes),
-            SizedBox(height: 24.h),
-            const FilteredBoxGrid(),
-          ],
-        ),
+      body: BlocBuilder<ServicesCubit, ServicesState>(
+        builder: (context, state) {
+          if (state.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (state.isFailure) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    state.errorMessage ?? 'Une erreur est survenue',
+                    style: TextStyle(fontSize: 16.sp, color: Colors.red),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 16.h),
+                  ElevatedButton(
+                    onPressed: () {
+                      context.read<ServicesCubit>().fetchPharmacyBoxes();
+                    },
+                    child: const Text('Réessayer'),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          return Padding(
+            padding: EdgeInsets.only(left: 16.w, right: 16.w, top: 20.h),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SearchBarWidget(allBoxes: state.allBoxes),
+                SizedBox(height: 24.h),
+                const FilteredBoxGrid(),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
 }
 
 // Search bar widget
+// Replace your current SearchBarWidget with this one
 class SearchBarWidget extends StatelessWidget {
   const SearchBarWidget({super.key, required this.allBoxes});
-  final List<BoxData> allBoxes;
+  final List<PharmacyBoxEntity> allBoxes;
+
+  // Static controller that persists across rebuilds
+  static final TextEditingController _globalController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController searchController = TextEditingController();
     return Container(
       decoration: BoxDecoration(
         color: Colors.grey[100],
         borderRadius: BorderRadius.circular(50.r),
         border: Border.all(color: Colors.grey[300]!),
       ),
-
       child: TextField(
-        controller: searchController,
+        controller: _globalController,
         onChanged: (value) {
           context.read<ServicesCubit>().searchBoxes(value, allBoxes);
         },
-
         decoration: InputDecoration(
           suffixIcon: IconButton(
             icon: Icon(Icons.clear, color: Colors.grey, size: 20.sp),
             onPressed: () {
+              _globalController.clear();
               FocusScope.of(context).unfocus();
-              searchController.clear();
-              context.read<ServicesCubit>().resetSearch(allBoxes);
+              context.read<ServicesCubit>().clearBoxSearch();
             },
           ),
           hintText: 'Votre recherche ici',
           hintStyle: TextStyle(color: Colors.grey, fontSize: 14.sp),
           prefixIcon: Icon(Icons.search, color: Colors.grey, size: 20.sp),
           border: InputBorder.none,
-
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(50.r),
             borderSide: BorderSide(color: Colors.grey[300]!, width: 1.w),
@@ -159,11 +157,19 @@ class FilteredBoxGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<ServicesCubit, ServicesState>(
       buildWhen: (previous, current) =>
-          previous.filteredBoxes != current.filteredBoxes ||
+      previous.filteredBoxes != current.filteredBoxes ||
           previous.searchQuery != current.searchQuery,
       builder: (context, state) {
-        if (state.filteredBoxes.isEmpty) {
+        if (state.filteredBoxes.isEmpty && state.searchQuery.isNotEmpty) {
           return const NoBoxesFoundWidget();
+        }
+
+        if (state.filteredBoxes.isEmpty) {
+          return const Expanded(
+            child: Center(
+              child: Text('Aucune boîte disponible'),
+            ),
+          );
         }
 
         return Expanded(child: BoxGridWidget(boxes: state.filteredBoxes));
@@ -208,7 +214,7 @@ class NoBoxesFoundWidget extends StatelessWidget {
 // Grid widget for boxes
 class BoxGridWidget extends StatelessWidget {
   const BoxGridWidget({super.key, required this.boxes});
-  final List<BoxData> boxes;
+  final List<PharmacyBoxEntity> boxes;
 
   static const List<Color> _colors = [
     Color(0xFF5FBEAA), // Teal
@@ -226,25 +232,29 @@ class BoxGridWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2, // 4 columns on large screens, 2 on small
-        crossAxisSpacing: 16.w,
-        mainAxisSpacing: 16.h,
-        childAspectRatio: 0.8,
-      ),
-      itemCount: boxes.length,
-      itemBuilder: (context, index) {
-        final box = boxes[index];
-        final styleIndex = index % _colors.length;
+    return RefreshIndicator(
+      onRefresh: () => context.read<ServicesCubit>().fetchPharmacyBoxes(),
+      child: GridView.builder(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 16.w,
+          mainAxisSpacing: 16.h,
+          childAspectRatio: 0.8,
+        ),
+        itemCount: boxes.length,
+        itemBuilder: (context, index) {
+          final box = boxes[index];
+          final styleIndex = index % _colors.length;
 
-        return BoxCardWidget(
-          color: _colors[styleIndex],
-          icon: _icons[styleIndex],
-          title: box.title,
-          count: box.count,
-        );
-      },
+          return BoxCardWidget(
+            color: _colors[styleIndex],
+            icon: _icons[styleIndex],
+            title: box.groupName,
+            count: box.medicationCount.toString(),
+            pharmacyBox: box,
+          );
+        },
+      ),
     );
   }
 }
@@ -257,29 +267,23 @@ class BoxCardWidget extends StatelessWidget {
     required this.icon,
     required this.title,
     required this.count,
+    required this.pharmacyBox,
   });
   final Color color;
   final IconData icon;
   final String title;
   final String count;
+  final PharmacyBoxEntity pharmacyBox;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // Show snackbar with box title
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Box sélectionnée: $title'),
-            duration: const Duration(seconds: 2),
-          ),
-        );
-
-        // Navigate to another page (replace 'boxDetailsScreen' with your route name)
-        context.pushNamed(
-          AppRouteName.pharmacyBox,
-          extra: {'title': title, 'count': count},
-        );
+        // Just select the pharmacy box ID
+        context.read<ServicesCubit>().selectPharmacyBoxId(pharmacyBox.id);
+        context.read<ServicesCubit>().selectPharmacyBoxName(pharmacyBox.groupName);
+        // Navigate without passing any data
+        context.pushNamed(AppRouteName.pharmacyBox);
       },
       child: Container(
         decoration: BoxDecoration(

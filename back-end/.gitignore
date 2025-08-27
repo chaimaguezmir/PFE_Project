@@ -6,7 +6,8 @@ logs/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-
+#
+CLAUDE.md
 ### STS (Spring Tool Suite) ###
 .apt_generated
 .classpath

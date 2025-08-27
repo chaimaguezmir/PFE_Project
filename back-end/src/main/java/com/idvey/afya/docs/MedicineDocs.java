@@ -99,4 +99,38 @@ public final class MedicineDocs {
 
 	}
 
+	@Target(ElementType.METHOD)
+	@Retention(RetentionPolicy.RUNTIME)
+	@Documented
+	@Operation(summary = "Update medicine barcode",
+			description = "Updates the barcode of an existing medicine. The new barcode must be unique across the system.")
+	@ApiResponses({
+			@ApiResponse(responseCode = "200", description = "Medicine barcode updated successfully",
+					content = @Content(mediaType = "application/json",
+							schema = @Schema(implementation = com.idvey.afya.payload.response.MedicineResponse.class))),
+			@ApiResponse(responseCode = "400", description = "Invalid barcode or barcode already exists"),
+			@ApiResponse(responseCode = "404", description = "Medicine not found"),
+			@ApiResponse(responseCode = "401", description = "Unauthorized")
+	})
+	public @interface UpdateMedicineBarcode {
+
+	}
+
+
+	@Target(ElementType.METHOD)
+	@Retention(RetentionPolicy.RUNTIME)
+	@Documented
+	@Operation(summary = "Remove medicine barcode",
+			description = "Removes the barcode from an existing medicine by setting it to null. This allows the medicine to exist without a barcode.")
+	@ApiResponses({
+			@ApiResponse(responseCode = "200", description = "Medicine barcode removed successfully",
+					content = @Content(mediaType = "application/json",
+							schema = @Schema(implementation = com.idvey.afya.payload.response.MedicineResponse.class))),
+			@ApiResponse(responseCode = "404", description = "Medicine not found"),
+			@ApiResponse(responseCode = "401", description = "Unauthorized")
+	})
+	public @interface RemoveMedicineBarcode {
+
+	}
+
 }

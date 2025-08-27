@@ -133,4 +133,15 @@ public class MyMedicineController {
 		return ResponseEntity.ok(response);
 	}
 
+
+	@MyMedicineDocs.GetMedicineDetail
+	@GetMapping("/pharmacy-box/{pharmacyBoxId}/medicine/{medicineId}")
+	public ResponseEntity<MyMedicineResponse> getMyMedicineByMedicineIdAndPharmacyBox(
+			@AuthenticationPrincipal UserDetailsImpl currentUser,
+			@PathVariable UUID pharmacyBoxId,
+			@PathVariable UUID medicineId) throws AccessDeniedException {
+		MyMedicineResponse response = myMedicineService.getMyMedicineByMedicineIdAndPharmacyBox(
+				currentUser.getId(), pharmacyBoxId, medicineId);
+		return ResponseEntity.ok(response);
+	}
 }
