@@ -1,6 +1,8 @@
-// lib/presentation/screens/home/welcome_screen.dart
+// lib/presentation/screens/home/welcome_screen.dart - Complete corrected version
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_mobile/domain/entities/prescription/reminder_entity.dart';
+import 'package:flutter_mobile/domain/entities/prescription/reminder_extensions.dart';
 import 'package:flutter_mobile/presentation/bloc/home/welcome_screen_cubit.dart';
 import 'package:flutter_mobile/presentation/widgets/base_widgets/custom_app_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -10,6 +12,11 @@ class WelcomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Trigger loading when screen is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<WelcomeScreenCubit>().loadWelcomeData();
+    });
+
     return Scaffold(
       appBar: const CustomAppBar(
         title: "Accueil",
@@ -19,11 +26,47 @@ class WelcomeScreen extends StatelessWidget {
         showLeading: true,
       ),
       backgroundColor: Colors.grey[50],
-      body: const Column(
-        children: [
-          _DayHeader(),
-          Expanded(child: MedicationScheduleCard()),
-        ],
+      body: BlocBuilder<WelcomeScreenCubit, WelcomeScreenState>(
+        builder: (context, state) {
+          if (state.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (state.hasError) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.error_outline,
+                    size: 64.sp,
+                    color: Colors.red[400],
+                  ),
+                  SizedBox(height: 16.h),
+                  Text(
+                    state.errorMessage ?? 'Une erreur est survenue',
+                    style: TextStyle(fontSize: 16.sp, color: Colors.red),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 16.h),
+                  ElevatedButton(
+                    onPressed: () {
+                      context.read<WelcomeScreenCubit>().fetchReminders();
+                    },
+                    child: const Text('Réessayer'),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          return const Column(
+            children: [
+              _DayHeader(),
+              Expanded(child: MedicationScheduleCard()),
+            ],
+          );
+        },
       ),
     );
   }
@@ -40,12 +83,163 @@ class _DayHeader extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Mardi',
-              style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w600)),
+          const ClickableDayName(),
           SizedBox(height: 18.h),
           const TimeButtonSelector(),
         ],
       ),
+    );
+  }
+}
+
+class ClickableDayName extends StatelessWidget {
+  const ClickableDayName({super.key});
+
+  void _showDayPicker(BuildContext context) {
+    final theme = Theme.of(context);
+    final cubit = context.read<WelcomeScreenCubit>();
+    final now = DateTime.now();
+    final yesterday = now.subtract(const Duration(days: 1));
+    final tomorrow = now.add(const Duration(days: 1));
+
+    final options = [
+      {
+        'index': 0,
+        'dayName': _getDayName(yesterday),
+        'label': 'Hier',
+        'date': yesterday,
+      },
+      {
+        'index': 1,
+        'dayName': _getDayName(now),
+        'label': 'Aujourd\'hui',
+        'date': now,
+      },
+      {
+        'index': 2,
+        'dayName': _getDayName(tomorrow),
+        'label': 'Demain',
+        'date': tomorrow,
+      },
+    ];
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20.r),
+            topRight: Radius.circular(20.r),
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              margin: EdgeInsets.only(top: 8.h),
+              width: 40.w,
+              height: 4.h,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(2.r),
+              ),
+            ),
+            SizedBox(height: 16.h),
+            Text(
+              'Sélectionner un jour',
+              style: TextStyle(
+                fontSize: 18.sp,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+              ),
+            ),
+            SizedBox(height: 16.h),
+            ...options.map((option) {
+              final isSelected = cubit.state.selectedDayIndex == option['index'];
+              return InkWell(
+                onTap: () {
+                  cubit.updateSelectedDay(option['index'] as int);
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+                  decoration: BoxDecoration(
+                    color: isSelected ? theme.colorScheme.primary.withOpacity(0.1) : Colors.transparent,
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: option['dayName'] as String,
+                                style: TextStyle(
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: isSelected ? theme.colorScheme.primary : Colors.black87,
+                                ),
+                              ),
+                              TextSpan(
+                                text: ' (${option['label']})',
+                                style: TextStyle(
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w400,
+                                  color: isSelected ? theme.colorScheme.primary.withOpacity(0.7) : Colors.grey[600],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      if (isSelected)
+                        Icon(
+                          Icons.check_circle,
+                          color: theme.colorScheme.primary,
+                          size: 20.sp,
+                        ),
+                    ],
+                  ),
+                ),
+              );
+            }),
+            SizedBox(height: 16.h + MediaQuery.of(context).padding.bottom),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _getDayName(DateTime date) {
+    final days = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
+    return days[date.weekday - 1];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<WelcomeScreenCubit, WelcomeScreenState>(
+      builder: (context, state) {
+        return GestureDetector(
+          onTap: () => _showDayPicker(context),
+          child: Row(
+            children: [
+              Text(
+                context.read<WelcomeScreenCubit>().getSelectedDayName(),
+                style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w600),
+              ),
+              SizedBox(width: 8.w),
+              Icon(
+                Icons.keyboard_arrow_down,
+                size: 24.sp,
+                color: Colors.grey[600],
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
@@ -55,18 +249,18 @@ class TimeButtonSelector extends StatelessWidget {
 
   final List<Map<String, dynamic>> _timeButtons = const [
     {'label': 'Matin', 'icon': Icons.wb_sunny_outlined},
-    {'label': 'Après Midi', 'icon': Icons.wb_sunny},
+    {'label': 'Après-midi', 'icon': Icons.wb_sunny},
     {'label': 'Soir', 'icon': Icons.wb_twilight},
     {'label': 'Nuit', 'icon': Icons.nightlight_round},
   ];
 
   void _onTap(BuildContext context, int index) {
     final cubit = context.read<WelcomeScreenCubit>();
-    final sel = cubit.state.selectedTimeIndex;
-    cubit.updateSelectedTime(sel == index ? -1 : index);
+    final currentSelected = cubit.state.selectedTimeIndex;
+    cubit.updateSelectedTime(currentSelected == index ? -1 : index);
   }
 
-  Widget _btn(String label, IconData icon, bool selected, VoidCallback tap) {
+  Widget _btn(String label, IconData icon, bool selected, VoidCallback tap, ThemeData theme) {
     return GestureDetector(
       onTap: tap,
       child: Column(
@@ -75,19 +269,21 @@ class TimeButtonSelector extends StatelessWidget {
             width: 56.w,
             height: 56.w,
             decoration: BoxDecoration(
-              color: selected ? Colors.blue : Colors.grey[200],
+              color: selected ? theme.colorScheme.primary : Colors.grey[200],
               borderRadius: BorderRadius.circular(14.r),
             ),
-            child: Icon(icon,
-                color: selected ? Colors.white : Colors.grey[600],
-                size: 28.sp),
+            child: Icon(
+              icon,
+              color: selected ? Colors.white : Colors.grey[600],
+              size: 28.sp,
+            ),
           ),
           SizedBox(height: 10.h),
           Text(
             label,
             style: TextStyle(
               fontSize: 12.sp,
-              color: selected ? Colors.blue : Colors.grey[600],
+              color: selected ? theme.colorScheme.primary : Colors.grey[600],
               fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
             ),
           ),
@@ -98,18 +294,20 @@ class TimeButtonSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return BlocBuilder<WelcomeScreenCubit, WelcomeScreenState>(
       builder: (context, state) {
-        final sel = state.selectedTimeIndex;
+        final selectedIndex = state.selectedTimeIndex;
         return Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: List.generate(_timeButtons.length, (i) {
-            final b = _timeButtons[i];
+            final button = _timeButtons[i];
             return _btn(
-              b['label'],
-              b['icon'],
-              i == sel && sel != -1,
+              button['label'],
+              button['icon'],
+              i == selectedIndex,
                   () => _onTap(context, i),
+              theme,
             );
           }),
         );
@@ -121,347 +319,298 @@ class TimeButtonSelector extends StatelessWidget {
 class MedicationScheduleCard extends StatelessWidget {
   const MedicationScheduleCard({super.key});
 
-  Widget _timeHeader(String t) => Container(
+  Widget _timeHeader(String time, ThemeData theme) => Container(
     padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
     decoration: BoxDecoration(
-      color: Colors.blue.withOpacity(0.08),
+      color: theme.colorScheme.primary.withOpacity(0.08),
       borderRadius: BorderRadius.circular(10.r),
-      border: Border.all(color: Colors.blue.withOpacity(0.2), width: 1.w),
+      border: Border.all(color: theme.colorScheme.primary.withOpacity(0.2), width: 1.w),
     ),
     child: Text(
-      t,
+      time,
       style: TextStyle(
-          fontSize: 16.sp,
-          fontWeight: FontWeight.w600,
-          color: Colors.blue),
+        fontSize: 16.sp,
+        fontWeight: FontWeight.w600,
+        color: theme.colorScheme.primary,
+      ),
     ),
   );
 
-  Widget _divider() =>
-      Divider(color: Colors.blue.withOpacity(0.25), height: 0, thickness: 1.h);
+  Widget _divider(ThemeData theme) => Divider(
+    color: theme.colorScheme.primary.withOpacity(0.25),
+    height: 0,
+    thickness: 1.h,
+  );
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: EdgeInsets.only(bottom: 24.h),
-      child: Column(
-        children: [
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.all(18.w),
-            child: const Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [],
-            ),
-          ),
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.all(18.w),
+    final theme = Theme.of(context);
+    return BlocBuilder<WelcomeScreenCubit, WelcomeScreenState>(
+      builder: (context, state) {
+        if (!state.hasReminders) {
+          return Center(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _timeHeader('8:00'),
-                SizedBox(height: 18.h),
-                const MedicationScheduleItem(
-                  name: 'Omega 3',
-                  description: '1 tablet after meals',
-                  duration: '7 Jours',
-                  color: Colors.orange,
-                  icon: Icons.medication,
-                  progress: 0.51,
-                  isTakenToday: false,
+                Icon(
+                  Icons.medication_outlined,
+                  size: 64.sp,
+                  color: Colors.grey[400],
                 ),
-                SizedBox(height: 18.h),
-                const MedicationScheduleItem(
-                  name: 'Vit D',
-                  description: '1 capsule',
-                  duration: '14 Jours',
-                  color: Colors.deepOrange,
-                  icon: Icons.local_hospital,
-                  progress: 0.2,
-                  isTakenToday: false,
+                SizedBox(height: 16.h),
+                Text(
+                  'Aucun rappel disponible',
+                  style: TextStyle(
+                    fontSize: 18.sp,
+                    color: Colors.grey[600],
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                SizedBox(height: 8.h),
+                Text(
+                  'Profitez de votre journée!',
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    color: Colors.grey[500],
+                  ),
                 ),
               ],
             ),
-          ),
-          _divider(),
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.all(18.w),
+          );
+        }
+
+        final remindersToShow = context.read<WelcomeScreenCubit>().getRemindersForSelectedTimeSlot();
+
+        if (remindersToShow.isEmpty) {
+          final dayName = state.selectedDayIndex == 1
+              ? 'aujourd\'hui'
+              : state.selectedDayIndex == 0
+              ? 'hier'
+              : 'demain';
+
+          return Center(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _timeHeader('14:00'),
-                SizedBox(height: 18.h),
-                const MedicationScheduleItem(
-                  name: 'Comlivit',
-                  description: '1 tablet after meals',
-                  duration: '7 Jours',
-                  color: Colors.grey,
-                  icon: Icons.medication,
-                  warningMessage: 'medicament non pris',
-                  progress: 0.7,
-                  isTakenToday: false,
+                Icon(
+                  Icons.schedule_outlined,
+                  size: 64.sp,
+                  color: Colors.grey[400],
                 ),
-                SizedBox(height: 18.h),
-                const MedicationScheduleItem(
-                  name: 'Omega 3',
-                  description: '1 tablet after meals',
-                  duration: '7 Jours',
-                  color: Colors.orange,
-                  icon: Icons.medication,
-                  isTakenToday: true,
-                  takenTime: '12h30',
+                SizedBox(height: 16.h),
+                Text(
+                  'Aucun rappel pour $dayName',
+                  style: TextStyle(
+                    fontSize: 18.sp,
+                    color: Colors.grey[600],
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
-                SizedBox(height: 18.h),
-                const MedicationScheduleItem(
-                  name: 'Paracétamol',
-                  description: '500 mg après repas',
-                  duration: '5 Jours',
-                  color: Colors.teal,
-                  icon: Icons.medication_liquid,
-                  progress: 0.35,
-                  isDue: true,            // <-- shows the due tile with buttons
-                  isTakenToday: false,
-warningMessage: 'medicament non pris',
-                  onTaken: null,          // will default to empty if null (or supply a function)
-                  onRemindLater: null,
-                ),
+                if (state.selectedTimeIndex != -1) ...[
+                  SizedBox(height: 8.h),
+                  Text(
+                    'Essayez une autre période',
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      color: Colors.grey[500],
+                    ),
+                  ),
+                ],
               ],
             ),
+          );
+        }
+
+        final groupedByTime = <String, List<ReminderEntity>>{};
+        for (final reminder in remindersToShow) {
+          final timeKey = reminder.timeString;
+          if (!groupedByTime.containsKey(timeKey)) {
+            groupedByTime[timeKey] = [];
+          }
+          groupedByTime[timeKey]!.add(reminder);
+        }
+
+        return RefreshIndicator(
+          onRefresh: () => context.read<WelcomeScreenCubit>().fetchReminders(),
+          child: SingleChildScrollView(
+            padding: EdgeInsets.only(bottom: 24.h),
+            child: Column(
+              children: groupedByTime.entries.map((entry) {
+                final time = entry.key;
+                final timeReminders = entry.value;
+
+                return Column(
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.all(18.w),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _timeHeader(time, theme),
+                          SizedBox(height: 18.h),
+                          ...timeReminders.map((reminder) => Column(
+                            children: [
+                              ReminderTile(reminder: reminder),
+                              if (reminder != timeReminders.last) SizedBox(height: 12.h),
+                            ],
+                          )),
+                        ],
+                      ),
+                    ),
+                    if (entry.key != groupedByTime.keys.last) _divider(theme),
+                  ],
+                );
+              }).toList(),
+            ),
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
 
-class MedicationScheduleItem extends StatelessWidget {
-  const MedicationScheduleItem({
-    super.key,
-    required this.name,
-    required this.description,
-    required this.duration,
-    required this.color,
-    required this.icon,
-    this.progress = 0.0,
-    this.isTakenToday = false,
-    this.isDue = false,
-    this.takenTime,
-    this.warningMessage,
-    this.alertMessage,
-    this.onTaken,
-    this.onRemindLater,
-  });
+class ReminderTile extends StatelessWidget {
+  const ReminderTile({super.key, required this.reminder});
 
-  final String name;
-  final String description;
-  final String duration;
-  final Color color;
-  final IconData icon;
-  final double progress;
-  final bool isTakenToday;
-  final bool isDue;
-  final String? takenTime;
-  final String? warningMessage;
-  final String? alertMessage;
-  final VoidCallback? onTaken;
-  final VoidCallback? onRemindLater;
+  final ReminderEntity reminder;
+
+  Color _getMedicationColor(String medicationName) {
+    final hash = medicationName.hashCode;
+    final colors = [
+      Colors.orange,
+      Colors.teal,
+      Colors.purple,
+      Colors.green,
+      Colors.indigo,
+      Colors.pink,
+    ];
+    return colors[hash.abs() % colors.length];
+  }
+
+  IconData _getMedicationIcon(String medicationName) {
+    final hash = medicationName.hashCode;
+    final icons = [
+      Icons.medication,
+      Icons.local_hospital,
+      Icons.medication_liquid,
+      Icons.healing,
+      Icons.vaccines,
+    ];
+    return icons[hash.abs() % icons.length];
+  }
+
+  bool _canInteract() {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = today.subtract(const Duration(days: 1));
+    final reminderDate = DateTime(
+      reminder.reminderTime.year,
+      reminder.reminderTime.month,
+      reminder.reminderTime.day,
+    );
+
+    return reminderDate.isAtSameMomentAs(today) ||
+        reminderDate.isAtSameMomentAs(yesterday);
+  }
+
+  bool _isYesterday() {
+    final now = DateTime.now();
+    final yesterday = DateTime(now.year, now.month, now.day).subtract(const Duration(days: 1));
+    final reminderDate = DateTime(
+      reminder.reminderTime.year,
+      reminder.reminderTime.month,
+      reminder.reminderTime.day,
+    );
+    return reminderDate.isAtSameMomentAs(yesterday);
+  }
 
   @override
   Widget build(BuildContext context) {
-    if (isTakenToday) {
+    final cubit = context.read<WelcomeScreenCubit>();
+    final isOverdue = reminder.isOverdue;
+    final isDue = reminder.isDue;
+    final isTaken = reminder.isTaken;
+    final isScheduled = reminder.isScheduled;
+    final canInteract = _canInteract();
+    final isYesterday = _isYesterday();
+
+    final color = _getMedicationColor(reminder.medicationName);
+    final icon = _getMedicationIcon(reminder.medicationName);
+
+    // Already taken - show taken card
+    if (isTaken) {
       return MedicationTakenTile(
-        name: name,
-        description: description,
+        name: reminder.medicationName,
+        description: reminder.message,
         color: color,
         icon: icon,
-        takenTime: takenTime,
-        warningMessage: warningMessage,
-        alertMessage: alertMessage,
+        takenTime: reminder.timeString,
+        prescriptionName: reminder.prescriptionName,
       );
     }
-    if (isDue) {
-      return MedicationDueTile(
-        name: name,
-        description: description,
-        duration: duration,
+
+    // Missed and cron job already changed to MISSED (after 2 days)
+    if (reminder.status.toUpperCase() == 'MISSED') {
+      return MedicationNotTakenTile(
+        name: reminder.medicationName,
+        description: reminder.message,
         color: color,
         icon: icon,
-        progress: progress,
-        warningMessage: warningMessage,
-        alertMessage: alertMessage,
-        onTaken: onTaken ?? () {},
-        onRemindLater: onRemindLater ?? () {},
+        prescriptionName: reminder.prescriptionName,
+        isOverdue: true,
+        status: 'Manqué',
+        canInteract: false,
       );
     }
+
+    // Can interact ONLY if:
+    // 1. It's time to take it (isDue) OR it's overdue from today OR it's from yesterday
+    // 2. AND it's still scheduled
+    if (canInteract && isScheduled) {
+      // Show interactive card only when:
+      // - It's due now (within 30 minutes) OR
+      // - It's overdue from today OR
+      // - It's from yesterday (missed yesterday)
+      if (isDue || (isOverdue && !isYesterday) || isYesterday) {
+        return MedicationDueTile(
+          name: reminder.medicationName,
+          description: reminder.message,
+          color: color,
+          icon: icon,
+          prescriptionName: reminder.prescriptionName,
+          onTaken: () => cubit.markMedicationAsTaken(reminder.id),
+          onRemindLater: () => cubit.snoozeReminder(reminder.id),
+          isOverdue: isOverdue,
+          isYesterday: isYesterday,
+        );
+      }
+    }
+
+    // Default case - show read-only card for scheduled but not yet time
     return MedicationNotTakenTile(
-      name: name,
-      description: description,
-      duration: duration,
+      name: reminder.medicationName,
+      description: reminder.message,
       color: color,
       icon: icon,
-      progress: progress,
-      warningMessage: warningMessage,
-      alertMessage: alertMessage,
-    );
-  }
-}
-
-class MedicationNotTakenTile extends StatelessWidget {
-  const MedicationNotTakenTile({
-    super.key,
-    required this.name,
-    required this.description,
-    required this.duration,
-    required this.color,
-    required this.icon,
-    this.progress = 0.0,
-    this.warningMessage,
-    this.alertMessage,
-  });
-
-  final String name;
-  final String description;
-  final String duration;
-  final Color color;
-  final IconData icon;
-  final double progress;
-  final String? warningMessage;
-  final String? alertMessage;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(16.w),
-      decoration: _boxDecoration(),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              _leadingIcon(),
-              SizedBox(width: 14.w),
-              Expanded(child: _texts()),
-              _progressColumn(),
-            ],
-          ),
-          if (alertMessage != null) ...[
-            SizedBox(height: 12.h),
-            _badge(alertMessage!, Colors.red, Icons.error),
-          ],
-          if (warningMessage != null) ...[
-            SizedBox(height: 12.h),
-            _badge(warningMessage!, Colors.orange, Icons.error),
-          ],
-        ],
-      ),
+      prescriptionName: reminder.prescriptionName,
+      isOverdue: false, // Not overdue if it's just scheduled for later
+      status: _getDisplayStatus(),
+      canInteract: false, // No interaction until it's time
     );
   }
 
-  Widget _leadingIcon() => Container(
-    width: 40.w,
-    height: 40.w,
-    decoration: BoxDecoration(
-      color: color.withOpacity(0.12),
-      borderRadius: BorderRadius.circular(10.r),
-    ),
-    child: Icon(icon, color: color, size: 22.sp),
-  );
+  /// Get appropriate display status based on timing
+  String _getDisplayStatus() {
+    final now = DateTime.now();
 
-  Widget _texts() => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text(name,
-          style:
-          TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600)),
-      SizedBox(height: 4.h),
-      Text(description,
-          style:
-          TextStyle(fontSize: 12.5.sp, color: Colors.grey[600])),
-    ],
-  );
+    if (reminder.reminderTime.isAfter(now)) {
+      // Future reminder - show when it's scheduled
+      return 'Prévu à ${reminder.timeString}';
+    }
 
-  Widget _progressColumn() => Column(
-    children: [
-      SizedBox(
-        width: 56.w,
-        height: 56.w,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            CircularProgressIndicator(
-              value: 1,
-              strokeWidth: 4.w,
-              valueColor:
-              AlwaysStoppedAnimation(Colors.grey.withOpacity(0.18)),
-              backgroundColor: Colors.transparent,
-            ),
-            CircularProgressIndicator(
-              value: progress,
-              strokeWidth: 4.w,
-              valueColor: const AlwaysStoppedAnimation(Colors.blue),
-              backgroundColor: Colors.transparent,
-            ),
-            Text(
-              '${(progress * 100).round()}%',
-              style: TextStyle(
-                fontSize: 12.sp,
-                fontWeight: FontWeight.w600,
-                color: progress > 0 ? Colors.blue : Colors.grey,
-              ),
-            ),
-          ],
-        ),
-      ),
-      SizedBox(height: 8.h),
-      Text(
-        duration,
-        style: TextStyle(
-            fontSize: 13.sp,
-            color: Colors.grey[500],
-            fontWeight: FontWeight.w500),
-      ),
-    ],
-  );
-
-  Widget _badge(String msg, Color c, IconData icon) => Container(
-    width: double.infinity,
-    padding:
-    EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
-    decoration: BoxDecoration(
-      color: c.withOpacity(0.08),
-      borderRadius: BorderRadius.circular(10.r),
-      border: Border.all(color: c.withOpacity(0.35), width: 1.w),
-    ),
-    child: Row(
-      children: [
-        Icon(icon, color: c, size: 18.sp),
-        SizedBox(width: 10.w),
-        Expanded(
-          child: Text(
-            msg,
-            style: TextStyle(
-                fontSize: 12.5.sp,
-                color: c,
-                fontWeight: FontWeight.w600),
-          ),
-        ),
-      ],
-    ),
-  );
-
-  BoxDecoration _boxDecoration() => BoxDecoration(
-    color: Colors.white,
-    borderRadius: BorderRadius.circular(14.r),
-    border: Border.all(color: Colors.grey.withOpacity(0.18), width: 1.w),
-    boxShadow: [
-      BoxShadow(
-        color: Colors.black.withOpacity(0.04),
-        blurRadius: 10.r,
-        offset: Offset(0, 3.h),
-      ),
-    ],
-  );
+    return reminder.status; // Default to actual status
+  }
 }
 
 class MedicationTakenTile extends StatelessWidget {
@@ -471,69 +620,67 @@ class MedicationTakenTile extends StatelessWidget {
     required this.description,
     required this.color,
     required this.icon,
+    required this.prescriptionName,
     this.takenTime,
-    this.warningMessage,
-    this.alertMessage,
   });
 
   final String name;
   final String description;
   final Color color;
   final IconData icon;
+  final String prescriptionName;
   final String? takenTime;
-  final String? warningMessage;
-  final String? alertMessage;
 
   @override
   Widget build(BuildContext context) {
-    final desc =
-    takenTime != null ? 'Médicament pris à $takenTime' : description;
+    final theme = Theme.of(context);
+
     return IntrinsicHeight(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _tickBox(),
+          _tickBox(theme),
           SizedBox(width: 16.w),
           Expanded(
             child: Container(
               padding: EdgeInsets.all(16.w),
               decoration: _detailDecoration(),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Row(
                 children: [
-                  Row(
-                    children: [
-                      _leadingIcon(),
-                      SizedBox(width: 16.w),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(name,
-                                style: TextStyle(
-                                    fontSize: 16.sp,
-                                    fontWeight: FontWeight.w600)),
-                            SizedBox(height: 4.h),
-                            Text(
-                              desc,
-                              style: TextStyle(
-                                  fontSize: 12.5.sp,
-                                  color: Colors.grey[600]),
-                            ),
-                          ],
+                  _leadingIcon(),
+                  SizedBox(width: 16.w),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          name,
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
-                      ),
-                    ],
+                        SizedBox(height: 4.h),
+                        Text(
+                          takenTime != null
+                              ? 'Médicament pris à $takenTime'
+                              : 'Médicament pris',
+                          style: TextStyle(
+                            fontSize: 12.5.sp,
+                            color: theme.colorScheme.primary,
+                          ),
+                        ),
+                        SizedBox(height: 2.h),
+                        Text(
+                          prescriptionName,
+                          style: TextStyle(
+                            fontSize: 11.sp,
+                            color: Colors.grey[500],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  if (alertMessage != null) ...[
-                    SizedBox(height: 14.h),
-                    _badge(alertMessage!, Colors.red, Icons.error),
-                  ],
-                  if (warningMessage != null) ...[
-                    SizedBox(height: 14.h),
-                    _badge(warningMessage!, Colors.orange,
-                        Icons.warning_amber_rounded),
-                  ],
                 ],
               ),
             ),
@@ -543,13 +690,13 @@ class MedicationTakenTile extends StatelessWidget {
     );
   }
 
-  Widget _tickBox() {
+  Widget _tickBox(ThemeData theme) {
     const double baseRaw = 64;
     return Container(
       width: baseRaw.w,
       constraints: BoxConstraints(minHeight: baseRaw.h),
       decoration: BoxDecoration(
-        color: Colors.blue.withOpacity(0.5),
+        color: theme.colorScheme.primary.withOpacity(0.2),
         borderRadius: BorderRadius.circular((baseRaw * 0.25).r),
       ),
       child: Center(
@@ -557,11 +704,11 @@ class MedicationTakenTile extends StatelessWidget {
           width: (baseRaw * 0.60).r,
           height: (baseRaw * 0.60).r,
           decoration: BoxDecoration(
-            color: Colors.blue,
+            color: theme.colorScheme.primary,
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: Colors.blue.withOpacity(0.35),
+                color: theme.colorScheme.primary.withOpacity(0.35),
                 blurRadius: 10.r,
                 offset: Offset(0, 4.h),
               ),
@@ -583,78 +730,43 @@ class MedicationTakenTile extends StatelessWidget {
     child: Icon(icon, color: color, size: 22.sp),
   );
 
-  Widget _badge(String msg, Color c, IconData icon) => Container(
-    width: double.infinity,
-    padding:
-    EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
-    decoration: BoxDecoration(
-      color: c.withOpacity(0.08),
-      borderRadius: BorderRadius.circular(12.r),
-      border: Border.all(color: c.withOpacity(0.35), width: 1.w),
-    ),
-    child: Row(
-      children: [
-        Icon(icon, color: c, size: 20.sp),
-        SizedBox(width: 10.w),
-        Expanded(
-          child: Text(
-            msg,
-            style: TextStyle(
-                fontSize: 12.5.sp,
-                color: c,
-                fontWeight: FontWeight.w600),
-          ),
-        ),
-      ],
-    ),
-  );
-
   BoxDecoration _detailDecoration() => BoxDecoration(
     color: Colors.white,
     borderRadius: BorderRadius.circular(14.r),
-    border: Border.all(color: Colors.grey.withOpacity(0.18), width: 1.w),
-    boxShadow: [
-      BoxShadow(
-        color: Colors.black.withOpacity(0.04),
-        blurRadius: 10.r,
-        offset: Offset(0, 3.h),
-      ),
-    ],
   );
 }
 
-// dart
 class MedicationDueTile extends StatelessWidget {
   const MedicationDueTile({
     super.key,
     required this.name,
     required this.description,
-    required this.duration, // retained but not shown
     required this.color,
     required this.icon,
-    required this.progress, // retained but not shown
+    required this.prescriptionName,
     required this.onTaken,
     required this.onRemindLater,
-    this.warningMessage,
-    this.alertMessage,
+    this.isOverdue = false,
+    this.isYesterday = false,
   });
 
   final String name;
   final String description;
-  final String duration; // no longer displayed
   final Color color;
   final IconData icon;
-  final double progress; // no longer displayed
-  final String? warningMessage;
-  final String? alertMessage;
+  final String prescriptionName;
   final VoidCallback onTaken;
   final VoidCallback onRemindLater;
+  final bool isOverdue;
+  final bool isYesterday;
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Container(
       padding: EdgeInsets.all(16.w),
-      decoration: _boxDecoration(),
+      decoration: _boxDecoration(theme),
       child: Column(
         children: [
           Row(
@@ -663,56 +775,61 @@ class MedicationDueTile extends StatelessWidget {
               _leadingIcon(),
               SizedBox(width: 14.w),
               Expanded(child: _texts()),
+              _urgencyIndicator(theme),
             ],
           ),
-          if (alertMessage != null) ...[
+          if (isOverdue || isYesterday) ...[
             SizedBox(height: 12.h),
-            _badge(alertMessage!, Colors.red, Icons.error),
-          ],
-          if (warningMessage != null) ...[
-            SizedBox(height: 12.h),
-            _badge(warningMessage!, Colors.orange, Icons.warning_amber_rounded),
+            _badge(
+              isYesterday
+                  ? 'Médicament d\'hier non pris'
+                  : 'Médicament en retard!',
+              isYesterday ? Colors.orange : Colors.red,
+              Icons.warning,
+            ),
           ],
           SizedBox(height: 14.h),
           Row(
             children: [
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: onRemindLater,
-                  style: OutlinedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(vertical: 9.h, horizontal: 8.w),
-                    minimumSize: Size(0, 38.h),
-                    shape: const StadiumBorder(),
-                    side: BorderSide(
-                      color: Colors.blue.withOpacity(0.55),
-                      width: 1.w,
+              if (!isYesterday) ...[
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: onRemindLater,
+                    style: OutlinedButton.styleFrom(
+                      padding: EdgeInsets.symmetric(vertical: 9.h, horizontal: 8.w),
+                      minimumSize: Size(0, 38.h),
+                      shape: const StadiumBorder(),
+                      side: BorderSide(
+                        color: theme.colorScheme.primary.withOpacity(0.55),
+                        width: 1.w,
+                      ),
                     ),
-                  ),
-                  child: Text(
-                    'Rappeler plus tard',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 11.5.sp,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.blue,
-                      height: 1.1,
+                    child: Text(
+                      'Rappeler plus tard',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 11.5.sp,
+                        fontWeight: FontWeight.w600,
+                        color: theme.colorScheme.primary,
+                        height: 1.1,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              SizedBox(width: 10.w),
+                SizedBox(width: 10.w),
+              ],
               Expanded(
                 child: ElevatedButton(
                   onPressed: onTaken,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
+                    backgroundColor: theme.colorScheme.primary,
                     elevation: 0,
                     padding: EdgeInsets.symmetric(vertical: 9.h, horizontal: 8.w),
                     minimumSize: Size(0, 38.h),
                     shape: const StadiumBorder(),
                   ),
                   child: Text(
-                    'Pris',
+                    isYesterday ? 'Marquer comme pris' : 'Pris',
                     style: TextStyle(
                       fontSize: 12.sp,
                       fontWeight: FontWeight.w600,
@@ -751,10 +868,32 @@ class MedicationDueTile extends StatelessWidget {
         description,
         style: TextStyle(fontSize: 12.5.sp, color: Colors.grey[600]),
       ),
+      SizedBox(height: 2.h),
+      Text(
+        prescriptionName,
+        style: TextStyle(fontSize: 11.sp, color: Colors.grey[500]),
+      ),
     ],
   );
 
-  Widget _badge(String msg, Color c, IconData icon) => Container(
+  Widget _urgencyIndicator(ThemeData theme) => Container(
+    padding: EdgeInsets.all(6.w),
+    decoration: BoxDecoration(
+      color: (isOverdue || isYesterday)
+          ? (isYesterday ? Colors.orange.withOpacity(0.1) : Colors.red.withOpacity(0.1))
+          : Colors.orange.withOpacity(0.1),
+      shape: BoxShape.circle,
+    ),
+    child: Icon(
+      (isOverdue || isYesterday) ? Icons.warning : Icons.schedule,
+      color: (isOverdue || isYesterday)
+          ? (isYesterday ? Colors.orange : Colors.red)
+          : Colors.orange,
+      size: 16.sp,
+    ),
+  );
+
+  Widget _badge(String msg, Color c, IconData iconData) => Container(
     width: double.infinity,
     padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 9.h),
     decoration: BoxDecoration(
@@ -764,7 +903,7 @@ class MedicationDueTile extends StatelessWidget {
     ),
     child: Row(
       children: [
-        Icon(icon, color: c, size: 18.sp),
+        Icon(iconData, color: c, size: 18.sp),
         SizedBox(width: 8.w),
         Expanded(
           child: Text(
@@ -781,16 +920,146 @@ class MedicationDueTile extends StatelessWidget {
     ),
   );
 
+  BoxDecoration _boxDecoration(ThemeData theme) => BoxDecoration(
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(14.r),
+  );
+}
+
+class MedicationNotTakenTile extends StatelessWidget {
+  const MedicationNotTakenTile({
+    super.key,
+    required this.name,
+    required this.description,
+    required this.color,
+    required this.icon,
+    required this.prescriptionName,
+    required this.isOverdue,
+    required this.status,
+    this.canInteract = false,
+  });
+
+  final String name;
+  final String description;
+  final Color color;
+  final IconData icon;
+  final String prescriptionName;
+  final bool isOverdue;
+  final String status;
+  final bool canInteract;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Container(
+      padding: EdgeInsets.all(16.w),
+      decoration: _boxDecoration(),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              _leadingIcon(),
+              SizedBox(width: 14.w),
+              Expanded(child: _texts()),
+              _statusIndicator(theme),
+            ],
+          ),
+          if (isOverdue) ...[
+            SizedBox(height: 12.h),
+            _badge(
+              status.toUpperCase() == 'MISSED'
+                  ? 'Médicament manqué (automatique)'
+                  : 'Médicament en retard',
+              status.toUpperCase() == 'MISSED'
+                  ? Colors.grey.shade600
+                  : Colors.red,
+              Icons.warning,
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _leadingIcon() => Container(
+    width: 40.w,
+    height: 40.w,
+    decoration: BoxDecoration(
+      color: color.withOpacity(0.12),
+      borderRadius: BorderRadius.circular(10.r),
+    ),
+    child: Icon(icon, color: color, size: 22.sp),
+  );
+
+  Widget _texts() => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        name,
+        style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
+      ),
+      SizedBox(height: 4.h),
+      Text(
+        description,
+        style: TextStyle(fontSize: 12.5.sp, color: Colors.grey[600]),
+      ),
+      SizedBox(height: 2.h),
+      Text(
+        prescriptionName,
+        style: TextStyle(fontSize: 11.sp, color: Colors.grey[500]),
+      ),
+    ],
+  );
+
+  Widget _statusIndicator(ThemeData theme) => Container(
+    padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+    decoration: BoxDecoration(
+      color: status.toUpperCase() == 'MISSED'
+          ? Colors.grey.shade200
+          : theme.colorScheme.primary.withOpacity(0.1),
+      borderRadius: BorderRadius.circular(12.r),
+    ),
+    child: Text(
+      status.toUpperCase() == 'MISSED' ? 'Manqué' : status,
+      style: TextStyle(
+        fontSize: 10.sp,
+        fontWeight: FontWeight.w600,
+        color: status.toUpperCase() == 'MISSED'
+            ? Colors.grey.shade600
+            : theme.colorScheme.primary,
+      ),
+    ),
+  );
+
+  Widget _badge(String msg, Color c, IconData iconData) => Container(
+    width: double.infinity,
+    padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+    decoration: BoxDecoration(
+      color: c.withOpacity(0.08),
+      borderRadius: BorderRadius.circular(10.r),
+      border: Border.all(color: c.withOpacity(0.35), width: 1.w),
+    ),
+    child: Row(
+      children: [
+        Icon(iconData, color: c, size: 18.sp),
+        SizedBox(width: 10.w),
+        Expanded(
+          child: Text(
+            msg,
+            style: TextStyle(
+              fontSize: 12.5.sp,
+              color: c,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+
   BoxDecoration _boxDecoration() => BoxDecoration(
     color: Colors.white,
     borderRadius: BorderRadius.circular(14.r),
-    border: Border.all(color: Colors.grey.withOpacity(0.18), width: 1.w),
-    boxShadow: [
-      BoxShadow(
-        color: Colors.black.withOpacity(0.04),
-        blurRadius: 10.r,
-        offset: Offset(0, 3.h),
-      ),
-    ],
   );
 }
