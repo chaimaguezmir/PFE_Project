@@ -134,7 +134,7 @@ class AppRouter {
               ),
               ShellRoute(
                 builder: (context, state, child) => BlocProvider(
-                  create: (context) => sl<PrescriptionCreationCubit>(),
+                  create: (context) => sl<PrescriptionCreationCubit>()..fetchDiseases(),
                   child: child,
                 ),
                 routes: [

@@ -1,193 +1,128 @@
-// Add pendingTreatments/pendingReminders to state (keep rest unchanged)
 part of 'prescription_creation_cubit.dart';
-
-enum CreationStep {
-  prescription,
-  treatment,
-  reminder,
-  completed,
-}
 
 class PrescriptionCreationState extends Equatable {
   const PrescriptionCreationState({
-    this.currentStep = CreationStep.prescription,
-    this.prescriptionForm = const CreatePrescriptionEntity(
-      name: '',
-      diseaseIds: [],
-    ),
-    this.prescriptionStatus = FormzSubmissionStatus.initial,
-    this.prescriptionErrorMessage,
-    this.createdPrescription,
-
-    this.availableMedicines = const [],
-    this.filteredMedicines = const [],
-    this.medicineSearchQuery = '',
+    this.status = FormzSubmissionStatus.initial,
+    this.errorMessage,
+    this.name = '',
+    this.diseases = const [],
+    this.diseasesStatus = FormzSubmissionStatus.initial,
+    this.diseasesErrorMessage,
+    this.selectedDiseaseId,
+    this.pharmacyBoxes = const [],
+    this.pharmacyBoxesStatus = FormzSubmissionStatus.initial,
+    this.pharmacyBoxesErrorMessage,
+    this.selectedPharmacyBoxId,
+    this.medicines = const [],
     this.medicinesStatus = FormzSubmissionStatus.initial,
     this.medicinesErrorMessage,
-
-    this.treatmentForm = const CreateTreatmentEntity(
-      prescriptionId: '',
-      myMedicineId: '',
-      dosage: '',
-      frequency: '',
-      durationDays: 0,
-    ),
-    this.treatmentStatus = FormzSubmissionStatus.initial,
-    this.treatmentErrorMessage,
-    this.createdTreatment,
-
-    this.reminderForm = const CreateReminderEntity(
-      treatmentId: '',
-      reminderTimes: [],
-      customMessage: '',
-      startPreference: '',
-    ),
-    this.reminderTimes = const [],
-    this.reminderCustomMessage = '',
-    this.reminderStartPreference = 'START_NOW',
-    this.reminderStatus = FormzSubmissionStatus.initial,
-    this.reminderErrorMessage,
-    this.createdReminders = const [],
-
-    this.pendingTreatments = const [],
-    this.pendingReminders = const [],
-
-    this.successMessage,
+    this.selectedMedicineId,
   });
 
-  // existing fields...
-  final CreationStep currentStep;
-  final CreatePrescriptionEntity prescriptionForm;
-  final FormzSubmissionStatus prescriptionStatus;
-  final String? prescriptionErrorMessage;
-  final PrescriptionEntity? createdPrescription;
+  final FormzSubmissionStatus status;
+  final String? errorMessage;
+  final String name;
+  final List<DiseaseEntity> diseases;
+  final FormzSubmissionStatus diseasesStatus;
+  final String? diseasesErrorMessage;
+  final String? selectedDiseaseId;
+  final List<PharmacyBoxEntity> pharmacyBoxes;
+  final FormzSubmissionStatus pharmacyBoxesStatus;
+  final String? pharmacyBoxesErrorMessage;
+  final String? selectedPharmacyBoxId;
 
-  final List<MyMedicineEntity> availableMedicines;
-  final List<MyMedicineEntity> filteredMedicines;
-  final String medicineSearchQuery;
+  final List<MyMedicineEntity> medicines;
   final FormzSubmissionStatus medicinesStatus;
   final String? medicinesErrorMessage;
-
-  final CreateTreatmentEntity treatmentForm;
-  final FormzSubmissionStatus treatmentStatus;
-  final String? treatmentErrorMessage;
-  final TreatmentEntity? createdTreatment;
-
-  final CreateReminderEntity reminderForm;
-  final List<ReminderTimeEntity> reminderTimes;
-  final String reminderCustomMessage;
-  final String reminderStartPreference;
-  final FormzSubmissionStatus reminderStatus;
-  final String? reminderErrorMessage;
-  final List<ReminderEntity> createdReminders;
-
-  // New: pending local items (not yet persisted to backend)
-  // pendingTreatments: list of CreateTreatmentEntity (prescriptionId left empty until prescription created)
-  final List<CreateTreatmentEntity> pendingTreatments;
-  // pendingReminders: parallel list where pendingReminders[i] are ReminderTimeEntity list for pendingTreatments[i]
-  final List<List<ReminderTimeEntity>> pendingReminders;
-
-  // General
-  final String? successMessage;
+  final String? selectedMedicineId;
 
   PrescriptionCreationState copyWith({
-    CreationStep? currentStep,
-    CreatePrescriptionEntity? prescriptionForm,
-    FormzSubmissionStatus? prescriptionStatus,
-    String? prescriptionErrorMessage,
-    PrescriptionEntity? createdPrescription,
-
-    List<MyMedicineEntity>? availableMedicines,
-    List<MyMedicineEntity>? filteredMedicines,
-    String? medicineSearchQuery,
+    FormzSubmissionStatus? status,
+    String? errorMessage,
+    String? name,
+    List<DiseaseEntity>? diseases,
+    FormzSubmissionStatus? diseasesStatus,
+    String? diseasesErrorMessage,
+    String? selectedDiseaseId,
+    List<PharmacyBoxEntity>? pharmacyBoxes,
+    FormzSubmissionStatus? pharmacyBoxesStatus,
+    String? pharmacyBoxesErrorMessage,
+    String? selectedPharmacyBoxId,
+    List<MyMedicineEntity>? medicines,
     FormzSubmissionStatus? medicinesStatus,
     String? medicinesErrorMessage,
-
-    CreateTreatmentEntity? treatmentForm,
-    FormzSubmissionStatus? treatmentStatus,
-    String? treatmentErrorMessage,
-    TreatmentEntity? createdTreatment,
-
-    CreateReminderEntity? reminderForm,
-    List<ReminderTimeEntity>? reminderTimes,
-    String? reminderCustomMessage,
-    String? reminderStartPreference,
-    FormzSubmissionStatus? reminderStatus,
-    String? reminderErrorMessage,
-    List<ReminderEntity>? createdReminders,
-
-    // New
-    List<CreateTreatmentEntity>? pendingTreatments,
-    List<List<ReminderTimeEntity>>? pendingReminders,
-
-    String? successMessage,
+    String? selectedMedicineId,
   }) {
     return PrescriptionCreationState(
-      currentStep: currentStep ?? this.currentStep,
-      prescriptionForm: prescriptionForm ?? this.prescriptionForm,
-      prescriptionStatus: prescriptionStatus ?? this.prescriptionStatus,
-      prescriptionErrorMessage: prescriptionErrorMessage,
-      createdPrescription: createdPrescription ?? this.createdPrescription,
-
-      availableMedicines: availableMedicines ?? this.availableMedicines,
-      filteredMedicines: filteredMedicines ?? this.filteredMedicines,
-      medicineSearchQuery: medicineSearchQuery ?? this.medicineSearchQuery,
+      status: status ?? this.status,
+      errorMessage: errorMessage,
+      name: name ?? this.name,
+      diseases: diseases ?? this.diseases,
+      diseasesStatus: diseasesStatus ?? this.diseasesStatus,
+      diseasesErrorMessage: diseasesErrorMessage,
+      selectedDiseaseId: selectedDiseaseId,
+      pharmacyBoxes: pharmacyBoxes ?? this.pharmacyBoxes,
+      pharmacyBoxesStatus: pharmacyBoxesStatus ?? this.pharmacyBoxesStatus,
+      pharmacyBoxesErrorMessage: pharmacyBoxesErrorMessage,
+      selectedPharmacyBoxId: selectedPharmacyBoxId,
+      medicines: medicines ?? this.medicines,
       medicinesStatus: medicinesStatus ?? this.medicinesStatus,
       medicinesErrorMessage: medicinesErrorMessage,
-
-      treatmentForm: treatmentForm ?? this.treatmentForm,
-      treatmentStatus: treatmentStatus ?? this.treatmentStatus,
-      treatmentErrorMessage: treatmentErrorMessage,
-      createdTreatment: createdTreatment ?? this.createdTreatment,
-
-      reminderForm: reminderForm ?? this.reminderForm,
-      reminderTimes: reminderTimes ?? this.reminderTimes,
-      reminderCustomMessage: reminderCustomMessage ?? this.reminderCustomMessage,
-      reminderStartPreference: reminderStartPreference ?? this.reminderStartPreference,
-      reminderStatus: reminderStatus ?? this.reminderStatus,
-      reminderErrorMessage: reminderErrorMessage,
-      createdReminders: createdReminders ?? this.createdReminders,
-
-      pendingTreatments: pendingTreatments ?? this.pendingTreatments,
-      pendingReminders: pendingReminders ?? this.pendingReminders,
-
-      successMessage: successMessage,
+      selectedMedicineId: selectedMedicineId,
     );
   }
 
-  // convenience getter: can create prescription when every pending treatment has at least one pending reminder
-  bool get canCreatePrescriptionWithPending {
-    if (pendingTreatments.isEmpty) return false;
-    if (pendingReminders.length != pendingTreatments.length) return false;
-    return pendingReminders.every((lst) => lst.isNotEmpty);
-  }
+  bool get isDiseasesLoading =>
+      diseasesStatus == FormzSubmissionStatus.inProgress;
+  bool get isDiseasesSuccess => diseasesStatus == FormzSubmissionStatus.success;
+  bool get isDiseasesFailure => diseasesStatus == FormzSubmissionStatus.failure;
+  bool get hasDiseases => diseases.isNotEmpty;
+  bool get hasDiseasesError => diseasesErrorMessage != null;
+  bool get isLoading => status == FormzSubmissionStatus.inProgress;
+  bool get isSuccess => status == FormzSubmissionStatus.success;
+  bool get isFailure => status == FormzSubmissionStatus.failure;
+  bool get hasError => errorMessage != null;
+  bool get isNameValid => name.trim().isNotEmpty;
+  bool get canProceed => isNameValid && hasDiseases;
+  bool get hasAnyLoading => isLoading || isDiseasesLoading;
+  bool get hasAnyError => hasError || hasDiseasesError;
 
-  // include pending lists in props
+  // Pharmacy box getters
+  bool get isPharmacyBoxesLoading =>
+      pharmacyBoxesStatus == FormzSubmissionStatus.inProgress;
+  bool get isPharmacyBoxesSuccess =>
+      pharmacyBoxesStatus == FormzSubmissionStatus.success;
+  bool get isPharmacyBoxesFailure =>
+      pharmacyBoxesStatus == FormzSubmissionStatus.failure;
+  bool get hasPharmacyBoxes => pharmacyBoxes.isNotEmpty;
+  bool get hasPharmacyBoxesError => pharmacyBoxesErrorMessage != null;
+
+  // Medicine getters
+  bool get isMedicinesLoading =>
+      medicinesStatus == FormzSubmissionStatus.inProgress;
+  bool get isMedicinesSuccess =>
+      medicinesStatus == FormzSubmissionStatus.success;
+  bool get isMedicinesFailure =>
+      medicinesStatus == FormzSubmissionStatus.failure;
+  bool get hasMedicines => medicines.isNotEmpty;
+  bool get hasMedicinesError => medicinesErrorMessage != null;
+
   @override
   List<Object?> get props => [
-    currentStep,
-    prescriptionForm,
-    prescriptionStatus,
-    prescriptionErrorMessage,
-    createdPrescription,
-    availableMedicines,
-    filteredMedicines,
-    medicineSearchQuery,
+    status,
+    errorMessage,
+    name,
+    diseases,
+    diseasesStatus,
+    diseasesErrorMessage,
+    selectedDiseaseId,
+    pharmacyBoxes,
+    pharmacyBoxesStatus,
+    pharmacyBoxesErrorMessage,
+    selectedPharmacyBoxId,
+    medicines,
     medicinesStatus,
     medicinesErrorMessage,
-    treatmentForm,
-    treatmentStatus,
-    treatmentErrorMessage,
-    createdTreatment,
-    reminderForm,
-    reminderTimes,
-    reminderCustomMessage,
-    reminderStartPreference,
-    reminderStatus,
-    reminderErrorMessage,
-    createdReminders,
-    pendingTreatments,
-    pendingReminders,
-    successMessage,
+    selectedMedicineId,
   ];
 }

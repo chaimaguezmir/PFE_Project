@@ -3,6 +3,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter_mobile/core/network/network_controller.dart';
 import 'package:flutter_mobile/data/data_sources/auth_remote_datasource.dart';
 import 'package:flutter_mobile/data/data_sources/auth_remote_datasource_impl.dart';
+import 'package:flutter_mobile/data/data_sources/disease_remote_datasource.dart';
+import 'package:flutter_mobile/data/data_sources/disease_remote_datasource_impl.dart';
 import 'package:flutter_mobile/data/data_sources/group_remote_datasource.dart';
 import 'package:flutter_mobile/data/data_sources/group_remote_datasource_impl.dart';
 import 'package:flutter_mobile/data/data_sources/medicine_remote_datasource.dart';
@@ -22,6 +24,7 @@ import 'package:flutter_mobile/data/repositories/pharmacy_repository_impl.dart';
 import 'package:flutter_mobile/data/repositories/prescription_repository_impl.dart';
 import 'package:flutter_mobile/data/repositories/treatment_repository_impl.dart';
 import 'package:flutter_mobile/data/repositories/reminder_repository_impl.dart';
+import 'package:flutter_mobile/data/repositories/disease_repository_impl.dart';
 import 'package:flutter_mobile/domain/repositories/auth_repository.dart';
 import 'package:flutter_mobile/domain/repositories/group_repository.dart';
 import 'package:flutter_mobile/domain/repositories/medicine_repository.dart';
@@ -29,6 +32,7 @@ import 'package:flutter_mobile/domain/repositories/pharmacy_repository.dart';
 import 'package:flutter_mobile/domain/repositories/prescription_repository.dart';
 import 'package:flutter_mobile/domain/repositories/reminder_repository.dart';
 import 'package:flutter_mobile/domain/repositories/treatment_repository.dart';
+import 'package:flutter_mobile/domain/repositories/disease_repository.dart';
 import 'package:flutter_mobile/presentation/bloc/auth/auth/auth_bloc.dart';
 import 'package:flutter_mobile/presentation/bloc/auth/forgot_password/forgot_password_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/auth/login/login_cubit.dart';
@@ -93,6 +97,9 @@ Future<void> initInjectionContainer() async {
   sl.registerLazySingleton<ReminderRemoteDataSource>(
     () => ReminderRemoteDataSourceImpl(sl()),
   );
+  sl.registerLazySingleton<DiseaseRemoteDataSource>(
+    () => DiseaseRemoteDataSourceImpl(sl()),
+  );
 
   // Repositories
   sl.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl(sl()));
@@ -112,6 +119,9 @@ Future<void> initInjectionContainer() async {
   sl.registerLazySingleton<ReminderRepository>(
     () => ReminderRepositoryImpl(sl()),
   );
+  sl.registerLazySingleton<DiseaseRepository>(
+    () => DiseaseRepositoryImpl(sl()),
+  );
 
   // BLoCs / Cubits
   sl.registerFactory<ProfileCubit>(() => ProfileCubit(sl()));
@@ -130,10 +140,9 @@ Future<void> initInjectionContainer() async {
   // NEW: Add this line for the PrescriptionCreationCubit
   sl.registerFactory<PrescriptionCreationCubit>(
     () => PrescriptionCreationCubit(
-      prescriptionRepository: sl(),
-      treatmentRepository: sl(),
-      reminderRepository: sl(),
-      medicineRepository: sl(),
+      sl(),
+      sl(),
+      sl(), // Add this
     ),
   );
   // Network Controller

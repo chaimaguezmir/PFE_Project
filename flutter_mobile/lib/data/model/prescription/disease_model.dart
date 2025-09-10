@@ -1,4 +1,4 @@
-// Defensive DiseaseModel with toEntity mapping
+// lib/data/model/prescription/disease_model.dart
 import 'package:flutter_mobile/domain/entities/prescription/disease_entity.dart';
 
 class DiseaseModel {
@@ -32,7 +32,6 @@ class DiseaseModel {
     'prescriptionCount': prescriptionCount,
   };
 
-  // Convert model -> domain entity to avoid leaking data-layer types to presentation
   DiseaseEntity toEntity() {
     return DiseaseEntity(
       id: id,
