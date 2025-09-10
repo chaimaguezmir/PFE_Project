@@ -10,11 +10,14 @@ abstract class GroupRepository {
   Future<DataState<List<MemberEntity>>> getGroupMembers(String groupId);
   Future<DataState<AddMemberEntity>> addMember(String groupId, String email);
   Future<DataState<ToggleRoleEntity>> toggleRole(
-    String groupId,
-    String targetUserId,
-  );
+      String groupId,
+      String targetUserId,
+      );
   Future<DataState<RemoveMemberEntity>> removeMember(
-    String groupId,
-    String memberId,
-  );
+      String groupId,
+      String memberId,
+      );
+
+  // New method for creating groups
+  Future<DataState<GroupEntity>> createGroup(String groupName);
 }

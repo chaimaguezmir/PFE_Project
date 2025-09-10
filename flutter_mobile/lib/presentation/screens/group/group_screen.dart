@@ -26,47 +26,86 @@ class GroupScreen extends StatelessWidget {
 
       body: BlocBuilder<GroupCubit, GroupState>(
         builder: (context, state) {
-          // if (state.status.isInitial &&
-          //     state.status != FormzSubmissionStatus.inProgress) {
-          //   WidgetsBinding.instance.addPostFrameCallback((_) {
-          //     context.read<GroupCubit>().fetchGroups();
-          //   });
-          // }
-
-          if (state.status.isInProgress) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (state.status.isFailure) {
-            return Center(child: Text(state.errorMessage ?? 'Error'));
-          }
-          if (state.groups.isEmpty) {
-            return const Center(child: Text('No groups found.'));
-          }
-          return RefreshIndicator(
-            onRefresh: () => context.read<GroupCubit>().fetchGroups(),
-            child: ListView.builder(
-              itemCount: state.groups.length,
-              itemBuilder: (context, i) {
-                final group = state.groups[i];
-                return ListTile(
-                  onTap: () {
-                    context.read<GroupCubit>().currentGroupIdChanged(
-                      group.groupId,
-                    );
-                    context.read<GroupCubit>().currentGroupUserRoleChanged(
-                      group.role,
-                    );
-                    context.read<GroupCubit>().currentGroupNameChanged(
-                      group.name,
-                    );
-
-                   context.pushNamed(AppRouteName.groupMembersScreen);
-                  },
-                  title: Text(group.name),
-                  subtitle: Text(group.role),
-                );
-              },
-            ),
+          return Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    TextField(
+                      decoration: InputDecoration(
+                        labelText: 'Nom du groupe',
+                        errorText: state.errorMessage,
+                        border: const OutlineInputBorder(),
+                      ),
+                      onChanged: (value) => context.read<GroupCubit>().groupNameChanged(value),
+                      controller: TextEditingController.fromValue(
+                        TextEditingValue(
+                          text: state.newGroupName,
+                          selection: TextSelection.collapsed(offset: state.newGroupName.length),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    ElevatedButton(
+                      onPressed: state.status.isInProgress
+                          ? null
+                          : () => context.read<GroupCubit>().createGroup(),
+                      child: state.status.isInProgress
+                          ? const SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Text('Créer le groupe'),
+                    ),
+                    if (state.successMessage != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Text(
+                          state.successMessage!,
+                          style: const TextStyle(color: Colors.green),
+                        ),
+                      ),
+                    if (state.errorMessage != null && state.status.isFailure)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Text(
+                          state.errorMessage!,
+                          style: const TextStyle(color: Colors.red),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              const Divider(),
+              Expanded(
+                child: state.status.isInProgress
+                    ? const Center(child: CircularProgressIndicator())
+                    : state.groups.isEmpty
+                        ? const Center(child: Text('No groups found.'))
+                        : RefreshIndicator(
+                            onRefresh: () => context.read<GroupCubit>().fetchGroups(),
+                            child: ListView.builder(
+                              itemCount: state.groups.length,
+                              itemBuilder: (context, i) {
+                                final group = state.groups[i];
+                                return ListTile(
+                                  onTap: () {
+                                    context.read<GroupCubit>().currentGroupIdChanged(group.groupId);
+                                    context.read<GroupCubit>().currentGroupUserRoleChanged(group.role);
+                                    context.read<GroupCubit>().currentGroupNameChanged(group.name);
+                                    context.pushNamed(AppRouteName.groupMembersScreen);
+                                  },
+                                  title: Text(group.name),
+                                  subtitle: Text(group.role),
+                                );
+                              },
+                            ),
+                          ),
+              ),
+            ],
           );
         },
       ),

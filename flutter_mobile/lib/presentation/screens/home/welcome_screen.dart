@@ -1,4 +1,4 @@
-// lib/presentation/screens/home/welcome_screen.dart - Complete corrected version
+// Complete corrected version with always-available pull-to-refresh
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_mobile/domain/entities/prescription/reminder_entity.dart';
@@ -28,43 +28,69 @@ class WelcomeScreen extends StatelessWidget {
       backgroundColor: Colors.grey[50],
       body: BlocBuilder<WelcomeScreenCubit, WelcomeScreenState>(
         builder: (context, state) {
-          if (state.isLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
+          final cubit = context.read<WelcomeScreenCubit>();
 
-          if (state.hasError) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.error_outline,
-                    size: 64.sp,
-                    color: Colors.red[400],
-                  ),
-                  SizedBox(height: 16.h),
-                  Text(
-                    state.errorMessage ?? 'Une erreur est survenue',
-                    style: TextStyle(fontSize: 16.sp, color: Colors.red),
-                    textAlign: TextAlign.center,
-                  ),
-                  SizedBox(height: 16.h),
-                  ElevatedButton(
-                    onPressed: () {
-                      context.read<WelcomeScreenCubit>().fetchReminders();
-                    },
-                    child: const Text('Réessayer'),
-                  ),
-                ],
-              ),
-            );
-          }
+          // Always wrap in RefreshIndicator with a scrollable ListView so pull-to-refresh
+          // is available even when the content is empty or an error occurred.
+          return RefreshIndicator(
+            onRefresh: () async => await cubit.fetchReminders(),
+            child: ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: EdgeInsets.zero,
+              children: [
+                // Day header is always shown
+                const _DayHeader(),
 
-          return const Column(
-            children: [
-              _DayHeader(),
-              Expanded(child: MedicationScheduleCard()),
-            ],
+                // Content area: use different visuals depending on state
+                Builder(builder: (context) {
+                  if (state.isLoading) {
+                    return SizedBox(
+                      // ensure it fills remaining viewport for nice centering
+                      height: MediaQuery.of(context).size.height - 160.h,
+                      child: const Center(child: CircularProgressIndicator()),
+                    );
+                  }
+
+                  if (state.hasError) {
+                    return SizedBox(
+                      height: MediaQuery.of(context).size.height - 160.h,
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.error_outline,
+                              size: 64.sp,
+                              color: Colors.red[400],
+                            ),
+                            SizedBox(height: 16.h),
+                            Text(
+                              state.errorMessage ?? 'Une erreur est survenue',
+                              style: TextStyle(fontSize: 16.sp, color: Colors.red),
+                              textAlign: TextAlign.center,
+                            ),
+                            SizedBox(height: 16.h),
+                            ElevatedButton(
+                              onPressed: () {
+                                cubit.fetchReminders();
+                              },
+                              child: const Text('Réessayer'),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }
+
+                  // Normal content (reminders card)
+                  return SizedBox(
+                    // ensure card occupies remaining viewport so the list can scroll naturally
+                    height: MediaQuery.of(context).size.height - 160.h,
+                    child: const MedicationScheduleCard(),
+                  );
+                }),
+              ],
+            ),
           );
         },
       ),
@@ -430,40 +456,34 @@ class MedicationScheduleCard extends StatelessWidget {
           groupedByTime[timeKey]!.add(reminder);
         }
 
-        return RefreshIndicator(
-          onRefresh: () => context.read<WelcomeScreenCubit>().fetchReminders(),
-          child: SingleChildScrollView(
-            padding: EdgeInsets.only(bottom: 24.h),
-            child: Column(
-              children: groupedByTime.entries.map((entry) {
-                final time = entry.key;
-                final timeReminders = entry.value;
+        return Column(
+          children: groupedByTime.entries.map((entry) {
+            final time = entry.key;
+            final timeReminders = entry.value;
 
-                return Column(
-                  children: [
-                    Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.all(18.w),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+            return Column(
+              children: [
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.all(18.w),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _timeHeader(time, theme),
+                      SizedBox(height: 18.h),
+                      ...timeReminders.map((reminder) => Column(
                         children: [
-                          _timeHeader(time, theme),
-                          SizedBox(height: 18.h),
-                          ...timeReminders.map((reminder) => Column(
-                            children: [
-                              ReminderTile(reminder: reminder),
-                              if (reminder != timeReminders.last) SizedBox(height: 12.h),
-                            ],
-                          )),
+                          ReminderTile(reminder: reminder),
+                          if (reminder != timeReminders.last) SizedBox(height: 12.h),
                         ],
-                      ),
-                    ),
-                    if (entry.key != groupedByTime.keys.last) _divider(theme),
-                  ],
-                );
-              }).toList(),
-            ),
-          ),
+                      )),
+                    ],
+                  ),
+                ),
+                if (entry.key != groupedByTime.keys.last) _divider(theme),
+              ],
+            );
+          }).toList(),
         );
       },
     );

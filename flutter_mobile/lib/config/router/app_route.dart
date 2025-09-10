@@ -102,7 +102,7 @@ class AppRouter {
             routes: <RouteBase>[
               ShellRoute(
                 builder: (context, state, child) => BlocProvider(
-                  create: (context) => sl<WelcomeScreenCubit>(),
+                  create: (context) => sl<WelcomeScreenCubit>()..loadWelcomeData(),
                   child: child,
                 ),
                 routes: [

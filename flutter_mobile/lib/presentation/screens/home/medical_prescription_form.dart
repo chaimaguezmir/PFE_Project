@@ -521,38 +521,38 @@ class MedicalPrescriptionForm extends StatelessWidget {
                                             ),
                                           );
                                         } else if (failedReminders.isNotEmpty) {
-                                          scaffold.showSnackBar(
-                                            SnackBar(
-                                              content: Text(
-                                                'Prescription créée. Échec rappels: ${failedReminders.join(", ")}',
-                                              ),
-                                              backgroundColor: Colors.orange,
-                                            ),
-                                          );
+                                          // scaffold.showSnackBar(
+                                          //   SnackBar(
+                                          //     content: Text(
+                                          //       'Prescription créée. Échec rappels: ${failedReminders.join(", ")}',
+                                          //     ),
+                                          //     backgroundColor: Colors.orange,
+                                          //   ),
+                                          // );
                                         } else {
-                                          scaffold.showSnackBar(
-                                            const SnackBar(
-                                              content: Text(
-                                                'Prescription et traitements créés!',
-                                              ),
-                                            ),
-                                          );
+                                          // scaffold.showSnackBar(
+                                          //   const SnackBar(
+                                          //     content: Text(
+                                          //       'Prescription et traitements créés!',
+                                          //     ),
+                                          //   ),
+                                          // );
                                         }
                                       } else {
-                                        scaffold.showSnackBar(
-                                          const SnackBar(
-                                            content: Text(
-                                              'Prescription créée sans traitements',
-                                            ),
-                                          ),
-                                        );
+                                        // scaffold.showSnackBar(
+                                        //   const SnackBar(
+                                        //     content: Text(
+                                        //       'Prescription créée sans traitements',
+                                        //     ),
+                                        //   ),
+                                        // );
                                       }
 
                                       // Navigate back
                                       if (onValidatePressed != null) {
                                         onValidatePressed!();
                                       }
-                                      context.pop();
+                                      context.goNamed(AppRouteName.home);
                                     } catch (e) {
                                       scaffold.showSnackBar(
                                         SnackBar(
