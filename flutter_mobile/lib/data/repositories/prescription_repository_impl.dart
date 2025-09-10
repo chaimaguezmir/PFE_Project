@@ -1,7 +1,10 @@
+// lib/data/repositories/prescription_repository_impl.dart
 import 'package:dio/dio.dart';
 import 'package:flutter_mobile/core/resources/data_state.dart';
 import 'package:flutter_mobile/data/data_sources/prescription_remote_datasource.dart';
+import 'package:flutter_mobile/data/model/prescription/create_prescription_request_model.dart';
 import 'package:flutter_mobile/domain/entities/prescription/prescription_entity.dart';
+import 'package:flutter_mobile/domain/entities/prescription/create_prescription_entity.dart';
 import 'package:flutter_mobile/domain/repositories/prescription_repository.dart';
 
 class PrescriptionRepositoryImpl implements PrescriptionRepository {
@@ -13,7 +16,9 @@ class PrescriptionRepositoryImpl implements PrescriptionRepository {
   Future<DataState<List<PrescriptionEntity>>> getPrescriptions() async {
     try {
       final result = await _remoteDataSource.getPrescriptions();
-      return DataSuccess(result);
+      // FIXED: Convert PrescriptionModel list to PrescriptionEntity list
+      final entities = result.map((model) => model.toEntity()).toList();
+      return DataSuccess(entities);
     } on DioException catch (e) {
       return DataError(_handleDioError(e));
     } catch (e) {
@@ -25,7 +30,8 @@ class PrescriptionRepositoryImpl implements PrescriptionRepository {
   Future<DataState<PrescriptionEntity>> getPrescriptionById(String id) async {
     try {
       final result = await _remoteDataSource.getPrescriptionById(id);
-      return DataSuccess(result);
+      // FIXED: Convert PrescriptionModel to PrescriptionEntity
+      return DataSuccess(result.toEntity());
     } on DioException catch (e) {
       return DataError(_handleDioError(e));
     } catch (e) {
@@ -34,20 +40,19 @@ class PrescriptionRepositoryImpl implements PrescriptionRepository {
   }
 
   @override
-  Future<DataState<PrescriptionEntity>> createPrescription({
-    required String name,
-    required DateTime startDate,
-    DateTime? endDate,
-    required List<String> diseaseIds,
-  }) async {
+  Future<DataState<PrescriptionEntity>> createPrescription(
+      CreatePrescriptionEntity prescription,
+      ) async {
     try {
-      final result = await _remoteDataSource.createPrescription(
-        name: name,
-        startDate: startDate,
-        endDate: endDate,
-        diseaseIds: diseaseIds,
+      // Convert entity to request model
+      final requestModel = CreatePrescriptionRequestModel(
+        name: prescription.name,
+        diseaseIds: prescription.diseaseIds,
       );
-      return DataSuccess(result);
+
+      final result = await _remoteDataSource.createPrescription(requestModel);
+      // FIXED: Convert PrescriptionModel to PrescriptionEntity
+      return DataSuccess(result.toEntity());
     } on DioException catch (e) {
       return DataError(_handleDioError(e));
     } catch (e) {
@@ -69,7 +74,8 @@ class PrescriptionRepositoryImpl implements PrescriptionRepository {
         startDate: startDate,
         endDate: endDate,
       );
-      return DataSuccess(result);
+      // FIXED: Convert PrescriptionModel to PrescriptionEntity
+      return DataSuccess(result.toEntity());
     } on DioException catch (e) {
       return DataError(_handleDioError(e));
     } catch (e) {
@@ -104,6 +110,8 @@ class PrescriptionRepositoryImpl implements PrescriptionRepository {
           return 'Non autorisé.';
         } else if (error.response?.statusCode == 404) {
           return 'Prescription non trouvée.';
+        } else if (error.response?.statusCode == 409) {
+          return 'Une prescription avec ce nom existe déjà.';
         } else if (error.response?.statusCode == 500) {
           return 'Erreur du serveur. Veuillez réessayer plus tard.';
         }

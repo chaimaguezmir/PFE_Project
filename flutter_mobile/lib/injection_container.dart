@@ -35,6 +35,7 @@ import 'package:flutter_mobile/presentation/bloc/auth/login/login_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/auth/onboarding/auth_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/auth/signup/signup_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/group/group_cubit.dart';
+import 'package:flutter_mobile/presentation/bloc/home/prescription_creation_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/home/prescription_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/home/welcome_screen_cubit.dart';
 
@@ -109,7 +110,7 @@ Future<void> initInjectionContainer() async {
     () => TreatmentRepositoryImpl(sl()),
   );
   sl.registerLazySingleton<ReminderRepository>(
-    () => ReminderRepositoryImpl(remoteDataSource: sl()),
+    () => ReminderRepositoryImpl(sl()),
   );
 
   // BLoCs / Cubits
@@ -126,6 +127,15 @@ Future<void> initInjectionContainer() async {
     () => WelcomeScreenCubit(reminderRepository: sl()),
   );
 
+  // NEW: Add this line for the PrescriptionCreationCubit
+  sl.registerFactory<PrescriptionCreationCubit>(
+    () => PrescriptionCreationCubit(
+      prescriptionRepository: sl(),
+      treatmentRepository: sl(),
+      reminderRepository: sl(),
+      medicineRepository: sl(),
+    ),
+  );
   // Network Controller
   sl.registerLazySingleton<Connectivity>(() => Connectivity());
 }

@@ -1,4 +1,4 @@
-// lib/presentation/screens/barcode/barcode_scanner_screen.dart
+// dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_mobile/config/router/app_route_constants.dart';
@@ -20,54 +20,84 @@ class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
   late MobileScannerController cameraController;
   bool _hasScanned = false;
   bool _isTorchOn = false;
+  bool _isStopping = false;
 
   @override
   void initState() {
     super.initState();
     cameraController = MobileScannerController(
+      // Reduce duplicate callbacks and frame pressure
+      detectionSpeed: DetectionSpeed.noDuplicates,
+      detectionTimeoutMs: 800,
       formats: [BarcodeFormat.all],
-      detectionSpeed: DetectionSpeed.normal,
       facing: CameraFacing.back,
       torchEnabled: false,
+      autoStart: true,
     );
   }
 
   @override
   void dispose() {
+    // Dispose controller (stops the stream internally)
     cameraController.dispose();
     super.dispose();
   }
 
-  void _onDetect(BarcodeCapture capture) {
-    if (_hasScanned) return;
+  Future<void> _stopScanner() async {
+    if (_isStopping) return;
+    _isStopping = true;
+    try {
+      // Stop stream ASAP to release ImageReader buffers
+      await cameraController.stop();
+    } catch (_) {
+      // ignore
+    }
+  }
+
+  Future<void> _onDetect(BarcodeCapture capture) async {
+    if (_hasScanned || _isStopping) return;
 
     final List<Barcode> barcodes = capture.barcodes;
-    if (barcodes.isNotEmpty && barcodes.first.rawValue != null) {
-      setState(() {
-        _hasScanned = true;
-      });
+    final String? value = barcodes.isNotEmpty ? barcodes.first.rawValue : null;
+    if (value == null) return;
 
-      final String barcode = barcodes.first.rawValue!;
+    // Lock further detections
+    setState(() {
+      _hasScanned = true;
+    });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Code scanné: $barcode'),
-          duration: const Duration(seconds: 1),
-        ),
-      );
+    // Stop camera to free buffers before any heavy work or navigation
+    await _stopScanner();
 
-      context.read<ServicesCubit>().fetchMedicineByBarcode(barcode);
+    if (!mounted) return;
+
+    final String barcode = value;
+
+    // Optional feedback
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Code scanné'),
+        duration: Duration(milliseconds: 800),
+      ),
+    );
+
+    // Trigger search then navigate
+    context.read<ServicesCubit>().fetchMedicineByBarcode(barcode);
+    if (mounted) {
       context.pushReplacementNamed(AppRouteName.medicineSearchResult);
     }
   }
 
   void _toggleTorch() async {
+    if (_hasScanned || _isStopping) return;
     try {
       await cameraController.toggleTorch();
+      if (!mounted) return;
       setState(() {
         _isTorchOn = !_isTorchOn;
       });
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Erreur avec la lampe: $e'),
@@ -78,12 +108,15 @@ class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
   }
 
   void _switchCamera() async {
+    if (_hasScanned || _isStopping) return;
     try {
       await cameraController.switchCamera();
+      if (!mounted) return;
       setState(() {
         _isTorchOn = false;
       });
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Erreur changement caméra: $e'),
@@ -107,15 +140,13 @@ class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
         ),
         child: Stack(
           children: [
-            // Corner brackets
             ...List.generate(4, (index) {
               final positions = [
-                {'top': 0.0, 'left': 0.0}, // Top-left
-                {'top': 0.0, 'right': 0.0}, // Top-right
-                {'bottom': 0.0, 'left': 0.0}, // Bottom-left
-                {'bottom': 0.0, 'right': 0.0}, // Bottom-right
+                {'top': 0.0, 'left': 0.0},
+                {'top': 0.0, 'right': 0.0},
+                {'bottom': 0.0, 'left': 0.0},
+                {'bottom': 0.0, 'right': 0.0},
               ];
-
               final pos = positions[index];
               return Positioned(
                 top: pos['top']?.toDouble(),
@@ -144,8 +175,6 @@ class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
                 ),
               );
             }),
-
-            // Scanning line animation
             Center(
               child: Container(
                 width: double.infinity,
@@ -191,7 +220,6 @@ class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Drag indicator
             Container(
               width: 40.w,
               height: 4.h,
@@ -201,8 +229,6 @@ class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
                 borderRadius: BorderRadius.circular(2.r),
               ),
             ),
-
-            // Main instruction
             Row(
               children: [
                 Container(
@@ -243,10 +269,7 @@ class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
                 ),
               ],
             ),
-
             SizedBox(height: 16.h),
-
-            // Status indicator
             Container(
               width: double.infinity,
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
@@ -290,7 +313,6 @@ class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          // Camera view (full screen)
           Positioned.fill(
             child: MobileScanner(
               controller: cameraController,
@@ -335,11 +357,7 @@ class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
               },
             ),
           ),
-
-          // Scanning overlay
           _buildScanningOverlay(),
-
-          // Torch indicator
           if (_isTorchOn)
             Positioned(
               top: 20.h,
@@ -357,8 +375,6 @@ class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
                 ),
               ),
             ),
-
-          // Bottom instruction panel
           Positioned(
             left: 0,
             right: 0,
@@ -368,7 +384,7 @@ class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
         ],
       ),
       floatingActionButton: Padding(
-        padding: EdgeInsets.only(bottom: 120.h), // Above the instruction panel
+        padding: EdgeInsets.only(bottom: 120.h),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
@@ -390,9 +406,9 @@ class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
               onPressed: _switchCamera,
               backgroundColor: Colors.white.withOpacity(0.9),
               elevation: 8,
-              child: Icon(
+              child: const Icon(
                 Icons.flip_camera_android,
-                color: Colors.grey[700],
+                color: Colors.grey,
               ),
             ),
           ],

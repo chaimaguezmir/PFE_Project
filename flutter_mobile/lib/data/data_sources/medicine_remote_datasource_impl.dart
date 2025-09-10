@@ -181,7 +181,6 @@ class MedicineRemoteDataSourceImpl implements MedicineRemoteDataSource {
       if (response.statusCode == 200 || response.statusCode == 201) {
         print('Successfully added purchase history');
 
-        // Add defensive null checking
         if (response.data == null) {
           throw Exception('Response data is null');
         }
@@ -210,6 +209,7 @@ class MedicineRemoteDataSourceImpl implements MedicineRemoteDataSource {
       );
     }
   }
+
   @override
   Future<List<MedicineModel>> getAllMedicines() async {
     try {
@@ -279,20 +279,86 @@ class MedicineRemoteDataSourceImpl implements MedicineRemoteDataSource {
       );
     }
   }
+
   @override
   Future<List<MedicineModel>> searchMedicinesByName(String query) async {
     try {
-      print('Searching medicines by name: $query');
+      print('🌐 API: Searching medicines by name: "$query"');
+      print('🌐 API: Endpoint: ${ApiEndpoints.searchMedicines}');
+      print('🌐 API: Query params: {q: $query}');
+
       final response = await _dio.get(
         ApiEndpoints.searchMedicines,
         queryParameters: {'q': query},
+        options: Options(
+          receiveTimeout: const Duration(seconds: 10),
+          sendTimeout: const Duration(seconds: 10),
+        ),
       );
 
+      print('🌐 API: Response status: ${response.statusCode}');
+      print('🌐 API: Response data type: ${response.data.runtimeType}');
+
       if (response.statusCode == 200) {
+        if (response.data == null) {
+          print('🌐 API: Response data is null');
+          return [];
+        }
+
+        if (response.data is! List) {
+          print('🌐 API: Response data is not a List: ${response.data}');
+          throw Exception('API returned unexpected data format: ${response.data.runtimeType}');
+        }
+
         final data = response.data as List;
-        print('Successfully found ${data.length} medicines for query: $query');
-        return data.map((json) => MedicineModel.fromJson(json)).toList();
+        print('🌐 API: Successfully found ${data.length} medicines for query: "$query"');
+
+        // Log first few items for debugging
+        for (int i = 0; i < data.length && i < 2; i++) {
+          print('🌐 API: Item $i: ${data[i]['medicationName']} - ${data[i]['laboratory']}');
+        }
+
+        try {
+          final medicines = data.map((json) {
+            try {
+              print('🔧 Parsing medicine: ${json['medicationName']}');
+
+              // Validate required fields before parsing
+              if (json['id'] == null) {
+                print('🔧 Warning: Medicine has null ID, skipping');
+                return null;
+              }
+              if (json['medicationName'] == null) {
+                print('🔧 Warning: Medicine has null medicationName, skipping');
+                return null;
+              }
+              if (json['laboratory'] == null) {
+                print('🔧 Warning: Medicine has null laboratory, skipping');
+                return null;
+              }
+
+              final medicine = MedicineModel.fromJson(json);
+              print('🔧 Successfully parsed: ${medicine.medicationName} (barcode: "${medicine.barcode}")');
+              return medicine;
+            } catch (e) {
+              print('🔧 Error parsing individual medicine: ${json['medicationName']}');
+              print('🔧 Parse error: $e');
+              // Skip this medicine and continue with others
+              return null;
+            }
+          }).where((medicine) => medicine != null).cast<MedicineModel>().toList();
+
+          print('🔧 Successfully parsed ${medicines.length} out of ${data.length} medicines');
+          return medicines;
+        } catch (e) {
+          print('🔧 Error during medicines parsing: $e');
+          throw Exception('Error parsing medicines data: $e');
+        }
       } else {
+        print('🌐 API: Bad response status: ${response.statusCode}');
+        print('🌐 API: Response message: ${response.statusMessage}');
+        print('🌐 API: Response data: ${response.data}');
+
         throw DioException(
           requestOptions: response.requestOptions,
           response: response,
@@ -300,14 +366,118 @@ class MedicineRemoteDataSourceImpl implements MedicineRemoteDataSource {
         );
       }
     } on DioException catch (e) {
-      print('DioException in searchMedicinesByName: ${e.message}');
+      print('🌐 API: DioException in searchMedicinesByName: ${e.message}');
+      print('🌐 API: Error type: ${e.type}');
+      print('🌐 API: Status code: ${e.response?.statusCode}');
+      print('🌐 API: Response data: ${e.response?.data}');
+
+      // Provide more specific error messages
+      String userMessage;
+      switch (e.type) {
+        case DioExceptionType.connectionTimeout:
+        case DioExceptionType.sendTimeout:
+        case DioExceptionType.receiveTimeout:
+          userMessage = 'Délai de connexion dépassé. Vérifiez votre connexion internet.';
+          break;
+        case DioExceptionType.connectionError:
+          userMessage = 'Erreur de connexion. Vérifiez votre connexion internet.';
+          break;
+        case DioExceptionType.badResponse:
+          if (e.response?.statusCode == 404) {
+            userMessage = 'Service de recherche non disponible.';
+          } else if (e.response?.statusCode == 500) {
+            userMessage = 'Erreur du serveur. Veuillez réessayer plus tard.';
+          } else {
+            userMessage = 'Erreur de recherche: ${e.response?.statusCode}';
+          }
+          break;
+        default:
+          userMessage = 'Erreur de recherche: ${e.message}';
+      }
+
+      throw DioException(
+        requestOptions: e.requestOptions,
+        response: e.response,
+        message: userMessage,
+        type: e.type,
+      );
+    } catch (e) {
+      print('🌐 API: Unexpected error in searchMedicinesByName: $e');
+      print('🌐 API: Error type: ${e.runtimeType}');
+      throw DioException(
+        requestOptions: RequestOptions(path: ApiEndpoints.searchMedicines),
+        message: 'Erreur inattendue lors de la recherche: $e',
+      );
+    }
+  }
+
+  @override
+  Future<void> removeBarcode({
+    required String medicineId,
+    required String barcode,
+  }) async {
+    try {
+      print('Removing barcode $barcode from medicine $medicineId');
+      final response = await _dio.delete(
+        '${ApiEndpoints.medicines}/$medicineId/barcode',
+        data: {'barcode': barcode},
+      );
+
+      print('Remove barcode response status: ${response.statusCode}');
+      print('Remove barcode response data: ${response.data}');
+
+      if (response.statusCode != 200 && response.statusCode != 204) {
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          message: 'Failed to remove barcode: ${response.statusMessage}',
+        );
+      }
+    } on DioException catch (e) {
+      print('DioException in removeBarcode: ${e.message}');
       print('Status code: ${e.response?.statusCode}');
       print('Response data: ${e.response?.data}');
       rethrow;
     } catch (e) {
-      print('Unexpected error in searchMedicinesByName: $e');
+      print('Unexpected error in removeBarcode: $e');
       throw DioException(
-        requestOptions: RequestOptions(path: ApiEndpoints.searchMedicines),
+        requestOptions: RequestOptions(path: '${ApiEndpoints.medicines}/$medicineId/barcode'),
+        message: 'An unexpected error occurred: $e',
+      );
+    }
+  }
+
+  @override
+  Future<void> assignBarcode({
+    required String medicineId,
+    required String barcode,
+  }) async {
+    try {
+      print('Assigning barcode $barcode to medicine $medicineId');
+      final response = await _dio.put(
+        '${ApiEndpoints.medicines}/$medicineId/barcode',
+        data: {'barcode': barcode},
+      );
+
+      print('Assign barcode response status: ${response.statusCode}');
+      print('Assign barcode response data: ${response.data}');
+
+      if (response.statusCode != 200 && response.statusCode != 204) {
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          message: 'Failed to assign barcode: ${response.statusMessage}',
+        );
+      }
+    } on DioException catch (e) {
+      print('DioException in assignBarcode: ${e.message}');
+      print('Status code: ${e.response?.statusCode}');
+      print('Response data: ${e.response?.data}');
+      rethrow;
+    } catch (e) {
+      print('Unexpected error in assignBarcode: $e');
+      throw DioException(
+        requestOptions: RequestOptions(path: '${ApiEndpoints.medicines}/$medicineId/barcode'),
         message: 'An unexpected error occurred: $e',
       );
     }

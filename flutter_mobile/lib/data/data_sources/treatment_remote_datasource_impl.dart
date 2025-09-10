@@ -1,7 +1,10 @@
+// lib/data/data_sources/treatment_remote_datasource_impl.dart
+import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter_mobile/core/constants/api_endpoint.dart';
 import 'package:flutter_mobile/data/data_sources/treatment_remote_datasource.dart';
 import 'package:flutter_mobile/data/model/prescription/treatment_model.dart';
+import 'package:flutter_mobile/data/model/prescription/create_treatment_request_model.dart';
 
 class TreatmentRemoteDataSourceImpl implements TreatmentRemoteDataSource {
   TreatmentRemoteDataSourceImpl(this._dio);
@@ -12,7 +15,7 @@ class TreatmentRemoteDataSourceImpl implements TreatmentRemoteDataSource {
   Future<List<TreatmentModel>> getTreatmentsByPrescriptionId(String prescriptionId) async {
     try {
       print('Fetching treatments for prescription: $prescriptionId');
-      final response = await _dio.get('${ApiEndpoints.baseurl}/treatments/prescription/$prescriptionId');
+      final response = await _dio.get(ApiEndpoints.treatmentsByPrescription(prescriptionId));
 
       if (response.statusCode == 200) {
         final data = response.data as List;
@@ -34,7 +37,7 @@ class TreatmentRemoteDataSourceImpl implements TreatmentRemoteDataSource {
       print('Unexpected error in getTreatmentsByPrescriptionId: $e');
       throw DioException(
         requestOptions: RequestOptions(
-          path: '${ApiEndpoints.baseurl}/treatments/prescription/$prescriptionId',
+          path: ApiEndpoints.treatmentsByPrescription(prescriptionId),
         ),
         message: 'An unexpected error occurred: $e',
       );
@@ -42,27 +45,48 @@ class TreatmentRemoteDataSourceImpl implements TreatmentRemoteDataSource {
   }
 
   @override
-  Future<TreatmentModel> createTreatment({
-    required String prescriptionId,
-    required String myMedicineId,
-    required String dosage,
-    required String frequency,
-    required int durationDays,
-  }) async {
+  Future<TreatmentModel> getTreatmentById(String id) async {
     try {
-      print('Creating new treatment for prescription: $prescriptionId');
-      final requestData = {
-        'prescriptionId': prescriptionId,
-        'myMedicineId': myMedicineId,
-        'dosage': dosage,
-        'frequency': frequency,
-        'durationDays': durationDays,
-      };
+      print('Fetching treatment by ID: $id');
+      final response = await _dio.get(ApiEndpoints.treatmentById(id));
+
+      if (response.statusCode == 200) {
+        print('Successfully fetched treatment: $id');
+        return TreatmentModel.fromJson(response.data);
+      } else {
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          message: 'Failed to fetch treatment: ${response.statusMessage}',
+        );
+      }
+    } on DioException catch (e) {
+      print('DioException in getTreatmentById: ${e.message}');
+      rethrow;
+    } catch (e) {
+      print('Unexpected error in getTreatmentById: $e');
+      throw DioException(
+        requestOptions: RequestOptions(path: ApiEndpoints.treatmentById(id)),
+        message: 'An unexpected error occurred: $e',
+      );
+    }
+  }
+
+  @override
+  Future<TreatmentModel> createTreatment(
+      CreateTreatmentRequestModel request,
+      ) async {
+    try {
+      print('Creating new treatment for prescription: ${request.prescriptionId}');
+      print('Request data: ${request.toJson()}');
 
       final response = await _dio.post(
-        '${ApiEndpoints.baseurl}/treatments',
-        data: requestData,
+        ApiEndpoints.treatments,
+        data: request.toJson(),
       );
+
+      print('Create treatment response status: ${response.statusCode}');
+      print('Create treatment response data: ${response.data}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         print('Successfully created treatment');
@@ -76,11 +100,13 @@ class TreatmentRemoteDataSourceImpl implements TreatmentRemoteDataSource {
       }
     } on DioException catch (e) {
       print('DioException in createTreatment: ${e.message}');
+      print('Status code: ${e.response?.statusCode}');
+      print('Response data: ${e.response?.data}');
       rethrow;
     } catch (e) {
       print('Unexpected error in createTreatment: $e');
       throw DioException(
-        requestOptions: RequestOptions(path: '${ApiEndpoints.baseurl}/treatments'),
+        requestOptions: RequestOptions(path: ApiEndpoints.treatments),
         message: 'An unexpected error occurred: $e',
       );
     }
@@ -101,8 +127,10 @@ class TreatmentRemoteDataSourceImpl implements TreatmentRemoteDataSource {
       if (frequency != null) requestData['frequency'] = frequency;
       if (durationDays != null) requestData['durationDays'] = durationDays;
 
+      print('Update request data: $requestData');
+
       final response = await _dio.put(
-        '${ApiEndpoints.baseurl}/treatments/$id',
+        ApiEndpoints.treatmentById(id),
         data: requestData,
       );
 
@@ -122,7 +150,7 @@ class TreatmentRemoteDataSourceImpl implements TreatmentRemoteDataSource {
     } catch (e) {
       print('Unexpected error in updateTreatment: $e');
       throw DioException(
-        requestOptions: RequestOptions(path: '${ApiEndpoints.baseurl}/treatments/$id'),
+        requestOptions: RequestOptions(path: ApiEndpoints.treatmentById(id)),
         message: 'An unexpected error occurred: $e',
       );
     }
@@ -132,7 +160,7 @@ class TreatmentRemoteDataSourceImpl implements TreatmentRemoteDataSource {
   Future<void> deleteTreatment(String id) async {
     try {
       print('Deleting treatment: $id');
-      final response = await _dio.delete('${ApiEndpoints.baseurl}/treatments/$id');
+      final response = await _dio.delete(ApiEndpoints.treatmentById(id));
 
       if (response.statusCode != 200 && response.statusCode != 204) {
         throw DioException(
@@ -148,7 +176,7 @@ class TreatmentRemoteDataSourceImpl implements TreatmentRemoteDataSource {
     } catch (e) {
       print('Unexpected error in deleteTreatment: $e');
       throw DioException(
-        requestOptions: RequestOptions(path: '${ApiEndpoints.baseurl}/treatments/$id'),
+        requestOptions: RequestOptions(path: ApiEndpoints.treatmentById(id)),
         message: 'An unexpected error occurred: $e',
       );
     }

@@ -17,4 +17,13 @@ abstract class MedicineRemoteDataSource {
   // New search method
   Future<List<MedicineModel>> searchMedicinesByName(String query);
 
+  // New barcode removal method
+  Future<void> removeBarcode({
+    required String medicineId,
+    required String barcode,
+  });
+  Future<void> assignBarcode({
+    required String medicineId,
+    required String barcode,
+  });
 }

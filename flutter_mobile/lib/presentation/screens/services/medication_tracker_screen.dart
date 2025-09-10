@@ -7,6 +7,7 @@ import 'package:flutter_mobile/presentation/widgets/base_widgets/simple_custom_a
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
+
 class MedicationTrackerScreen extends StatelessWidget {
   const MedicationTrackerScreen({super.key});
 
@@ -111,9 +112,9 @@ class MedicationInfoCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Use displayName which prioritizes designation over name
+                    // Use medicationName instead of displayName
                     Text(
-                      medicine.displayName,
+                      medicine.medicationName,
                       style: TextStyle(
                         fontSize: 18.sp,
                         fontWeight: FontWeight.w600,
@@ -122,29 +123,18 @@ class MedicationInfoCard extends StatelessWidget {
                     ),
                     SizedBox(height: 4.h),
 
-                    // Show enhanced dosage and form info
-                    if (medicine.fullDosageInfo.isNotEmpty) ...[
-                      Text(
-                        medicine.fullDosageInfo,
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          color: Colors.black54,
-                        ),
+                    // Show dosage and form info
+                    Text(
+                      medicine.fullMedicationInfo,
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        color: Colors.black54,
                       ),
-                      SizedBox(height: 2.h),
-                    ] else if (medicine.dosageForm.isNotEmpty) ...[
-                      Text(
-                        medicine.dosageForm,
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          color: Colors.black54,
-                        ),
-                      ),
-                      SizedBox(height: 2.h),
-                    ],
+                    ),
+                    SizedBox(height: 2.h),
 
                     Text(
-                      medicine.manufacturer,
+                      medicine.laboratory,
                       style: TextStyle(
                         fontSize: 12.sp,
                         color: Colors.grey[500],
@@ -679,7 +669,7 @@ class AddToBoxButton extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: () {
                         context.pop();
-                        context.goNamed(AppRouteName.pharmacyBox);
+                        context.goNamed(AppRouteName.services);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: theme().colorScheme.secondary,

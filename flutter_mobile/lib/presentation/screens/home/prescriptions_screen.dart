@@ -98,7 +98,7 @@ class PrescriptionsBody extends StatelessWidget {
               ),
               SizedBox(height: 24.h),
 
-              // Prescription List
+              // Prescription List - FIXED: Convert models to entities properly
               Expanded(
                 child: PrescriptionsList(prescriptions: state.allPrescriptions),
               ),
@@ -117,6 +117,7 @@ class PrescriptionsBody extends StatelessWidget {
 
 class PrescriptionsList extends StatelessWidget {
   const PrescriptionsList({super.key, required this.prescriptions});
+  // FIXED: Accept PrescriptionEntity list directly
   final List<PrescriptionEntity> prescriptions;
 
   @override
@@ -265,10 +266,8 @@ class AddPrescriptionButton extends StatelessWidget {
       ),
       child: ElevatedButton(
         onPressed: () {
-          // TODO: Implement add prescription functionality
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Ajouter prescription - À implémenter')),
-          );
+          // Navigate to prescription form
+          context.pushNamed(AppRouteName.prescriptionForm);
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.transparent,

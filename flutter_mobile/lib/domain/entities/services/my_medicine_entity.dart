@@ -1,3 +1,4 @@
+
 import 'package:flutter_mobile/domain/entities/services/medicine_entity.dart';
 
 class MyMedicineEntity {
