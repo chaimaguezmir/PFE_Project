@@ -1,4 +1,6 @@
-// Completely Stateless MedicalPrescriptionForm
+// Completely Stateless MedicalPrescriptionForm (shows treatments saved in cubit)
+// Updated: enable "Valider la prescription" only when name, disease and at least one treatment exist.
+// On press it prints the next-step info to console (no navigation / repo changes).
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_mobile/config/router/app_route_constants.dart';
@@ -46,30 +48,56 @@ class MedicalPrescriptionForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sampleMedications = [
-      MedicationData(
-        name: 'Aminofer',
-        duration: '7 jours',
-        instructions: 'Une seule prise après repas',
-        percentage: 51,
-      ),
-      MedicationData(
-        name: 'Paracétamol',
-        duration: '5 jours',
-        instructions: 'Trois fois par jour',
-        percentage: 75,
-      ),
-    ];
-
-    final displayMedications = medications.isNotEmpty
-        ? medications
-        : sampleMedications;
-
+    // We'll display either the provided medications param, or the saved treatments from cubit,
+    // otherwise the MedicationsList will show the "Aucune prescription ajoutée" state.
     return BlocBuilder<PrescriptionCreationCubit, PrescriptionCreationState>(
       builder: (context, state) {
-        final diseaseItems = state.diseases
-            .map((disease) => disease.id)
-            .toList();
+        // Convert cubit.saved treatments (List<Map<String, dynamic>>) into MedicationData
+        final medicationsFromState = (state.treatments)
+            .map<MedicationData>((t) {
+          final name = (t['medicineName'] as String?) ??
+              (t['medicineId'] as String?) ??
+              '';
+          final duration = t['durationDays'] != null
+              ? '${t['durationDays']} jours'
+              : (t['duration'] as String?) ?? '';
+          final dosage = t['dosage']?.toString() ?? '';
+          final frequency = (t['frequency'] as String?) ?? '';
+          final mealTiming = (t['mealTiming'] as String?) ?? '';
+          final momentsList = (t['moments'] as List<dynamic>?)?.cast<String>() ??
+              <String>[];
+          final instructionsParts = <String>[];
+          if (dosage.isNotEmpty) instructionsParts.add('$dosage prise(s)');
+          if (frequency.isNotEmpty) instructionsParts.add(frequency);
+          if (momentsList.isNotEmpty) instructionsParts.add(momentsList.join(', '));
+          if (mealTiming.isNotEmpty) instructionsParts.add(mealTiming);
+          final instructions =
+          instructionsParts.isNotEmpty ? instructionsParts.join(' · ') : '';
+
+          final percentage =
+          t['percentage'] is int ? t['percentage'] as int : 0;
+
+          return MedicationData(
+            name: name,
+            duration: duration.isNotEmpty ? duration : '30 jours',
+            instructions: instructions.isNotEmpty ? instructions : '',
+            percentage: percentage,
+          );
+        }).toList();
+
+        // Decide which list to display: prefer the passed `medications` prop,
+        // otherwise use treatments saved in cubit. If both are empty, MedicationsList
+        // will render the empty-state UI.
+        final displayMedications = medications.isNotEmpty
+            ? medications
+            : medicationsFromState;
+
+        // Compute whether the "Valider la prescription" button should be enabled:
+        final hasName = state.name.trim().isNotEmpty;
+        final hasDisease = state.selectedDiseaseId != null && state.selectedDiseaseId!.isNotEmpty;
+        final hasAtLeastOneTreatment = state.treatments.isNotEmpty;
+        final enableValidateButton = hasName && hasDisease && hasAtLeastOneTreatment;
+
         return Scaffold(
           backgroundColor: Colors.white,
           appBar: const CustomAppBar(title: 'Ajouter Une prescription'),
@@ -101,13 +129,13 @@ class MedicalPrescriptionForm extends StatelessWidget {
                                 .cast<DiseaseEntity?>()
                                 .firstWhere(
                                   (d) => d?.id == state.selectedDiseaseId,
-                                  orElse: () => null,
-                                )
+                              orElse: () => null,
+                            )
                                 ?.name,
-
                             onChanged: (diseaseName) {
+                              if (diseaseName == null) return;
                               final disease = state.diseases.firstWhere(
-                                (d) => d.name == diseaseName,
+                                    (d) => d.name == diseaseName,
                               );
                               context
                                   .read<PrescriptionCreationCubit>()
@@ -129,54 +157,33 @@ class MedicalPrescriptionForm extends StatelessWidget {
                       padding: EdgeInsets.symmetric(horizontal: 20.w),
                       child: Column(
                         children: [
-                          if (pendingTreatments.isNotEmpty) ...[
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                'Traitements ajoutés (${pendingTreatments.length})',
-                                style: TextStyle(
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.black87,
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: 8.h),
-                            Container(
-                              padding: EdgeInsets.all(12.w),
-                              decoration: BoxDecoration(
-                                color: Colors.grey[50],
-                                borderRadius: BorderRadius.circular(12.r),
-                              ),
-                              child: Column(
-                                children: pendingTreatments.map((treatment) {
-                                  return ListTile(
-                                    dense: true,
-                                    contentPadding: EdgeInsets.zero,
-                                    title: Text(
-                                      treatment,
-                                      style: TextStyle(
-                                        fontSize: 14.sp,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                    trailing: IconButton(
-                                      icon: Icon(
-                                        Icons.delete_outline,
-                                        size: 20.sp,
-                                      ),
-                                      onPressed: () {},
-                                    ),
-                                  );
-                                }).toList(),
-                              ),
-                            ),
-                            SizedBox(height: 12.h),
-                          ],
                           ValidateButton(
-                            onPressed: canValidate ? onValidatePressed : null,
+                            onPressed: enableValidateButton
+                                ? () {
+                              // Print next step info to console as requested
+                              final matching = state.diseases.where((d) => d.id == state.selectedDiseaseId);
+                              final DiseaseEntity? disease = matching.isNotEmpty ? matching.first : null;
+                              final diseaseName = disease?.name ?? '';
+                              print('--- Valider la prescription ---');
+                              print('Patient Treatment Name: ${state.name}');
+                              print('Selected disease id: ${state.selectedDiseaseId}');
+                              print('Selected disease name: ${disease?.name}');
+                              print('Number of treatments saved: ${state.treatments.length}');
+                              for (var i = 0; i < state.treatments.length; i++) {
+                                final t = state.treatments[i];
+                                print('Treatment ${i + 1}: '
+                                    '${t['medicineName'] ?? t['medicineId'] ?? 'unknown'} - '
+                                    '${t['dosage'] ?? '-'} prise(s), '
+                                    '${t['frequency'] ?? '-'}, '
+                                    '${t['durationDays'] ?? '-'} jours');
+                              }
+                              print('Proceeding to next step...');
+                              // Optional external callback
+                              if (onValidatePressed != null) onValidatePressed!();
+                            }
+                                : null,
                             text: 'Valider la prescription',
-                            isEnabled: canValidate,
+                            isEnabled: enableValidateButton,
                           ),
                           SizedBox(height: 20.h),
                         ],
@@ -369,17 +376,17 @@ class CustomDropdown extends StatelessWidget {
         items: items
             .map(
               (item) => DropdownMenuItem(
-                value: item,
-                child: Text(
-                  item,
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    color: Colors.black87,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
+            value: item,
+            child: Text(
+              item,
+              style: TextStyle(
+                fontSize: 16.sp,
+                color: Colors.black87,
+                fontWeight: FontWeight.w500,
               ),
-            )
+            ),
+          ),
+        )
             .toList(),
         onChanged: onChanged,
         icon: Icon(
@@ -443,44 +450,44 @@ class MedicationsList extends StatelessWidget {
       ),
       child: medications.isEmpty
           ? Container(
-              height: 200.h,
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.medication_outlined,
-                      size: 64.sp,
-                      color: Colors.grey[400],
-                    ),
-                    SizedBox(height: 16.h),
-                    Text(
-                      'Aucune prescription ajoutée',
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        color: Colors.grey[600],
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    SizedBox(height: 8.h),
-                    Text(
-                      'Ajoutez votre première prescription',
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        color: Colors.grey[500],
-                      ),
-                    ),
-                  ],
+        height: 200.h,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.medication_outlined,
+                size: 64.sp,
+                color: Colors.grey[400],
+              ),
+              SizedBox(height: 16.h),
+              Text(
+                'Aucune prescription ajoutée',
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  color: Colors.grey[600],
+                  fontWeight: FontWeight.w500,
                 ),
               ),
-            )
+              SizedBox(height: 8.h),
+              Text(
+                'Ajoutez votre première prescription',
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: Colors.grey[500],
+                ),
+              ),
+            ],
+          ),
+        ),
+      )
           : ListView.separated(
-              padding: EdgeInsets.all(16.w),
-              itemCount: medications.length,
-              separatorBuilder: (context, index) => SizedBox(height: 12.h),
-              itemBuilder: (context, index) =>
-                  MedicationCard(medication: medications[index]),
-            ),
+        padding: EdgeInsets.all(16.w),
+        itemCount: medications.length,
+        separatorBuilder: (context, index) => SizedBox(height: 12.h),
+        itemBuilder: (context, index) =>
+            MedicationCard(medication: medications[index]),
+      ),
     );
   }
 }
@@ -616,15 +623,15 @@ class ValidateButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(28.r),
         boxShadow: isEnabled
             ? [
-                BoxShadow(
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.secondary.withOpacity(0.3),
-                  spreadRadius: 0,
-                  blurRadius: 8,
-                  offset: Offset(0, 4.h),
-                ),
-              ]
+          BoxShadow(
+            color: Theme.of(
+              context,
+            ).colorScheme.secondary.withOpacity(0.3),
+            spreadRadius: 0,
+            blurRadius: 8,
+            offset: Offset(0, 4.h),
+          ),
+        ]
             : null,
       ),
       child: ElevatedButton(

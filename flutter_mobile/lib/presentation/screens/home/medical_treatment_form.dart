@@ -1,85 +1,18 @@
-// Complete Stateless MedicalTreatmentForm with Cubit Integration
+// Stateless MedicalTreatmentForm that uses PrescriptionCreationCubit/state
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_mobile/domain/entities/services/PharmacyBoxEntity.dart';
 import 'package:flutter_mobile/domain/entities/services/my_medicine_entity.dart';
 import 'package:flutter_mobile/presentation/bloc/home/prescription_creation_cubit.dart';
-import 'package:flutter_mobile/presentation/bloc/home/welcome_screen_cubit.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:formz/formz.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:go_router/go_router.dart';
 
-class TreatmentFormData {
-  final String selectedBox;
-  final String selectedMedicineId;
-  final int selectedDosage;
-  final String selectedFrequency;
-  final int selectedDurationDays;
-  final Set<String> selectedMoments;
-  final String selectedMealTiming;
-  final String searchQuery;
-
-  const TreatmentFormData({
-    this.selectedBox = '',
-    this.selectedMedicineId = '',
-    this.selectedDosage = 1,
-    this.selectedFrequency = 'Chaque jour',
-    this.selectedDurationDays = 30,
-    this.selectedMoments = const {'Matin', 'Après Midi'},
-    this.selectedMealTiming = 'Avant repas',
-    this.searchQuery = '',
-  });
-
-  TreatmentFormData copyWith({
-    String? selectedBox,
-    String? selectedMedicineId,
-    int? selectedDosage,
-    String? selectedFrequency,
-    int? selectedDurationDays,
-    Set<String>? selectedMoments,
-    String? selectedMealTiming,
-    String? searchQuery,
-  }) {
-    return TreatmentFormData(
-      selectedBox: selectedBox ?? this.selectedBox,
-      selectedMedicineId: selectedMedicineId ?? this.selectedMedicineId,
-      selectedDosage: selectedDosage ?? this.selectedDosage,
-      selectedFrequency: selectedFrequency ?? this.selectedFrequency,
-      selectedDurationDays: selectedDurationDays ?? this.selectedDurationDays,
-      selectedMoments: selectedMoments ?? this.selectedMoments,
-      selectedMealTiming: selectedMealTiming ?? this.selectedMealTiming,
-      searchQuery: searchQuery ?? this.searchQuery,
-    );
-  }
-}
-
-class MedicalTreatmentForm extends StatefulWidget {
+class MedicalTreatmentForm extends StatelessWidget {
   const MedicalTreatmentForm({super.key, this.onConfirmTreatment});
 
   final VoidCallback? onConfirmTreatment;
-
-  @override
-  State<MedicalTreatmentForm> createState() => _MedicalTreatmentFormState();
-}
-
-class _MedicalTreatmentFormState extends State<MedicalTreatmentForm> {
-  TreatmentFormData formData = const TreatmentFormData();
-
-  @override
-  void initState() {
-    super.initState();
-    // Fetch pharmacy boxes when the form loads
-    context.read<PrescriptionCreationCubit>().fetchPharmacyBoxes();
-  }
-
-  void _updateFormData(TreatmentFormData newData) {
-    setState(() {
-      formData = newData;
-    });
-  }
-
-  bool get _canConfirm {
-    return formData.selectedBox.isNotEmpty &&
-        formData.selectedMedicineId.isNotEmpty;
-  }
 
   String _durationValueString(int days) => '$days jours';
 
@@ -87,6 +20,20 @@ class _MedicalTreatmentFormState extends State<MedicalTreatmentForm> {
   Widget build(BuildContext context) {
     return BlocBuilder<PrescriptionCreationCubit, PrescriptionCreationState>(
       builder: (context, state) {
+        // Ensure pharmacy boxes are fetched once when needed
+        SchedulerBinding.instance.addPostFrameCallback((_) {
+          final cubit = context.read<PrescriptionCreationCubit>();
+          if (state.pharmacyBoxes.isEmpty &&
+              state.pharmacyBoxesStatus != FormzSubmissionStatus.inProgress) {
+            cubit.fetchPharmacyBoxes();
+          }
+        });
+
+        final cubit = context.read<PrescriptionCreationCubit>();
+        final canConfirm =
+            state.treatmentSelectedBox.isNotEmpty &&
+            state.treatmentSelectedMedicineId.isNotEmpty;
+
         return Scaffold(
           backgroundColor: Colors.white,
           appBar: const CustomAppBar(title: 'Modifier Prescription'),
@@ -102,24 +49,18 @@ class _MedicalTreatmentFormState extends State<MedicalTreatmentForm> {
                       const _FormSectionLabel('Nom de la boîte'),
                       SizedBox(height: 8.h),
                       _PharmacyBoxDropdown(
-                        selectedBox: formData.selectedBox,
+                        selectedBox: state.treatmentSelectedBox,
                         pharmacyBoxes: state.pharmacyBoxes,
                         isLoading:
                             state.pharmacyBoxesStatus ==
                             FormzSubmissionStatus.inProgress,
                         onChanged: (boxId) {
-                          if (boxId != null && boxId != formData.selectedBox) {
-                            _updateFormData(
-                              formData.copyWith(
-                                selectedBox: boxId,
-                                selectedMedicineId:
-                                    '', // Reset medicine selection
-                              ),
-                            );
-                            // Fetch medicines for the selected box
-                            context
-                                .read<PrescriptionCreationCubit>()
-                                .selectPharmacyBox(boxId);
+                          if (boxId != null &&
+                              boxId != state.treatmentSelectedBox) {
+                            // update treatment selected box in cubit (resets treatment medicine)
+                            cubit.updateTreatmentSelectedBox(boxId);
+                            // fetch medicines for the selected box (existing cubit method)
+                            cubit.selectPharmacyBox(boxId);
                           }
                         },
                       ),
@@ -127,17 +68,17 @@ class _MedicalTreatmentFormState extends State<MedicalTreatmentForm> {
                       const _FormSectionLabel('Sélectionner Médicament'),
                       SizedBox(height: 8.h),
                       _MedicineDropdown(
-                        selectedMedicineId: formData.selectedMedicineId,
+                        selectedMedicineId: state.treatmentSelectedMedicineId,
                         medicines: state.medicines,
                         isLoading:
                             state.medicinesStatus ==
                             FormzSubmissionStatus.inProgress,
-                        isEnabled: formData.selectedBox.isNotEmpty,
+                        isEnabled: state.treatmentSelectedBox.isNotEmpty,
                         onChanged: (medicineId) {
                           if (medicineId != null) {
-                            _updateFormData(
-                              formData.copyWith(selectedMedicineId: medicineId),
-                            );
+                            cubit.updateTreatmentSelectedMedicineId(medicineId);
+                            // keep global selectedMedicine in sync if desired
+                            cubit.selectMedicine(medicineId);
                           }
                         },
                       ),
@@ -145,11 +86,9 @@ class _MedicalTreatmentFormState extends State<MedicalTreatmentForm> {
                       const _FormSectionLabel('Dosage'),
                       SizedBox(height: 8.h),
                       _DosageCircleSelector(
-                        selectedDosage: formData.selectedDosage,
+                        selectedDosage: state.treatmentSelectedDosage,
                         onSelected: (dosage) {
-                          _updateFormData(
-                            formData.copyWith(selectedDosage: dosage),
-                          );
+                          cubit.updateTreatmentDosage(dosage);
                         },
                       ),
                       SizedBox(height: 16.h),
@@ -157,7 +96,7 @@ class _MedicalTreatmentFormState extends State<MedicalTreatmentForm> {
                       SizedBox(height: 8.h),
                       _CustomDropdown(
                         hintText: 'Sélectionner la fréquence',
-                        value: formData.selectedFrequency,
+                        value: state.treatmentSelectedFrequency,
                         items: const [
                           'Chaque jour',
                           'Tous les 2 jours',
@@ -165,9 +104,7 @@ class _MedicalTreatmentFormState extends State<MedicalTreatmentForm> {
                         ],
                         onChanged: (frequency) {
                           if (frequency != null) {
-                            _updateFormData(
-                              formData.copyWith(selectedFrequency: frequency),
-                            );
+                            cubit.updateTreatmentFrequency(frequency);
                           }
                         },
                       ),
@@ -177,16 +114,14 @@ class _MedicalTreatmentFormState extends State<MedicalTreatmentForm> {
                       _CustomDropdown(
                         hintText: 'Sélectionner la durée',
                         value: _durationValueString(
-                          formData.selectedDurationDays,
+                          state.treatmentSelectedDurationDays,
                         ),
                         items: const ['7 jours', '30 jours', '60 jours'],
                         onChanged: (newValue) {
                           if (newValue != null) {
                             final days =
                                 int.tryParse(newValue.split(' ').first) ?? 30;
-                            _updateFormData(
-                              formData.copyWith(selectedDurationDays: days),
-                            );
+                            cubit.updateTreatmentDurationDays(days);
                           }
                         },
                       ),
@@ -194,11 +129,9 @@ class _MedicalTreatmentFormState extends State<MedicalTreatmentForm> {
                       const _FormSectionLabel('Moment de la journée'),
                       SizedBox(height: 12.h),
                       _MomentsSelector(
-                        selectedMoments: formData.selectedMoments,
+                        selectedMoments: state.treatmentSelectedMoments,
                         onChanged: (moments) {
-                          _updateFormData(
-                            formData.copyWith(selectedMoments: moments),
-                          );
+                          cubit.updateTreatmentMoments(moments);
                         },
                       ),
                       SizedBox(height: 16.h),
@@ -224,12 +157,10 @@ class _MedicalTreatmentFormState extends State<MedicalTreatmentForm> {
                       const _FormSectionLabel('Avant / Après / Avec repas'),
                       SizedBox(height: 8.h),
                       _MealTimingButtonSelector(
-                        selectedMealTiming: formData.selectedMealTiming,
+                        selectedMealTiming: state.treatmentMealTiming,
                         onSelected: (timing) {
                           if (timing != null) {
-                            _updateFormData(
-                              formData.copyWith(selectedMealTiming: timing),
-                            );
+                            cubit.updateTreatmentMealTiming(timing);
                           }
                         },
                       ),
@@ -244,8 +175,17 @@ class _MedicalTreatmentFormState extends State<MedicalTreatmentForm> {
                   children: [
                     ValidateButton(
                       text: 'Confirmer traitement',
-                      onPressed: _canConfirm ? widget.onConfirmTreatment : null,
-                      isEnabled: _canConfirm,
+                      onPressed: canConfirm
+                          ? () {
+                              cubit.addTreatment();
+                              // call the optional callback (e.g. to pop) if provided
+                              if (onConfirmTreatment != null) {
+                                onConfirmTreatment!();
+                              }
+                              context.pop();
+                            }
+                          : null,
+                      isEnabled: canConfirm,
                     ),
                     SizedBox(height: 20.h),
                   ],
@@ -378,12 +318,10 @@ class _MedicineDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Debug prints
-    print('🔧 _MedicineDropdown build:');
-    print('  - isEnabled: $isEnabled');
-    print('  - isLoading: $isLoading');
-    print('  - medicines.length: ${medicines.length}');
-    print('  - selectedMedicineId: $selectedMedicineId');
+    // ignore: avoid_print
+    print(
+      '🔧 _MedicineDropdown build: isEnabled=$isEnabled isLoading=$isLoading medicines=${medicines.length} selected=$selectedMedicineId',
+    );
 
     if (!isEnabled) {
       return Container(
@@ -415,6 +353,7 @@ class _MedicineDropdown extends StatelessWidget {
     }
 
     if (medicines.isEmpty) {
+      // ignore: avoid_print
       print('🔧 Showing empty medicines message');
       return Container(
         height: 56.h,
@@ -432,10 +371,8 @@ class _MedicineDropdown extends StatelessWidget {
       );
     }
 
+    // ignore: avoid_print
     print('🔧 Showing dropdown with ${medicines.length} medicines');
-    for (final medicine in medicines) {
-      print('  - ${medicine.name} (${medicine.id})');
-    }
 
     return Container(
       decoration: BoxDecoration(

@@ -14,10 +14,10 @@ part 'prescription_creation_state.dart';
 
 class PrescriptionCreationCubit extends Cubit<PrescriptionCreationState> {
   PrescriptionCreationCubit(
-    this._diseaseRepository,
-    this._pharmacyRepository,
-    this._medicineRepository,
-  ) : super(const PrescriptionCreationState());
+      this._diseaseRepository,
+      this._pharmacyRepository,
+      this._medicineRepository,
+      ) : super(const PrescriptionCreationState());
 
   final DiseaseRepository _diseaseRepository;
   final PharmacyRepository _pharmacyRepository;
@@ -32,16 +32,114 @@ class PrescriptionCreationCubit extends Cubit<PrescriptionCreationState> {
     emit(state.copyWith(selectedDiseaseId: diseaseId));
   }
 
-  Future<void> fetchDiseases() async {
-    if (_diseaseRepository == null) {
-      print('Disease repository is not available');
+  // --- Treatment form related update methods ---
+  void updateTreatmentSelectedBox(String boxId) {
+    // Update the treatment selected box and reset treatment medicine selection
+    emit(state.copyWith(
+      treatmentSelectedBox: boxId,
+      treatmentSelectedMedicineId: '',
+    ));
+  }
+
+  void updateTreatmentSelectedMedicineId(String medicineId) {
+    emit(state.copyWith(treatmentSelectedMedicineId: medicineId));
+  }
+
+  void updateTreatmentDosage(int dosage) {
+    emit(state.copyWith(treatmentSelectedDosage: dosage));
+  }
+
+  void updateTreatmentFrequency(String frequency) {
+    emit(state.copyWith(treatmentSelectedFrequency: frequency));
+  }
+
+  void updateTreatmentDurationDays(int days) {
+    emit(state.copyWith(treatmentSelectedDurationDays: days));
+  }
+
+  void updateTreatmentMoments(Set<String> moments) {
+    emit(state.copyWith(treatmentSelectedMoments: moments));
+  }
+
+  void updateTreatmentMealTiming(String timing) {
+    emit(state.copyWith(treatmentMealTiming: timing));
+  }
+
+  void updateTreatmentSearchQuery(String query) {
+    emit(state.copyWith(treatmentSearchQuery: query));
+  }
+  // --- end treatment updates ---
+
+  /// Builds a treatment object from current treatment fields and appends it to
+  /// state.treatments. Also resets the treatment fields back to their defaults.
+  void addTreatment() {
+    // require the minimal data
+    if (state.treatmentSelectedBox.isEmpty ||
+        state.treatmentSelectedMedicineId.isEmpty) {
       return;
     }
 
+    // Safely find box name and medicine name from existing lists without creating new entities
+    String boxName = '';
+    for (final b in state.pharmacyBoxes) {
+      if (b.id == state.treatmentSelectedBox) {
+        boxName = b.groupName;
+        break;
+      }
+    }
+
+    String medicineName = '';
+    for (final m in state.medicines) {
+      if (m.id == state.treatmentSelectedMedicineId) {
+        medicineName = m.name;
+        break;
+      }
+    }
+
+    final newTreatment = <String, dynamic>{
+      'boxId': state.treatmentSelectedBox,
+      'boxName': boxName,
+      'medicineId': state.treatmentSelectedMedicineId,
+      'medicineName': medicineName,
+      'dosage': state.treatmentSelectedDosage,
+      'frequency': state.treatmentSelectedFrequency,
+      'durationDays': state.treatmentSelectedDurationDays,
+      'moments': state.treatmentSelectedMoments.toList(),
+      'mealTiming': state.treatmentMealTiming,
+      'searchQuery': state.treatmentSearchQuery,
+      'createdAt': DateTime.now().toIso8601String(),
+    };
+
+    final updatedList = List<Map<String, dynamic>>.from(state.treatments)
+      ..add(newTreatment);
+
+    // Append and reset treatment fields
+    emit(state.copyWith(
+      treatments: updatedList,
+      treatmentSelectedBox: '',
+      treatmentSelectedMedicineId: '',
+      treatmentSelectedDosage: 1,
+      treatmentSelectedFrequency: 'Chaque jour',
+      treatmentSelectedDurationDays: 30,
+      treatmentSelectedMoments: const {'Matin', 'Après Midi'},
+      treatmentMealTiming: 'Avant repas',
+      treatmentSearchQuery: '',
+    ));
+  }
+
+  /// Optionally remove a treatment by index
+  void removeTreatmentAt(int index) {
+    if (index < 0 || index >= state.treatments.length) return;
+    final updated = List<Map<String, dynamic>>.from(state.treatments)
+      ..removeAt(index);
+    emit(state.copyWith(treatments: updated));
+  }
+
+  Future<void> fetchDiseases() async {
     emit(state.copyWith(diseasesStatus: FormzSubmissionStatus.inProgress));
 
     try {
-      final result = await _diseaseRepository!.getDiseases();
+      final result = await _diseaseRepository.getDiseases();
 
       if (result is DataSuccess<List<DiseaseEntity>>) {
         emit(
@@ -75,7 +173,6 @@ class PrescriptionCreationCubit extends Cubit<PrescriptionCreationState> {
       final result = await _pharmacyRepository.getMyPharmacyBoxes();
 
       if (result is DataSuccess<List<PharmacyBoxEntity>>) {
-        print('Successfully fetched ${result.data?.length ?? 0} pharmacy boxes');
         emit(
           state.copyWith(
             pharmacyBoxesStatus: FormzSubmissionStatus.success,
@@ -83,7 +180,6 @@ class PrescriptionCreationCubit extends Cubit<PrescriptionCreationState> {
           ),
         );
       } else {
-        print('Failed to fetch pharmacy boxes: ${result.error}');
         emit(
           state.copyWith(
             pharmacyBoxesStatus: FormzSubmissionStatus.failure,
@@ -92,7 +188,6 @@ class PrescriptionCreationCubit extends Cubit<PrescriptionCreationState> {
         );
       }
     } catch (e) {
-      print('Exception while fetching pharmacy boxes: $e');
       emit(
         state.copyWith(
           pharmacyBoxesStatus: FormzSubmissionStatus.failure,
@@ -103,7 +198,6 @@ class PrescriptionCreationCubit extends Cubit<PrescriptionCreationState> {
   }
 
   void selectPharmacyBox(String boxId) {
-    print('Selecting pharmacy box: $boxId');
     emit(state.copyWith(
       selectedPharmacyBoxId: boxId,
       medicines: [],
@@ -113,7 +207,6 @@ class PrescriptionCreationCubit extends Cubit<PrescriptionCreationState> {
   }
 
   Future<void> fetchMedicinesForBox(String boxId) async {
-    print('Fetching medicines for pharmacy box: $boxId');
     emit(state.copyWith(medicinesStatus: FormzSubmissionStatus.inProgress));
 
     try {
@@ -121,11 +214,6 @@ class PrescriptionCreationCubit extends Cubit<PrescriptionCreationState> {
 
       if (result is DataSuccess<List<MyMedicineEntity>>) {
         final medicines = result.data ?? [];
-        print('Successfully fetched ${medicines.length} medicines');
-
-        for (final medicine in medicines) {
-          print('Medicine: ${medicine.name} (ID: ${medicine.id})');
-        }
 
         emit(
           state.copyWith(
@@ -134,7 +222,6 @@ class PrescriptionCreationCubit extends Cubit<PrescriptionCreationState> {
           ),
         );
       } else {
-        print('Failed to fetch medicines: ${result.error}');
         emit(
           state.copyWith(
             medicinesStatus: FormzSubmissionStatus.failure,
@@ -143,7 +230,6 @@ class PrescriptionCreationCubit extends Cubit<PrescriptionCreationState> {
         );
       }
     } catch (e) {
-      print('Exception while fetching medicines: $e');
       emit(
         state.copyWith(
           medicinesStatus: FormzSubmissionStatus.failure,
@@ -154,7 +240,6 @@ class PrescriptionCreationCubit extends Cubit<PrescriptionCreationState> {
   }
 
   void selectMedicine(String medicineId) {
-    print('Selecting medicine: $medicineId');
     emit(state.copyWith(selectedMedicineId: medicineId));
   }
 

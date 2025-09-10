@@ -17,6 +17,16 @@ class PrescriptionCreationState extends Equatable {
     this.medicinesStatus = FormzSubmissionStatus.initial,
     this.medicinesErrorMessage,
     this.selectedMedicineId,
+    // Treatment form defaults
+    this.treatmentSelectedBox = '',
+    this.treatmentSelectedMedicineId = '',
+    this.treatmentSelectedDosage = 1,
+    this.treatmentSelectedFrequency = 'Chaque jour',
+    this.treatmentSelectedDurationDays = 30,
+    this.treatmentSelectedMoments = const {'Matin', 'Après Midi'},
+    this.treatmentMealTiming = 'Avant repas',
+    this.treatmentSearchQuery = '',
+    this.treatments = const [],
   });
 
   final FormzSubmissionStatus status;
@@ -36,6 +46,19 @@ class PrescriptionCreationState extends Equatable {
   final String? medicinesErrorMessage;
   final String? selectedMedicineId;
 
+  // Treatment form state
+  final String treatmentSelectedBox;
+  final String treatmentSelectedMedicineId;
+  final int treatmentSelectedDosage;
+  final String treatmentSelectedFrequency;
+  final int treatmentSelectedDurationDays;
+  final Set<String> treatmentSelectedMoments;
+  final String treatmentMealTiming;
+  final String treatmentSearchQuery;
+
+  // Saved treatments list (each element is a Map with the selected values)
+  final List<Map<String, dynamic>> treatments;
+
   PrescriptionCreationState copyWith({
     FormzSubmissionStatus? status,
     String? errorMessage,
@@ -52,23 +75,51 @@ class PrescriptionCreationState extends Equatable {
     FormzSubmissionStatus? medicinesStatus,
     String? medicinesErrorMessage,
     String? selectedMedicineId,
+    // treatment fields
+    String? treatmentSelectedBox,
+    String? treatmentSelectedMedicineId,
+    int? treatmentSelectedDosage,
+    String? treatmentSelectedFrequency,
+    int? treatmentSelectedDurationDays,
+    Set<String>? treatmentSelectedMoments,
+    String? treatmentMealTiming,
+    String? treatmentSearchQuery,
+    List<Map<String, dynamic>>? treatments,
   }) {
     return PrescriptionCreationState(
       status: status ?? this.status,
-      errorMessage: errorMessage,
+      errorMessage: errorMessage ?? this.errorMessage,
       name: name ?? this.name,
       diseases: diseases ?? this.diseases,
       diseasesStatus: diseasesStatus ?? this.diseasesStatus,
-      diseasesErrorMessage: diseasesErrorMessage,
-      selectedDiseaseId: selectedDiseaseId,
+      diseasesErrorMessage: diseasesErrorMessage ?? this.diseasesErrorMessage,
+      selectedDiseaseId: selectedDiseaseId ?? this.selectedDiseaseId,
       pharmacyBoxes: pharmacyBoxes ?? this.pharmacyBoxes,
       pharmacyBoxesStatus: pharmacyBoxesStatus ?? this.pharmacyBoxesStatus,
-      pharmacyBoxesErrorMessage: pharmacyBoxesErrorMessage,
-      selectedPharmacyBoxId: selectedPharmacyBoxId,
+      pharmacyBoxesErrorMessage:
+      pharmacyBoxesErrorMessage ?? this.pharmacyBoxesErrorMessage,
+      selectedPharmacyBoxId:
+      selectedPharmacyBoxId ?? this.selectedPharmacyBoxId,
       medicines: medicines ?? this.medicines,
       medicinesStatus: medicinesStatus ?? this.medicinesStatus,
-      medicinesErrorMessage: medicinesErrorMessage,
-      selectedMedicineId: selectedMedicineId,
+      medicinesErrorMessage: medicinesErrorMessage ?? this.medicinesErrorMessage,
+      selectedMedicineId: selectedMedicineId ?? this.selectedMedicineId,
+      // treatment
+      treatmentSelectedBox: treatmentSelectedBox ?? this.treatmentSelectedBox,
+      treatmentSelectedMedicineId:
+      treatmentSelectedMedicineId ?? this.treatmentSelectedMedicineId,
+      treatmentSelectedDosage:
+      treatmentSelectedDosage ?? this.treatmentSelectedDosage,
+      treatmentSelectedFrequency:
+      treatmentSelectedFrequency ?? this.treatmentSelectedFrequency,
+      treatmentSelectedDurationDays:
+      treatmentSelectedDurationDays ?? this.treatmentSelectedDurationDays,
+      treatmentSelectedMoments:
+      treatmentSelectedMoments ?? this.treatmentSelectedMoments,
+      treatmentMealTiming: treatmentMealTiming ?? this.treatmentMealTiming,
+      treatmentSearchQuery:
+      treatmentSearchQuery ?? this.treatmentSearchQuery,
+      treatments: treatments ?? this.treatments,
     );
   }
 
@@ -124,5 +175,15 @@ class PrescriptionCreationState extends Equatable {
     medicinesStatus,
     medicinesErrorMessage,
     selectedMedicineId,
+    // treatment fields
+    treatmentSelectedBox,
+    treatmentSelectedMedicineId,
+    treatmentSelectedDosage,
+    treatmentSelectedFrequency,
+    treatmentSelectedDurationDays,
+    treatmentSelectedMoments,
+    treatmentMealTiming,
+    treatmentSearchQuery,
+    treatments,
   ];
 }
