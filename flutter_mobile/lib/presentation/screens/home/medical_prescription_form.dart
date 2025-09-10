@@ -4,7 +4,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_mobile/config/router/app_route_constants.dart';
+import 'package:flutter_mobile/core/resources/data_state.dart';
+import 'package:flutter_mobile/domain/entities/prescription/create_reminder_entity.dart';
+import 'package:flutter_mobile/domain/entities/prescription/create_treatment_entity.dart';
 import 'package:flutter_mobile/domain/entities/prescription/disease_entity.dart';
+import 'package:flutter_mobile/domain/entities/prescription/prescription_entity.dart';
+import 'package:flutter_mobile/domain/entities/prescription/reminder_entity.dart';
+import 'package:flutter_mobile/domain/entities/prescription/reminder_time_entity.dart';
+import 'package:flutter_mobile/domain/entities/prescription/treatment_entity.dart';
+import 'package:flutter_mobile/domain/entities/reminder/simple_create_reminder_entity.dart';
+import 'package:flutter_mobile/domain/entities/reminder/simple_reminder_entity.dart';
+import 'package:flutter_mobile/domain/entities/reminder/simple_reminder_time_entity.dart';
 import 'package:flutter_mobile/presentation/bloc/home/prescription_creation_cubit.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -53,9 +63,11 @@ class MedicalPrescriptionForm extends StatelessWidget {
     return BlocBuilder<PrescriptionCreationCubit, PrescriptionCreationState>(
       builder: (context, state) {
         // Convert cubit.saved treatments (List<Map<String, dynamic>>) into MedicationData
-        final medicationsFromState = (state.treatments)
-            .map<MedicationData>((t) {
-          final name = (t['medicineName'] as String?) ??
+        final medicationsFromState = (state.treatments).map<MedicationData>((
+          t,
+        ) {
+          final name =
+              (t['medicineName'] as String?) ??
               (t['medicineId'] as String?) ??
               '';
           final duration = t['durationDays'] != null
@@ -64,18 +76,21 @@ class MedicalPrescriptionForm extends StatelessWidget {
           final dosage = t['dosage']?.toString() ?? '';
           final frequency = (t['frequency'] as String?) ?? '';
           final mealTiming = (t['mealTiming'] as String?) ?? '';
-          final momentsList = (t['moments'] as List<dynamic>?)?.cast<String>() ??
-              <String>[];
+          final momentsList =
+              (t['moments'] as List<dynamic>?)?.cast<String>() ?? <String>[];
           final instructionsParts = <String>[];
           if (dosage.isNotEmpty) instructionsParts.add('$dosage prise(s)');
           if (frequency.isNotEmpty) instructionsParts.add(frequency);
-          if (momentsList.isNotEmpty) instructionsParts.add(momentsList.join(', '));
+          if (momentsList.isNotEmpty)
+            instructionsParts.add(momentsList.join(', '));
           if (mealTiming.isNotEmpty) instructionsParts.add(mealTiming);
-          final instructions =
-          instructionsParts.isNotEmpty ? instructionsParts.join(' · ') : '';
+          final instructions = instructionsParts.isNotEmpty
+              ? instructionsParts.join(' · ')
+              : '';
 
-          final percentage =
-          t['percentage'] is int ? t['percentage'] as int : 0;
+          final percentage = t['percentage'] is int
+              ? t['percentage'] as int
+              : 0;
 
           return MedicationData(
             name: name,
@@ -94,10 +109,13 @@ class MedicalPrescriptionForm extends StatelessWidget {
 
         // Compute whether the "Valider la prescription" button should be enabled:
         final hasName = state.name.trim().isNotEmpty;
-        final hasDisease = state.selectedDiseaseId != null && state.selectedDiseaseId!.isNotEmpty;
+        final hasDisease =
+            state.selectedDiseaseId != null &&
+            state.selectedDiseaseId!.isNotEmpty;
         final hasAtLeastOneTreatment = state.treatments.isNotEmpty;
-        final enableValidateButton = hasName && hasDisease && hasAtLeastOneTreatment;
-
+        final enableValidateButton =
+            hasName && hasDisease && hasAtLeastOneTreatment;
+        final cubit = context.read<PrescriptionCreationCubit>();
         return Scaffold(
           backgroundColor: Colors.white,
           appBar: const CustomAppBar(title: 'Ajouter Une prescription'),
@@ -129,13 +147,13 @@ class MedicalPrescriptionForm extends StatelessWidget {
                                 .cast<DiseaseEntity?>()
                                 .firstWhere(
                                   (d) => d?.id == state.selectedDiseaseId,
-                              orElse: () => null,
-                            )
+                                  orElse: () => null,
+                                )
                                 ?.name,
                             onChanged: (diseaseName) {
                               if (diseaseName == null) return;
                               final disease = state.diseases.firstWhere(
-                                    (d) => d.name == diseaseName,
+                                (d) => d.name == diseaseName,
                               );
                               context
                                   .read<PrescriptionCreationCubit>()
@@ -159,28 +177,392 @@ class MedicalPrescriptionForm extends StatelessWidget {
                         children: [
                           ValidateButton(
                             onPressed: enableValidateButton
-                                ? () {
-                              // Print next step info to console as requested
-                              final matching = state.diseases.where((d) => d.id == state.selectedDiseaseId);
-                              final DiseaseEntity? disease = matching.isNotEmpty ? matching.first : null;
-                              final diseaseName = disease?.name ?? '';
-                              print('--- Valider la prescription ---');
-                              print('Patient Treatment Name: ${state.name}');
-                              print('Selected disease id: ${state.selectedDiseaseId}');
-                              print('Selected disease name: ${disease?.name}');
-                              print('Number of treatments saved: ${state.treatments.length}');
-                              for (var i = 0; i < state.treatments.length; i++) {
-                                final t = state.treatments[i];
-                                print('Treatment ${i + 1}: '
-                                    '${t['medicineName'] ?? t['medicineId'] ?? 'unknown'} - '
-                                    '${t['dosage'] ?? '-'} prise(s), '
-                                    '${t['frequency'] ?? '-'}, '
-                                    '${t['durationDays'] ?? '-'} jours');
-                              }
-                              print('Proceeding to next step...');
-                              // Optional external callback
-                              if (onValidatePressed != null) onValidatePressed!();
-                            }
+                                ? () async {
+                                    final scaffold = ScaffoldMessenger.of(
+                                      context,
+                                    );
+                                    final cubit = context
+                                        .read<PrescriptionCreationCubit>();
+
+                                    try {
+                                      // 1) Create prescription
+                                      scaffold.showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                            'Création de la prescription...',
+                                          ),
+                                        ),
+                                      );
+
+                                      final createPrescriptionResult =
+                                          await cubit.createPrescription();
+
+                                      if (createPrescriptionResult
+                                          is! DataSuccess<PrescriptionEntity>) {
+                                        final err =
+                                            (createPrescriptionResult
+                                                is DataError)
+                                            ? createPrescriptionResult.error
+                                            : 'Erreur création prescription';
+                                        scaffold.showSnackBar(
+                                          SnackBar(
+                                            content: Text('Erreur: $err'),
+                                          ),
+                                        );
+                                        return;
+                                      }
+
+                                      final String createdPrescriptionId =
+                                          createPrescriptionResult.data!.id;
+                                      print(
+                                        'Prescription created id: $createdPrescriptionId',
+                                      );
+
+                                      // 2) Create treatments
+                                      final savedTreatments =
+                                          List<Map<String, dynamic>>.from(
+                                            cubit.state.treatments,
+                                          );
+
+                                      if (savedTreatments.isNotEmpty) {
+                                        scaffold.showSnackBar(
+                                          const SnackBar(
+                                            content: Text(
+                                              'Création des traitements...',
+                                            ),
+                                          ),
+                                        );
+
+                                        final treatmentResults = await cubit
+                                            .createTreatmentsForPrescription(
+                                              createdPrescriptionId,
+                                              savedTreatments,
+                                            );
+
+                                        // 3) Create reminders for each successful treatment
+                                        final List<String> failedReminders = [];
+                                        int successfulReminders = 0;
+
+                                        for (
+                                          int i = 0;
+                                          i < treatmentResults.length;
+                                          i++
+                                        ) {
+                                          final treatmentResult =
+                                              treatmentResults[i];
+                                          final savedTreatment =
+                                              savedTreatments[i];
+
+                                          if (treatmentResult
+                                              is DataSuccess<TreatmentEntity>) {
+                                            final createdTreatment =
+                                                treatmentResult.data!;
+
+                                            // ENHANCED DEBUGGING: Show what data we're working with
+                                            print(
+                                              '🔍 DEBUGGING Treatment Data:',
+                                            );
+                                            print(
+                                              '  Treatment ID: ${createdTreatment.id}',
+                                            );
+                                            print(
+                                              '  Medicine Name: ${createdTreatment.myMedicine.name}',
+                                            );
+
+                                            print(
+                                              '🔍 DEBUGGING Saved Treatment Data:',
+                                            );
+                                            print(
+                                              '  Full savedTreatment: $savedTreatment',
+                                            );
+                                            savedTreatment.forEach((
+                                              key,
+                                              value,
+                                            ) {
+                                              print(
+                                                '    $key: $value (type: ${value.runtimeType})',
+                                              );
+                                            });
+
+                                            // Extract reminder data with debugging
+                                            final List<dynamic> moments =
+                                                (savedTreatment['moments']
+                                                    as List<dynamic>?) ??
+                                                [];
+                                            final String mealTiming =
+                                                (savedTreatment['mealTiming']
+                                                    as String?) ??
+                                                'après repas';
+
+                                            print(
+                                              '🔍 DEBUGGING Extracted Data:',
+                                            );
+                                            print(
+                                              '  moments: $moments (type: ${moments.runtimeType}, length: ${moments.length})',
+                                            );
+                                            print(
+                                              '  mealTiming: "$mealTiming"',
+                                            );
+
+                                            if (moments.isNotEmpty) {
+                                              print(
+                                                '✅ Moments found, creating simple reminders for treatment: ${createdTreatment.id}',
+                                              );
+
+                                              // Convert moments to simple reminder times with debugging
+                                              final List<
+                                                SimpleReminderTimeEntity
+                                              >
+                                              reminderTimes = [];
+
+                                              print(
+                                                '🔍 Converting moments to reminder times:',
+                                              );
+                                              for (
+                                                int idx = 0;
+                                                idx < moments.length;
+                                                idx++
+                                              ) {
+                                                final moment = moments[idx];
+                                                final momentStr = moment
+                                                    .toString()
+                                                    .toLowerCase()
+                                                    .trim();
+                                                print(
+                                                  '  [$idx] Original moment: "$moment" -> processed: "$momentStr"',
+                                                );
+
+                                                String timeSlot;
+                                                String defaultTime;
+
+                                                if (momentStr.contains(
+                                                  'matin',
+                                                )) {
+                                                  timeSlot = 'MORNING';
+                                                  defaultTime = '08:00';
+                                                } else if (momentStr.contains(
+                                                      'aprÃ¨',
+                                                    ) ||
+                                                    momentStr.contains(
+                                                      'midi',
+                                                    )) {
+                                                  timeSlot =
+                                                      'NOON'; // Changed from 'AFTERNOON' to 'NOON'
+                                                  defaultTime = '12:00';
+                                                } else if (momentStr.contains(
+                                                  'soir',
+                                                )) {
+                                                  timeSlot = 'EVENING';
+                                                  defaultTime = '18:00';
+                                                } else if (momentStr.contains(
+                                                  'nuit',
+                                                )) {
+                                                  timeSlot = 'NIGHT';
+                                                  defaultTime = '21:00';
+                                                } else {
+                                                  print(
+                                                    '⚠️ Unknown moment "$momentStr", using MORNING as default',
+                                                  );
+                                                  timeSlot = 'MORNING';
+                                                  defaultTime = '08:00';
+                                                }
+
+                                                print(
+                                                  '    Mapped to -> timeSlot: "$timeSlot", time: "$defaultTime"',
+                                                );
+
+                                                reminderTimes.add(
+                                                  SimpleReminderTimeEntity(
+                                                    timeSlot: timeSlot,
+                                                    time: defaultTime,
+                                                  ),
+                                                );
+                                              }
+
+                                              print(
+                                                '🔍 Total reminder times before deduplication: ${reminderTimes.length}',
+                                              );
+
+                                              // Remove duplicates with debugging
+                                              final uniqueTimes =
+                                                  <
+                                                    String,
+                                                    SimpleReminderTimeEntity
+                                                  >{};
+                                              for (final rt in reminderTimes) {
+                                                if (uniqueTimes.containsKey(
+                                                  rt.timeSlot,
+                                                )) {
+                                                  print(
+                                                    '  Duplicate timeSlot found: ${rt.timeSlot}, keeping first occurrence',
+                                                  );
+                                                } else {
+                                                  uniqueTimes[rt.timeSlot] = rt;
+                                                }
+                                              }
+
+                                              print(
+                                                '🔍 Unique reminder times: ${uniqueTimes.length}',
+                                              );
+                                              uniqueTimes.forEach((key, value) {
+                                                print('  $key: ${value.time}');
+                                              });
+
+                                              if (uniqueTimes.isNotEmpty) {
+                                                final customMessage =
+                                                    'Prendre ${createdTreatment.myMedicine.name} - $mealTiming';
+                                                print(
+                                                  '🔍 Creating SimpleCreateReminderEntity with:',
+                                                );
+                                                print(
+                                                  '  treatmentId: "${createdTreatment.id}"',
+                                                );
+                                                print(
+                                                  '  reminderTimes count: ${uniqueTimes.values.length}',
+                                                );
+                                                print(
+                                                  '  customMessage: "$customMessage"',
+                                                );
+                                                print(
+                                                  '  startPreference: "START_NEXT_CYCLE"',
+                                                );
+
+                                                final simpleReminder =
+                                                    SimpleCreateReminderEntity(
+                                                      treatmentId:
+                                                          createdTreatment.id,
+                                                      reminderTimes: uniqueTimes
+                                                          .values
+                                                          .toList(),
+                                                      customMessage:
+                                                          customMessage,
+                                                      startPreference:
+                                                          'START_NEXT_CYCLE',
+                                                    );
+
+                                                // This will now show detailed validation info
+                                                if (simpleReminder.isValid) {
+                                                  print(
+                                                    '✅ SimpleCreateReminderEntity validation passed, calling API...',
+                                                  );
+                                                  final remindersResult =
+                                                      await cubit
+                                                          .createSimpleReminders(
+                                                            simpleReminder,
+                                                          );
+
+                                                  if (remindersResult
+                                                      is DataSuccess<
+                                                        List<
+                                                          SimpleReminderEntity
+                                                        >
+                                                      >) {
+                                                    successfulReminders +=
+                                                        remindersResult
+                                                            .data!
+                                                            .length;
+                                                    print(
+                                                      '✅ Successfully created ${remindersResult.data!.length} simple reminders',
+                                                    );
+                                                  } else {
+                                                    failedReminders.add(
+                                                      createdTreatment
+                                                          .myMedicine
+                                                          .name,
+                                                    );
+                                                    print(
+                                                      '❌ Failed to create simple reminders: ${remindersResult.error}',
+                                                    );
+                                                  }
+                                                } else {
+                                                  failedReminders.add(
+                                                    createdTreatment
+                                                        .myMedicine
+                                                        .name,
+                                                  );
+                                                  print(
+                                                    '❌ Simple reminder validation failed - check logs above for details',
+                                                  );
+                                                }
+                                              } else {
+                                                print(
+                                                  '❌ No unique reminder times created',
+                                                );
+                                                failedReminders.add(
+                                                  createdTreatment
+                                                      .myMedicine
+                                                      .name,
+                                                );
+                                              }
+                                            } else {
+                                              print(
+                                                '⚠️ No moments found in savedTreatment data',
+                                              );
+                                              print(
+                                                '   Available keys in savedTreatment: ${savedTreatment.keys.toList()}',
+                                              );
+                                            }
+                                          } else {
+                                            print(
+                                              '❌ Treatment creation failed: ${(treatmentResult as DataError).error}',
+                                            );
+                                          }
+                                        }
+
+                                        // Show final result
+                                        if (failedReminders.isEmpty &&
+                                            successfulReminders > 0) {
+                                          scaffold.showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                'Prescription créée avec $successfulReminders rappels!',
+                                              ),
+                                              backgroundColor: Colors.green,
+                                            ),
+                                          );
+                                        } else if (failedReminders.isNotEmpty) {
+                                          scaffold.showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                'Prescription créée. Échec rappels: ${failedReminders.join(", ")}',
+                                              ),
+                                              backgroundColor: Colors.orange,
+                                            ),
+                                          );
+                                        } else {
+                                          scaffold.showSnackBar(
+                                            const SnackBar(
+                                              content: Text(
+                                                'Prescription et traitements créés!',
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                      } else {
+                                        scaffold.showSnackBar(
+                                          const SnackBar(
+                                            content: Text(
+                                              'Prescription créée sans traitements',
+                                            ),
+                                          ),
+                                        );
+                                      }
+
+                                      // Navigate back
+                                      if (onValidatePressed != null) {
+                                        onValidatePressed!();
+                                      }
+                                      context.pop();
+                                    } catch (e) {
+                                      scaffold.showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            'Erreur inattendue: $e',
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  }
                                 : null,
                             text: 'Valider la prescription',
                             isEnabled: enableValidateButton,
@@ -376,17 +758,17 @@ class CustomDropdown extends StatelessWidget {
         items: items
             .map(
               (item) => DropdownMenuItem(
-            value: item,
-            child: Text(
-              item,
-              style: TextStyle(
-                fontSize: 16.sp,
-                color: Colors.black87,
-                fontWeight: FontWeight.w500,
+                value: item,
+                child: Text(
+                  item,
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    color: Colors.black87,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               ),
-            ),
-          ),
-        )
+            )
             .toList(),
         onChanged: onChanged,
         icon: Icon(
@@ -449,45 +831,47 @@ class MedicationsList extends StatelessWidget {
         borderRadius: BorderRadius.circular(12.r),
       ),
       child: medications.isEmpty
-          ? Container(
-        height: 200.h,
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.medication_outlined,
-                size: 64.sp,
-                color: Colors.grey[400],
-              ),
-              SizedBox(height: 16.h),
-              Text(
-                'Aucune prescription ajoutée',
-                style: TextStyle(
-                  fontSize: 16.sp,
-                  color: Colors.grey[600],
-                  fontWeight: FontWeight.w500,
+          ? SingleChildScrollView(
+              child: SizedBox(
+                height: 200.h,
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.medication_outlined,
+                        size: 64.sp,
+                        color: Colors.grey[400],
+                      ),
+                      SizedBox(height: 16.h),
+                      Text(
+                        'Aucune prescription ajoutée',
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          color: Colors.grey[600],
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      SizedBox(height: 8.h),
+                      Text(
+                        'Ajoutez votre première prescription',
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          color: Colors.grey[500],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              SizedBox(height: 8.h),
-              Text(
-                'Ajoutez votre première prescription',
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  color: Colors.grey[500],
-                ),
-              ),
-            ],
-          ),
-        ),
-      )
+            )
           : ListView.separated(
-        padding: EdgeInsets.all(16.w),
-        itemCount: medications.length,
-        separatorBuilder: (context, index) => SizedBox(height: 12.h),
-        itemBuilder: (context, index) =>
-            MedicationCard(medication: medications[index]),
-      ),
+              padding: EdgeInsets.all(16.w),
+              itemCount: medications.length,
+              separatorBuilder: (context, index) => SizedBox(height: 12.h),
+              itemBuilder: (context, index) =>
+                  MedicationCard(medication: medications[index]),
+            ),
     );
   }
 }
@@ -623,15 +1007,15 @@ class ValidateButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(28.r),
         boxShadow: isEnabled
             ? [
-          BoxShadow(
-            color: Theme.of(
-              context,
-            ).colorScheme.secondary.withOpacity(0.3),
-            spreadRadius: 0,
-            blurRadius: 8,
-            offset: Offset(0, 4.h),
-          ),
-        ]
+                BoxShadow(
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.secondary.withOpacity(0.3),
+                  spreadRadius: 0,
+                  blurRadius: 8,
+                  offset: Offset(0, 4.h),
+                ),
+              ]
             : null,
       ),
       child: ElevatedButton(
