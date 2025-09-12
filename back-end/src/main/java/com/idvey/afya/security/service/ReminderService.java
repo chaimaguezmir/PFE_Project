@@ -1,9 +1,6 @@
 package com.idvey.afya.security.service;
 
-import com.idvey.afya.models.MyMedicine;
-import com.idvey.afya.models.Reminder;
-import com.idvey.afya.models.ReminderStatus;
-import com.idvey.afya.models.Treatment;
+import com.idvey.afya.models.*;
 import com.idvey.afya.payload.request.CreateReminderRequest;
 import com.idvey.afya.payload.request.ReminderStartSuggestionRequest;
 import com.idvey.afya.payload.response.*;
@@ -168,7 +165,7 @@ public class ReminderService {
 		if (hour >= 5 && hour < 12)
 			return "morning";
 		if (hour >= 12 && hour < 17)
-			return "afternoon";
+			return "noon";
 		if (hour >= 17 && hour < 21)
 			return "evening";
 		return "night";
@@ -447,38 +444,27 @@ public class ReminderService {
 	// Add this method to ReminderService.java
 
 	@Transactional(readOnly = true)
-	public List<MedicationWithRemindersResponse> getMedicationsWithReminders(UUID userId) {
-		log.info("Getting all medications with reminders for user: {}", userId);
+	public List<ReminderWithMedicationResponse> getRemindersWithMedications(UUID userId) {
+		log.info("Getting all reminders with medication details for user: {}", userId);
 
-		// Get all distinct medications that have reminders for this user
-		List<MyMedicine> medicationsWithReminders = reminderRepository.findDistinctMedicationsWithReminders(userId);
+		// Get all reminders for the user with medication and prescription details
+		List<Reminder> allReminders = reminderRepository.findAllRemindersByUserIdWithDetails(userId);
 
-		return medicationsWithReminders.stream().map(myMedicine -> {
-			// Get all reminders for this medication
-			List<Reminder> reminders = reminderRepository.findRemindersByMyMedicineId(myMedicine.getId());
+		return allReminders.stream().map(reminder -> {
+			Treatment treatment = reminder.getTreatment();
+			MyMedicine myMedicine = treatment.getMyMedicine();
+			Prescription prescription = treatment.getPrescription();
 
-			// Convert reminders to response DTOs
-			List<ReminderResponse> reminderResponses = reminders.stream()
-					.map(this::toResponse)
-					.toList();
-
-			// Get prescription info from the first reminder (all should have same prescription for same myMedicine)
-			UUID prescriptionId = null;
-			String prescriptionName = null;
-			if (!reminders.isEmpty()) {
-				prescriptionId = reminders.get(0).getTreatment().getPrescription().getId();
-				prescriptionName = reminders.get(0).getTreatment().getPrescription().getName();
-			}
-
-			return new MedicationWithRemindersResponse(
-					myMedicine.getId(),
-					myMedicine.getName(),
-					prescriptionId,
-					prescriptionName,
-					reminderResponses.size(),
-					reminderResponses
-			);
-		}).toList();
+			return new ReminderWithMedicationResponse(reminder.getId(), myMedicine.getId(), myMedicine.getName(),
+					prescription.getId(), prescription.getName(), reminder.getReminderDateTime(), reminder.getStatus(),
+					reminder.getMessage(), reminder.getCreatedAt(), reminder.getUpdatedAt(), treatment.getId(),
+					reminder.getTimeSlot());
+		})
+			.sorted((r1, r2) -> r1.getReminderTime().compareTo(r2.getReminderTime())) // Sort
+																						// by
+																						// reminder
+																						// time
+			.toList();
 	}
 
 	private ReminderResponse toResponse(Reminder reminder) {

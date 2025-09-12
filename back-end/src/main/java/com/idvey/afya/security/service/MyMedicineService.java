@@ -26,9 +26,13 @@ import java.util.UUID;
 public class MyMedicineService {
 
 	private final MyMedicineRepository myMedicineRepository;
+
 	private final PharmacyBoxRepository pharmacyBoxRepository;
+
 	private final MedicineRepository medicineRepository;
+
 	private final GroupMemberRepository groupMemberRepository;
+
 	private final PurchaseHistoryService purchaseHistoryService;
 
 	@Transactional
@@ -37,7 +41,7 @@ public class MyMedicineService {
 		log.info("Creating MyMedicine for pharmacy box: {} by user: {}", request.getPharmacyBoxId(), userId);
 
 		PharmacyBox pharmacyBox = pharmacyBoxRepository.findById(request.getPharmacyBoxId())
-				.orElseThrow(() -> new NoSuchElementException("Pharmacy box not found"));
+			.orElseThrow(() -> new NoSuchElementException("Pharmacy box not found"));
 
 		// 🔒 AUTHORIZATION CHECK
 		validateUserAccessToPharmacyBox(userId, pharmacyBox);
@@ -47,39 +51,42 @@ public class MyMedicineService {
 		// If medicineId is provided, fetch from global database
 		if (request.getMedicineId() != null) {
 			medicine = medicineRepository.findById(request.getMedicineId())
-					.orElseThrow(() -> new NoSuchElementException("Medicine not found"));
+				.orElseThrow(() -> new NoSuchElementException("Medicine not found"));
 
-			// Check if this medicine already exists in pharmacy box (only for global medicines)
-			if (myMedicineRepository.existsByPharmacyBox_IdAndMedicine_Id(
-					request.getPharmacyBoxId(), request.getMedicineId())) {
+			// Check if this medicine already exists in pharmacy box (only for global
+			// medicines)
+			if (myMedicineRepository.existsByPharmacyBox_IdAndMedicine_Id(request.getPharmacyBoxId(),
+					request.getMedicineId())) {
 				throw new IllegalStateException("This medicine already exists in the pharmacy box");
 			}
-		} else {
+		}
+		else {
 			// For custom medicines, check if a custom medicine with the same name exists
-			if (myMedicineRepository.existsByPharmacyBox_IdAndNameAndMedicine_IsNull(
-					request.getPharmacyBoxId(), request.getName())) {
+			if (myMedicineRepository.existsByPharmacyBox_IdAndNameAndMedicine_IsNull(request.getPharmacyBoxId(),
+					request.getName())) {
 				throw new IllegalStateException("A custom medicine with this name already exists in the pharmacy box");
 			}
 		}
 
 		MyMedicine.MyMedicineBuilder builder = MyMedicine.builder()
-				.name(request.getName())
-				.form(request.getForm())
-				.pharmacyBox(pharmacyBox)
-				.medicine(medicine); // Can be null
+			.name(request.getName())
+			.form(request.getForm())
+			.pharmacyBox(pharmacyBox)
+			.medicine(medicine); // Can be null
 
 		// If it's a custom medicine (medicineId is null), set custom fields
 		if (medicine == null) {
 			builder.customManufacturer(request.getManufacturer())
-					.customForm(request.getDosage()) // FIXED: Changed from getDosageForm to getDosage
-					.customRequiresPrescription(request.isRequiresPrescription());
+				.customForm(request.getDosage()) // FIXED: Changed from getDosageForm to
+													// getDosage
+				.customRequiresPrescription(request.isRequiresPrescription());
 		}
 
 		MyMedicine myMedicine = builder.build();
 		MyMedicine saved = myMedicineRepository.save(myMedicine);
 
-		log.info("MyMedicine created with ID: {} (custom: {}) by user: {}",
-				saved.getId(), saved.isCustomMedicine(), userId);
+		log.info("MyMedicine created with ID: {} (custom: {}) by user: {}", saved.getId(), saved.isCustomMedicine(),
+				userId);
 
 		return toResponse(saved);
 	}
@@ -90,14 +97,14 @@ public class MyMedicineService {
 		log.info("Fetching medicines for pharmacy box: {} by user: {}", pharmacyBoxId, userId);
 
 		PharmacyBox pharmacyBox = pharmacyBoxRepository.findById(pharmacyBoxId)
-				.orElseThrow(() -> new NoSuchElementException("Pharmacy box not found"));
+			.orElseThrow(() -> new NoSuchElementException("Pharmacy box not found"));
 
 		validateUserAccessToPharmacyBox(userId, pharmacyBox);
 
 		return myMedicineRepository.findByPharmacyBoxIdWithMedicine(pharmacyBoxId)
-				.stream()
-				.map(this::toResponse)
-				.toList();
+			.stream()
+			.map(this::toResponse)
+			.toList();
 	}
 
 	@Transactional(readOnly = true)
@@ -106,14 +113,14 @@ public class MyMedicineService {
 		log.info("Fetching medicines for pharmacy box ordered by creation date: {} by user: {}", pharmacyBoxId, userId);
 
 		PharmacyBox pharmacyBox = pharmacyBoxRepository.findById(pharmacyBoxId)
-				.orElseThrow(() -> new NoSuchElementException("Pharmacy box not found"));
+			.orElseThrow(() -> new NoSuchElementException("Pharmacy box not found"));
 
 		validateUserAccessToPharmacyBox(userId, pharmacyBox);
 
 		return myMedicineRepository.findByPharmacyBoxIdOrderByCreatedAtDesc(pharmacyBoxId)
-				.stream()
-				.map(this::toResponse)
-				.toList();
+			.stream()
+			.map(this::toResponse)
+			.toList();
 	}
 
 	@Transactional(readOnly = true)
@@ -122,14 +129,14 @@ public class MyMedicineService {
 		log.info("Searching medicines in pharmacy box {} with name: {} by user: {}", pharmacyBoxId, name, userId);
 
 		PharmacyBox pharmacyBox = pharmacyBoxRepository.findById(pharmacyBoxId)
-				.orElseThrow(() -> new NoSuchElementException("Pharmacy box not found"));
+			.orElseThrow(() -> new NoSuchElementException("Pharmacy box not found"));
 
 		validateUserAccessToPharmacyBox(userId, pharmacyBox);
 
 		return myMedicineRepository.findByPharmacyBoxIdAndNameContaining(pharmacyBoxId, name)
-				.stream()
-				.map(this::toResponse)
-				.toList();
+			.stream()
+			.map(this::toResponse)
+			.toList();
 	}
 
 	@Transactional(readOnly = true)
@@ -138,14 +145,14 @@ public class MyMedicineService {
 		log.info("Finding medicines in pharmacy box {} with form: {} by user: {}", pharmacyBoxId, form, userId);
 
 		PharmacyBox pharmacyBox = pharmacyBoxRepository.findById(pharmacyBoxId)
-				.orElseThrow(() -> new NoSuchElementException("Pharmacy box not found"));
+			.orElseThrow(() -> new NoSuchElementException("Pharmacy box not found"));
 
 		validateUserAccessToPharmacyBox(userId, pharmacyBox);
 
 		return myMedicineRepository.findByPharmacyBoxIdAndForm(pharmacyBoxId, form)
-				.stream()
-				.map(this::toResponse)
-				.toList();
+			.stream()
+			.map(this::toResponse)
+			.toList();
 	}
 
 	@Transactional(readOnly = true)
@@ -159,7 +166,7 @@ public class MyMedicineService {
 		log.info("Checking if medicine {} exists in pharmacy box {} by user: {}", medicineId, pharmacyBoxId, userId);
 
 		PharmacyBox pharmacyBox = pharmacyBoxRepository.findById(pharmacyBoxId)
-				.orElseThrow(() -> new NoSuchElementException("Pharmacy box not found"));
+			.orElseThrow(() -> new NoSuchElementException("Pharmacy box not found"));
 
 		validateUserAccessToPharmacyBox(userId, pharmacyBox);
 
@@ -171,7 +178,7 @@ public class MyMedicineService {
 		log.info("Counting medicines in pharmacy box: {} by user: {}", pharmacyBoxId, userId);
 
 		PharmacyBox pharmacyBox = pharmacyBoxRepository.findById(pharmacyBoxId)
-				.orElseThrow(() -> new NoSuchElementException("Pharmacy box not found"));
+			.orElseThrow(() -> new NoSuchElementException("Pharmacy box not found"));
 
 		validateUserAccessToPharmacyBox(userId, pharmacyBox);
 
@@ -183,7 +190,7 @@ public class MyMedicineService {
 		log.info("Fetching detailed MyMedicine: {} by user: {}", id, userId);
 
 		MyMedicine myMedicine = myMedicineRepository.findByIdWithPurchaseHistory(id)
-				.orElseThrow(() -> new NoSuchElementException("MyMedicine not found"));
+			.orElseThrow(() -> new NoSuchElementException("MyMedicine not found"));
 
 		validateUserAccessToPharmacyBox(userId, myMedicine.getPharmacyBox());
 
@@ -196,18 +203,14 @@ public class MyMedicineService {
 			medicineResponse = toMedicineResponse(myMedicine.getMedicine());
 		}
 
-		return new MyMedicineDetailResponse(
-				myMedicine.getId(),
-				myMedicine.getName(),
-				myMedicine.getForm(),
-				myMedicine.getPharmacyBox().getId(),
-				myMedicine.getPharmacyBox().getGroup().getName(),
-				medicineResponse, // Can be null for custom medicines
-				totalQuantity,
-				purchaseHistory,
-				myMedicine.getCreatedAt(),
-				myMedicine.getUpdatedAt()
-		);
+		return new MyMedicineDetailResponse(myMedicine.getId(), myMedicine.getName(), myMedicine.getForm(),
+				myMedicine.getPharmacyBox().getId(), myMedicine.getPharmacyBox().getGroup().getName(), medicineResponse, // Can
+																															// be
+																															// null
+																															// for
+																															// custom
+																															// medicines
+				totalQuantity, purchaseHistory, myMedicine.getCreatedAt(), myMedicine.getUpdatedAt());
 	}
 
 	@Transactional
@@ -216,7 +219,7 @@ public class MyMedicineService {
 		log.info("Updating MyMedicine: {} by user: {}", id, userId);
 
 		MyMedicine myMedicine = myMedicineRepository.findById(id)
-				.orElseThrow(() -> new NoSuchElementException("MyMedicine not found"));
+			.orElseThrow(() -> new NoSuchElementException("MyMedicine not found"));
 
 		validateUserAccessToPharmacyBox(userId, myMedicine.getPharmacyBox());
 
@@ -234,26 +237,28 @@ public class MyMedicineService {
 		log.info("Deleting MyMedicine: {} by user: {}", id, userId);
 
 		MyMedicine myMedicine = myMedicineRepository.findById(id)
-				.orElseThrow(() -> new NoSuchElementException("MyMedicine not found"));
+			.orElseThrow(() -> new NoSuchElementException("MyMedicine not found"));
 
 		validateUserAccessToPharmacyBox(userId, myMedicine.getPharmacyBox());
 
 		myMedicineRepository.deleteById(id);
 		log.info("MyMedicine deleted: {} by user: {}", id, userId);
 	}
+
 	@Transactional(readOnly = true)
 	public MyMedicineResponse getMyMedicineByMedicineIdAndPharmacyBox(UUID userId, UUID pharmacyBoxId, UUID medicineId)
 			throws AccessDeniedException {
-		log.info("Fetching MyMedicine for medicine: {} in pharmacy box: {} by user: {}", medicineId, pharmacyBoxId, userId);
+		log.info("Fetching MyMedicine for medicine: {} in pharmacy box: {} by user: {}", medicineId, pharmacyBoxId,
+				userId);
 
 		PharmacyBox pharmacyBox = pharmacyBoxRepository.findById(pharmacyBoxId)
-				.orElseThrow(() -> new NoSuchElementException("Pharmacy box not found"));
+			.orElseThrow(() -> new NoSuchElementException("Pharmacy box not found"));
 
 		// 🔒 AUTHORIZATION CHECK
 		validateUserAccessToPharmacyBox(userId, pharmacyBox);
 
 		MyMedicine myMedicine = myMedicineRepository.findByPharmacyBoxIdAndMedicineId(pharmacyBoxId, medicineId)
-				.orElseThrow(() -> new NoSuchElementException("Medicine not found in this pharmacy box"));
+			.orElseThrow(() -> new NoSuchElementException("Medicine not found in this pharmacy box"));
 
 		return toResponse(myMedicine);
 	}
@@ -264,18 +269,14 @@ public class MyMedicineService {
 		log.info("Fetching pharmacy box medicines overview: {} by user: {}", pharmacyBoxId, userId);
 
 		PharmacyBox pharmacyBox = pharmacyBoxRepository.findById(pharmacyBoxId)
-				.orElseThrow(() -> new NoSuchElementException("Pharmacy box not found"));
+			.orElseThrow(() -> new NoSuchElementException("Pharmacy box not found"));
 
 		validateUserAccessToPharmacyBox(userId, pharmacyBox);
 
 		List<MyMedicineResponse> medicines = getMyMedicinesByPharmacyBox(userId, pharmacyBoxId);
 
-		return new PharmacyBoxMedicinesResponse(
-				pharmacyBoxId,
-				pharmacyBox.getGroup().getName(),
-				medicines.size(),
-				medicines
-		);
+		return new PharmacyBoxMedicinesResponse(pharmacyBoxId, pharmacyBox.getGroup().getName(), medicines.size(),
+				medicines);
 	}
 
 	// 🔒 AUTHORIZATION VALIDATION METHOD
@@ -297,47 +298,40 @@ public class MyMedicineService {
 			medicineResponse = toMedicineResponse(myMedicine.getMedicine());
 		}
 
-		return new MyMedicineResponse(
-				myMedicine.getId(),                                // 1. id
-				myMedicine.getName(),                              // 2. name
-				myMedicine.getForm(),                              // 3. form
-				myMedicine.getPharmacyBox().getId(),               // 4. pharmacyBoxId
-				myMedicine.getPharmacyBox().getGroup().getName(),  // 5. pharmacyBoxName
-				medicineResponse,                                  // 6. medicine (can be null for custom medicines)
-				myMedicine.isCustomMedicine(),                     // 7. isCustomMedicine
-				myMedicine.getCustomManufacturer(),                // 8. customManufacturer
-				myMedicine.getCustomForm(),                  // 9. customDosageForm
-				myMedicine.getCustomRequiresPrescription(),        // 10. customRequiresPrescription
-				totalQuantity != null ? totalQuantity.intValue() : 0, // 11. totalQuantityPurchased
-				purchaseCount,                                     // 12. purchaseHistoryCount
-				myMedicine.getCreatedAt(),                         // 13. createdAt
-				myMedicine.getUpdatedAt()                          // 14. updatedAt
+		return new MyMedicineResponse(myMedicine.getId(), // 1. id
+				myMedicine.getName(), // 2. name
+				myMedicine.getForm(), // 3. form
+				myMedicine.getPharmacyBox().getId(), // 4. pharmacyBoxId
+				myMedicine.getPharmacyBox().getGroup().getName(), // 5. pharmacyBoxName
+				medicineResponse, // 6. medicine (can be null for custom medicines)
+				myMedicine.isCustomMedicine(), // 7. isCustomMedicine
+				myMedicine.getCustomManufacturer(), // 8. customManufacturer
+				myMedicine.getCustomForm(), // 9. customDosageForm
+				myMedicine.getCustomRequiresPrescription(), // 10.
+															// customRequiresPrescription
+				totalQuantity != null ? totalQuantity.intValue() : 0, // 11.
+																		// totalQuantityPurchased
+				purchaseCount, // 12. purchaseHistoryCount
+				myMedicine.getCreatedAt(), // 13. createdAt
+				myMedicine.getUpdatedAt() // 14. updatedAt
 		);
 	}
 
 	// Updated toMedicineResponse method in MyMedicineService.java
 	private MedicineResponse toMedicineResponse(Medicine medicine) {
-		return new MedicineResponse(
-				medicine.getId(),
-				medicine.getMedicationName(),      // Changed from getName() or getDesignation()
-				medicine.getDosage(),              // Changed from getManufacturer()
-				medicine.getForm(),                // Changed from getDosageForm()
-				medicine.getPresentation(),
-				medicine.getDci(),
-				medicine.getTherapeuticClass(),
-				medicine.getSubClass(),
-				medicine.getLaboratory(),          // Changed from getManufacturer()
-				medicine.getAmmNumber(),
-				medicine.getAmmDate(),
-				medicine.getPrimaryPackaging(),
-				medicine.getPackagingSpecification(),
-				medicine.getScheduleCategory(),
-				medicine.getShelfLife(),
-				medicine.getIndications(),
-				medicine.getMedicationType(),
-				medicine.getVeicClassification(),
-				medicine.getBarcode(),
-				medicine.isRequiresPrescription()
-		);
+		return new MedicineResponse(medicine.getId(), medicine.getMedicationName(), // Changed
+																					// from
+																					// getName()
+																					// or
+																					// getDesignation()
+				medicine.getDosage(), // Changed from getManufacturer()
+				medicine.getForm(), // Changed from getDosageForm()
+				medicine.getPresentation(), medicine.getDci(), medicine.getTherapeuticClass(), medicine.getSubClass(),
+				medicine.getLaboratory(), // Changed from getManufacturer()
+				medicine.getAmmNumber(), medicine.getAmmDate(), medicine.getPrimaryPackaging(),
+				medicine.getPackagingSpecification(), medicine.getScheduleCategory(), medicine.getShelfLife(),
+				medicine.getIndications(), medicine.getMedicationType(), medicine.getVeicClassification(),
+				medicine.getBarcode(), medicine.isRequiresPrescription());
 	}
+
 }

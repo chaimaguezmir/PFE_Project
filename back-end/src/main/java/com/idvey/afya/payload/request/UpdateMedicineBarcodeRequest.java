@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 public class UpdateMedicineBarcodeRequest {
 
-    @NotBlank(message = "Barcode is required")
-    private String barcode;
+	@NotBlank(message = "Barcode is required")
+	private String barcode;
 
 }

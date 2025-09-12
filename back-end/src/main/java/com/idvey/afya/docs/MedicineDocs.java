@@ -110,12 +110,10 @@ public final class MedicineDocs {
 							schema = @Schema(implementation = com.idvey.afya.payload.response.MedicineResponse.class))),
 			@ApiResponse(responseCode = "400", description = "Invalid barcode or barcode already exists"),
 			@ApiResponse(responseCode = "404", description = "Medicine not found"),
-			@ApiResponse(responseCode = "401", description = "Unauthorized")
-	})
+			@ApiResponse(responseCode = "401", description = "Unauthorized") })
 	public @interface UpdateMedicineBarcode {
 
 	}
-
 
 	@Target(ElementType.METHOD)
 	@Retention(RetentionPolicy.RUNTIME)
@@ -127,8 +125,7 @@ public final class MedicineDocs {
 					content = @Content(mediaType = "application/json",
 							schema = @Schema(implementation = com.idvey.afya.payload.response.MedicineResponse.class))),
 			@ApiResponse(responseCode = "404", description = "Medicine not found"),
-			@ApiResponse(responseCode = "401", description = "Unauthorized")
-	})
+			@ApiResponse(responseCode = "401", description = "Unauthorized") })
 	public @interface RemoveMedicineBarcode {
 
 	}

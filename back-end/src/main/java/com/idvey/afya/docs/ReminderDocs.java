@@ -170,19 +170,19 @@ public final class ReminderDocs {
 	public @interface DeleteReminder {
 
 	}
+
 	@Target(ElementType.METHOD)
 	@Retention(RetentionPolicy.RUNTIME)
 	@Documented
-	@Operation(summary = "Get medications with reminders",
-			description = "Retrieves all medications that have reminders for the authenticated user. " +
-					"Returns medication details, prescription info, and all associated reminders.")
+	@Operation(summary = "Get reminders with medication details",
+			description = "Retrieves all reminders for the authenticated user with their associated medication and prescription details. "
+					+ "Returns a flat list of reminders, each containing full medication and prescription information.")
 	@ApiResponses({
-			@ApiResponse(responseCode = "200", description = "Medications with reminders retrieved successfully",
-					content = @Content(mediaType = "application/json",
-							schema = @Schema(implementation = com.idvey.afya.payload.response.MedicationWithRemindersResponse.class))),
-			@ApiResponse(responseCode = "401", description = "Unauthorized")
-	})
-	public @interface GetMedicationsWithReminders {
+			@ApiResponse(responseCode = "200", description = "Reminders with medication details retrieved successfully",
+					content = @Content(mediaType = "application/json", schema = @Schema(
+							implementation = com.idvey.afya.payload.response.ReminderWithMedicationResponse.class))),
+			@ApiResponse(responseCode = "401", description = "Unauthorized") })
+	public @interface GetRemindersWithMedications {
 
 	}
 

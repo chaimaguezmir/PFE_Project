@@ -64,17 +64,17 @@ public class MyMedicine {
 
 	// Helper methods to get effective values
 
-
 	public String getEffectiveForm() {
 		return medicine != null ? medicine.getForm() : customForm;
 	}
 
 	public boolean getEffectiveRequiresPrescription() {
-		return medicine != null ? medicine.isRequiresPrescription() :
-				(customRequiresPrescription != null ? customRequiresPrescription : false);
+		return medicine != null ? medicine.isRequiresPrescription()
+				: (customRequiresPrescription != null ? customRequiresPrescription : false);
 	}
 
 	public boolean isCustomMedicine() {
 		return medicine == null;
 	}
+
 }

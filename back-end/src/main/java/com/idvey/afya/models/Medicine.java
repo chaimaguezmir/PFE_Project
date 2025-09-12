@@ -83,9 +83,8 @@ public class Medicine {
 
 	// Helper method to check if prescription is required
 	public boolean isRequiresPrescription() {
-		return medicationType != null &&
-				(medicationType.toLowerCase().contains("prescription") ||
-						medicationType.toLowerCase().contains("rx"));
+		return medicationType != null && (medicationType.toLowerCase().contains("prescription")
+				|| medicationType.toLowerCase().contains("rx"));
 	}
 
 }

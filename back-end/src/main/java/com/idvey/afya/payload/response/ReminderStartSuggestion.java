@@ -17,7 +17,7 @@ public class ReminderStartSuggestion {
 
 	private LocalTime currentTime;
 
-	private String currentPeriod; // "morning", "afternoon", "evening", "night"
+	private String currentPeriod; // "morning", "noon", "evening", "night"
 
 	private List<StartOption> availableOptions;
 

@@ -24,8 +24,13 @@ public class CreateMyMedicineRequest {
 
 	// Additional fields for custom medicines when medicineId is null
 	private String manufacturer = "Unknown";
+
 	private String designation;
+
 	private String dosage;
+
 	private String customForm;
+
 	private boolean requiresPrescription = false;
+
 }
