@@ -1,6 +1,7 @@
 import 'package:flutter_mobile/core/resources/data_state.dart';
-import 'package:flutter_mobile/domain/entities/prescription/create_reminder_entity.dart';
-import 'package:flutter_mobile/domain/entities/prescription/reminder_entity.dart';
+import 'package:flutter_mobile/domain/entities/reminder/reminder_entity.dart';
+import 'package:flutter_mobile/domain/entities/reminder/simple_create_reminder_entity.dart';
+import 'package:flutter_mobile/domain/entities/reminder/simple_reminder_entity.dart';
 
 abstract class ReminderRepository {
   Future<DataState<List<ReminderEntity>>> getRemindersWithMedications();
@@ -9,10 +10,9 @@ abstract class ReminderRepository {
   );
   Future<DataState<ReminderEntity>> getReminderById(String id);
 
-  // New methods for creating reminders
-  Future<DataState<List<ReminderEntity>>> createReminders(
-    CreateReminderEntity reminderRequest,
-  );
+  Future<DataState<List<SimpleReminderEntity>>> createReminders(
+      SimpleCreateReminderEntity reminderRequest,
+      );
 
   Future<DataState<ReminderEntity>> updateReminder({
     required String id,

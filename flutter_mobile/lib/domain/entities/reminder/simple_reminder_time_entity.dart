@@ -32,7 +32,7 @@ class SimpleReminderTimeEntity {
   }
 
   bool get isValidTimeSlot {
-    const validSlots = ['MORNING', 'AFTERNOON', 'EVENING', 'NIGHT'];
+    const validSlots = ['MORNING', 'NOON', 'EVENING', 'NIGHT'];
     final cleanedSlot = cleanTimeSlot;
     final isValid = validSlots.contains(cleanedSlot);
 

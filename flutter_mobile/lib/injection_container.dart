@@ -47,12 +47,7 @@ import 'package:flutter_mobile/presentation/bloc/profile/profile_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/services/services_cubit.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'data/data_sources/auth_interceptor.dart';
-import 'package:flutter_mobile/data/data_sources/simple_reminder_remote_datasource.dart';
-import 'package:flutter_mobile/data/data_sources/simple_reminder_remote_datasource_impl.dart';
-import 'package:flutter_mobile/data/repositories/simple_reminder_repository_impl.dart';
-import 'package:flutter_mobile/domain/repositories/simple_reminder_repository.dart';
 
 final sl = GetIt.instance;
 final dio = Dio();
@@ -104,9 +99,6 @@ Future<void> initInjectionContainer() async {
   sl.registerLazySingleton<DiseaseRemoteDataSource>(
     () => DiseaseRemoteDataSourceImpl(sl()),
   );
-  sl.registerLazySingleton<SimpleReminderRemoteDataSource>(
-    () => SimpleReminderRemoteDataSourceImpl(sl()),
-  );
 
   // Repositories
   sl.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl(sl()));
@@ -129,9 +121,6 @@ Future<void> initInjectionContainer() async {
   sl.registerLazySingleton<DiseaseRepository>(
     () => DiseaseRepositoryImpl(sl()),
   );
-  sl.registerLazySingleton<SimpleReminderRepository>(
-    () => SimpleReminderRepositoryImpl(remoteDataSource: sl()),
-  );
 
   // BLoCs / Cubits
   sl.registerFactory<ProfileCubit>(() => ProfileCubit(sl()));
@@ -149,15 +138,7 @@ Future<void> initInjectionContainer() async {
 
   // NEW: Add this line for the PrescriptionCreationCubit
   sl.registerFactory<PrescriptionCreationCubit>(
-    () => PrescriptionCreationCubit(
-      sl(),
-      sl(),
-      sl(),
-      sl(),
-      sl(),
-      sl(),
-      sl(),// Add this
-    ),
+    () => PrescriptionCreationCubit(sl(), sl(), sl(), sl(), sl(), sl()),
   );
   // Network Controller
   sl.registerLazySingleton<Connectivity>(() => Connectivity());

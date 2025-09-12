@@ -5,12 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_mobile/config/router/app_route_constants.dart';
 import 'package:flutter_mobile/core/resources/data_state.dart';
-import 'package:flutter_mobile/domain/entities/prescription/create_reminder_entity.dart';
 import 'package:flutter_mobile/domain/entities/prescription/create_treatment_entity.dart';
 import 'package:flutter_mobile/domain/entities/prescription/disease_entity.dart';
 import 'package:flutter_mobile/domain/entities/prescription/prescription_entity.dart';
-import 'package:flutter_mobile/domain/entities/prescription/reminder_entity.dart';
-import 'package:flutter_mobile/domain/entities/prescription/reminder_time_entity.dart';
+import 'package:flutter_mobile/domain/entities/reminder/reminder_entity.dart';
 import 'package:flutter_mobile/domain/entities/prescription/treatment_entity.dart';
 import 'package:flutter_mobile/domain/entities/reminder/simple_create_reminder_entity.dart';
 import 'package:flutter_mobile/domain/entities/reminder/simple_reminder_entity.dart';
@@ -347,7 +345,7 @@ class MedicalPrescriptionForm extends StatelessWidget {
                                                       'midi',
                                                     )) {
                                                   timeSlot =
-                                                      'NOON'; // Changed from 'AFTERNOON' to 'NOON'
+                                                      'NOON';
                                                   defaultTime = '12:00';
                                                 } else if (momentStr.contains(
                                                   'soir',

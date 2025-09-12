@@ -1,5 +1,5 @@
 // lib/domain/entities/prescription/reminder_extensions.dart
-import 'package:flutter_mobile/domain/entities/prescription/reminder_entity.dart';
+import 'package:flutter_mobile/domain/entities/reminder/reminder_entity.dart';
 
 extension ReminderEntityExtensions on ReminderEntity {
 
@@ -75,7 +75,7 @@ extension ReminderEntityExtensions on ReminderEntity {
     switch (timeSlot.toUpperCase()) {
       case 'MORNING':
         return 'Matin';
-      case 'AFTERNOON':
+      case 'NOON':
         return 'Après-midi';
       case 'EVENING':
         return 'Soir';
@@ -93,7 +93,7 @@ extension ReminderEntityExtensions on ReminderEntity {
         return 'MORNING';
       case 'APRES_MIDI':
       case 'APRÈS_MIDI':
-        return 'AFTERNOON';
+        return 'NOON';
       case 'SOIR':
         return 'EVENING';
       case 'NUIT':

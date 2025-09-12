@@ -1,11 +1,11 @@
 // lib/presentation/bloc/home/welcome_screen_cubit.dart
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter_mobile/domain/entities/prescription/reminder_entity.dart';
+import 'package:flutter_mobile/domain/entities/reminder/reminder_entity.dart';
+import 'package:flutter_mobile/domain/entities/reminder/reminder_extensions.dart';
 import 'package:flutter_mobile/domain/repositories/reminder_repository.dart';
 import 'package:flutter_mobile/core/resources/data_state.dart';
 // Import the extensions
-import 'package:flutter_mobile/domain/entities/prescription/reminder_extensions.dart';
 
 part 'welcome_screen_state.dart';
 
@@ -147,13 +147,13 @@ class WelcomeScreenCubit extends Cubit<WelcomeScreenState> {
     // In a real implementation, this would make an API call to update the reminder
   }
 
-  /// Group reminders by time slot (morning, afternoon, evening, night)
+  /// Group reminders by time slot (morning, noon, evening, night)
   Map<String, List<ReminderEntity>> _groupRemindersByTimeSlot(
       List<ReminderEntity> reminders,
       ) {
     final grouped = <String, List<ReminderEntity>>{
       'MORNING': [],
-      'AFTERNOON': [],
+      'NOON': [],
       'EVENING': [],
       'NIGHT': [],
     };
@@ -217,7 +217,7 @@ class WelcomeScreenCubit extends Cubit<WelcomeScreenState> {
     }
 
     // Filter by selected time slot
-    final timeSlots = ['MORNING', 'AFTERNOON', 'EVENING', 'NIGHT'];
+    final timeSlots = ['MORNING', 'NOON', 'EVENING', 'NIGHT'];
     final selectedTimeSlot = timeSlots[state.selectedTimeIndex];
 
     return dayReminders
@@ -256,7 +256,7 @@ class WelcomeScreenCubit extends Cubit<WelcomeScreenState> {
     switch (timeSlot.toUpperCase()) {
       case 'MORNING':
         return 'Matin';
-      case 'AFTERNOON':
+      case 'NOON':
         return 'Après-midi';
       case 'EVENING':
         return 'Soir';

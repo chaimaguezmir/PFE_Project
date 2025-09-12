@@ -5,7 +5,7 @@ class ReminderTimeEntity {
     required this.time,
   });
 
-  final String timeSlot; // MORNING, AFTERNOON, EVENING, NIGHT
+  final String timeSlot; // MORNING, NOON, EVENING, NIGHT
   final String time; // Format: "HH:mm"
 
   // Helper method to get display name for time slot
@@ -13,7 +13,7 @@ class ReminderTimeEntity {
     switch (timeSlot.toUpperCase()) {
       case 'MORNING':
         return 'Matin';
-      case 'AFTERNOON':
+      case 'NOON':
         return 'Après-midi';
       case 'EVENING':
         return 'Soir';

@@ -3,16 +3,38 @@ import 'package:dio/dio.dart';
 import 'package:flutter_mobile/core/resources/data_state.dart';
 import 'package:flutter_mobile/data/model/prescription/create_reminder_request_model.dart';
 import 'package:flutter_mobile/data/model/prescription/reminder_time_model.dart';
-import 'package:flutter_mobile/domain/entities/prescription/reminder_entity.dart';
-import 'package:flutter_mobile/domain/entities/prescription/create_reminder_entity.dart';
+import 'package:flutter_mobile/data/model/reminder/simple_create_reminder_request_model.dart';
+import 'package:flutter_mobile/domain/entities/reminder/reminder_entity.dart';
+import 'package:flutter_mobile/domain/entities/reminder/simple_reminder_entity.dart';
 import 'package:flutter_mobile/domain/repositories/reminder_repository.dart';
 
+import '../../domain/entities/reminder/simple_create_reminder_entity.dart' show SimpleCreateReminderEntity;
 import '../data_sources/reminder_remote_data_source.dart' show ReminderRemoteDataSource;
 
 class ReminderRepositoryImpl implements ReminderRepository {
   ReminderRepositoryImpl(this._remoteDataSource);
 
   final ReminderRemoteDataSource _remoteDataSource;
+
+  @override
+  Future<DataState<List<SimpleReminderEntity>>> createReminders(
+      SimpleCreateReminderEntity reminderRequest,
+      ) async {
+    try {
+      final requestModel = SimpleCreateReminderRequestModel.fromEntity(
+        reminderRequest,
+      );
+      final responseModels = await _remoteDataSource.createReminders(
+        requestModel,
+      );
+      final entities = responseModels.map((m) => m.toEntity()).toList();
+      return DataSuccess(entities);
+    } on DioException catch (e) {
+      return DataError('Failed to create reminders:  {e.message}');
+    } catch (e) {
+      return DataError('Unexpected error: $e');
+    }
+  }
 
   @override
   Future<DataState<List<ReminderEntity>>> getRemindersWithMedications() async {
@@ -50,34 +72,6 @@ class ReminderRepositoryImpl implements ReminderRepository {
     }
   }
 
-  @override
-  Future<DataState<List<ReminderEntity>>> createReminders(
-      CreateReminderEntity reminderRequest,
-      ) async {
-    try {
-      // Convert entity to request model
-      final reminderTimeModels = reminderRequest.reminderTimes
-          .map((timeEntity) => ReminderTimeModel(
-        timeSlot: timeEntity.timeSlot,
-        time: timeEntity.time,
-      ))
-          .toList();
-
-      final requestModel = CreateReminderRequestModel(
-        treatmentId: reminderRequest.treatmentId,
-        reminderTimes: reminderTimeModels,
-        customMessage: reminderRequest.customMessage,
-        startPreference: reminderRequest.startPreference,
-      );
-
-      final result = await _remoteDataSource.createReminders(requestModel);
-      return DataSuccess(result);
-    } on DioException catch (e) {
-      return DataError(_handleDioError(e));
-    } catch (e) {
-      return DataError('Une erreur inattendue s\'est produite: $e');
-    }
-  }
 
   @override
   Future<DataState<ReminderEntity>> updateReminder({

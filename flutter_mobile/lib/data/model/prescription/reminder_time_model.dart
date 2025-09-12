@@ -4,7 +4,7 @@ class ReminderTimeModel {
     required this.time,
   });
 
-  final String timeSlot; // MORNING, AFTERNOON, EVENING, NIGHT
+  final String timeSlot; // MORNING, NOON, EVENING, NIGHT
   final String time; // Format: "HH:mm"
 
   Map<String, dynamic> toJson() => {
@@ -24,7 +24,7 @@ class ReminderTimeModel {
     switch (timeSlot.toUpperCase()) {
       case 'MORNING':
         return 'Matin';
-      case 'AFTERNOON':
+      case 'NOON':
         return 'Après-midi';
       case 'EVENING':
         return 'Soir';

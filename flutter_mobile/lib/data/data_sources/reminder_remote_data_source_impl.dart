@@ -1,15 +1,72 @@
-// lib/data/data_sources/reminder_remote_datasource_impl.dart
-import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter_mobile/core/constants/api_endpoint.dart';
 import 'package:flutter_mobile/data/data_sources/reminder_remote_data_source.dart';
 import 'package:flutter_mobile/data/model/prescription/reminder_model.dart';
 import 'package:flutter_mobile/data/model/prescription/create_reminder_request_model.dart';
+import 'package:flutter_mobile/data/model/reminder/simple_create_reminder_request_model.dart';
+import 'package:flutter_mobile/data/model/reminder/simple_reminder_response_model.dart';
 
 class ReminderRemoteDataSourceImpl implements ReminderRemoteDataSource {
   ReminderRemoteDataSourceImpl(this._dio);
 
   final Dio _dio;
+  @override
+  Future<List<SimpleReminderResponseModel>> createReminders(
+    SimpleCreateReminderRequestModel request,
+  ) async {
+    print('Creating reminders for treatment:  {request.treatmentId}');
+
+    // Try different formats until one works
+    final formats = [
+      ('Standard', request.toJson()),
+      ('SnakeCase', request.toJsonSnakeCase()),
+      ('Simplified', request.toJsonSimplified()),
+      ('Minimal', request.toJsonMinimal()),
+    ];
+
+    for (final (formatName, requestData) in formats) {
+      try {
+        print('Trying  formatName format...');
+        print('Data:  requestData');
+
+        final response = await _dio.post(
+          ApiEndpoints.reminders,
+          data: requestData,
+        );
+
+        print('SUCCESS with  formatName! Status:  {response.statusCode}');
+
+        if (response.statusCode == 200 || response.statusCode == 201) {
+          final data = response.data;
+
+          // Handle different response formats
+          if (data is List) {
+            return data
+                .map((json) => SimpleReminderResponseModel.fromJson(json))
+                .toList();
+          } else if (data is Map && data.containsKey('reminders')) {
+            final reminders = data['reminders'] as List;
+            return reminders
+                .map((json) => SimpleReminderResponseModel.fromJson(json))
+                .toList();
+          } else {
+            // Single reminder response
+            return [SimpleReminderResponseModel.fromJson(data)];
+          }
+        }
+      } on DioException catch (e) {
+        print('Failed  formatName:  {e.response?.statusCode}');
+        if (e.response?.data != null) {
+          print('Error:  {e.response?.data}');
+        }
+        continue; // Try next format
+      }
+    }
+    throw DioException(
+      requestOptions: RequestOptions(path: ApiEndpoints.reminders),
+      message: 'All reminder formats failed',
+    );
+  }
 
   @override
   Future<List<ReminderModel>> getRemindersWithMedications() async {
@@ -102,92 +159,6 @@ class ReminderRemoteDataSourceImpl implements ReminderRemoteDataSource {
       print('Unexpected error in getReminderById: $e');
       throw DioException(
         requestOptions: RequestOptions(path: ApiEndpoints.reminderById(id)),
-        message: 'An unexpected error occurred: $e',
-      );
-    }
-  }
-
-  @override
-  Future<List<ReminderModel>> createReminders(
-    CreateReminderRequestModel request,
-  ) async {
-    try {
-      print(
-        '🔍 DEBUG: Creating reminders for treatment: ${request.treatmentId}',
-      );
-
-      // Debug the request data before sending
-      final requestData = request.toJson();
-      print('🔍 DEBUG: Full request data:');
-      print('  treatmentId: ${requestData['treatmentId']}');
-      print('  customMessage: ${requestData['customMessage']}');
-      print('  startPreference: ${requestData['startPreference']}');
-      print('  reminderTimes: ${requestData['reminderTimes']}');
-
-      // Validate each reminderTime
-      final reminderTimes = requestData['reminderTimes'] as List;
-      print('🔍 DEBUG: Validating ${reminderTimes.length} reminder times:');
-      for (int i = 0; i < reminderTimes.length; i++) {
-        final rt = reminderTimes[i];
-        print('  [$i] timeSlot: "${rt['timeSlot']}", time: "${rt['time']}"');
-
-        // Check if time format is valid (HH:mm)
-        final timeRegex = RegExp(r'^([01]?[0-9]|2[0-3]):[0-5][0-9]$');
-        final isValidTime = timeRegex.hasMatch(rt['time']);
-        print('    Time format valid: $isValidTime');
-
-        // Check if timeSlot is valid
-        final validTimeSlots = ['MORNING', 'AFTERNOON', 'EVENING', 'NIGHT'];
-        final isValidTimeSlot = validTimeSlots.contains(rt['timeSlot']);
-        print('    TimeSlot valid: $isValidTimeSlot');
-      }
-
-      final response = await _dio.post(
-        ApiEndpoints.reminders,
-        data: requestData,
-      );
-
-      print(
-        '🔍 DEBUG: Create reminders response status: ${response.statusCode}',
-      );
-      print('🔍 DEBUG: Create reminders response data: ${response.data}');
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        print('✅ Successfully created reminders');
-        final data = response.data as List;
-        return data.map((json) => ReminderModel.fromJson(json)).toList();
-      } else {
-        throw DioException(
-          requestOptions: response.requestOptions,
-          response: response,
-          message: 'Failed to create reminders: ${response.statusMessage}',
-        );
-      }
-    } on DioException catch (e) {
-      print('❌ DioException in createReminders: ${e.message}');
-      print('   Status code: ${e.response?.statusCode}');
-      print('   Response data: ${e.response?.data}');
-
-      // Try to extract more specific error information
-      if (e.response?.data != null) {
-        try {
-          final errorData = e.response!.data;
-          if (errorData is Map) {
-            print('   Error details:');
-            errorData.forEach((key, value) {
-              print('     $key: $value');
-            });
-          }
-        } catch (parseError) {
-          print('   Could not parse error response: $parseError');
-        }
-      }
-
-      rethrow;
-    } catch (e) {
-      print('❌ Unexpected error in createReminders: $e');
-      throw DioException(
-        requestOptions: RequestOptions(path: ApiEndpoints.reminders),
         message: 'An unexpected error occurred: $e',
       );
     }

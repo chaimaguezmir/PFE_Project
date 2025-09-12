@@ -2,11 +2,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_mobile/core/resources/data_state.dart';
-import 'package:flutter_mobile/domain/entities/prescription/create_reminder_entity.dart';
 import 'package:flutter_mobile/domain/entities/prescription/create_treatment_entity.dart';
 import 'package:flutter_mobile/domain/entities/prescription/disease_entity.dart';
-import 'package:flutter_mobile/domain/entities/prescription/reminder_entity.dart';
-import 'package:flutter_mobile/domain/entities/prescription/reminder_time_entity.dart';
 import 'package:flutter_mobile/domain/entities/prescription/treatment_entity.dart';
 import 'package:flutter_mobile/domain/entities/reminder/simple_create_reminder_entity.dart';
 import 'package:flutter_mobile/domain/entities/reminder/simple_reminder_entity.dart';
@@ -19,7 +16,6 @@ import 'package:flutter_mobile/domain/repositories/medicine_repository.dart';
 import 'package:flutter_mobile/domain/repositories/pharmacy_repository.dart';
 import 'package:flutter_mobile/domain/repositories/prescription_repository.dart';
 import 'package:flutter_mobile/domain/repositories/reminder_repository.dart';
-import 'package:flutter_mobile/domain/repositories/simple_reminder_repository.dart';
 import 'package:flutter_mobile/domain/repositories/treatment_repository.dart';
 import 'package:formz/formz.dart';
 
@@ -33,7 +29,6 @@ class PrescriptionCreationCubit extends Cubit<PrescriptionCreationState> {
     this._medicineRepository,
     this._treatmentRepository,
     this._reminderRepository,
-      this._simpleReminderRepository,
   ) : super(const PrescriptionCreationState());
 
   final PrescriptionRepository _prescriptionRepository;
@@ -42,7 +37,6 @@ class PrescriptionCreationCubit extends Cubit<PrescriptionCreationState> {
   final MedicineRepository _medicineRepository;
   final TreatmentRepository _treatmentRepository;
   final ReminderRepository _reminderRepository;
-  final SimpleReminderRepository _simpleReminderRepository;
   void updateName(String name) {
     emit(state.copyWith(name: name));
   }
@@ -445,47 +439,6 @@ class PrescriptionCreationCubit extends Cubit<PrescriptionCreationState> {
     return results;
   }
 
-  Future<DataState<List<ReminderEntity>>> createRemindersForTreatment(
-    CreateReminderEntity createReminderEntity,
-  ) async {
-    emit(
-      state.copyWith(
-        status: FormzSubmissionStatus.inProgress,
-        errorMessage: null,
-      ),
-    );
-
-    try {
-      final result = await _reminderRepository.createReminders(
-        createReminderEntity,
-      );
-
-      if (result is DataSuccess<List<ReminderEntity>>) {
-        emit(state.copyWith(status: FormzSubmissionStatus.success));
-        return result;
-      } else {
-        final err = (result is DataError)
-            ? result.error
-            : 'Failed to create reminders';
-        emit(
-          state.copyWith(
-            status: FormzSubmissionStatus.failure,
-            errorMessage: err,
-          ),
-        );
-        return DataError(err!);
-      }
-    } catch (e) {
-      final err = 'Unexpected error: $e';
-      emit(
-        state.copyWith(
-          status: FormzSubmissionStatus.failure,
-          errorMessage: err,
-        ),
-      );
-      return DataError(err);
-    }
-  }
   Future<DataState<List<SimpleReminderEntity>>> createSimpleReminders(
       SimpleCreateReminderEntity createReminderEntity,
       ) async {
@@ -495,7 +448,7 @@ class PrescriptionCreationCubit extends Cubit<PrescriptionCreationState> {
         errorMessage: null,
       ));
 
-      final result = await _simpleReminderRepository.createReminders(createReminderEntity);
+      final result = await _reminderRepository.createReminders(createReminderEntity);
 
       if (result is DataSuccess<List<SimpleReminderEntity>>) {
         emit(state.copyWith(status: FormzSubmissionStatus.success));
