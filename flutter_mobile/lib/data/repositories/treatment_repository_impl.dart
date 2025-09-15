@@ -1,7 +1,10 @@
+// lib/data/repositories/treatment_repository_impl.dart
 import 'package:dio/dio.dart';
 import 'package:flutter_mobile/core/resources/data_state.dart';
 import 'package:flutter_mobile/data/data_sources/treatment_remote_datasource.dart';
+import 'package:flutter_mobile/data/model/prescription/create_treatment_request_model.dart';
 import 'package:flutter_mobile/domain/entities/prescription/treatment_entity.dart';
+import 'package:flutter_mobile/domain/entities/prescription/create_treatment_entity.dart';
 import 'package:flutter_mobile/domain/repositories/treatment_repository.dart';
 
 class TreatmentRepositoryImpl implements TreatmentRepository {
@@ -22,21 +25,32 @@ class TreatmentRepositoryImpl implements TreatmentRepository {
   }
 
   @override
-  Future<DataState<TreatmentEntity>> createTreatment({
-    required String prescriptionId,
-    required String myMedicineId,
-    required String dosage,
-    required String frequency,
-    required int durationDays,
-  }) async {
+  Future<DataState<TreatmentEntity>> getTreatmentById(String id) async {
     try {
-      final result = await _remoteDataSource.createTreatment(
-        prescriptionId: prescriptionId,
-        myMedicineId: myMedicineId,
-        dosage: dosage,
-        frequency: frequency,
-        durationDays: durationDays,
+      final result = await _remoteDataSource.getTreatmentById(id);
+      return DataSuccess(result);
+    } on DioException catch (e) {
+      return DataError(_handleDioError(e));
+    } catch (e) {
+      return DataError('Une erreur inattendue s\'est produite: $e');
+    }
+  }
+
+  @override
+  Future<DataState<TreatmentEntity>> createTreatment(
+      CreateTreatmentEntity treatment,
+      ) async {
+    try {
+      // Convert entity to request model
+      final requestModel = CreateTreatmentRequestModel(
+        prescriptionId: treatment.prescriptionId,
+        myMedicineId: treatment.myMedicineId,
+        dosage: treatment.dosage,
+        frequency: treatment.frequency,
+        durationDays: treatment.durationDays,
       );
+
+      final result = await _remoteDataSource.createTreatment(requestModel);
       return DataSuccess(result);
     } on DioException catch (e) {
       return DataError(_handleDioError(e));
@@ -94,6 +108,8 @@ class TreatmentRepositoryImpl implements TreatmentRepository {
           return 'Non autorisé.';
         } else if (error.response?.statusCode == 404) {
           return 'Traitement non trouvé.';
+        } else if (error.response?.statusCode == 409) {
+          return 'Un traitement pour ce médicament existe déjà dans cette prescription.';
         } else if (error.response?.statusCode == 500) {
           return 'Erreur du serveur. Veuillez réessayer plus tard.';
         }

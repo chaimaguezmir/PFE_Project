@@ -50,6 +50,16 @@ class GroupCubit extends Cubit<GroupState> {
     emit(state.copyWith(email: value, errorMessage: null));
   }
 
+  // New method for group name input
+  void groupNameChanged(String value) {
+    emit(state.copyWith(newGroupName: value, errorMessage: null));
+  }
+
+  // New method to clear group name
+  void clearGroupName() {
+    emit(state.copyWith(newGroupName: '', errorMessage: null));
+  }
+
   bool _isFormValid() {
     if (state.email == sl<SharedPreferences>().getString('email')) {
       emit(state.copyWith(errorMessage: 'Vous êtes déjà membre de ce groupe'));
@@ -62,6 +72,18 @@ class GroupCubit extends Cubit<GroupState> {
 
     if (!_isValidEmail(state.email.trim())) {
       emit(state.copyWith(errorMessage: 'Adresse e-mail invalide'));
+      return false;
+    }
+    return true;
+  }
+
+  bool _isCreateGroupFormValid() {
+    if (state.newGroupName.trim().isEmpty) {
+      emit(state.copyWith(errorMessage: 'Le nom du groupe est requis'));
+      return false;
+    }
+    if (state.newGroupName.trim().length < 2) {
+      emit(state.copyWith(errorMessage: 'Le nom du groupe doit contenir au moins 2 caractères'));
       return false;
     }
     return true;
@@ -161,6 +183,49 @@ class GroupCubit extends Cubit<GroupState> {
     }
   }
 
+  // New method to create a group
+  Future<void> createGroup() async {
+    emit(state.copyWith(errorMessage: null));
+
+    if (!_isCreateGroupFormValid()) {
+      return;
+    }
+
+    emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
+
+    try {
+      final result = await _groupRepository.createGroup(state.newGroupName.trim());
+
+      if (result is DataSuccess) {
+        emit(
+          state.copyWith(
+            status: FormzSubmissionStatus.success,
+            errorMessage: null,
+            successMessage: 'Groupe créé avec succès',
+            newGroupName: '', // Clear the form
+          ),
+        );
+
+        // Refresh the groups list
+        await fetchGroups();
+      } else {
+        emit(
+          state.copyWith(
+            status: FormzSubmissionStatus.failure,
+            errorMessage: result.error ?? 'Échec de la création du groupe',
+          ),
+        );
+      }
+    } catch (e) {
+      emit(
+        state.copyWith(
+          status: FormzSubmissionStatus.failure,
+          errorMessage: 'Une erreur inattendue s\'est produite: $e',
+        ),
+      );
+    }
+  }
+
   Future<void> toggleRole(BuildContext context) async {
     DialogService.showRemoveMemberDialog(
       context: context,
@@ -188,7 +253,7 @@ class GroupCubit extends Cubit<GroupState> {
               status: FormzSubmissionStatus.success,
               errorMessage: null,
               successMessage:
-                  result.data?.message ?? 'Role toggled successfully',
+              result.data?.message ?? 'Role toggled successfully',
             ),
           );
         } else {
@@ -211,7 +276,7 @@ class GroupCubit extends Cubit<GroupState> {
       context: context,
       avatarPath: 'lib/config/assets/images/default_avatar.jpg',
       message:
-          'Êtes-vous sûr de vouloir retirer ${state.selectedMemberUsername} du groupe ?',
+      'Êtes-vous sûr de vouloir retirer ${state.selectedMemberUsername} du groupe ?',
       groupName: state.currentGroupName,
       onConfirm: () async {
         emit(

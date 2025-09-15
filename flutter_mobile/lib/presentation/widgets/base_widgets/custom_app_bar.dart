@@ -89,7 +89,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      username,
+                      'afya',
                       style: theme.textTheme.bodyLarge?.copyWith(
                         color: theme.colorScheme.onPrimary,
                         fontWeight: FontWeight.bold,
@@ -99,7 +99,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                     ),
                     SizedBox(height: 4.h), // Added spacing between texts
                     Text(
-                      email,
+                      'afya@test.com',
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: theme.colorScheme.onPrimary.withOpacity(0.7),
                         fontSize: 14.sp, // Added explicit size

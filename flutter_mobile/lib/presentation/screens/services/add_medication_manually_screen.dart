@@ -371,8 +371,8 @@ class MedicineResultCard extends StatelessWidget {
 
                     // Show enhanced dosage and form information
                     Text(
-                      medicine.fullDosageInfo.isNotEmpty
-                          ? medicine.fullDosageInfo
+                      medicine.fullMedicationInfo.isNotEmpty
+                          ? medicine.fullMedicationInfo
                           : '${medicine.dosageForm} - ${medicine.manufacturer}',
                       style: TextStyle(
                         fontSize: 14.sp,
@@ -381,7 +381,7 @@ class MedicineResultCard extends StatelessWidget {
                     ),
 
                     // Show manufacturer if not already shown above
-                    if (medicine.fullDosageInfo.isNotEmpty) ...[
+                    if (medicine.fullMedicationInfo.isNotEmpty) ...[
                       SizedBox(height: 2.h),
                       Text(
                         medicine.manufacturer,

@@ -5,6 +5,7 @@ import 'package:flutter_mobile/presentation/bloc/auth/forgot_password/forgot_pas
 import 'package:flutter_mobile/presentation/bloc/auth/login/login_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/auth/signup/signup_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/group/group_cubit.dart';
+import 'package:flutter_mobile/presentation/bloc/home/prescription_creation_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/home/prescription_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/home/welcome_screen_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/profile/profile_cubit.dart';
@@ -20,6 +21,8 @@ import 'package:flutter_mobile/presentation/screens/auth/signup_screen.dart';
 import 'package:flutter_mobile/presentation/screens/group/add_member_screen.dart';
 import 'package:flutter_mobile/presentation/screens/group/group_membe_screen.dart';
 import 'package:flutter_mobile/presentation/screens/group/group_screen.dart';
+import 'package:flutter_mobile/presentation/screens/home/medical_prescription_form.dart';
+import 'package:flutter_mobile/presentation/screens/home/medical_treatment_form.dart';
 import 'package:flutter_mobile/presentation/screens/home/prescription_detail_screen.dart';
 import 'package:flutter_mobile/presentation/screens/home/prescriptions_screen.dart';
 import 'package:flutter_mobile/presentation/screens/home/welcome_screen.dart';
@@ -99,7 +102,7 @@ class AppRouter {
             routes: <RouteBase>[
               ShellRoute(
                 builder: (context, state, child) => BlocProvider(
-                  create: (context) => sl<WelcomeScreenCubit>(),
+                  create: (context) => sl<WelcomeScreenCubit>()..loadWelcomeData(),
                   child: child,
                 ),
                 routes: [
@@ -126,6 +129,26 @@ class AppRouter {
                     path: AppRoutePath.prescriptionDetail,
                     builder: (context, state) =>
                         const PrescriptionDetailScreen(),
+                  ),
+                ],
+              ),
+              ShellRoute(
+                builder: (context, state, child) => BlocProvider(
+                  create: (context) => sl<PrescriptionCreationCubit>()..fetchDiseases(),
+                  child: child,
+                ),
+                routes: [
+                  GoRoute(
+                    name: AppRouteName.prescriptionForm,
+                    path: AppRoutePath.prescriptionForm,
+
+                    builder: (context, state) =>
+                        const MedicalPrescriptionForm(),
+                  ),
+                  GoRoute(
+                    name: AppRouteName.treatmentForm,
+                    path: AppRoutePath.treatmentForm,
+                    builder: (context, state) => const MedicalTreatmentForm(),
                   ),
                 ],
               ),

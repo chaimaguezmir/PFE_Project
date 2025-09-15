@@ -1,8 +1,8 @@
 // lib/core/constants/api_endpoint.dart
+// ignore_for_file: avoid_classes_with_only_static_members
 abstract class ApiEndpoints {
-  //
-//static const String baseurl = 'http://10.0.2.2:8081/api';
-static const String baseurl = 'https://44b74af1f2a5.ngrok-free.app/api';
+  // Base URL
+  static const String baseurl = 'http://102.219.178.221:8085/api';
 
   // Auth endpoints
   static const String signUp = '$baseurl/auth/signup';
@@ -14,10 +14,25 @@ static const String baseurl = 'https://44b74af1f2a5.ngrok-free.app/api';
   static const String resetPassword = '$baseurl/auth/reset-password';
   static const String signOut = '$baseurl/auth/signout';
 
-  // Medicine management endpoints - Simple endpoints only
+  // Medicine management endpoints
   static const String myMedicines = '$baseurl/my-medicines';
   static const String purchaseHistory = '$baseurl/purchase-history';
   static const String medicines = '$baseurl/medicines';
-  //
-static const String searchMedicines = '$baseurl/medicines/search';
+  static const String searchMedicines = '$baseurl/medicines/search';
+
+  // Prescription management endpoints
+  static const String prescriptions = '$baseurl/prescriptions';
+
+  // Treatment management endpoints
+  static const String treatments = '$baseurl/treatments';
+
+  // Reminder management endpoints
+  static const String reminders = '$baseurl/reminders';
+
+  // Helper methods for dynamic endpoints
+  static String prescriptionById(String id) => '$prescriptions/$id';
+  static String treatmentById(String id) => '$treatments/$id';
+  static String treatmentsByPrescription(String prescriptionId) => '$treatments/prescription/$prescriptionId';
+  static String reminderById(String id) => '$reminders/$id';
+  static String remindersWithMedications() => '$reminders/with-medications';
 }

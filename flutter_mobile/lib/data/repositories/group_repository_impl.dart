@@ -35,9 +35,9 @@ class GroupRepositoryImpl implements GroupRepository {
 
   @override
   Future<DataState<AddMemberEntity>> addMember(
-    String groupId,
-    String email,
-  ) async {
+      String groupId,
+      String email,
+      ) async {
     try {
       final result = await _remoteDataSource.addMember(groupId, email);
       return DataSuccess(result);
@@ -50,7 +50,7 @@ class GroupRepositoryImpl implements GroupRepository {
       } else if (e.response?.statusCode == 404) {
         return DataError('Not Found');
       } else if (e.response?.statusCode == 409) {
-        return DataError('Member already exists}');
+        return DataError('Member already exists');
       }
       return DataError('Error: ${e.message}');
     } catch (e) {
@@ -60,10 +60,9 @@ class GroupRepositoryImpl implements GroupRepository {
 
   @override
   Future<DataState<ToggleRoleEntity>> toggleRole(
-
-    String groupId,
-    String targetUserId,
-  ) async {
+      String groupId,
+      String targetUserId,
+      ) async {
     try {
       final result = await _remoteDataSource.toggleRole(groupId, targetUserId);
       return DataSuccess(result);
@@ -74,14 +73,35 @@ class GroupRepositoryImpl implements GroupRepository {
 
   @override
   Future<DataState<RemoveMemberEntity>> removeMember(
-    String groupId,
-    String memberId,
-  ) async {
+      String groupId,
+      String memberId,
+      ) async {
     try {
       final result = await _remoteDataSource.removeMember(groupId, memberId);
       return DataSuccess(result);
     } catch (e) {
       return DataError('Failed to remove member: $e');
+    }
+  }
+
+  @override
+  Future<DataState<GroupEntity>> createGroup(String groupName) async {
+    try {
+      final result = await _remoteDataSource.createGroup(groupName);
+      return DataSuccess(result);
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 400) {
+        return DataError('Données invalides');
+      } else if (e.response?.statusCode == 401) {
+        return DataError('Non autorisé');
+      } else if (e.response?.statusCode == 409) {
+        return DataError('Un groupe avec ce nom existe déjà');
+      } else if (e.response?.statusCode == 500) {
+        return DataError('Erreur du serveur');
+      }
+      return DataError('Erreur: ${e.message}');
+    } catch (e) {
+      return DataError('Erreur inattendue: $e');
     }
   }
 }

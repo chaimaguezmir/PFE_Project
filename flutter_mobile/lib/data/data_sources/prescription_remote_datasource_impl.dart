@@ -1,7 +1,10 @@
+// lib/data/data_sources/prescription_remote_datasource_impl.dart
+import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter_mobile/core/constants/api_endpoint.dart';
 import 'package:flutter_mobile/data/data_sources/prescription_remote_datasource.dart';
 import 'package:flutter_mobile/data/model/prescription/prescription_model.dart';
+import 'package:flutter_mobile/data/model/prescription/create_prescription_request_model.dart';
 
 class PrescriptionRemoteDataSourceImpl implements PrescriptionRemoteDataSource {
   PrescriptionRemoteDataSourceImpl(this._dio);
@@ -12,12 +15,58 @@ class PrescriptionRemoteDataSourceImpl implements PrescriptionRemoteDataSource {
   Future<List<PrescriptionModel>> getPrescriptions() async {
     try {
       print('Fetching prescriptions from API');
-      final response = await _dio.get('${ApiEndpoints.baseurl}/prescriptions');
+      final response = await _dio.get(ApiEndpoints.prescriptions);
 
       if (response.statusCode == 200) {
         final data = response.data as List;
         print('Successfully fetched ${data.length} prescriptions');
-        return data.map((json) => PrescriptionModel.fromJson(json)).toList();
+
+        // ADDED: Debug logging for the raw data
+        print(
+          'Raw prescription data sample: ${data.isNotEmpty ? data.first : 'No data'}',
+        );
+
+        final List<PrescriptionModel> prescriptions = [];
+
+        // ADDED: Process each prescription with error handling
+        for (int i = 0; i < data.length; i++) {
+          try {
+            final prescriptionJson = data[i];
+            print(
+              'Processing prescription $i: ${prescriptionJson['id'] ?? 'no-id'}',
+            );
+
+            // ADDED: Validate required fields before parsing
+            if (prescriptionJson == null) {
+              print('Warning: Prescription at index $i is null, skipping');
+              continue;
+            }
+
+            if (prescriptionJson is! Map<String, dynamic>) {
+              print(
+                'Warning: Prescription at index $i is not a valid map, skipping',
+              );
+              continue;
+            }
+
+            final prescription = PrescriptionModel.fromJson(prescriptionJson);
+            prescriptions.add(prescription);
+
+            print(
+              'Successfully parsed prescription: ${prescription.id} - ${prescription.name}',
+            );
+          } catch (e, stackTrace) {
+            print('ERROR parsing prescription at index $i: $e');
+            print('Stack trace: $stackTrace');
+            print('Raw data: ${data[i]}');
+            // Continue processing other prescriptions instead of failing completely
+          }
+        }
+
+        print(
+          'Successfully parsed ${prescriptions.length} out of ${data.length} prescriptions',
+        );
+        return prescriptions;
       } else {
         throw DioException(
           requestOptions: response.requestOptions,
@@ -30,10 +79,11 @@ class PrescriptionRemoteDataSourceImpl implements PrescriptionRemoteDataSource {
       print('Status code: ${e.response?.statusCode}');
       print('Response data: ${e.response?.data}');
       rethrow;
-    } catch (e) {
+    } catch (e, stackTrace) {
       print('Unexpected error in getPrescriptions: $e');
+      print('Stack trace: $stackTrace');
       throw DioException(
-        requestOptions: RequestOptions(path: '${ApiEndpoints.baseurl}/prescriptions'),
+        requestOptions: RequestOptions(path: ApiEndpoints.prescriptions),
         message: 'An unexpected error occurred: $e',
       );
     }
@@ -43,10 +93,14 @@ class PrescriptionRemoteDataSourceImpl implements PrescriptionRemoteDataSource {
   Future<PrescriptionModel> getPrescriptionById(String id) async {
     try {
       print('Fetching prescription by ID: $id');
-      final response = await _dio.get('${ApiEndpoints.baseurl}/prescriptions/$id');
+      final response = await _dio.get(ApiEndpoints.prescriptionById(id));
 
       if (response.statusCode == 200) {
         print('Successfully fetched prescription: $id');
+
+        // ADDED: Debug logging
+        print('Raw prescription data: ${response.data}');
+
         return PrescriptionModel.fromJson(response.data);
       } else {
         throw DioException(
@@ -58,35 +112,31 @@ class PrescriptionRemoteDataSourceImpl implements PrescriptionRemoteDataSource {
     } on DioException catch (e) {
       print('DioException in getPrescriptionById: ${e.message}');
       rethrow;
-    } catch (e) {
+    } catch (e, stackTrace) {
       print('Unexpected error in getPrescriptionById: $e');
+      print('Stack trace: $stackTrace');
       throw DioException(
-        requestOptions: RequestOptions(path: '${ApiEndpoints.baseurl}/prescriptions/$id'),
+        requestOptions: RequestOptions(path: ApiEndpoints.prescriptionById(id)),
         message: 'An unexpected error occurred: $e',
       );
     }
   }
 
   @override
-  Future<PrescriptionModel> createPrescription({
-    required String name,
-    required DateTime startDate,
-    DateTime? endDate,
-    required List<String> diseaseIds,
-  }) async {
+  Future<PrescriptionModel> createPrescription(
+    CreatePrescriptionRequestModel request,
+  ) async {
     try {
-      print('Creating new prescription: $name');
-      final requestData = {
-        'name': name,
-        'startDate': startDate.toIso8601String().split('T')[0],
-        if (endDate != null) 'endDate': endDate.toIso8601String().split('T')[0],
-        'diseaseIds': diseaseIds,
-      };
+      print('Creating new prescription: ${request.name}');
+      print('Request data: ${request.toJson()}');
 
       final response = await _dio.post(
-        '${ApiEndpoints.baseurl}/prescriptions',
-        data: requestData,
+        ApiEndpoints.prescriptions,
+        data: request.toJson(),
       );
+
+      print('Create prescription response status: ${response.statusCode}');
+      print('Create prescription response data: ${response.data}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         print('Successfully created prescription');
@@ -100,11 +150,14 @@ class PrescriptionRemoteDataSourceImpl implements PrescriptionRemoteDataSource {
       }
     } on DioException catch (e) {
       print('DioException in createPrescription: ${e.message}');
+      print('Status code: ${e.response?.statusCode}');
+      print('Response data: ${e.response?.data}');
       rethrow;
-    } catch (e) {
+    } catch (e, stackTrace) {
       print('Unexpected error in createPrescription: $e');
+      print('Stack trace: $stackTrace');
       throw DioException(
-        requestOptions: RequestOptions(path: '${ApiEndpoints.baseurl}/prescriptions'),
+        requestOptions: RequestOptions(path: ApiEndpoints.prescriptions),
         message: 'An unexpected error occurred: $e',
       );
     }
@@ -122,11 +175,15 @@ class PrescriptionRemoteDataSourceImpl implements PrescriptionRemoteDataSource {
       final requestData = <String, dynamic>{};
 
       if (name != null) requestData['name'] = name;
-      if (startDate != null) requestData['startDate'] = startDate.toIso8601String().split('T')[0];
-      if (endDate != null) requestData['endDate'] = endDate.toIso8601String().split('T')[0];
+      if (startDate != null)
+        requestData['startDate'] = startDate.toIso8601String().split('T')[0];
+      if (endDate != null)
+        requestData['endDate'] = endDate.toIso8601String().split('T')[0];
+
+      print('Update request data: $requestData');
 
       final response = await _dio.put(
-        '${ApiEndpoints.baseurl}/prescriptions/$id',
+        ApiEndpoints.prescriptionById(id),
         data: requestData,
       );
 
@@ -143,10 +200,11 @@ class PrescriptionRemoteDataSourceImpl implements PrescriptionRemoteDataSource {
     } on DioException catch (e) {
       print('DioException in updatePrescription: ${e.message}');
       rethrow;
-    } catch (e) {
+    } catch (e, stackTrace) {
       print('Unexpected error in updatePrescription: $e');
+      print('Stack trace: $stackTrace');
       throw DioException(
-        requestOptions: RequestOptions(path: '${ApiEndpoints.baseurl}/prescriptions/$id'),
+        requestOptions: RequestOptions(path: ApiEndpoints.prescriptionById(id)),
         message: 'An unexpected error occurred: $e',
       );
     }
@@ -156,7 +214,7 @@ class PrescriptionRemoteDataSourceImpl implements PrescriptionRemoteDataSource {
   Future<void> deletePrescription(String id) async {
     try {
       print('Deleting prescription: $id');
-      final response = await _dio.delete('${ApiEndpoints.baseurl}/prescriptions/$id');
+      final response = await _dio.delete(ApiEndpoints.prescriptionById(id));
 
       if (response.statusCode != 200 && response.statusCode != 204) {
         throw DioException(
@@ -169,10 +227,11 @@ class PrescriptionRemoteDataSourceImpl implements PrescriptionRemoteDataSource {
     } on DioException catch (e) {
       print('DioException in deletePrescription: ${e.message}');
       rethrow;
-    } catch (e) {
+    } catch (e, stackTrace) {
       print('Unexpected error in deletePrescription: $e');
+      print('Stack trace: $stackTrace');
       throw DioException(
-        requestOptions: RequestOptions(path: '${ApiEndpoints.baseurl}/prescriptions/$id'),
+        requestOptions: RequestOptions(path: ApiEndpoints.prescriptionById(id)),
         message: 'An unexpected error occurred: $e',
       );
     }

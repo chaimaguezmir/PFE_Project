@@ -14,14 +14,12 @@ class GroupState extends Equatable {
     this.currentGroupId = '',
     this.selectedMemberUsername = '',
     this.selectedMemberRole = '',
-    this.selectedMemberId='',
-
-
+    this.selectedMemberId = '',
+    this.newGroupName = '', // New field for creating groups
   });
 
   final List<GroupEntity> groups;
   final List<MemberEntity> members;
-
   final String email;
   final FormzSubmissionStatus status;
   final String? errorMessage;
@@ -29,15 +27,15 @@ class GroupState extends Equatable {
   final bool isIconSelected;
   final String currentGroupUserRole;
   final String currentGroupName;
-  final String currentGroupId ;
-  final String selectedMemberUsername ;
+  final String currentGroupId;
+  final String selectedMemberUsername;
   final String selectedMemberRole;
   final String selectedMemberId;
+  final String newGroupName; // New field for creating groups
 
   GroupState copyWith({
     List<GroupEntity>? groups,
     List<MemberEntity>? members,
-
     String? email,
     FormzSubmissionStatus? status,
     String? errorMessage,
@@ -49,12 +47,12 @@ class GroupState extends Equatable {
     String? selectedMemberUsername,
     String? selectedMemberRole,
     String? selectedMemberId,
+    String? newGroupName, // New parameter for creating groups
   }) {
     return GroupState(
       groups: groups ?? this.groups,
       members: members ?? this.members,
       email: email ?? this.email,
-
       status: status ?? this.status,
       errorMessage: errorMessage,
       successMessage: successMessage,
@@ -65,12 +63,15 @@ class GroupState extends Equatable {
       selectedMemberUsername: selectedMemberUsername ?? this.selectedMemberUsername,
       selectedMemberRole: selectedMemberRole ?? this.selectedMemberRole,
       selectedMemberId: selectedMemberId ?? this.selectedMemberId,
+      newGroupName: newGroupName ?? this.newGroupName, // New assignment
     );
   }
 
   bool get hasError => errorMessage != null;
-
   bool get hasSuccess => successMessage != null;
+  bool get isLoading => status == FormzSubmissionStatus.inProgress;
+  bool get isCreateGroupFormValid => newGroupName.trim().length >= 2;
+
   @override
   List<Object?> get props => [
     groups,
@@ -86,5 +87,6 @@ class GroupState extends Equatable {
     currentGroupId,
     selectedMemberUsername,
     selectedMemberRole,
+    newGroupName, // Add to props
   ];
 }

@@ -27,7 +27,7 @@ class WelcomeScreenState extends Equatable {
   final String? errorMessage;
 
   // UI selection states
-  final int selectedTimeIndex; // -1 = all, 0 = morning, 1 = afternoon, 2 = evening, 3 = night
+  final int selectedTimeIndex; // -1 = all, 0 = morning, 1 = noon, 2 = evening, 3 = night
   final int selectedDayIndex;  // 0 = yesterday, 1 = today, 2 = tomorrow
 
   // Data states

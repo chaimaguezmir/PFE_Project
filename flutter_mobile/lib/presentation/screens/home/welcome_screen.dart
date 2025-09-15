@@ -1,8 +1,8 @@
-// lib/presentation/screens/home/welcome_screen.dart - Complete corrected version
+// Complete fixed version with proper scrolling
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_mobile/domain/entities/prescription/reminder_entity.dart';
-import 'package:flutter_mobile/domain/entities/prescription/reminder_extensions.dart';
+import 'package:flutter_mobile/domain/entities/reminder/reminder_entity.dart';
+import 'package:flutter_mobile/domain/entities/reminder/reminder_extensions.dart';
 import 'package:flutter_mobile/presentation/bloc/home/welcome_screen_cubit.dart';
 import 'package:flutter_mobile/presentation/widgets/base_widgets/custom_app_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -23,48 +23,71 @@ class WelcomeScreen extends StatelessWidget {
         username: "Walid Zaroui",
         email: "zarwi.walid@gmail.com",
         avatarPath: "lib/config/assets/images/default_avatar.jpg",
-        showLeading: true,
+        showLeading: false,
       ),
       backgroundColor: Colors.grey[50],
       body: BlocBuilder<WelcomeScreenCubit, WelcomeScreenState>(
         builder: (context, state) {
-          if (state.isLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
+          final cubit = context.read<WelcomeScreenCubit>();
 
-          if (state.hasError) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.error_outline,
-                    size: 64.sp,
-                    color: Colors.red[400],
-                  ),
-                  SizedBox(height: 16.h),
-                  Text(
-                    state.errorMessage ?? 'Une erreur est survenue',
-                    style: TextStyle(fontSize: 16.sp, color: Colors.red),
-                    textAlign: TextAlign.center,
-                  ),
-                  SizedBox(height: 16.h),
-                  ElevatedButton(
-                    onPressed: () {
-                      context.read<WelcomeScreenCubit>().fetchReminders();
-                    },
-                    child: const Text('Réessayer'),
-                  ),
-                ],
-              ),
-            );
-          }
+          return RefreshIndicator(
+            onRefresh: () async => await cubit.fetchReminders(),
+            child: CustomScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              slivers: [
+                // Day header - always shown
+                SliverToBoxAdapter(child: const _DayHeader()),
 
-          return const Column(
-            children: [
-              _DayHeader(),
-              Expanded(child: MedicationScheduleCard()),
-            ],
+                // Content area - scrollable
+                Builder(
+                  builder: (context) {
+                    if (state.isLoading) {
+                      return SliverFillRemaining(
+                        child: const Center(child: CircularProgressIndicator()),
+                      );
+                    }
+
+                    if (state.hasError) {
+                      return SliverFillRemaining(
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.error_outline,
+                                size: 64.sp,
+                                color: Colors.red[400],
+                              ),
+                              SizedBox(height: 16.h),
+                              Text(
+                                state.errorMessage ?? 'Une erreur est survenue',
+                                style: TextStyle(
+                                  fontSize: 16.sp,
+                                  color: Colors.red,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              SizedBox(height: 16.h),
+                              ElevatedButton(
+                                onPressed: () {
+                                  cubit.fetchReminders();
+                                },
+                                child: const Text('Réessayer'),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }
+
+                    // Normal content (reminders)
+                    return const SliverToBoxAdapter(
+                      child: MedicationScheduleCard(),
+                    );
+                  },
+                ),
+              ],
+            ),
           );
         },
       ),
@@ -157,7 +180,8 @@ class ClickableDayName extends StatelessWidget {
             ),
             SizedBox(height: 16.h),
             ...options.map((option) {
-              final isSelected = cubit.state.selectedDayIndex == option['index'];
+              final isSelected =
+                  cubit.state.selectedDayIndex == option['index'];
               return InkWell(
                 onTap: () {
                   cubit.updateSelectedDay(option['index'] as int);
@@ -165,9 +189,14 @@ class ClickableDayName extends StatelessWidget {
                 },
                 child: Container(
                   width: double.infinity,
-                  padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 20.w,
+                    vertical: 16.h,
+                  ),
                   decoration: BoxDecoration(
-                    color: isSelected ? theme.colorScheme.primary.withOpacity(0.1) : Colors.transparent,
+                    color: isSelected
+                        ? theme.colorScheme.primary.withOpacity(0.1)
+                        : Colors.transparent,
                   ),
                   child: Row(
                     children: [
@@ -180,7 +209,9 @@ class ClickableDayName extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 16.sp,
                                   fontWeight: FontWeight.w600,
-                                  color: isSelected ? theme.colorScheme.primary : Colors.black87,
+                                  color: isSelected
+                                      ? theme.colorScheme.primary
+                                      : Colors.black87,
                                 ),
                               ),
                               TextSpan(
@@ -188,7 +219,11 @@ class ClickableDayName extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 14.sp,
                                   fontWeight: FontWeight.w400,
-                                  color: isSelected ? theme.colorScheme.primary.withOpacity(0.7) : Colors.grey[600],
+                                  color: isSelected
+                                      ? theme.colorScheme.primary.withOpacity(
+                                          0.7,
+                                        )
+                                      : Colors.grey[600],
                                 ),
                               ),
                             ],
@@ -214,7 +249,15 @@ class ClickableDayName extends StatelessWidget {
   }
 
   String _getDayName(DateTime date) {
-    final days = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
+    final days = [
+      'Lundi',
+      'Mardi',
+      'Mercredi',
+      'Jeudi',
+      'Vendredi',
+      'Samedi',
+      'Dimanche',
+    ];
     return days[date.weekday - 1];
   }
 
@@ -260,7 +303,13 @@ class TimeButtonSelector extends StatelessWidget {
     cubit.updateSelectedTime(currentSelected == index ? -1 : index);
   }
 
-  Widget _btn(String label, IconData icon, bool selected, VoidCallback tap, ThemeData theme) {
+  Widget _btn(
+    String label,
+    IconData icon,
+    bool selected,
+    VoidCallback tap,
+    ThemeData theme,
+  ) {
     return GestureDetector(
       onTap: tap,
       child: Column(
@@ -306,7 +355,7 @@ class TimeButtonSelector extends StatelessWidget {
               button['label'],
               button['icon'],
               i == selectedIndex,
-                  () => _onTap(context, i),
+              () => _onTap(context, i),
               theme,
             );
           }),
@@ -324,7 +373,10 @@ class MedicationScheduleCard extends StatelessWidget {
     decoration: BoxDecoration(
       color: theme.colorScheme.primary.withOpacity(0.08),
       borderRadius: BorderRadius.circular(10.r),
-      border: Border.all(color: theme.colorScheme.primary.withOpacity(0.2), width: 1.w),
+      border: Border.all(
+        color: theme.colorScheme.primary.withOpacity(0.2),
+        width: 1.w,
+      ),
     ),
     child: Text(
       time,
@@ -348,38 +400,40 @@ class MedicationScheduleCard extends StatelessWidget {
     return BlocBuilder<WelcomeScreenCubit, WelcomeScreenState>(
       builder: (context, state) {
         if (!state.hasReminders) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.medication_outlined,
-                  size: 64.sp,
-                  color: Colors.grey[400],
-                ),
-                SizedBox(height: 16.h),
-                Text(
-                  'Aucun rappel disponible',
-                  style: TextStyle(
-                    fontSize: 18.sp,
-                    color: Colors.grey[600],
-                    fontWeight: FontWeight.w500,
+          return Container(
+            height: MediaQuery.of(context).size.height * 0.5,
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.medication_outlined,
+                    size: 64.sp,
+                    color: Colors.grey[400],
                   ),
-                ),
-                SizedBox(height: 8.h),
-                Text(
-                  'Profitez de votre journée!',
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    color: Colors.grey[500],
+                  SizedBox(height: 16.h),
+                  Text(
+                    'Aucun rappel disponible',
+                    style: TextStyle(
+                      fontSize: 18.sp,
+                      color: Colors.grey[600],
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                ),
-              ],
+                  SizedBox(height: 8.h),
+                  Text(
+                    'Profitez de votre journée!',
+                    style: TextStyle(fontSize: 14.sp, color: Colors.grey[500]),
+                  ),
+                ],
+              ),
             ),
           );
         }
 
-        final remindersToShow = context.read<WelcomeScreenCubit>().getRemindersForSelectedTimeSlot();
+        final remindersToShow = context
+            .read<WelcomeScreenCubit>()
+            .getRemindersForSelectedTimeSlot();
 
         if (remindersToShow.isEmpty) {
           final dayName = state.selectedDayIndex == 1
@@ -388,35 +442,38 @@ class MedicationScheduleCard extends StatelessWidget {
               ? 'hier'
               : 'demain';
 
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.schedule_outlined,
-                  size: 64.sp,
-                  color: Colors.grey[400],
-                ),
-                SizedBox(height: 16.h),
-                Text(
-                  'Aucun rappel pour $dayName',
-                  style: TextStyle(
-                    fontSize: 18.sp,
-                    color: Colors.grey[600],
-                    fontWeight: FontWeight.w500,
+          return Container(
+            height: MediaQuery.of(context).size.height * 0.5,
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.schedule_outlined,
+                    size: 64.sp,
+                    color: Colors.grey[400],
                   ),
-                ),
-                if (state.selectedTimeIndex != -1) ...[
-                  SizedBox(height: 8.h),
+                  SizedBox(height: 16.h),
                   Text(
-                    'Essayez une autre période',
+                    'Aucun rappel pour $dayName',
                     style: TextStyle(
-                      fontSize: 14.sp,
-                      color: Colors.grey[500],
+                      fontSize: 18.sp,
+                      color: Colors.grey[600],
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
+                  if (state.selectedTimeIndex != -1) ...[
+                    SizedBox(height: 8.h),
+                    Text(
+                      'Essayez une autre période',
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        color: Colors.grey[500],
+                      ),
+                    ),
+                  ],
                 ],
-              ],
+              ),
             ),
           );
         }
@@ -430,39 +487,44 @@ class MedicationScheduleCard extends StatelessWidget {
           groupedByTime[timeKey]!.add(reminder);
         }
 
-        return RefreshIndicator(
-          onRefresh: () => context.read<WelcomeScreenCubit>().fetchReminders(),
-          child: SingleChildScrollView(
-            padding: EdgeInsets.only(bottom: 24.h),
-            child: Column(
-              children: groupedByTime.entries.map((entry) {
-                final time = entry.key;
-                final timeReminders = entry.value;
+        // FIXED: Use a Column that allows natural scrolling instead of fixed height
+        return Padding(
+          padding: EdgeInsets.only(bottom: 20.h), // Add some bottom padding
+          child: Column(
+            mainAxisSize: MainAxisSize.min, // Important: only take needed space
+            children: groupedByTime.entries.map((entry) {
+              final time = entry.key;
+              final timeReminders = entry.value;
 
-                return Column(
-                  children: [
-                    Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.all(18.w),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _timeHeader(time, theme),
-                          SizedBox(height: 18.h),
-                          ...timeReminders.map((reminder) => Column(
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.all(18.w),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _timeHeader(time, theme),
+                        SizedBox(height: 18.h),
+                        ...timeReminders.map(
+                          (reminder) => Column(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
                               ReminderTile(reminder: reminder),
-                              if (reminder != timeReminders.last) SizedBox(height: 12.h),
+                              if (reminder != timeReminders.last)
+                                SizedBox(height: 12.h),
                             ],
-                          )),
-                        ],
-                      ),
+                          ),
+                        ),
+                      ],
                     ),
-                    if (entry.key != groupedByTime.keys.last) _divider(theme),
-                  ],
-                );
-              }).toList(),
-            ),
+                  ),
+                  if (entry.key != groupedByTime.keys.last) _divider(theme),
+                ],
+              );
+            }).toList(),
           ),
         );
       },
@@ -516,7 +578,11 @@ class ReminderTile extends StatelessWidget {
 
   bool _isYesterday() {
     final now = DateTime.now();
-    final yesterday = DateTime(now.year, now.month, now.day).subtract(const Duration(days: 1));
+    final yesterday = DateTime(
+      now.year,
+      now.month,
+      now.day,
+    ).subtract(const Duration(days: 1));
     final reminderDate = DateTime(
       reminder.reminderTime.year,
       reminder.reminderTime.month,
@@ -796,7 +862,10 @@ class MedicationDueTile extends StatelessWidget {
                   child: OutlinedButton(
                     onPressed: onRemindLater,
                     style: OutlinedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(vertical: 9.h, horizontal: 8.w),
+                      padding: EdgeInsets.symmetric(
+                        vertical: 9.h,
+                        horizontal: 8.w,
+                      ),
                       minimumSize: Size(0, 38.h),
                       shape: const StadiumBorder(),
                       side: BorderSide(
@@ -824,7 +893,10 @@ class MedicationDueTile extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: theme.colorScheme.primary,
                     elevation: 0,
-                    padding: EdgeInsets.symmetric(vertical: 9.h, horizontal: 8.w),
+                    padding: EdgeInsets.symmetric(
+                      vertical: 9.h,
+                      horizontal: 8.w,
+                    ),
                     minimumSize: Size(0, 38.h),
                     shape: const StadiumBorder(),
                   ),
@@ -880,7 +952,9 @@ class MedicationDueTile extends StatelessWidget {
     padding: EdgeInsets.all(6.w),
     decoration: BoxDecoration(
       color: (isOverdue || isYesterday)
-          ? (isYesterday ? Colors.orange.withOpacity(0.1) : Colors.red.withOpacity(0.1))
+          ? (isYesterday
+                ? Colors.orange.withOpacity(0.1)
+                : Colors.red.withOpacity(0.1))
           : Colors.orange.withOpacity(0.1),
       shape: BoxShape.circle,
     ),
