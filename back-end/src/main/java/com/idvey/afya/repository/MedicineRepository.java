@@ -38,11 +38,10 @@ public interface MedicineRepository extends JpaRepository<Medicine, UUID> {
 	List<Medicine> findByDciContainingIgnoreCase(String dci);
 
 	// Complex search across multiple fields
-	@Query("SELECT m FROM Medicine m WHERE " +
-			"LOWER(m.medicationName) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-			"LOWER(m.laboratory) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-			"LOWER(m.dci) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-			"LOWER(m.therapeuticClass) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
+	@Query("SELECT m FROM Medicine m WHERE " + "LOWER(m.medicationName) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR "
+			+ "LOWER(m.laboratory) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR "
+			+ "LOWER(m.dci) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR "
+			+ "LOWER(m.therapeuticClass) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
 	List<Medicine> searchMedicines(@Param("searchTerm") String searchTerm);
 
 	// Check if barcode exists

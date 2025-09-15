@@ -14,21 +14,37 @@ public class CreateMedicineRequest {
 	private String medicationName;
 
 	private String dosage;
+
 	private String form;
+
 	private String presentation;
+
 	private String dci;
+
 	private String therapeuticClass;
+
 	private String subClass;
+
 	private String laboratory;
+
 	private String ammNumber;
+
 	private LocalDate ammDate;
+
 	private String primaryPackaging;
+
 	private String packagingSpecification;
+
 	private String scheduleCategory;
+
 	private String shelfLife;
+
 	private String indications;
+
 	private String medicationType;
+
 	private String veicClassification;
+
 	private String barcode;
 
 }

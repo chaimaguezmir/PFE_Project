@@ -101,12 +101,13 @@ public class ReminderController {
 		return ResponseEntity.ok(new MessageResponse("Reminder deleted successfully"));
 	}
 
-	@ReminderDocs.GetMedicationsWithReminders
-	@GetMapping("/medications-with-reminders")
-	public ResponseEntity<List<MedicationWithRemindersResponse>> getMedicationsWithReminders(
+	@ReminderDocs.GetRemindersWithMedications
+	@GetMapping("/with-medications")
+	public ResponseEntity<List<ReminderWithMedicationResponse>> getRemindersWithMedications(
 			@AuthenticationPrincipal UserDetailsImpl currentUser) {
-		List<MedicationWithRemindersResponse> medications = reminderService.getMedicationsWithReminders(currentUser.getId());
-		return ResponseEntity.ok(medications);
+		List<ReminderWithMedicationResponse> reminders = reminderService
+			.getRemindersWithMedications(currentUser.getId());
+		return ResponseEntity.ok(reminders);
 	}
 
 }

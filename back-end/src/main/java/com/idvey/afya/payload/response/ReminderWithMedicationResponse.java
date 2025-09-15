@@ -14,17 +14,28 @@ import java.util.UUID;
 @AllArgsConstructor
 public class ReminderWithMedicationResponse {
 
-    private UUID id;
-    private UUID myMedicineId;
-    private String medicationName;
-    private UUID prescriptionId;
-    private String prescriptionName;
-    private LocalDateTime reminderTime;
-    private ReminderStatus status;
-    private String message;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-    private UUID treatmentId;
-    private CreateReminderRequest.TimeSlot timeSlot;
+	private UUID id;
+
+	private UUID myMedicineId;
+
+	private String medicationName;
+
+	private UUID prescriptionId;
+
+	private String prescriptionName;
+
+	private LocalDateTime reminderTime;
+
+	private ReminderStatus status;
+
+	private String message;
+
+	private LocalDateTime createdAt;
+
+	private LocalDateTime updatedAt;
+
+	private UUID treatmentId;
+
+	private CreateReminderRequest.TimeSlot timeSlot;
 
 }
