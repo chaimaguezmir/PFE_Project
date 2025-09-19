@@ -55,8 +55,8 @@ final dio = Dio();
 Future<void> initInjectionContainer() async {
   // Dio configuration
   dio.options = BaseOptions(
-    connectTimeout: const Duration(seconds: 10),
-    receiveTimeout: const Duration(seconds: 10),
+    connectTimeout: const Duration(seconds: 20),
+    receiveTimeout: const Duration(seconds: 20),
     sendTimeout: const Duration(seconds: 30),
   );
   // Shared Preferences

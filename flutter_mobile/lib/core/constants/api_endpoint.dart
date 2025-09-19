@@ -2,9 +2,9 @@
 // ignore_for_file: avoid_classes_with_only_static_members
 abstract class ApiEndpoints {
   // Base URL
-  static const String baseurl = 'http://102.219.178.221:8085/api';
+  static const String baseurl = 'https://caf3c2beb043.ngrok-free.app/api';
 
-  // Auth endpoints
+
   static const String signUp = '$baseurl/auth/signup';
   static const String signIn = '$baseurl/auth/signin';
   static const String activateAccount = '$baseurl/auth/activate';

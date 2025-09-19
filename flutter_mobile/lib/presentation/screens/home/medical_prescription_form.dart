@@ -344,8 +344,7 @@ class MedicalPrescriptionForm extends StatelessWidget {
                                                     momentStr.contains(
                                                       'midi',
                                                     )) {
-                                                  timeSlot =
-                                                      'NOON';
+                                                  timeSlot = 'NOON';
                                                   defaultTime = '12:00';
                                                 } else if (momentStr.contains(
                                                   'soir',

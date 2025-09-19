@@ -1,4 +1,4 @@
-// lib/presentation/screens/home/prescriptions_screen.dart
+// lib/presentation/screens/home/user_prescriptions_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_mobile/config/router/app_route_constants.dart';
