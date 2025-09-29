@@ -10,6 +10,7 @@ import 'package:flutter_mobile/presentation/bloc/home/prescription_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/home/welcome_screen_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/profile/profile_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/services/services_cubit.dart';
+import 'package:flutter_mobile/presentation/bottom_bar.dart';
 import 'package:flutter_mobile/presentation/screens/auth/account_verification_screen.dart';
 import 'package:flutter_mobile/presentation/screens/auth/forgot_password/forgot_password_code_screen.dart';
 import 'package:flutter_mobile/presentation/screens/auth/forgot_password/forgot_password_email_screen.dart';
@@ -26,7 +27,6 @@ import 'package:flutter_mobile/presentation/screens/home/medical_treatment_form.
 import 'package:flutter_mobile/presentation/screens/home/prescription_detail_screen.dart';
 import 'package:flutter_mobile/presentation/screens/home/prescriptions_screen.dart';
 import 'package:flutter_mobile/presentation/screens/home/welcome_screen.dart';
-import 'package:flutter_mobile/presentation/screens/bottom_bar.dart';
 
 import 'package:flutter_mobile/presentation/screens/onboarding/onboarding_screen.dart';
 import 'package:flutter_mobile/presentation/screens/profile/profile_screen.dart';

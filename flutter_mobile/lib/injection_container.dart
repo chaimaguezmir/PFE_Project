@@ -1,6 +1,5 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter_mobile/core/network/network_controller.dart';
 import 'package:flutter_mobile/data/data_sources/auth_remote_datasource.dart';
 import 'package:flutter_mobile/data/data_sources/auth_remote_datasource_impl.dart';
 import 'package:flutter_mobile/data/data_sources/disease_remote_datasource.dart';
