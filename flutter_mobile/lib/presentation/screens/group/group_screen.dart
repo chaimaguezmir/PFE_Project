@@ -14,15 +14,8 @@ class GroupScreen extends StatelessWidget {
     final screenSize = MediaQuery.of(context).size;
     print(screenSize);
 
-
     return Scaffold(
-      appBar: const CustomAppBar(
-        title: "Groupes",
-        username: "Walid Zaroui",
-        email: "zarwi.walid@gmail.com",
-        avatarPath: "lib/config/assets/images/default_avatar.jpg",
-        showLeading: false,
-      ),
+      appBar: const CustomAppBar(title: "Groupes", showLeading: false),
 
       body: BlocBuilder<GroupCubit, GroupState>(
         builder: (context, state) {
@@ -39,11 +32,14 @@ class GroupScreen extends StatelessWidget {
                         errorText: state.errorMessage,
                         border: const OutlineInputBorder(),
                       ),
-                      onChanged: (value) => context.read<GroupCubit>().groupNameChanged(value),
+                      onChanged: (value) =>
+                          context.read<GroupCubit>().groupNameChanged(value),
                       controller: TextEditingController.fromValue(
                         TextEditingValue(
                           text: state.newGroupName,
-                          selection: TextSelection.collapsed(offset: state.newGroupName.length),
+                          selection: TextSelection.collapsed(
+                            offset: state.newGroupName.length,
+                          ),
                         ),
                       ),
                     ),
@@ -84,26 +80,35 @@ class GroupScreen extends StatelessWidget {
                 child: state.status.isInProgress
                     ? const Center(child: CircularProgressIndicator())
                     : state.groups.isEmpty
-                        ? const Center(child: Text('No groups found.'))
-                        : RefreshIndicator(
-                            onRefresh: () => context.read<GroupCubit>().fetchGroups(),
-                            child: ListView.builder(
-                              itemCount: state.groups.length,
-                              itemBuilder: (context, i) {
-                                final group = state.groups[i];
-                                return ListTile(
-                                  onTap: () {
-                                    context.read<GroupCubit>().currentGroupIdChanged(group.groupId);
-                                    context.read<GroupCubit>().currentGroupUserRoleChanged(group.role);
-                                    context.read<GroupCubit>().currentGroupNameChanged(group.name);
-                                    context.pushNamed(AppRouteName.groupMembersScreen);
-                                  },
-                                  title: Text(group.name),
-                                  subtitle: Text(group.role),
+                    ? const Center(child: Text('No groups found.'))
+                    : RefreshIndicator(
+                        onRefresh: () =>
+                            context.read<GroupCubit>().fetchGroups(),
+                        child: ListView.builder(
+                          itemCount: state.groups.length,
+                          itemBuilder: (context, i) {
+                            final group = state.groups[i];
+                            return ListTile(
+                              onTap: () {
+                                context
+                                    .read<GroupCubit>()
+                                    .currentGroupIdChanged(group.groupId);
+                                context
+                                    .read<GroupCubit>()
+                                    .currentGroupUserRoleChanged(group.role);
+                                context
+                                    .read<GroupCubit>()
+                                    .currentGroupNameChanged(group.name);
+                                context.pushNamed(
+                                  AppRouteName.groupMembersScreen,
                                 );
                               },
-                            ),
-                          ),
+                              title: Text(group.name),
+                              subtitle: Text(group.role),
+                            );
+                          },
+                        ),
+                      ),
               ),
             ],
           );

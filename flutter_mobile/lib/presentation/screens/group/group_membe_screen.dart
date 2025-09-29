@@ -34,13 +34,7 @@ class GroupMembersScreen extends StatelessWidget {
         }
       },
       child: Scaffold(
-        appBar: const CustomAppBar(
-          title: "Groupes",
-          username: "Walid Zaroui",
-          email: "zarwi.walid@gmail.com",
-          avatarPath: "lib/config/assets/images/default_avatar.jpg",
-          showLeading: true,
-        ),
+        appBar: const CustomAppBar(title: "Groupes", showLeading: true),
         body: SafeArea(
           child: Container(
             padding: EdgeInsets.only(
@@ -124,7 +118,6 @@ class _MembersList extends StatelessWidget {
                 return Column(
                   children: [
                     ElevatedButton(
-
                       onPressed: () {},
                       style: ElevatedButton.styleFrom(
                         elevation: 0,

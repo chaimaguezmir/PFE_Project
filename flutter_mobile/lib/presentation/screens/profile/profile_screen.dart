@@ -28,7 +28,9 @@ class ProfileScreen extends StatelessWidget {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
-                  state.errorMessage ?? state.successMessage ?? 'Action completed',
+                  state.errorMessage ??
+                      state.successMessage ??
+                      'Action completed',
                 ),
               ),
             );
@@ -37,13 +39,7 @@ class ProfileScreen extends StatelessWidget {
       },
       child: Scaffold(
         backgroundColor: Colors.grey.shade50,
-        appBar: const CustomAppBar(
-          title: "Profile",
-          username: "Walid Zaroui",
-          email: "zarwi.walid@gmail.com",
-          avatarPath: "lib/config/assets/images/default_avatar.jpg",
-          showLeading: false,
-        ),
+        appBar: const CustomAppBar(title: "Profile", showLeading: false),
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
@@ -58,7 +54,7 @@ class ProfileScreen extends StatelessWidget {
                         items: const [
                           "Mes informations personnelles",
                           "Modifier mon profil",
-                          "Changer le mot de passe / Sécurité"
+                          "Changer le mot de passe / Sécurité",
                         ],
                         onItemTap: (item) => _showSnackBar(context, item),
                       ),
@@ -71,7 +67,7 @@ class ProfileScreen extends StatelessWidget {
                           "Mes rappels",
                           "Mes rendez-vous médicaux",
                           "Ordonnances et renouvellements",
-                          "Interactions médicamenteuses"
+                          "Interactions médicamenteuses",
                         ],
                         onItemTap: (item) => _showSnackBar(context, item),
                       ),
@@ -82,7 +78,7 @@ class ProfileScreen extends StatelessWidget {
                         items: const [
                           "Paramètres de notifications",
                           "Mode sombre / clair",
-                          "Langue de l'application"
+                          "Langue de l'application",
                         ],
                         onItemTap: (item) => _showSnackBar(context, item),
                       ),
@@ -93,7 +89,7 @@ class ProfileScreen extends StatelessWidget {
                         items: const [
                           "Aide & FAQ",
                           "Contact support / assistance",
-                          "Confidentialité & sécurité des données"
+                          "Confidentialité & sécurité des données",
                         ],
                         onItemTap: (item) => _showSnackBar(context, item),
                       ),
@@ -115,10 +111,7 @@ class ProfileScreen extends StatelessWidget {
 
   void _showSnackBar(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        duration: const Duration(seconds: 2),
-      ),
+      SnackBar(content: Text(message), duration: const Duration(seconds: 2)),
     );
   }
 }
@@ -138,7 +131,8 @@ class ExpandableProfileSection extends StatefulWidget {
   });
 
   @override
-  State<ExpandableProfileSection> createState() => _ExpandableProfileSectionState();
+  State<ExpandableProfileSection> createState() =>
+      _ExpandableProfileSectionState();
 }
 
 class _ExpandableProfileSectionState extends State<ExpandableProfileSection>
@@ -207,11 +201,7 @@ class _ExpandableProfileSectionState extends State<ExpandableProfileSection>
                       color: _getIconColor().withOpacity(0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Icon(
-                      widget.icon,
-                      size: 20,
-                      color: _getIconColor(),
-                    ),
+                    child: Icon(widget.icon, size: 20, color: _getIconColor()),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -243,7 +233,7 @@ class _ExpandableProfileSectionState extends State<ExpandableProfileSection>
               color: Colors.grey[200],
             ),
             ...widget.items.map(
-                  (item) => ProfileSubMenuItem(
+              (item) => ProfileSubMenuItem(
                 title: item,
                 onTap: () => widget.onItemTap(item),
               ),
@@ -287,12 +277,7 @@ class ProfileSubMenuItem extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          border: Border(
-            top: BorderSide(
-              color: Colors.grey[200]!,
-              width: 0.5,
-            ),
-          ),
+          border: Border(top: BorderSide(color: Colors.grey[200]!, width: 0.5)),
         ),
         child: Row(
           children: [
@@ -307,11 +292,7 @@ class ProfileSubMenuItem extends StatelessWidget {
                 ),
               ),
             ),
-            Icon(
-              Icons.chevron_right,
-              color: Colors.grey[400],
-              size: 20,
-            ),
+            Icon(Icons.chevron_right, color: Colors.grey[400], size: 20),
           ],
         ),
       ),
@@ -322,10 +303,7 @@ class ProfileSubMenuItem extends StatelessWidget {
 class DisconnectButton extends StatelessWidget {
   final VoidCallback onPressed;
 
-  const DisconnectButton({
-    super.key,
-    required this.onPressed,
-  });
+  const DisconnectButton({super.key, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -356,11 +334,7 @@ class DisconnectButton extends StatelessWidget {
                   color: Colors.red.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Icon(
-                  Icons.logout,
-                  size: 20,
-                  color: Colors.red,
-                ),
+                child: const Icon(Icons.logout, size: 20, color: Colors.red),
               ),
               const SizedBox(width: 12),
               const Expanded(
@@ -373,11 +347,7 @@ class DisconnectButton extends StatelessWidget {
                   ),
                 ),
               ),
-              Icon(
-                Icons.chevron_right,
-                color: Colors.grey[400],
-                size: 20,
-              ),
+              Icon(Icons.chevron_right, color: Colors.grey[400], size: 20),
             ],
           ),
         ),

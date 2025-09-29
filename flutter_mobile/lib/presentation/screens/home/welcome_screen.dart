@@ -18,13 +18,7 @@ class WelcomeScreen extends StatelessWidget {
     });
 
     return Scaffold(
-      appBar: const CustomAppBar(
-        title: "Accueil",
-        username: "Walid Zaroui",
-        email: "zarwi.walid@gmail.com",
-        avatarPath: "lib/config/assets/images/default_avatar.jpg",
-        showLeading: false,
-      ),
+      appBar: const CustomAppBar(title: "Accueil", showLeading: false),
       backgroundColor: Colors.grey[50],
       body: BlocBuilder<WelcomeScreenCubit, WelcomeScreenState>(
         builder: (context, state) {

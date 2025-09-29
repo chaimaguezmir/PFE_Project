@@ -1,26 +1,56 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobile/core/utils/shared_prefs_utils.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
+class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   const CustomAppBar({
     super.key,
     required this.title,
-    required this.username,
-    required this.email,
-    required this.avatarPath,
     this.onBack,
     this.showLeading = true,
   });
 
   final String title;
-  final String username;
-  final String email;
-  final String avatarPath;
   final VoidCallback? onBack;
   final bool showLeading;
 
   @override
-  Size get preferredSize => Size.fromHeight(150.h); // Reduced from 350.h
+  Size get preferredSize => Size.fromHeight(150.h);
+
+  @override
+  State<CustomAppBar> createState() => _CustomAppBarState();
+}
+
+class _CustomAppBarState extends State<CustomAppBar> {
+  late SharedPrefsUtils _prefsUtils;
+  String _displayName = 'User';
+  String _email = '';
+  String _avatarPath = 'lib/config/assets/images/default_avatar.jpg';
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _prefsUtils = SharedPrefsUtils();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    try {
+      final profile = await _prefsUtils.getUserProfile();
+      setState(() {
+        _displayName = _prefsUtils.getDisplayName();
+        _email = profile['email'] as String? ?? '';
+        _avatarPath = _prefsUtils.getAvatarPath();
+        _isLoading = false;
+      });
+    } catch (e) {
+      print('Error loading user data: $e');
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,14 +65,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       scrolledUnderElevation: 0,
       automaticallyImplyLeading: false,
       toolbarHeight: 55.h,
-      leading: showLeading
+      leading: widget.showLeading
           ? Padding(
-        padding:  EdgeInsets.all(8.0.w), // Reduced padding
+        padding: EdgeInsets.all(8.0.w),
         child: ElevatedButton(
-          onPressed: onBack ?? () => Navigator.of(context).pop(),
+          onPressed: widget.onBack ?? () => Navigator.of(context).pop(),
           style: ElevatedButton.styleFrom(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.r), // Slightly smaller radius
+              borderRadius: BorderRadius.circular(10.r),
             ),
             backgroundColor: theme.colorScheme.onSecondary,
             padding: EdgeInsets.zero,
@@ -51,58 +81,90 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           child: Icon(
             Icons.arrow_back,
             color: theme.colorScheme.onPrimary,
-            size: 18.sp, // Added explicit size
+            size: 18.sp,
           ),
         ),
       )
           : null,
       title: Text(
-        title,
+        widget.title,
         style: TextStyle(
           color: theme.colorScheme.onPrimary,
-          fontSize: 20.sp, // Reduced from 45.sp
+          fontSize: 20.sp,
           fontWeight: FontWeight.w500,
         ),
       ),
       bottom: PreferredSize(
-        preferredSize: Size.fromHeight(60.h), // Adjusted to fit content
-        child: Padding(
+        preferredSize: Size.fromHeight(60.h),
+        child: _isLoading
+            ? Padding(
+          padding: EdgeInsets.only(left: 16.w, right: 16.w, bottom: 16.h),
+          child: Row(
+            children: [
+              CircleAvatar(
+                radius: 25.w,
+                backgroundColor: Colors.grey[300],
+              ),
+              SizedBox(width: 16.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 100.w,
+                      height: 16.h,
+                      color: Colors.grey[300],
+                    ),
+                    SizedBox(height: 4.h),
+                    Container(
+                      width: 150.w,
+                      height: 14.h,
+                      color: Colors.grey[300],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        )
+            : Padding(
           padding: EdgeInsets.only(left: 16.w, right: 16.w, bottom: 16.h),
           child: Row(
             children: [
               Container(
-                width: 50.w, // Reduced from 150.w
-                height: 50.w, // Reduced from 150.w
+                width: 50.w,
+                height: 50.w,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   image: DecorationImage(
-                    image: AssetImage(avatarPath),
+                    image: AssetImage(_avatarPath),
                     fit: BoxFit.cover,
                     alignment: Alignment.topCenter,
                   ),
                 ),
               ),
-              SizedBox(width: 16.w), // Reduced spacing
-              Expanded( // Added Expanded to prevent overflow
+              SizedBox(width: 16.w),
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      'afya',
+                      _displayName,
                       style: theme.textTheme.bodyLarge?.copyWith(
                         color: theme.colorScheme.onPrimary,
                         fontWeight: FontWeight.bold,
-                        fontSize: 16.sp, // Added explicit size
+                        fontSize: 16.sp,
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
-                    SizedBox(height: 4.h), // Added spacing between texts
+                    SizedBox(height: 4.h),
                     Text(
-                      'afya@test.com',
+                      _email,
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: theme.colorScheme.onPrimary.withOpacity(0.7),
-                        fontSize: 14.sp, // Added explicit size
+                        fontSize: 14.sp,
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),

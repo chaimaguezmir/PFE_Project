@@ -14,13 +14,7 @@ class AddMemberScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: theme().colorScheme.onSecondary,
-      appBar: const CustomAppBar(
-        title: "Ajouter Un Membre",
-        username: "Walid Zaroui",
-        email: "zarwi.walid@gmail.com",
-        avatarPath: "lib/config/assets/images/default_avatar.jpg",
-        showLeading: true,
-      ),
+      appBar: const CustomAppBar(title: "Ajouter Un Membre", showLeading: true),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.only(left: 20.w, right: 20.w, top: 24.w),

@@ -16,7 +16,6 @@ class ServicesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Fetch data when screen loads
 
-
     return BlocListener<ServicesCubit, ServicesState>(
       listener: (context, state) {
         if (state.hasError) {
@@ -37,13 +36,7 @@ class ServicesScreenView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(
-        title: "Services",
-        username: "Walid Zaroui",
-        email: "zarwi.walid@gmail.com",
-        avatarPath: "lib/config/assets/images/default_avatar.jpg",
-        showLeading: false,
-      ),
+      appBar: const CustomAppBar(title: "Services", showLeading: false),
       body: BlocBuilder<ServicesCubit, ServicesState>(
         builder: (context, state) {
           if (state.isLoading) {
@@ -96,7 +89,8 @@ class SearchBarWidget extends StatelessWidget {
   final List<PharmacyBoxEntity> allBoxes;
 
   // Static controller that persists across rebuilds
-  static final TextEditingController _globalController = TextEditingController();
+  static final TextEditingController _globalController =
+      TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -157,7 +151,7 @@ class FilteredBoxGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<ServicesCubit, ServicesState>(
       buildWhen: (previous, current) =>
-      previous.filteredBoxes != current.filteredBoxes ||
+          previous.filteredBoxes != current.filteredBoxes ||
           previous.searchQuery != current.searchQuery,
       builder: (context, state) {
         if (state.filteredBoxes.isEmpty && state.searchQuery.isNotEmpty) {
@@ -166,9 +160,7 @@ class FilteredBoxGrid extends StatelessWidget {
 
         if (state.filteredBoxes.isEmpty) {
           return const Expanded(
-            child: Center(
-              child: Text('Aucune boîte disponible'),
-            ),
+            child: Center(child: Text('Aucune boîte disponible')),
           );
         }
 
@@ -281,7 +273,9 @@ class BoxCardWidget extends StatelessWidget {
       onTap: () {
         // Just select the pharmacy box ID
         context.read<ServicesCubit>().selectPharmacyBoxId(pharmacyBox.id);
-        context.read<ServicesCubit>().selectPharmacyBoxName(pharmacyBox.groupName);
+        context.read<ServicesCubit>().selectPharmacyBoxName(
+          pharmacyBox.groupName,
+        );
         // Navigate without passing any data
         context.pushNamed(AppRouteName.pharmacyBox);
       },
