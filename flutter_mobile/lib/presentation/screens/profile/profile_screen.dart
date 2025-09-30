@@ -39,7 +39,8 @@ class ProfileScreen extends StatelessWidget {
       },
       child: Scaffold(
         backgroundColor: Colors.grey.shade50,
-        appBar: const CustomAppBar(title: "Profile", showLeading: false),
+        appBar: const CustomAppBar(title: "Profile",
+            showLeading: false,),
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
@@ -56,7 +57,13 @@ class ProfileScreen extends StatelessWidget {
                           "Modifier mon profil",
                           "Changer le mot de passe / Sécurité",
                         ],
-                        onItemTap: (item) => _showSnackBar(context, item),
+                        onItemTap: (item) {
+                          if (item == "Modifier mon profil") {
+                            context.pushNamed(AppRouteName.editProfile);
+                          } else {
+                            _showSnackBar(context, item);
+                          }
+                        },
                       ),
                       const SizedBox(height: 16),
                       ExpandableProfileSection(

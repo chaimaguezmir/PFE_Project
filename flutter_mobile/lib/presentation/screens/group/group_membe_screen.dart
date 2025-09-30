@@ -361,12 +361,14 @@ class _CustomGroupPopUpMenuButton extends StatelessWidget {
           onCanceled: () {
             context.read<GroupCubit>().toggleIconSelected();
           },
-          onSelected: (value) {
+          onSelected: (value) async {
             context.read<GroupCubit>().toggleIconSelected();
             // Handle action
             if (value == 'add') {
-              // Handle edit action
-              context.pushNamed(AppRouteName.addMemberScreen);
+              // Navigate to add member screen and wait for it to pop
+              await context.pushNamed(AppRouteName.addMemberScreen);
+              // Refresh members when returning
+              context.read<GroupCubit>().fetchGroupMembers();
             }
           },
           itemBuilder: (context) => [

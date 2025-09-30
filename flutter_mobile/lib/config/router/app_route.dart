@@ -8,6 +8,7 @@ import 'package:flutter_mobile/presentation/bloc/group/group_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/home/prescription_creation_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/home/prescription_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/home/welcome_screen_cubit.dart';
+import 'package:flutter_mobile/presentation/bloc/profile/edit_profile_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/profile/profile_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/services/services_cubit.dart';
 import 'package:flutter_mobile/presentation/bottom_bar.dart';
@@ -29,6 +30,7 @@ import 'package:flutter_mobile/presentation/screens/home/prescriptions_screen.da
 import 'package:flutter_mobile/presentation/screens/home/welcome_screen.dart';
 
 import 'package:flutter_mobile/presentation/screens/onboarding/onboarding_screen.dart';
+import 'package:flutter_mobile/presentation/screens/profile/edit_profile_screen.dart';
 import 'package:flutter_mobile/presentation/screens/profile/profile_screen.dart';
 import 'package:flutter_mobile/presentation/screens/services/add_medication_manually_screen.dart';
 import 'package:flutter_mobile/presentation/screens/services/barcode_scanner_screen.dart';
@@ -232,13 +234,24 @@ class AppRouter {
           StatefulShellBranch(
             routes: <RouteBase>[
               GoRoute(
-                name: 'profile',
-                path: '/profile',
+                name: AppRouteName.profile,
+                path: AppRoutePath.profile,
                 builder: (context, state) => BlocProvider(
                   create: (context) => sl<ProfileCubit>(),
                   child: const ProfileScreen(),
                 ),
+
               ),
+              GoRoute(
+                name: AppRouteName.editProfile,
+                path: AppRoutePath.editProfile,
+                builder: (context, state) => BlocProvider(
+                  create: (context) => sl<EditProfileCubit>()..init(),
+                  child: const EditProfileScreen(),
+                ),
+
+              ),
+
             ],
           ),
         ],

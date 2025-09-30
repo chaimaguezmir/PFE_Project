@@ -1,3 +1,4 @@
+import 'package:flutter_mobile/core/constants/api_endpoint.dart';
 import 'package:flutter_mobile/data/model/auth/login/login_result_model.dart';
 import 'package:flutter_mobile/data/model/auth/sign_out_request_model.dart';
 import 'package:flutter_mobile/injection_container.dart';
@@ -154,7 +155,7 @@ Future<void> saveLoginResult(LoginResultModel result) async {
 
   // Save profile image URL or set default
   if (result.profileImageUrl != null && result.profileImageUrl!.isNotEmpty) {
-    await prefs.setString('profileImageUrl', result.profileImageUrl!);
+    await prefs.setString('profileImageUrl', ApiEndpoints.baseurl+result.profileImageUrl!);
   } else {
     await prefs.setString('profileImageUrl', 'lib/config/assets/images/default_avatar.jpg');
   }

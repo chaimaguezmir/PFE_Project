@@ -12,6 +12,8 @@ import 'package:flutter_mobile/data/data_sources/pharmacy_remote_datasource.dart
 import 'package:flutter_mobile/data/data_sources/pharmacy_remote_datasource_impl.dart';
 import 'package:flutter_mobile/data/data_sources/prescription_remote_datasource.dart';
 import 'package:flutter_mobile/data/data_sources/prescription_remote_datasource_impl.dart';
+import 'package:flutter_mobile/data/data_sources/profile_remote_datasource.dart';
+import 'package:flutter_mobile/data/data_sources/profile_remote_datasource_impl.dart';
 import 'package:flutter_mobile/data/data_sources/reminder_remote_data_source.dart';
 import 'package:flutter_mobile/data/data_sources/reminder_remote_data_source_impl.dart';
 import 'package:flutter_mobile/data/data_sources/treatment_remote_datasource.dart';
@@ -21,6 +23,7 @@ import 'package:flutter_mobile/data/repositories/group_repository_impl.dart';
 import 'package:flutter_mobile/data/repositories/medicine_repository_impl.dart';
 import 'package:flutter_mobile/data/repositories/pharmacy_repository_impl.dart';
 import 'package:flutter_mobile/data/repositories/prescription_repository_impl.dart';
+import 'package:flutter_mobile/data/repositories/profile_repository_impl.dart';
 import 'package:flutter_mobile/data/repositories/treatment_repository_impl.dart';
 import 'package:flutter_mobile/data/repositories/reminder_repository_impl.dart';
 import 'package:flutter_mobile/data/repositories/disease_repository_impl.dart';
@@ -29,6 +32,7 @@ import 'package:flutter_mobile/domain/repositories/group_repository.dart';
 import 'package:flutter_mobile/domain/repositories/medicine_repository.dart';
 import 'package:flutter_mobile/domain/repositories/pharmacy_repository.dart';
 import 'package:flutter_mobile/domain/repositories/prescription_repository.dart';
+import 'package:flutter_mobile/domain/repositories/profile_repository.dart';
 import 'package:flutter_mobile/domain/repositories/reminder_repository.dart';
 import 'package:flutter_mobile/domain/repositories/treatment_repository.dart';
 import 'package:flutter_mobile/domain/repositories/disease_repository.dart';
@@ -41,6 +45,7 @@ import 'package:flutter_mobile/presentation/bloc/group/group_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/home/prescription_creation_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/home/prescription_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/home/welcome_screen_cubit.dart';
+import 'package:flutter_mobile/presentation/bloc/profile/edit_profile_cubit.dart';
 
 import 'package:flutter_mobile/presentation/bloc/profile/profile_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/services/services_cubit.dart';
@@ -141,4 +146,18 @@ Future<void> initInjectionContainer() async {
   );
   // Network Controller
   sl.registerLazySingleton<Connectivity>(() => Connectivity());
+
+  // Register ProfileRepository
+  sl.registerLazySingleton<ProfileRemoteDataSource>(
+    () => ProfileRemoteDataSourceImpl(sl()),
+  );
+
+  sl.registerLazySingleton<ProfileRepository>(
+    () => ProfileRepositoryImpl(sl()),
+  );
+
+  // Register EditProfileCubit with correct dependencies
+  sl.registerFactory<EditProfileCubit>(
+    () => EditProfileCubit(sl<ProfileRepository>(), sl<SharedPreferences>()),
+  );
 }

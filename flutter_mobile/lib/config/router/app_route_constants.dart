@@ -31,6 +31,10 @@ class AppRouteName {
   static const String prescriptionDetail = 'prescriptionDetail';
   static const String prescriptionForm = 'prescriptionForm';
   static const String treatmentForm = 'treatmentForm';
+
+  // profile
+  static const String profile = 'profile';
+  static const String editProfile = 'editProfile';
 }
 
 class AppRoutePath {
@@ -68,4 +72,9 @@ class AppRoutePath {
       '/home/prescription/prescriptionDetail';
   static const String prescriptionForm = '/home/prescriptionForm';
   static const String treatmentForm = '/home/prescriptionForm/treatmentForm';
+
+  // profile
+  static const String profile = '/profile';
+  static const String editProfile = '/profile/editProfile';
+
 }

@@ -35,6 +35,12 @@ class _CustomAppBarState extends State<CustomAppBar> {
     _loadUserData();
   }
 
+  @override
+  void didUpdateWidget(covariant CustomAppBar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _loadUserData();
+  }
+
   Future<void> _loadUserData() async {
     try {
       final profile = await _prefsUtils.getUserProfile();
@@ -55,6 +61,13 @@ class _CustomAppBarState extends State<CustomAppBar> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
+    ImageProvider avatarProvider;
+    if (_avatarPath.startsWith('http')) {
+      avatarProvider = NetworkImage(_avatarPath);
+    } else {
+      avatarProvider = AssetImage(_avatarPath);
+    }
 
     return AppBar(
       backgroundColor: theme.colorScheme.onSecondary,
@@ -138,7 +151,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   image: DecorationImage(
-                    image: AssetImage(_avatarPath),
+                    image: avatarProvider,
                     fit: BoxFit.cover,
                     alignment: Alignment.topCenter,
                   ),

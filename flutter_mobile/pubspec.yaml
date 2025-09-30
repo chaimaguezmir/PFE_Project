@@ -38,6 +38,7 @@ dependencies:
   get: ^4.7.2
   google_sign_in: ^6.1.4
   mobile_scanner: ^7.0.1
+  http_parser: ^4.0.2
 
 
 dev_dependencies:
