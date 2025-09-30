@@ -155,7 +155,7 @@ Future<void> saveLoginResult(LoginResultModel result) async {
 
   // Save profile image URL or set default
   if (result.profileImageUrl != null && result.profileImageUrl!.isNotEmpty) {
-    await prefs.setString('profileImageUrl', ApiEndpoints.baseurl+result.profileImageUrl!);
+    await prefs.setString('profileImageUrl', ApiEndpoints.imageUrl+result.profileImageUrl!);
   } else {
     await prefs.setString('profileImageUrl', 'lib/config/assets/images/default_avatar.jpg');
   }
