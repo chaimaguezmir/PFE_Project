@@ -29,6 +29,9 @@ public class User {
 	@Column
 	private String username;
 
+	@Column(name = "profile_image_url")
+	private String profileImageUrl;
+
 	@NotBlank
 	@Size(max = 50)
 	@Email

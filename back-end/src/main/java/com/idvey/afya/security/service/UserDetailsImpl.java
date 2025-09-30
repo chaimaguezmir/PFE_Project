@@ -67,20 +67,42 @@ public class UserDetailsImpl implements UserDetails {
 
 	private boolean allergies;
 
+	// ADD THIS FIELD
+	private String profileImageUrl;
+
 	private Collection<? extends GrantedAuthority> authorities;
 
 	public static UserDetailsImpl build(User user) {
 		List<GrantedAuthority> authorities = user.getRoles()
-			.stream()
-			.map(role -> new SimpleGrantedAuthority(role.getName().name()))
-			.collect(Collectors.toList());
+				.stream()
+				.map(role -> new SimpleGrantedAuthority(role.getName().name()))
+				.collect(Collectors.toList());
 
-		return new UserDetailsImpl(user.getId(), user.getUsername(), user.getEmail(), user.getPassword(),
-				user.getFirstName(), user.getLastName(), user.getPhoneNumber(), user.getWeight(), user.getHeight(),
-				user.getBloodGroup(), user.getGender(), user.getBirthDate(), user.isSmokingStatus(),
-				user.isAlcoholConsumption(), user.isExerciseRegularly(), user.isFamilyHistoryHeartDisease(),
-				user.isHypertensionHistory(), user.isHeartDisease(), user.isDiabetes(), user.isCholesterol(),
-				user.isAllergies(), authorities);
+		return new UserDetailsImpl(
+				user.getId(),
+				user.getUsername(),
+				user.getEmail(),
+				user.getPassword(),
+				user.getFirstName(),
+				user.getLastName(),
+				user.getPhoneNumber(),
+				user.getWeight(),
+				user.getHeight(),
+				user.getBloodGroup(),
+				user.getGender(),
+				user.getBirthDate(),
+				user.isSmokingStatus(),
+				user.isAlcoholConsumption(),
+				user.isExerciseRegularly(),
+				user.isFamilyHistoryHeartDisease(),
+				user.isHypertensionHistory(),
+				user.isHeartDisease(),
+				user.isDiabetes(),
+				user.isCholesterol(),
+				user.isAllergies(),
+				user.getProfileImageUrl(), // ADD THIS
+				authorities
+		);
 	}
 
 	@Override

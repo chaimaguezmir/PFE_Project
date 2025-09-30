@@ -95,8 +95,15 @@ public class WebSecurityConfig {
 				.authenticated()
 				.requestMatchers("/api/reminders/**")
 				.authenticated()
+				.requestMatchers("/api/group-medical/**")
+				.authenticated()
+				.requestMatchers("/api/users/**")
+				.authenticated()
+				.requestMatchers("/uploads/**")
+				.permitAll()
 				.anyRequest()
 				.permitAll());
+
 
 		http.authenticationProvider(authenticationProvider());
 

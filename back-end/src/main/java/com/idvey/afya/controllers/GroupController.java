@@ -50,11 +50,16 @@ public class GroupController {
 	@GroupDocs.GetGroupMembers
 	@GetMapping("/{groupId}/members")
 	public ResponseEntity<List<GroupMemberResponse>> listMembers(@AuthenticationPrincipal UserDetailsImpl currentUser,
-			@PathVariable UUID groupId) {
+																 @PathVariable UUID groupId) {
 		List<GroupMember> members = groupService.fetchGroupMembers(groupId);
 		List<GroupMemberResponse> resp = members.stream()
-			.map(m -> new GroupMemberResponse(m.getUser().getId(), m.getUser().getUsername(), m.getRole()))
-			.collect(Collectors.toList());
+				.map(m -> new GroupMemberResponse(
+						m.getUser().getId(),
+						m.getUser().getUsername(),
+						m.getRole(),
+						m.getUser().getProfileImageUrl() // ADD THIS
+				))
+				.collect(Collectors.toList());
 		return ResponseEntity.ok(resp);
 	}
 

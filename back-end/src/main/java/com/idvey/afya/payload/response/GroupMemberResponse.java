@@ -8,6 +8,7 @@ import java.util.UUID;
 
 @Getter
 @AllArgsConstructor
+
 public class GroupMemberResponse {
 
 	private UUID userId;
@@ -15,5 +16,7 @@ public class GroupMemberResponse {
 	private String username;
 
 	private GroupRole role;
+
+	private String profileImageUrl; // NEW FIELD
 
 }
