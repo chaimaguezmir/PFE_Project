@@ -7,6 +7,7 @@ enum EditProfileStatus {
   loading,
   imageSelected,
   uploading,
+  updating,
   success,
   failure,
 }
@@ -21,6 +22,20 @@ class EditProfileState extends Equatable {
     this.firstName = '',
     this.lastName = '',
     this.phoneNumber = '',
+    this.weight,
+    this.height,
+    this.bloodGroup,
+    this.gender,
+    this.birthDate,
+    this.smokingStatus,
+    this.alcoholConsumption,
+    this.exerciseRegularly,
+    this.familyHistoryHeartDisease,
+    this.hypertensionHistory,
+    this.heartDisease,
+    this.diabetes,
+    this.cholesterol,
+    this.allergies,
     this.errorMessage,
     this.successMessage,
   });
@@ -33,13 +48,28 @@ class EditProfileState extends Equatable {
   final String firstName;
   final String lastName;
   final String phoneNumber;
+  final double? weight;
+  final double? height;
+  final String? bloodGroup;
+  final String? gender;
+  final String? birthDate;
+  final bool? smokingStatus;
+  final bool? alcoholConsumption;
+  final bool? exerciseRegularly;
+  final bool? familyHistoryHeartDisease;
+  final bool? hypertensionHistory;
+  final bool? heartDisease;
+  final bool? diabetes;
+  final bool? cholesterol;
+  final bool? allergies;
   final String? errorMessage;
   final String? successMessage;
 
   // Computed properties
   bool get isLoading =>
       status == EditProfileStatus.loading ||
-          status == EditProfileStatus.uploading;
+          status == EditProfileStatus.uploading ||
+          status == EditProfileStatus.updating;
 
   bool get hasSelectedImage => selectedImagePath != null;
 
@@ -66,16 +96,30 @@ class EditProfileState extends Equatable {
     EditProfileStatus? status,
     String? currentImageUrl,
     String? selectedImagePath,
-    bool clearSelectedImagePath = false, // NEW: flag to explicitly clear
+    bool clearSelectedImagePath = false,
     String? username,
     String? email,
     String? firstName,
     String? lastName,
     String? phoneNumber,
+    double? weight,
+    double? height,
+    String? bloodGroup,
+    String? gender,
+    String? birthDate,
+    bool? smokingStatus,
+    bool? alcoholConsumption,
+    bool? exerciseRegularly,
+    bool? familyHistoryHeartDisease,
+    bool? hypertensionHistory,
+    bool? heartDisease,
+    bool? diabetes,
+    bool? cholesterol,
+    bool? allergies,
     String? errorMessage,
-    bool clearErrorMessage = false, // NEW: flag to explicitly clear
+    bool clearErrorMessage = false,
     String? successMessage,
-    bool clearSuccessMessage = false, // NEW: flag to explicitly clear
+    bool clearSuccessMessage = false,
   }) {
     return EditProfileState(
       status: status ?? this.status,
@@ -88,6 +132,20 @@ class EditProfileState extends Equatable {
       firstName: firstName ?? this.firstName,
       lastName: lastName ?? this.lastName,
       phoneNumber: phoneNumber ?? this.phoneNumber,
+      weight: weight ?? this.weight,
+      height: height ?? this.height,
+      bloodGroup: bloodGroup ?? this.bloodGroup,
+      gender: gender ?? this.gender,
+      birthDate: birthDate ?? this.birthDate,
+      smokingStatus: smokingStatus ?? this.smokingStatus,
+      alcoholConsumption: alcoholConsumption ?? this.alcoholConsumption,
+      exerciseRegularly: exerciseRegularly ?? this.exerciseRegularly,
+      familyHistoryHeartDisease: familyHistoryHeartDisease ?? this.familyHistoryHeartDisease,
+      hypertensionHistory: hypertensionHistory ?? this.hypertensionHistory,
+      heartDisease: heartDisease ?? this.heartDisease,
+      diabetes: diabetes ?? this.diabetes,
+      cholesterol: cholesterol ?? this.cholesterol,
+      allergies: allergies ?? this.allergies,
       errorMessage: clearErrorMessage
           ? null
           : (errorMessage ?? this.errorMessage),
@@ -107,6 +165,20 @@ class EditProfileState extends Equatable {
     firstName,
     lastName,
     phoneNumber,
+    weight,
+    height,
+    bloodGroup,
+    gender,
+    birthDate,
+    smokingStatus,
+    alcoholConsumption,
+    exerciseRegularly,
+    familyHistoryHeartDisease,
+    hypertensionHistory,
+    heartDisease,
+    diabetes,
+    cholesterol,
+    allergies,
     errorMessage,
     successMessage,
   ];

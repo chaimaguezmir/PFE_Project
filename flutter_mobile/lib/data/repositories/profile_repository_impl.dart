@@ -1,7 +1,11 @@
+// lib/data/repositories/profile_repository_impl.dart
+
 import 'package:dio/dio.dart';
 import 'package:flutter_mobile/core/resources/data_state.dart';
 import 'package:flutter_mobile/data/data_sources/profile_remote_datasource.dart';
+import 'package:flutter_mobile/data/model/profile/update_profile_request_model.dart';
 import 'package:flutter_mobile/domain/entities/profile/upload_image_entity.dart';
+import 'package:flutter_mobile/domain/entities/profile/user_profile_entity.dart';
 import 'package:flutter_mobile/domain/repositories/profile_repository.dart';
 
 class ProfileRepositoryImpl implements ProfileRepository {
@@ -13,6 +17,33 @@ class ProfileRepositoryImpl implements ProfileRepository {
   Future<DataState<UploadImageEntity>> uploadProfileImage(String filePath) async {
     try {
       final result = await _remoteDataSource.uploadProfileImage(filePath);
+      return DataSuccess(result);
+    } on DioException catch (e) {
+      return DataError(_handleDioError(e));
+    } catch (e) {
+      return DataError('Une erreur inattendue s\'est produite: $e');
+    }
+  }
+
+  @override
+  Future<DataState<UserProfileEntity>> getUserProfile() async {
+    try {
+      final result = await _remoteDataSource.getUserProfile();
+      return DataSuccess(result);
+    } on DioException catch (e) {
+      return DataError(_handleDioError(e));
+    } catch (e) {
+      return DataError('Une erreur inattendue s\'est produite: $e');
+    }
+  }
+
+  @override
+  Future<DataState<UserProfileEntity>> updateUserProfile(
+      UpdateProfileEntity profile,
+      ) async {
+    try {
+      final request = UpdateProfileRequestModel.fromEntity(profile);
+      final result = await _remoteDataSource.updateUserProfile(request);
       return DataSuccess(result);
     } on DioException catch (e) {
       return DataError(_handleDioError(e));
@@ -34,11 +65,11 @@ class ProfileRepositoryImpl implements ProfileRepository {
       case DioExceptionType.badResponse:
         if (error.response?.statusCode == 400) {
           final message = error.response?.data['message'];
-          return message ?? 'Données invalides. Le fichier doit être une image.';
+          return message ?? 'Données invalides.';
         } else if (error.response?.statusCode == 401) {
           return 'Non autorisé. Veuillez vous reconnecter.';
         } else if (error.response?.statusCode == 413) {
-          return 'L\'image est trop volumineuse. Taille maximale: 5MB.';
+          return 'Fichier trop volumineux.';
         } else if (error.response?.statusCode == 500) {
           return 'Erreur du serveur. Veuillez réessayer plus tard.';
         }

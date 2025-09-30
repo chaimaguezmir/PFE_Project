@@ -18,10 +18,7 @@ class WelcomeScreen extends StatelessWidget {
     });
 
     return Scaffold(
-      appBar: const CustomAppBar(
-        title: "Accueil",
-     showLeading: false,
-      ),
+      appBar: const CustomAppBar(title: "Accueil", showLeading: false),
       backgroundColor: Colors.grey[50],
       body: BlocBuilder<WelcomeScreenCubit, WelcomeScreenState>(
         builder: (context, state) {
@@ -33,14 +30,14 @@ class WelcomeScreen extends StatelessWidget {
               physics: const AlwaysScrollableScrollPhysics(),
               slivers: [
                 // Day header - always shown
-                SliverToBoxAdapter(child: const _DayHeader()),
+                const SliverToBoxAdapter(child: _DayHeader()),
 
                 // Content area - scrollable
                 Builder(
                   builder: (context) {
                     if (state.isLoading) {
-                      return SliverFillRemaining(
-                        child: const Center(child: CircularProgressIndicator()),
+                      return const SliverFillRemaining(
+                        child: Center(child: CircularProgressIndicator()),
                       );
                     }
 
