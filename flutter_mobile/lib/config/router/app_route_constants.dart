@@ -12,11 +12,17 @@ class AppRouteName {
       'forgotPasswordSuccessScreen';
   static const String getStartedScreen = 'getStartedScreen';
 
-  // home related screens
+  // group related screens
   static const String mainScreen = 'mainScreen';
   static const String groupScreen = 'groupScreen';
+  static const String addGroupScreen = 'addGroupScreen'; // NEW
   static const String groupMembersScreen = 'groupMembersScreen';
   static const String addMemberScreen = 'addMemberScreen';
+  static const String userManagementWelcome = 'userManagementWelcome';
+  static const String userManagementPrescriptions = 'userManagementPrescriptions';
+  static const String userManagementPrescriptionDetail = 'userManagementPrescriptionDetail';
+  static const String userManagementTreatmentForm = 'userManagementTreatmentForm';
+
 
   // services related screens
   static const String services = 'services';
@@ -54,9 +60,13 @@ class AppRoutePath {
   // home related screens
   static const String mainScreen = '/mainScreen';
   static const String groupScreen = '/groupScreen';
+  static const String addGroupScreen = '/addGroupScreen'; // NEW
   static const String groupMembersScreen = '/groupScreen/groupMembersScreen';
-  static const String addMemberScreen = '/addMemberScreen';
-
+  static const String addMemberScreen = '/groupScreen/groupMembersScreen/addMemberScreen';
+  static const String userManagementWelcome = '/groupScreen/groupMembersScreen/userManagementWelcome';
+  static const String userManagementPrescriptions = '/groupScreen/groupMembersScreen/userManagementPrescriptions';
+  static const String userManagementPrescriptionDetail = '/groupScreen/groupMembersScreen/userManagementPrescriptionDetail';
+  static const String userManagementTreatmentForm = '/groupScreen/groupMembersScreen/userManagementTreatmentForm';
   //services related screens
   static const String services = '/services';
   static const String pharmacyBox = '/services/pharmacyBox';

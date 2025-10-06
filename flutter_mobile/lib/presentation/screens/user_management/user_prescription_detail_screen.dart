@@ -5,26 +5,27 @@ import 'package:flutter_mobile/config/router/app_route_constants.dart';
 import 'package:flutter_mobile/config/theme/theme_data_config.dart';
 import 'package:flutter_mobile/domain/entities/prescription/treatment_entity.dart';
 import 'package:flutter_mobile/presentation/bloc/home/prescription_cubit.dart';
+import 'package:flutter_mobile/presentation/bloc/user_management/user_prescription_cubit.dart';
 import 'package:flutter_mobile/presentation/widgets/base_widgets/simple_custom_appbar.dart';
 import 'package:flutter_mobile/presentation/widgets/base_widgets/snackbar_helper.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:formz/formz.dart';
 import 'package:go_router/go_router.dart';
 
-class PrescriptionDetailScreen extends StatelessWidget {
-  const PrescriptionDetailScreen({super.key});
+class UserPrescriptionDetailScreen extends StatelessWidget {
+  const UserPrescriptionDetailScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     // Fetch treatments when screen loads using the stored selectedPrescriptionId
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final selectedId = context.read<PrescriptionCubit>().state.selectedPrescriptionId;
+      final selectedId = context.read<UserPrescriptionCubit>().state.selectedPrescriptionId;
       if (selectedId.isNotEmpty) {
-        context.read<PrescriptionCubit>().fetchTreatments(selectedId);
+        context.read<UserPrescriptionCubit>().fetchTreatments(selectedId);
       }
     });
 
-    return BlocListener<PrescriptionCubit, PrescriptionState>(
+    return BlocListener<UserPrescriptionCubit, UserPrescriptionState>(
       listener: (context, state) {
         if (state.treatmentErrorMessage != null) {
           SnackBarHelper.showError(context, state.treatmentErrorMessage!);
@@ -47,7 +48,7 @@ class DynamicPrescriptionAppBar extends StatelessWidget implements PreferredSize
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<PrescriptionCubit, PrescriptionState>(
+    return BlocBuilder<UserPrescriptionCubit, UserPrescriptionState>(
       buildWhen: (previous, current) =>
       previous.selectedPrescriptionId != current.selectedPrescriptionId ||
           previous.treatments != current.treatments,
@@ -72,7 +73,7 @@ class PrescriptionDetailBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<PrescriptionCubit, PrescriptionState>(
+    return BlocBuilder<UserPrescriptionCubit, UserPrescriptionState>(
       builder: (context, state) {
         if (state.treatmentStatus == FormzSubmissionStatus.inProgress) {
           return const Center(child: CircularProgressIndicator());
@@ -99,7 +100,7 @@ class PrescriptionDetailBody extends StatelessWidget {
                   onPressed: () {
                     final selectedId = state.selectedPrescriptionId;
                     if (selectedId.isNotEmpty) {
-                      context.read<PrescriptionCubit>().fetchTreatments(selectedId);
+                      context.read<UserPrescriptionCubit>().fetchTreatments(selectedId);
                     }
                   },
                   child: const Text('Réessayer'),
@@ -219,9 +220,9 @@ class MedicationsList extends StatelessWidget {
 
     return RefreshIndicator(
       onRefresh: () {
-        final selectedId = context.read<PrescriptionCubit>().state.selectedPrescriptionId;
+        final selectedId = context.read<UserPrescriptionCubit>().state.selectedPrescriptionId;
         if (selectedId.isNotEmpty) {
-          return context.read<PrescriptionCubit>().fetchTreatments(selectedId);
+          return context.read<UserPrescriptionCubit>().fetchTreatments(selectedId);
         }
         return Future.value();
       },
@@ -479,7 +480,7 @@ class MedicationCard extends StatelessWidget {
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
-              context.read<PrescriptionCubit>().updateTreatment(
+              context.read<UserPrescriptionCubit>().updateTreatment(
                 id: treatment.id,
                 dosage: dosageController.text.trim(),
                 frequency: frequencyController.text.trim(),

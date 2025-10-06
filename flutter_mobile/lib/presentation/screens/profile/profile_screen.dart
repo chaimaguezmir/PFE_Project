@@ -1,9 +1,12 @@
+// lib/presentation/screens/profile/profile_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_mobile/config/router/app_route_constants.dart';
+import 'package:flutter_mobile/config/theme/theme_data_config.dart';
 import 'package:flutter_mobile/injection_container.dart';
 import 'package:flutter_mobile/presentation/bloc/profile/profile_cubit.dart';
 import 'package:flutter_mobile/presentation/widgets/base_widgets/custom_app_bar.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:formz/formz.dart';
 import 'package:go_router/go_router.dart';
 
@@ -18,11 +21,7 @@ class ProfileScreen extends StatelessWidget {
           context.goNamed(AppRouteName.signIn);
         }
         if (state.status.isInProgress) {
-          showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (_) => const Center(child: CircularProgressIndicator()),
-          );
+          // Remove the dialog and let the modal handle the loading state
         } else {
           if (state.errorMessage != null || state.successMessage != null) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -39,8 +38,10 @@ class ProfileScreen extends StatelessWidget {
       },
       child: Scaffold(
         backgroundColor: Colors.grey.shade50,
-        appBar: const CustomAppBar(title: "Profile",
-            showLeading: false,),
+        appBar: const CustomAppBar(
+          title: "Profile",
+          showLeading: false,
+        ),
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
@@ -102,7 +103,7 @@ class ProfileScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 16),
                       DisconnectButton(
-                        onPressed: () => context.read<ProfileCubit>().logout(),
+                        onPressed: () => _showLogoutConfirmation(context),
                       ),
                       const SizedBox(height: 24),
                     ],
@@ -121,7 +122,175 @@ class ProfileScreen extends StatelessWidget {
       SnackBar(content: Text(message), duration: const Duration(seconds: 2)),
     );
   }
+
+  void _showLogoutConfirmation(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (bottomSheetContext) {
+        return BlocProvider.value(
+          value: context.read<ProfileCubit>(),
+          child: BlocBuilder<ProfileCubit, ProfileState>(
+            builder: (context, state) {
+              final isLoading = state.status.isInProgress;
+
+              return Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+                ),
+                child: SafeArea(
+                  child: Padding(
+                    padding: EdgeInsets.all(24.w),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Handle indicator
+                        Container(
+                          width: 40.w,
+                          height: 4.h,
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade300,
+                            borderRadius: BorderRadius.circular(2.r),
+                          ),
+                        ),
+                        SizedBox(height: 24.h),
+
+                        // Avatar/Icon
+                        Container(
+                          width: 80.w,
+                          height: 80.w,
+                          decoration: BoxDecoration(
+                            color: Colors.red.withOpacity(0.1),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.logout,
+                            size: 40.sp,
+                            color: Colors.red,
+                          ),
+                        ),
+                        SizedBox(height: 24.h),
+
+                        // Title
+                        Text(
+                          'Déconnexion',
+                          style: TextStyle(
+                            fontSize: 22.sp,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        SizedBox(height: 12.h),
+
+                        // Message
+                        Text(
+                          'êtes-vous sûr de vouloir vous\ndéconnecter',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            color: Colors.grey.shade600,
+                            height: 1.5,
+                          ),
+                        ),
+                        SizedBox(height: 32.h),
+
+                        // Buttons
+                        Row(
+                          children: [
+                            Expanded(
+                              child: OutlinedButton(
+                                onPressed: isLoading
+                                    ? null
+                                    : () => Navigator.pop(bottomSheetContext),
+                                style: OutlinedButton.styleFrom(
+                                  side: BorderSide(
+                                    color: Colors.grey.shade400,
+                                    width: 1.5,
+                                  ),
+                                  padding: EdgeInsets.symmetric(vertical: 14.h),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12.r),
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      'Annuler',
+                                      style: TextStyle(
+                                        color: Colors.grey.shade700,
+                                        fontSize: 16.sp,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    SizedBox(width: 8.w),
+                                    Icon(
+                                      Icons.close,
+                                      color: Colors.grey.shade700,
+                                      size: 20.sp,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 12.w),
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: isLoading
+                                    ? null
+                                    : () async {
+                                  await context.read<ProfileCubit>().logout();
+                                  if (context.mounted) {
+                                    Navigator.pop(bottomSheetContext);
+                                  }
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: theme().colorScheme.primary,
+                                  disabledBackgroundColor:
+                                  theme().colorScheme.primary.withOpacity(0.6),
+                                  padding: EdgeInsets.symmetric(vertical: 14.h),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12.r),
+                                  ),
+                                  elevation: 0,
+                                ),
+                                child: isLoading
+                                    ? SizedBox(
+                                  height: 20.h,
+                                  width: 20.w,
+                                  child: const CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                                    : Text(
+                                  'Confirmer',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16.sp,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 16.h),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
 }
+
 
 class ExpandableProfileSection extends StatefulWidget {
   final String title;

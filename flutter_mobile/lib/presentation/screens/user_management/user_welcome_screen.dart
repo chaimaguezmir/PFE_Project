@@ -1,28 +1,30 @@
-// Complete fixed version with proper scrolling
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_mobile/domain/entities/reminder/reminder_entity.dart';
 import 'package:flutter_mobile/domain/entities/reminder/reminder_extensions.dart';
-import 'package:flutter_mobile/presentation/bloc/home/welcome_screen_cubit.dart';
+import 'package:flutter_mobile/presentation/bloc/group/group_cubit.dart';
+import 'package:flutter_mobile/presentation/bloc/user_management/user_welcome_cubit.dart';
 import 'package:flutter_mobile/presentation/widgets/base_widgets/custom_app_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class WelcomeScreen extends StatelessWidget {
-  const WelcomeScreen({super.key});
+class UserWelcomeScreen extends StatelessWidget {
+  const UserWelcomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final String groupId =context.read<GroupCubit>().state.currentGroupId;
+    final String userId = context.read<GroupCubit>().state.selectedMemberId;
     // Trigger loading when screen is built
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<WelcomeScreenCubit>().loadWelcomeData();
+      context.read<UserWelcomeCubit>().loadWelcomeData(userId,groupId);
     });
 
     return Scaffold(
-      appBar: const CustomAppBar(title: "Accueil", showLeading: false),
+      appBar: const CustomAppBar(title: "Espace gestionnaire", showLeading: false),
       backgroundColor: Colors.grey[50],
-      body: BlocBuilder<WelcomeScreenCubit, WelcomeScreenState>(
+      body: BlocBuilder<UserWelcomeCubit, UserWelcomeState>(
         builder: (context, state) {
-          final cubit = context.read<WelcomeScreenCubit>();
+          final cubit = context.read<UserWelcomeCubit>();
 
           return RefreshIndicator(
             onRefresh: () async => await cubit.fetchReminders(),
@@ -114,7 +116,7 @@ class ClickableDayName extends StatelessWidget {
 
   void _showDayPicker(BuildContext context) {
     final theme = Theme.of(context);
-    final cubit = context.read<WelcomeScreenCubit>();
+    final cubit = context.read<UserWelcomeCubit>();
     final now = DateTime.now();
     final yesterday = now.subtract(const Duration(days: 1));
     final tomorrow = now.add(const Duration(days: 1));
@@ -257,14 +259,14 @@ class ClickableDayName extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<WelcomeScreenCubit, WelcomeScreenState>(
+    return BlocBuilder<UserWelcomeCubit, UserWelcomeState>(
       builder: (context, state) {
         return GestureDetector(
           onTap: () => _showDayPicker(context),
           child: Row(
             children: [
               Text(
-                context.read<WelcomeScreenCubit>().getSelectedDayName(),
+                context.read<UserWelcomeCubit>().getSelectedDayName(),
                 style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w600),
               ),
               SizedBox(width: 8.w),
@@ -292,7 +294,7 @@ class TimeButtonSelector extends StatelessWidget {
   ];
 
   void _onTap(BuildContext context, int index) {
-    final cubit = context.read<WelcomeScreenCubit>();
+    final cubit = context.read<UserWelcomeCubit>();
     final currentSelected = cubit.state.selectedTimeIndex;
     cubit.updateSelectedTime(currentSelected == index ? -1 : index);
   }
@@ -338,7 +340,7 @@ class TimeButtonSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return BlocBuilder<WelcomeScreenCubit, WelcomeScreenState>(
+    return BlocBuilder<UserWelcomeCubit, UserWelcomeState>(
       builder: (context, state) {
         final selectedIndex = state.selectedTimeIndex;
         return Row(
@@ -391,7 +393,7 @@ class MedicationScheduleCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return BlocBuilder<WelcomeScreenCubit, WelcomeScreenState>(
+    return BlocBuilder<UserWelcomeCubit, UserWelcomeState>(
       builder: (context, state) {
         if (!state.hasReminders) {
           return Container(
@@ -426,7 +428,7 @@ class MedicationScheduleCard extends StatelessWidget {
         }
 
         final remindersToShow = context
-            .read<WelcomeScreenCubit>()
+            .read<UserWelcomeCubit>()
             .getRemindersForSelectedTimeSlot();
 
         if (remindersToShow.isEmpty) {
@@ -587,7 +589,7 @@ class ReminderTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cubit = context.read<WelcomeScreenCubit>();
+    final cubit = context.read<UserWelcomeCubit>();
     final isOverdue = reminder.isOverdue;
     final isDue = reminder.isDue;
     final isTaken = reminder.isTaken;

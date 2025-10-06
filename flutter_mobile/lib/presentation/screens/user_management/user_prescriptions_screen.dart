@@ -3,24 +3,29 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_mobile/config/router/app_route_constants.dart';
 import 'package:flutter_mobile/config/theme/theme_data_config.dart';
-import 'package:flutter_mobile/domain/entities/prescription/prescription_entity.dart';
-import 'package:flutter_mobile/presentation/bloc/home/prescription_cubit.dart';
+import 'package:flutter_mobile/presentation/bloc/group/group_cubit.dart';
+import 'package:flutter_mobile/presentation/bloc/user_management/user_prescription_cubit.dart';
 import 'package:flutter_mobile/presentation/widgets/base_widgets/custom_app_bar.dart';
 import 'package:flutter_mobile/presentation/widgets/base_widgets/snackbar_helper.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
-class PrescriptionsScreen extends StatelessWidget {
-  const PrescriptionsScreen({super.key});
+import '../../../domain/entities/prescription/prescription_entity.dart';
+
+class UserPrescriptionsScreen extends StatelessWidget {
+  const UserPrescriptionsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     // Fetch prescriptions when screen loads
+    final String groupId =context.read<GroupCubit>().state.currentGroupId;
+    final String userId = context.read<GroupCubit>().state.selectedMemberId;
+    context.read<UserPrescriptionCubit>().setUserAndGroup( userId,groupId);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<PrescriptionCubit>().fetchPrescriptions();
+      context.read<UserPrescriptionCubit>().fetchPrescriptions();
     });
 
-    return BlocListener<PrescriptionCubit, PrescriptionState>(
+    return BlocListener<UserPrescriptionCubit, UserPrescriptionState>(
       listener: (context, state) {
         if (state.hasError) {
           SnackBarHelper.showError(context, state.errorMessage!);
@@ -42,7 +47,7 @@ class PrescriptionsBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<PrescriptionCubit, PrescriptionState>(
+    return BlocBuilder<UserPrescriptionCubit, UserPrescriptionState>(
       builder: (context, state) {
         if (state.isLoading) {
           return const Center(child: CircularProgressIndicator());
@@ -63,7 +68,7 @@ class PrescriptionsBody extends StatelessWidget {
                 SizedBox(height: 16.h),
                 ElevatedButton(
                   onPressed: () {
-                    context.read<PrescriptionCubit>().fetchPrescriptions();
+                    context.read<UserPrescriptionCubit>().fetchPrescriptions();
                   },
                   child: const Text('Réessayer'),
                 ),
@@ -117,7 +122,8 @@ class PrescriptionsList extends StatelessWidget {
     }
 
     return RefreshIndicator(
-      onRefresh: () => context.read<PrescriptionCubit>().refreshPrescriptions(),
+      onRefresh: () =>
+          context.read<UserPrescriptionCubit>().refreshPrescriptions(),
       child: ListView.builder(
         itemCount: prescriptions.length,
         itemBuilder: (context, index) {
@@ -160,9 +166,9 @@ class PrescriptionCard extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         // Store prescription ID in state and navigate
-        context.read<PrescriptionCubit>().selectPrescriptionAndFetchTreatments(
-          prescription.id,
-        );
+        context
+            .read<UserPrescriptionCubit>()
+            .selectPrescriptionAndFetchTreatments(prescription.id);
         context.pushNamed(AppRouteName.prescriptionDetail);
       },
       child: Container(

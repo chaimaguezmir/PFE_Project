@@ -11,6 +11,8 @@ import 'package:flutter_mobile/presentation/bloc/home/welcome_screen_cubit.dart'
 import 'package:flutter_mobile/presentation/bloc/profile/edit_profile_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/profile/profile_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/services/services_cubit.dart';
+import 'package:flutter_mobile/presentation/bloc/user_management/user_prescription_cubit.dart';
+import 'package:flutter_mobile/presentation/bloc/user_management/user_welcome_cubit.dart';
 import 'package:flutter_mobile/presentation/bottom_bar.dart';
 import 'package:flutter_mobile/presentation/screens/auth/account_verification_screen.dart';
 import 'package:flutter_mobile/presentation/screens/auth/forgot_password/forgot_password_code_screen.dart';
@@ -20,6 +22,7 @@ import 'package:flutter_mobile/presentation/screens/auth/forgot_password/forgot_
 import 'package:flutter_mobile/presentation/screens/auth/get_started_screen.dart';
 import 'package:flutter_mobile/presentation/screens/auth/login_screen.dart';
 import 'package:flutter_mobile/presentation/screens/auth/signup_screen.dart';
+import 'package:flutter_mobile/presentation/screens/group/add_group_screen.dart';
 import 'package:flutter_mobile/presentation/screens/group/add_member_screen.dart';
 import 'package:flutter_mobile/presentation/screens/group/group_membe_screen.dart';
 import 'package:flutter_mobile/presentation/screens/group/group_screen.dart';
@@ -38,6 +41,8 @@ import 'package:flutter_mobile/presentation/screens/services/medication_tracker_
 import 'package:flutter_mobile/presentation/screens/services/pharmacy_box_screen.dart';
 import 'package:flutter_mobile/presentation/screens/services/medicine_search_result_screen.dart';
 import 'package:flutter_mobile/presentation/screens/services/services_screen.dart';
+import 'package:flutter_mobile/presentation/screens/user_management/user_prescriptions_screen.dart';
+import 'package:flutter_mobile/presentation/screens/user_management/user_welcome_screen.dart';
 import 'package:go_router/go_router.dart';
 
 import 'app_route_constants.dart';
@@ -104,7 +109,8 @@ class AppRouter {
             routes: <RouteBase>[
               ShellRoute(
                 builder: (context, state, child) => BlocProvider(
-                  create: (context) => sl<WelcomeScreenCubit>()..loadWelcomeData(),
+                  create: (context) =>
+                      sl<WelcomeScreenCubit>()..loadWelcomeData(),
                   child: child,
                 ),
                 routes: [
@@ -136,7 +142,8 @@ class AppRouter {
               ),
               ShellRoute(
                 builder: (context, state, child) => BlocProvider(
-                  create: (context) => sl<PrescriptionCreationCubit>()..fetchDiseases(),
+                  create: (context) =>
+                      sl<PrescriptionCreationCubit>()..fetchDiseases(),
                   child: child,
                 ),
                 routes: [
@@ -218,6 +225,11 @@ class AppRouter {
                     builder: (context, state) => const GroupScreen(),
                   ),
                   GoRoute(
+                    name: AppRouteName.addGroupScreen,
+                    path: AppRoutePath.addGroupScreen,
+                    builder: (context, state) => const AddGroupScreen(),
+                  ),
+                  GoRoute(
                     name: AppRouteName.groupMembersScreen,
                     path: AppRoutePath.groupMembersScreen,
                     builder: (context, state) => const GroupMembersScreen(),
@@ -226,6 +238,22 @@ class AppRouter {
                     name: AppRouteName.addMemberScreen,
                     path: AppRoutePath.addMemberScreen,
                     builder: (context, state) => const AddMemberScreen(),
+                  ),
+                  GoRoute(
+                    name: AppRouteName.userManagementWelcome,
+                    path: AppRoutePath.userManagementWelcome,
+                    builder: (context, state) => BlocProvider(
+                      create: (context) => sl<UserWelcomeCubit>(),
+                      child: const UserWelcomeScreen(),
+                    ),
+                  ),
+                  GoRoute(
+                    name: AppRouteName.userManagementPrescriptions,
+                    path: AppRoutePath.userManagementPrescriptions,
+                    builder: (context, state) => BlocProvider(
+                      create: (context) => sl<UserPrescriptionCubit>(),
+                      child: const UserPrescriptionsScreen(),
+                    ),
                   ),
                 ],
               ),
@@ -240,7 +268,6 @@ class AppRouter {
                   create: (context) => sl<ProfileCubit>(),
                   child: const ProfileScreen(),
                 ),
-
               ),
               GoRoute(
                 name: AppRouteName.editProfile,
@@ -249,9 +276,7 @@ class AppRouter {
                   create: (context) => sl<EditProfileCubit>()..init(),
                   child: const EditProfileScreen(),
                 ),
-
               ),
-
             ],
           ),
         ],

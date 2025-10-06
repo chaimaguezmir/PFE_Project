@@ -32,9 +32,9 @@ class PharmacyBoxScreen extends StatelessWidget {
           SnackBarHelper.showSuccess(context, state.medicineSuccessMessage!);
         }
       },
-      child: Scaffold(
-        appBar: const DynamicPharmacyBoxAppBar(),
-        body: const PharmacyBoxBody(),
+      child: const Scaffold(
+        appBar: DynamicPharmacyBoxAppBar(),
+        body: PharmacyBoxBody(),
       ),
     );
   }

@@ -1,16 +1,19 @@
-// Stateless MedicalTreatmentForm that uses PrescriptionCreationCubit/state
+// Stateless MedicalTreatmentForm that uses UserPrescriptionCreationCubit/state
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_mobile/domain/entities/services/PharmacyBoxEntity.dart';
 import 'package:flutter_mobile/domain/entities/services/my_medicine_entity.dart';
-import 'package:flutter_mobile/presentation/bloc/home/prescription_creation_cubit.dart';
+import 'package:flutter_mobile/presentation/bloc/user_management/user_prescription_creation_cubit.dart';
+import 'package:flutter_mobile/presentation/bloc/user_management/user_prescription_creation_cubit.dart';
+import 'package:flutter_mobile/presentation/bloc/user_management/user_prescription_creation_cubit.dart';
+import 'package:flutter_mobile/presentation/bloc/user_management/user_prescription_creation_cubit.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:formz/formz.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:go_router/go_router.dart';
 
-class MedicalTreatmentForm extends StatelessWidget {
-  const MedicalTreatmentForm({super.key, this.onConfirmTreatment});
+class UserMedicalTreatmentForm extends StatelessWidget {
+  const UserMedicalTreatmentForm({super.key, this.onConfirmTreatment});
 
   final VoidCallback? onConfirmTreatment;
 
@@ -18,18 +21,21 @@ class MedicalTreatmentForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<PrescriptionCreationCubit, PrescriptionCreationState>(
+    return BlocBuilder<
+      UserPrescriptionCreationCubit,
+      UserPrescriptionCreationState
+    >(
       builder: (context, state) {
         // Ensure pharmacy boxes are fetched once when needed
         SchedulerBinding.instance.addPostFrameCallback((_) {
-          final cubit = context.read<PrescriptionCreationCubit>();
+          final cubit = context.read<UserPrescriptionCreationCubit>();
           if (state.pharmacyBoxes.isEmpty &&
               state.pharmacyBoxesStatus != FormzSubmissionStatus.inProgress) {
             cubit.fetchPharmacyBoxes();
           }
         });
 
-        final cubit = context.read<PrescriptionCreationCubit>();
+        final cubit = context.read<UserPrescriptionCreationCubit>();
         final canConfirm =
             state.treatmentSelectedBox.isNotEmpty &&
             state.treatmentSelectedMedicineId.isNotEmpty;

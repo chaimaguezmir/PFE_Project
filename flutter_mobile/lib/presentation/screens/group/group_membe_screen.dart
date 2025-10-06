@@ -267,6 +267,10 @@ class _CustomPopUpMenuButtonForMembers extends StatelessWidget {
         cubit.selectedMemberUsernameChanged(memberUsername);
         cubit.selectedMemberIdChanged(memberId);
         cubit.removeMember(context);
+      case 'manage':
+        cubit.selectedMemberIdChanged(memberId);
+        context.pushNamed(AppRouteName.userManagementWelcome);
+        
         break;
     }
   }
@@ -324,6 +328,11 @@ class _CustomPopUpMenuButtonForMembers extends StatelessWidget {
                 iconPath: 'lib/config/assets/icons/CrownMinus.png',
                 text: 'Désassigner un responsable',
               ),
+              _buildMenuItem(
+                value: 'manage',
+                iconPath: 'lib/config/assets/icons/CrownMinus.png',
+                text: 'Suivi et gestion d’un traitement',
+              ),
             ],
             if (role == 'MEMBER') ...[
               _buildMenuItem(
@@ -335,6 +344,11 @@ class _CustomPopUpMenuButtonForMembers extends StatelessWidget {
                 value: 'toggle',
                 iconPath: 'lib/config/assets/icons/CrownMinus.png',
                 text: 'Assigner un responsable',
+              ),
+              _buildMenuItem(
+                value: 'manage',
+                iconPath: 'lib/config/assets/icons/CrownMinus.png',
+                text: 'Suivi et gestion d’un traitement',
               ),
             ],
           ],
