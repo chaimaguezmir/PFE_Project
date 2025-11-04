@@ -39,9 +39,8 @@ class UploadImageResponseModel extends UploadImageEntity {
 
       // If the URL is relative (starts with /), prepend the base URL
       if (imageUrl.isNotEmpty && imageUrl.startsWith('/')) {
-        // Extract base URL without /api suffix
-        final baseUrl = ApiEndpoints.baseurl.replaceAll('/api', '');
-        imageUrl = '$baseUrl$imageUrl';
+        // Use imageUrl constant to avoid double slashes
+        imageUrl = '${ApiEndpoints.imageUrl}$imageUrl';
         print('🔗 Converted relative URL to absolute: $imageUrl');
       }
 

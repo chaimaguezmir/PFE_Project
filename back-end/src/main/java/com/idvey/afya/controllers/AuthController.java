@@ -90,20 +90,21 @@ public class AuthController {
 		User user;
 		if (identifier.contains("@")) {
 			user = userRepository.findByEmail(identifier)
-					.orElseThrow(() -> new UsernameNotFoundException("User Not Found with email: " + identifier));
-		} else {
+				.orElseThrow(() -> new UsernameNotFoundException("User Not Found with email: " + identifier));
+		}
+		else {
 			user = userRepository.findByUsername(identifier)
-					.orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + identifier));
+				.orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + identifier));
 		}
 
 		if (!user.isEnabled()) {
 			return ResponseEntity.status(HttpStatus.FORBIDDEN)
-					.body(new MessageResponse(
-							"Error: Account not activated. Please check your email for the activation code."));
+				.body(new MessageResponse(
+						"Error: Account not activated. Please check your email for the activation code."));
 		}
 
 		Authentication authentication = authenticationManager
-				.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), loginRequest.getPassword()));
+			.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), loginRequest.getPassword()));
 
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 
@@ -117,9 +118,9 @@ public class AuthController {
 		String jwt = jwtUtils.generateJwtToken(userDetails);
 
 		List<String> roles = userDetails.getAuthorities()
-				.stream()
-				.map(GrantedAuthority::getAuthority)
-				.collect(Collectors.toList());
+			.stream()
+			.map(GrantedAuthority::getAuthority)
+			.collect(Collectors.toList());
 
 		try {
 			RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId(),
@@ -128,40 +129,40 @@ public class AuthController {
 			System.out.println(" logged in successfully!");
 
 			JwtResponse jtr = JwtResponse.builder()
-					.token(jwt)
-					.refreshToken(refreshToken.getToken())
-					.id(userDetails.getId())
-					.username(userDetails.getUsername())
-					.email(userDetails.getEmail())
-					.firstName(userDetails.getFirstName())
-					.LastName(userDetails.getLastName())
-					.phoneNumber(userDetails.getPhoneNumber())
-					.weight(userDetails.getWeight())
-					.height(userDetails.getHeight())
-					.bloodGroup(userDetails.getBloodGroup())
-					.gender(userDetails.getGender())
-					.birthDate(userDetails.getBirthDate())
-					.smokingStatus(userDetails.isSmokingStatus())
-					.alcoholConsumption(userDetails.isAlcoholConsumption())
-					.exerciseRegularly(userDetails.isExerciseRegularly())
-					.familyHistoryHeartDisease(userDetails.isFamilyHistoryHeartDisease())
-					.hypertensionHistory(userDetails.isHypertensionHistory())
-					.heartDisease(userDetails.isHeartDisease())
-					.diabetes(userDetails.isDiabetes())
-					.cholesterol(userDetails.isCholesterol())
-					.allergies(userDetails.isAllergies())
-					.profileImageUrl(userDetails.getProfileImageUrl()) // NOW IT WORKS!
-					.deviceName(refreshToken.getDeviceName())
-					.deviceId(refreshToken.getDeviceId())
-					.roles(roles)
-					.type("Bearer")
-					.build();
+				.token(jwt)
+				.refreshToken(refreshToken.getToken())
+				.id(userDetails.getId())
+				.username(userDetails.getUsername())
+				.email(userDetails.getEmail())
+				.firstName(userDetails.getFirstName())
+				.LastName(userDetails.getLastName())
+				.phoneNumber(userDetails.getPhoneNumber())
+				.weight(userDetails.getWeight())
+				.height(userDetails.getHeight())
+				.bloodGroup(userDetails.getBloodGroup())
+				.gender(userDetails.getGender())
+				.birthDate(userDetails.getBirthDate())
+				.smokingStatus(userDetails.isSmokingStatus())
+				.alcoholConsumption(userDetails.isAlcoholConsumption())
+				.exerciseRegularly(userDetails.isExerciseRegularly())
+				.familyHistoryHeartDisease(userDetails.isFamilyHistoryHeartDisease())
+				.hypertensionHistory(userDetails.isHypertensionHistory())
+				.heartDisease(userDetails.isHeartDisease())
+				.diabetes(userDetails.isDiabetes())
+				.cholesterol(userDetails.isCholesterol())
+				.allergies(userDetails.isAllergies())
+				.profileImageUrl(userDetails.getProfileImageUrl()) // NOW IT WORKS!
+				.deviceName(refreshToken.getDeviceName())
+				.deviceId(refreshToken.getDeviceId())
+				.roles(roles)
+				.type("Bearer")
+				.build();
 
 			return ResponseEntity.ok(jtr);
 
-		} catch (TokenRefreshException tre) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-					.body(new MessageResponse(tre.getMessage()));
+		}
+		catch (TokenRefreshException tre) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponse(tre.getMessage()));
 		}
 	}
 

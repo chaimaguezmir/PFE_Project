@@ -12,22 +12,39 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 public class GroupMemberMedicalOverviewResponse {
-    private UUID userId;
-    private String username;
-    private String email;
-    private String firstName;
-    private String lastName;
-    private GroupRole role;
-    private int activePrescriptionsCount;
-    private int totalTreatmentsCount;
-    private int totalRemindersCount;
-    private int pendingRemindersCount;
-    private LocalDateTime lastPrescriptionDate;
-    private LocalDateTime lastTreatmentDate;
-    private LocalDateTime lastReminderDate;
-    private String bloodGroup;
-    private String gender;
-    private Double weight;
-    private Double height;
-}
 
+	private UUID userId;
+
+	private String username;
+
+	private String email;
+
+	private String firstName;
+
+	private String lastName;
+
+	private GroupRole role;
+
+	private int activePrescriptionsCount;
+
+	private int totalTreatmentsCount;
+
+	private int totalRemindersCount;
+
+	private int pendingRemindersCount;
+
+	private LocalDateTime lastPrescriptionDate;
+
+	private LocalDateTime lastTreatmentDate;
+
+	private LocalDateTime lastReminderDate;
+
+	private String bloodGroup;
+
+	private String gender;
+
+	private Double weight;
+
+	private Double height;
+
+}

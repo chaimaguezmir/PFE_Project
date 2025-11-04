@@ -34,8 +34,7 @@ public class UserService {
 
 	@Transactional
 	public void changePassword(UUID userId, ChangePasswordRequest req) {
-		User user = userRepository.findById(userId)
-				.orElseThrow(() -> new UsernameNotFoundException("User not found"));
+		User user = userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
 		if (!passwordEncoder.matches(req.getOldPassword(), user.getPassword())) {
 			throw new BadCredentialsException("Old password is incorrect");
@@ -49,8 +48,7 @@ public class UserService {
 	public UserProfileResponse updateUserProfile(UUID userId, UpdateUserProfileRequest request) {
 		log.info("Updating profile for user: {}", userId);
 
-		User user = userRepository.findById(userId)
-				.orElseThrow(() -> new UsernameNotFoundException("User not found"));
+		User user = userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
 		// Update fields only if provided
 		if (request.getUsername() != null && !request.getUsername().equals(user.getUsername())) {
@@ -67,25 +65,43 @@ public class UserService {
 			user.setEmail(request.getEmail());
 		}
 
-		if (request.getFirstName() != null) user.setFirstName(request.getFirstName());
-		if (request.getLastName() != null) user.setLastName(request.getLastName());
-		if (request.getPhoneNumber() != null) user.setPhoneNumber(request.getPhoneNumber());
-		if (request.getWeight() != null) user.setWeight(request.getWeight());
-		if (request.getHeight() != null) user.setHeight(request.getHeight());
-		if (request.getBloodGroup() != null) user.setBloodGroup(request.getBloodGroup());
-		if (request.getGender() != null) user.setGender(request.getGender());
-		if (request.getBirthDate() != null) user.setBirthDate(request.getBirthDate());
-		if (request.getProfileImageUrl() != null) user.setProfileImageUrl(request.getProfileImageUrl());
+		if (request.getFirstName() != null)
+			user.setFirstName(request.getFirstName());
+		if (request.getLastName() != null)
+			user.setLastName(request.getLastName());
+		if (request.getPhoneNumber() != null)
+			user.setPhoneNumber(request.getPhoneNumber());
+		if (request.getWeight() != null)
+			user.setWeight(request.getWeight());
+		if (request.getHeight() != null)
+			user.setHeight(request.getHeight());
+		if (request.getBloodGroup() != null)
+			user.setBloodGroup(request.getBloodGroup());
+		if (request.getGender() != null)
+			user.setGender(request.getGender());
+		if (request.getBirthDate() != null)
+			user.setBirthDate(request.getBirthDate());
+		if (request.getProfileImageUrl() != null)
+			user.setProfileImageUrl(request.getProfileImageUrl());
 
-		if (request.getSmokingStatus() != null) user.setSmokingStatus(request.getSmokingStatus());
-		if (request.getAlcoholConsumption() != null) user.setAlcoholConsumption(request.getAlcoholConsumption());
-		if (request.getExerciseRegularly() != null) user.setExerciseRegularly(request.getExerciseRegularly());
-		if (request.getFamilyHistoryHeartDisease() != null) user.setFamilyHistoryHeartDisease(request.getFamilyHistoryHeartDisease());
-		if (request.getHypertensionHistory() != null) user.setHypertensionHistory(request.getHypertensionHistory());
-		if (request.getHeartDisease() != null) user.setHeartDisease(request.getHeartDisease());
-		if (request.getDiabetes() != null) user.setDiabetes(request.getDiabetes());
-		if (request.getCholesterol() != null) user.setCholesterol(request.getCholesterol());
-		if (request.getAllergies() != null) user.setAllergies(request.getAllergies());
+		if (request.getSmokingStatus() != null)
+			user.setSmokingStatus(request.getSmokingStatus());
+		if (request.getAlcoholConsumption() != null)
+			user.setAlcoholConsumption(request.getAlcoholConsumption());
+		if (request.getExerciseRegularly() != null)
+			user.setExerciseRegularly(request.getExerciseRegularly());
+		if (request.getFamilyHistoryHeartDisease() != null)
+			user.setFamilyHistoryHeartDisease(request.getFamilyHistoryHeartDisease());
+		if (request.getHypertensionHistory() != null)
+			user.setHypertensionHistory(request.getHypertensionHistory());
+		if (request.getHeartDisease() != null)
+			user.setHeartDisease(request.getHeartDisease());
+		if (request.getDiabetes() != null)
+			user.setDiabetes(request.getDiabetes());
+		if (request.getCholesterol() != null)
+			user.setCholesterol(request.getCholesterol());
+		if (request.getAllergies() != null)
+			user.setAllergies(request.getAllergies());
 
 		User updated = userRepository.save(user);
 		log.info("Profile updated successfully for user: {}", userId);
@@ -97,8 +113,7 @@ public class UserService {
 	public String uploadProfileImage(UUID userId, MultipartFile file) throws IOException {
 		log.info("Uploading profile image for user: {}", userId);
 
-		User user = userRepository.findById(userId)
-				.orElseThrow(() -> new UsernameNotFoundException("User not found"));
+		User user = userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
 		// Delete old image if exists
 		if (user.getProfileImageUrl() != null && !user.getProfileImageUrl().isEmpty()) {
@@ -120,8 +135,7 @@ public class UserService {
 	public void deleteProfileImage(UUID userId) {
 		log.info("Deleting profile image for user: {}", userId);
 
-		User user = userRepository.findById(userId)
-				.orElseThrow(() -> new UsernameNotFoundException("User not found"));
+		User user = userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
 		if (user.getProfileImageUrl() == null || user.getProfileImageUrl().isEmpty()) {
 			throw new IllegalStateException("No profile image to delete");
@@ -141,40 +155,38 @@ public class UserService {
 	public UserProfileResponse getUserProfile(UUID userId) {
 		log.info("Fetching profile for user: {}", userId);
 
-		User user = userRepository.findById(userId)
-				.orElseThrow(() -> new UsernameNotFoundException("User not found"));
+		User user = userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
 		return toUserProfileResponse(user);
 	}
 
 	private UserProfileResponse toUserProfileResponse(User user) {
-		List<String> roles = user.getRoles().stream()
-				.map(role -> role.getName().name())
-				.collect(Collectors.toList());
+		List<String> roles = user.getRoles().stream().map(role -> role.getName().name()).collect(Collectors.toList());
 
 		return UserProfileResponse.builder()
-				.id(user.getId())
-				.username(user.getUsername())
-				.email(user.getEmail())
-				.firstName(user.getFirstName())
-				.lastName(user.getLastName())
-				.phoneNumber(user.getPhoneNumber())
-				.weight(user.getWeight())
-				.height(user.getHeight())
-				.bloodGroup(user.getBloodGroup())
-				.gender(user.getGender())
-				.birthDate(user.getBirthDate())
-				.smokingStatus(user.isSmokingStatus())
-				.alcoholConsumption(user.isAlcoholConsumption())
-				.exerciseRegularly(user.isExerciseRegularly())
-				.familyHistoryHeartDisease(user.isFamilyHistoryHeartDisease())
-				.hypertensionHistory(user.isHypertensionHistory())
-				.heartDisease(user.isHeartDisease())
-				.diabetes(user.isDiabetes())
-				.cholesterol(user.isCholesterol())
-				.allergies(user.isAllergies())
-				.profileImageUrl(user.getProfileImageUrl())
-				.roles(roles)
-				.build();
+			.id(user.getId())
+			.username(user.getUsername())
+			.email(user.getEmail())
+			.firstName(user.getFirstName())
+			.lastName(user.getLastName())
+			.phoneNumber(user.getPhoneNumber())
+			.weight(user.getWeight())
+			.height(user.getHeight())
+			.bloodGroup(user.getBloodGroup())
+			.gender(user.getGender())
+			.birthDate(user.getBirthDate())
+			.smokingStatus(user.isSmokingStatus())
+			.alcoholConsumption(user.isAlcoholConsumption())
+			.exerciseRegularly(user.isExerciseRegularly())
+			.familyHistoryHeartDisease(user.isFamilyHistoryHeartDisease())
+			.hypertensionHistory(user.isHypertensionHistory())
+			.heartDisease(user.isHeartDisease())
+			.diabetes(user.isDiabetes())
+			.cholesterol(user.isCholesterol())
+			.allergies(user.isAllergies())
+			.profileImageUrl(user.getProfileImageUrl())
+			.roles(roles)
+			.build();
 	}
+
 }

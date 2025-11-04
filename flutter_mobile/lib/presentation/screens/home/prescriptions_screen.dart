@@ -218,10 +218,86 @@ class PrescriptionCard extends StatelessWidget {
               ),
             ),
 
-            // Arrow Icon
-            Icon(Icons.arrow_forward_ios, color: Colors.grey[400], size: 16.sp),
+            // Three-dot menu icon
+            PopupMenuButton<String>(
+              icon: Icon(Icons.more_vert, color: Colors.grey[600], size: 20.sp),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+              onSelected: (value) {
+                if (value == 'delete') {
+                  _handleDelete(context);
+                }
+              },
+              itemBuilder: (BuildContext context) => [
+                PopupMenuItem<String>(
+                  value: 'delete',
+                  child: Row(
+                    children: [
+                      Icon(Icons.delete, size: 18.sp, color: Colors.red),
+                      SizedBox(width: 12.w),
+                      Text('Supprimer', style: TextStyle(fontSize: 14.sp)),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _handleDelete(BuildContext context) {
+    // Show confirmation dialog
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+        title: Text(
+          'Supprimer la prescription',
+          style: TextStyle(
+            fontSize: 18.sp,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        content: Text(
+          'Êtes-vous sûr de vouloir supprimer "${prescription.name}" ?\n\nCette action est irréversible.',
+          style: TextStyle(fontSize: 14.sp),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text(
+              'Annuler',
+              style: TextStyle(
+                color: Colors.grey[600],
+                fontSize: 14.sp,
+              ),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              // Close dialog
+              Navigator.pop(dialogContext);
+
+              // Delete prescription
+              context.read<PrescriptionCubit>().deletePrescription(prescription.id);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+            ),
+            child: Text(
+              'Supprimer',
+              style: TextStyle(fontSize: 14.sp, color: Colors.white),
+            ),
+          ),
+        ],
       ),
     );
   }

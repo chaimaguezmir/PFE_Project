@@ -8,7 +8,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class UserReminderResponse {
-    private ReminderResponse reminder;
-    private UserBasicInfoResponse userInfo;
-}
 
+	private ReminderResponse reminder;
+
+	private UserBasicInfoResponse userInfo;
+
+}

@@ -167,13 +167,10 @@ class _MemberItem extends StatelessWidget {
     final defaultImage = 'lib/config/assets/images/default_avatar.jpg';
 
     if (imagePath != null && imagePath!.isNotEmpty) {
-      if (imagePath!.startsWith('http')) {
-        // Full HTTP/HTTPS URL
-        return NetworkImage(imagePath!);
-      } else if (imagePath!.startsWith('/uploads')) {
-        // Handle relative URL from backend
-        final fullUrl = '${ApiEndpoints.baseurl.replaceAll('/api', '')}$imagePath';
-        return NetworkImage(fullUrl);
+      if (imagePath!.startsWith('http') || imagePath!.startsWith('/uploads')) {
+        // Network image (full or relative URL)
+        final cleanUrl = ApiEndpoints.getImageUrl(imagePath!);
+        return NetworkImage(cleanUrl);
       } else {
         // Local asset path
         return AssetImage(imagePath!);

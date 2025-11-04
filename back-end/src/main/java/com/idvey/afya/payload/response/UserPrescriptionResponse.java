@@ -8,7 +8,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class UserPrescriptionResponse {
-    private PrescriptionResponse prescription;
-    private UserBasicInfoResponse userInfo;
-}
 
+	private PrescriptionResponse prescription;
+
+	private UserBasicInfoResponse userInfo;
+
+}

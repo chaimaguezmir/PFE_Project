@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_mobile/config/theme/theme_data_config.dart';
+import 'package:flutter_mobile/core/constants/api_endpoint.dart';
 import 'package:flutter_mobile/presentation/bloc/profile/edit_profile_cubit.dart';
 import 'package:flutter_mobile/presentation/widgets/base_widgets/snackbar_helper.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -291,7 +292,7 @@ class _ProfileImageWidget extends StatelessWidget {
                 )
                     : state.isNetworkImage
                     ? Image.network(
-                  state.currentImageUrl!,
+                  ApiEndpoints.getImageUrl(state.currentImageUrl!),
                   fit: BoxFit.cover,
                   errorBuilder: (_, __, ___) => Image.asset(
                     'lib/config/assets/images/default_avatar.jpg',

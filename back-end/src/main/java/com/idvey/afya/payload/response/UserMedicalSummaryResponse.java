@@ -12,17 +12,29 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 public class UserMedicalSummaryResponse {
-    private UUID userId;
-    private String username;
-    private String email;
-    private String firstName;
-    private String lastName;
-    private String phoneNumber;
-    private GroupRole roleInGroup;
-    private UserHealthProfileResponse healthProfile;
-    private MedicalSummaryResponse medicalSummary;
-    private List<PrescriptionResponse> recentPrescriptions;
-    private List<TreatmentResponse> recentTreatments;
-    private List<ReminderResponse> upcomingReminders;
-}
 
+	private UUID userId;
+
+	private String username;
+
+	private String email;
+
+	private String firstName;
+
+	private String lastName;
+
+	private String phoneNumber;
+
+	private GroupRole roleInGroup;
+
+	private UserHealthProfileResponse healthProfile;
+
+	private MedicalSummaryResponse medicalSummary;
+
+	private List<PrescriptionResponse> recentPrescriptions;
+
+	private List<TreatmentResponse> recentTreatments;
+
+	private List<ReminderResponse> upcomingReminders;
+
+}

@@ -150,14 +150,23 @@ class AppRouter {
                   GoRoute(
                     name: AppRouteName.prescriptionForm,
                     path: AppRoutePath.prescriptionForm,
-
                     builder: (context, state) =>
                         const MedicalPrescriptionForm(),
                   ),
                   GoRoute(
                     name: AppRouteName.treatmentForm,
                     path: AppRoutePath.treatmentForm,
-                    builder: (context, state) => const MedicalTreatmentForm(),
+                    builder: (context, state) {
+                      final extra = state.extra as Map<String, dynamic>?;
+                      final prescriptionId = extra?['prescriptionId'] as String?;
+                      final treatment = extra?['treatment'];
+                      final isEdit = extra?['isEdit'] as bool? ?? false;
+                      return MedicalTreatmentForm(
+                        prescriptionId: prescriptionId,
+                        treatmentToEdit: treatment,
+                        isEditMode: isEdit,
+                      );
+                    },
                   ),
                 ],
               ),

@@ -104,7 +104,6 @@ public class WebSecurityConfig {
 				.anyRequest()
 				.permitAll());
 
-
 		http.authenticationProvider(authenticationProvider());
 
 		// Add rate limiting filter before authentication

@@ -11,11 +11,17 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 public class UserBasicInfoResponse {
-    private UUID userId;
-    private String username;
-    private String email;
-    private String firstName;
-    private String lastName;
-    private GroupRole roleInGroup;
-}
 
+	private UUID userId;
+
+	private String username;
+
+	private String email;
+
+	private String firstName;
+
+	private String lastName;
+
+	private GroupRole roleInGroup;
+
+}

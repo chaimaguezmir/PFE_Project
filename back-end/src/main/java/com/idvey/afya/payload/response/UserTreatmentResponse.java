@@ -8,7 +8,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class UserTreatmentResponse {
-    private TreatmentResponse treatment;
-    private UserBasicInfoResponse userInfo;
-}
 
+	private TreatmentResponse treatment;
+
+	private UserBasicInfoResponse userInfo;
+
+}
