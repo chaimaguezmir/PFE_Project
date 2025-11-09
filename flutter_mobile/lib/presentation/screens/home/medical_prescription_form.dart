@@ -5,10 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_mobile/config/router/app_route_constants.dart';
 import 'package:flutter_mobile/core/resources/data_state.dart';
-import 'package:flutter_mobile/domain/entities/prescription/create_treatment_entity.dart';
 import 'package:flutter_mobile/domain/entities/prescription/disease_entity.dart';
 import 'package:flutter_mobile/domain/entities/prescription/prescription_entity.dart';
-import 'package:flutter_mobile/domain/entities/reminder/reminder_entity.dart';
 import 'package:flutter_mobile/domain/entities/prescription/treatment_entity.dart';
 import 'package:flutter_mobile/domain/entities/reminder/simple_create_reminder_entity.dart';
 import 'package:flutter_mobile/domain/entities/reminder/simple_reminder_entity.dart';
@@ -77,11 +75,18 @@ class MedicalPrescriptionForm extends StatelessWidget {
           final momentsList =
               (t['moments'] as List<dynamic>?)?.cast<String>() ?? <String>[];
           final instructionsParts = <String>[];
-          if (dosage.isNotEmpty) instructionsParts.add('$dosage prise(s)');
-          if (frequency.isNotEmpty) instructionsParts.add(frequency);
-          if (momentsList.isNotEmpty)
+          if (dosage.isNotEmpty) {
+            instructionsParts.add('$dosage prise(s)');
+          }
+          if (frequency.isNotEmpty) {
+            instructionsParts.add(frequency);
+          }
+          if (momentsList.isNotEmpty) {
             instructionsParts.add(momentsList.join(', '));
-          if (mealTiming.isNotEmpty) instructionsParts.add(mealTiming);
+          }
+          if (mealTiming.isNotEmpty) {
+            instructionsParts.add(mealTiming);
+          }
           final instructions = instructionsParts.isNotEmpty
               ? instructionsParts.join(' · ')
               : '';
@@ -113,7 +118,7 @@ class MedicalPrescriptionForm extends StatelessWidget {
         final hasAtLeastOneTreatment = state.treatments.isNotEmpty;
         final enableValidateButton =
             hasName && hasDisease && hasAtLeastOneTreatment;
-        final cubit = context.read<PrescriptionCreationCubit>();
+
         return Scaffold(
           backgroundColor: Colors.white,
           appBar: const CustomAppBar(title: 'Ajouter Une prescription'),
@@ -586,39 +591,51 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return AppBar(
-      backgroundColor: theme.colorScheme.onSecondary,
-      elevation: 0,
-      automaticallyImplyLeading: false,
-      toolbarHeight: 55.h,
-      leading: Padding(
-        padding: EdgeInsets.all(8.0.w),
-        child: ElevatedButton(
-          onPressed: () => Navigator.of(context).pop(),
-          style: ElevatedButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.r),
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            theme.colorScheme.primary,
+            theme.colorScheme.secondary,
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      child: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        toolbarHeight: 55.h,
+        leading: Padding(
+          padding: EdgeInsets.all(8.0.w),
+          child: ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(),
+            style: ElevatedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.r),
+              ),
+              backgroundColor: Colors.white.withOpacity(0.2),
+              padding: EdgeInsets.zero,
+              elevation: 0,
             ),
-            backgroundColor: theme.colorScheme.onSecondary,
-            padding: EdgeInsets.zero,
-            elevation: 4,
-          ),
-          child: Icon(
-            Icons.arrow_back,
-            color: theme.colorScheme.onPrimary,
-            size: 18.sp,
+            child: Icon(
+              Icons.arrow_back,
+              color: Colors.white,
+              size: 18.sp,
+            ),
           ),
         ),
-      ),
-      title: Text(
-        title,
-        style: TextStyle(
-          color: theme.colorScheme.onPrimary,
-          fontSize: 20.sp,
-          fontWeight: FontWeight.w500,
+        title: Text(
+          title,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20.sp,
+            fontWeight: FontWeight.w500,
+          ),
         ),
+        centerTitle: true,
       ),
-      centerTitle: true,
     );
   }
 

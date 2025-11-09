@@ -5,7 +5,7 @@ import 'package:flutter_mobile/config/router/app_route_constants.dart';
 import 'package:flutter_mobile/config/theme/theme_data_config.dart';
 import 'package:flutter_mobile/presentation/bloc/group/group_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/user_management/user_prescription_cubit.dart';
-import 'package:flutter_mobile/presentation/widgets/base_widgets/custom_app_bar.dart';
+import 'package:flutter_mobile/presentation/widgets/base_widgets/dual_user_app_bar.dart';
 import 'package:flutter_mobile/presentation/widgets/base_widgets/snackbar_helper.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -35,7 +35,7 @@ class UserPrescriptionsScreen extends StatelessWidget {
         }
       },
       child: const Scaffold(
-        appBar: CustomAppBar(title: "Vos Prescriptions", showLeading: true),
+        appBar: DualUserAppBar(title: "Ordonnances", showLeading: true),
         body: PrescriptionsBody(),
       ),
     );
@@ -169,7 +169,7 @@ class PrescriptionCard extends StatelessWidget {
         context
             .read<UserPrescriptionCubit>()
             .selectPrescriptionAndFetchTreatments(prescription.id);
-        context.pushNamed(AppRouteName.prescriptionDetail);
+        context.pushNamed(AppRouteName.userManagementPrescriptionDetail);
       },
       child: Container(
         margin: EdgeInsets.only(bottom: 16.h),
@@ -224,10 +224,86 @@ class PrescriptionCard extends StatelessWidget {
               ),
             ),
 
-            // Arrow Icon
-            Icon(Icons.arrow_forward_ios, color: Colors.grey[400], size: 16.sp),
+            // 3-Dot Menu for delete
+            PopupMenuButton<String>(
+              icon: Icon(Icons.more_vert, color: Colors.grey[600], size: 20.sp),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+              onSelected: (value) {
+                if (value == 'delete') {
+                  _handleDelete(context);
+                }
+              },
+              itemBuilder: (BuildContext context) => [
+                PopupMenuItem<String>(
+                  value: 'delete',
+                  child: Row(
+                    children: [
+                      Icon(Icons.delete, size: 18.sp, color: Colors.red),
+                      SizedBox(width: 12.w),
+                      Text('Supprimer', style: TextStyle(fontSize: 14.sp)),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _handleDelete(BuildContext context) {
+    // Show confirmation dialog
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+        title: Text(
+          'Supprimer la prescription',
+          style: TextStyle(
+            fontSize: 18.sp,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        content: Text(
+          'Êtes-vous sûr de vouloir supprimer "${prescription.name}" ?\n\nCette action est irréversible.',
+          style: TextStyle(fontSize: 14.sp),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text(
+              'Annuler',
+              style: TextStyle(
+                color: Colors.grey[600],
+                fontSize: 14.sp,
+              ),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              // Close dialog
+              Navigator.pop(dialogContext);
+
+              // Delete prescription
+              context.read<UserPrescriptionCubit>().deletePrescription(prescription.id);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+            ),
+            child: Text(
+              'Supprimer',
+              style: TextStyle(fontSize: 14.sp, color: Colors.white),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -247,8 +323,8 @@ class AddPrescriptionButton extends StatelessWidget {
       ),
       child: ElevatedButton(
         onPressed: () {
-          // Navigate to prescription form
-          context.pushNamed(AppRouteName.prescriptionForm);
+          // Navigate to user management prescription form
+          context.pushNamed(AppRouteName.userManagementPrescriptionForm);
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.transparent,

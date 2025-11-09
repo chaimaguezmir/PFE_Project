@@ -24,23 +24,44 @@ class EditProfileScreen extends StatelessWidget {
           context.read<EditProfileCubit>().clearMessages();
         }
       },
-      child: Scaffold(
-        backgroundColor: Colors.grey.shade50,
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black,
-          surfaceTintColor: Colors.white,
-          elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () => context.pop(),
-          ),
-          title: Text(
-            'Modifier mon profil',
-            style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w600),
-          ),
-          centerTitle: true,
-        ),
+      child: Builder(
+        builder: (context) {
+          final theme = Theme.of(context);
+
+          return Scaffold(
+            backgroundColor: Colors.grey.shade50,
+            appBar: PreferredSize(
+              preferredSize: Size.fromHeight(kToolbarHeight),
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      theme.colorScheme.primary,
+                      theme.colorScheme.secondary,
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                ),
+                child: AppBar(
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  leading: IconButton(
+                    icon: const Icon(Icons.arrow_back, color: Colors.white),
+                    onPressed: () => context.pop(),
+                  ),
+                  title: Text(
+                    'Modifier mon profil',
+                    style: TextStyle(
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                  centerTitle: true,
+                ),
+              ),
+            ),
         body: SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.all(16.w),
@@ -61,6 +82,8 @@ class EditProfileScreen extends StatelessWidget {
           ),
         ),
         bottomNavigationBar: const _SaveButton(),
+          );
+        },
       ),
     );
   }

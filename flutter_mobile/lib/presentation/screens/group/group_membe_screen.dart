@@ -233,6 +233,7 @@ class _MemberItem extends StatelessWidget {
             memberId: memberId,
             role: memberRole,
             memberUsername: memberName,
+            memberImageUrl: imagePath,
           ),
       ],
     );
@@ -244,10 +245,12 @@ class _CustomPopUpMenuButtonForMembers extends StatelessWidget {
     required this.memberId,
     required this.role,
     required this.memberUsername,
+    this.memberImageUrl,
   });
   final String memberUsername;
   final String memberId;
   final String role;
+  final String? memberImageUrl;
 
   void _handleMenuAction(BuildContext context, String value, GroupState state) {
     final cubit = context.read<GroupCubit>();
@@ -266,8 +269,9 @@ class _CustomPopUpMenuButtonForMembers extends StatelessWidget {
         cubit.removeMember(context);
       case 'manage':
         cubit.selectedMemberIdChanged(memberId);
+        cubit.selectedMemberUsernameChanged(memberUsername);
+        cubit.selectedMemberImageUrlChanged(memberImageUrl ?? '');
         context.pushNamed(AppRouteName.userManagementWelcome);
-        
         break;
     }
   }

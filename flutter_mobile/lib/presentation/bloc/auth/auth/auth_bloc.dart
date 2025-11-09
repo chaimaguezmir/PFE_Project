@@ -18,17 +18,29 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
     on<LoginEvent>(_loginEventHandler);
     on<LogoutEvent>(_logoutEventHandler);
-
+    on<ProfileImageUpdated>(_profileImageUpdatedHandler);
     on<ConnectivityChanged>(_onConnectivityChanged);
+
+    // Load profile image URL from SharedPreferences on initialization
+    _loadProfileImageUrl();
   }
   final SharedPreferences _sharedPreferences;
   late final StreamSubscription<List<ConnectivityResult>> _subscription;
   final Connectivity _connectivity;
+
+  void _loadProfileImageUrl() {
+    final profileImageUrl = _sharedPreferences.getString('profileImageUrl');
+    if (profileImageUrl != null && profileImageUrl.isNotEmpty) {
+      add(ProfileImageUpdated(imageUrl: profileImageUrl));
+    }
+  }
+
   Future<void> _loginEventHandler(
     LoginEvent event,
     Emitter<AuthState> emit,
   ) async {
-    emit(const AuthAuthenticated());
+    final profileImageUrl = _sharedPreferences.getString('profileImageUrl');
+    emit(AuthAuthenticated(profileImageUrl: profileImageUrl));
   }
 
   Future<void> _logoutEventHandler(
@@ -39,16 +51,33 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     print(state.status);
   }
 
+  Future<void> _profileImageUpdatedHandler(
+    ProfileImageUpdated event,
+    Emitter<AuthState> emit,
+  ) async {
+    // Maintain current status while updating profile image URL
+    if (state is AuthAuthenticated) {
+      emit(AuthAuthenticated(profileImageUrl: event.imageUrl));
+    } else if (state is AuthNoNetwork) {
+      emit(AuthNoNetwork(profileImageUrl: event.imageUrl));
+    } else if (state is AuthBackOnLine) {
+      emit(AuthBackOnLine(profileImageUrl: event.imageUrl));
+    } else if (state is AuthInitial) {
+      emit(AuthInitial(profileImageUrl: event.imageUrl));
+    }
+  }
+
   FutureOr<void> _onConnectivityChanged(
     ConnectivityChanged event,
     Emitter<AuthState> emit,
   ) {
     print('function called');
+    final currentImageUrl = state.profileImageUrl;
     if (event.result.contains(ConnectivityResult.none)) {
-      emit(const AuthNoNetwork());
+      emit(AuthNoNetwork(profileImageUrl: currentImageUrl));
       print(state.status);
     } else {
-      emit(const AuthBackOnLine());
+      emit(AuthBackOnLine(profileImageUrl: currentImageUrl));
       print(state.status);
     }
 

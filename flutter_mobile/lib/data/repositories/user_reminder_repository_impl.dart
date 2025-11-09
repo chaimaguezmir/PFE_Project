@@ -1,7 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_mobile/core/resources/data_state.dart';
 import 'package:flutter_mobile/data/data_sources/user_reminder_remote_data_source.dart';
+import 'package:flutter_mobile/data/model/reminder/simple_create_reminder_request_model.dart';
 import 'package:flutter_mobile/domain/entities/reminder/reminder_entity.dart';
+import 'package:flutter_mobile/domain/entities/reminder/simple_create_reminder_entity.dart';
+import 'package:flutter_mobile/domain/entities/reminder/simple_reminder_entity.dart';
 import 'package:flutter_mobile/domain/repositories/user_reminder_repository.dart';
 
 class UserReminderRepositoryImpl implements UserReminderRepository {
@@ -38,6 +41,27 @@ class UserReminderRepositoryImpl implements UserReminderRepository {
         userId: userId,
       );
       return DataSuccess(result);
+    } on DioException catch (e) {
+      return DataError(_handleDioError(e));
+    } catch (e) {
+      return DataError('Une erreur inattendue s\'est produite: $e');
+    }
+  }
+
+  @override
+  Future<DataState<List<SimpleReminderEntity>>> createUserReminders({
+    required String groupId,
+    required String userId,
+    required SimpleCreateReminderEntity createReminderEntity,
+  }) async {
+    try {
+      final request = SimpleCreateReminderRequestModel.fromEntity(createReminderEntity);
+      final result = await _remoteDataSource.createUserReminders(
+        groupId: groupId,
+        userId: userId,
+        request: request,
+      );
+      return DataSuccess(result.map((model) => model.toEntity()).toList());
     } on DioException catch (e) {
       return DataError(_handleDioError(e));
     } catch (e) {

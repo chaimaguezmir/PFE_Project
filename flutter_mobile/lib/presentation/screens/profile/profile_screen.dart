@@ -99,7 +99,17 @@ class ProfileScreen extends StatelessWidget {
                           "Contact support / assistance",
                           "Confidentialité & sécurité des données",
                         ],
-                        onItemTap: (item) => _showSnackBar(context, item),
+                        onItemTap: (item) {
+                          if (item == "Aide & FAQ") {
+                            context.pushNamed(AppRouteName.helpFaq);
+                          } else if (item == "Contact support / assistance") {
+                            context.pushNamed(AppRouteName.contactSupport);
+                          } else if (item == "Confidentialité & sécurité des données") {
+                            context.pushNamed(AppRouteName.legal);
+                          } else {
+                            _showSnackBar(context, item);
+                          }
+                        },
                       ),
                       const SizedBox(height: 16),
                       DisconnectButton(

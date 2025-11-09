@@ -15,6 +15,7 @@ class GroupState extends Equatable {
     this.selectedMemberUsername = '',
     this.selectedMemberRole = '',
     this.selectedMemberId = '',
+    this.selectedMemberImageUrl = '',
     this.newGroupName = '', // New field for creating groups
   });
 
@@ -31,6 +32,7 @@ class GroupState extends Equatable {
   final String selectedMemberUsername;
   final String selectedMemberRole;
   final String selectedMemberId;
+  final String selectedMemberImageUrl;
   final String newGroupName; // New field for creating groups
 
   GroupState copyWith({
@@ -47,6 +49,7 @@ class GroupState extends Equatable {
     String? selectedMemberUsername,
     String? selectedMemberRole,
     String? selectedMemberId,
+    String? selectedMemberImageUrl,
     String? newGroupName, // New parameter for creating groups
   }) {
     return GroupState(
@@ -63,6 +66,7 @@ class GroupState extends Equatable {
       selectedMemberUsername: selectedMemberUsername ?? this.selectedMemberUsername,
       selectedMemberRole: selectedMemberRole ?? this.selectedMemberRole,
       selectedMemberId: selectedMemberId ?? this.selectedMemberId,
+      selectedMemberImageUrl: selectedMemberImageUrl ?? this.selectedMemberImageUrl,
       newGroupName: newGroupName ?? this.newGroupName, // New assignment
     );
   }
@@ -87,6 +91,7 @@ class GroupState extends Equatable {
     currentGroupId,
     selectedMemberUsername,
     selectedMemberRole,
+    selectedMemberImageUrl,
     newGroupName, // Add to props
   ];
 }

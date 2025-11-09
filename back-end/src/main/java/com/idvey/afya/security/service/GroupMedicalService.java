@@ -4,6 +4,7 @@ import com.idvey.afya.models.*;
 import com.idvey.afya.models.groupe.GroupMember;
 import com.idvey.afya.models.groupe.GroupRole;
 import com.idvey.afya.payload.request.CreatePrescriptionRequest;
+import com.idvey.afya.payload.request.CreateReminderRequest;
 import com.idvey.afya.payload.request.CreateTreatmentRequest;
 import com.idvey.afya.payload.request.UpdatePrescriptionRequest;
 import com.idvey.afya.payload.request.UpdateTreatmentRequest;
@@ -43,6 +44,8 @@ public class GroupMedicalService {
 	private final MyMedicineRepository myMedicineRepository;
 
 	private final PrescriptionService prescriptionService;
+
+	private final ReminderService reminderService;
 
 	// ============== AUTHORIZATION HELPER METHODS ==============
 
@@ -351,6 +354,50 @@ public class GroupMedicalService {
 		validateManagerOrResponsibleAccess(currentUserId, groupId, targetUserId);
 
 		return reminderRepository.findByUserId(targetUserId).stream().map(this::toReminderResponse).toList();
+	}
+
+	@Transactional
+	public ReminderResponse markUserReminderAsTaken(UUID currentUserId, UUID groupId, UUID targetUserId,
+			UUID reminderId) throws AccessDeniedException {
+		log.info("Marking reminder {} as taken for user {} by user {} in group {}", reminderId, targetUserId,
+				currentUserId, groupId);
+
+		validateManagerOrResponsibleAccess(currentUserId, groupId, targetUserId);
+
+		// Delegate to ReminderService to update the reminder status
+		// This reuses all the existing logic including dosage consumption
+		ReminderResponse updatedReminder = reminderService.updateReminderStatus(targetUserId, reminderId,
+				ReminderStatus.TAKEN);
+
+		log.info("Successfully marked reminder {} as taken for user {} by caregiver {}", reminderId, targetUserId,
+				currentUserId);
+
+		return updatedReminder;
+	}
+
+	@Transactional
+	public CreateReminderBulkResponse createRemindersForUser(UUID currentUserId, UUID groupId, UUID targetUserId,
+			CreateReminderRequest request) throws AccessDeniedException {
+		log.info("Creating reminders for user {} by user {} in group {}", targetUserId, currentUserId, groupId);
+
+		validateManagerOrResponsibleAccess(currentUserId, groupId, targetUserId);
+
+		// Get and validate treatment
+		Treatment treatment = treatmentRepository.findById(request.getTreatmentId())
+			.orElseThrow(() -> new NoSuchElementException("Treatment not found"));
+
+		// Verify treatment belongs to target user
+		if (!treatment.getPrescription().getUser().getId().equals(targetUserId)) {
+			throw new IllegalArgumentException("Treatment does not belong to target user");
+		}
+
+		// Delegate to reminderService with target user's ID
+		CreateReminderBulkResponse response = reminderService.createRemindersForTreatment(targetUserId, request);
+
+		log.info("Successfully created {} reminders for user {} by user {}", response.getTotalRemindersCreated(),
+				targetUserId, currentUserId);
+
+		return response;
 	}
 
 	// ============== GROUP OVERVIEW METHODS ==============

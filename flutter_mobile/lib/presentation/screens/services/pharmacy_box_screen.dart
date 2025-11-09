@@ -329,212 +329,195 @@ class MedicineCard extends StatelessWidget {
               ],
             ),
           ),
-          Row(
-            children: [
-              IconButton(
-                onPressed: () => _showMedicineDetails(context, medicine),
-                icon: Icon(
-                  Icons.visibility_outlined,
-                  size: 20.sp,
-                  color: Colors.blue[600],
-                ),
-                tooltip: 'Voir détails',
-              ),
-              IconButton(
-                onPressed: () => _showUpdateMedicine(context, medicine),
-                icon: Icon(
-                  Icons.edit_outlined,
-                  size: 20.sp,
-                  color: Colors.orange[600],
-                ),
-                tooltip: 'Modifier',
-              ),
-              IconButton(
-                onPressed: () => _showDeleteConfirmation(context, medicine),
-                icon: Icon(
-                  Icons.delete_outline,
-                  size: 20.sp,
-                  color: Colors.red[600],
-                ),
-                tooltip: 'Supprimer',
-              ),
-            ],
+          IconButton(
+            onPressed: () => context.pushNamed(
+              AppRouteName.purchaseHistory,
+              extra: medicine,
+            ),
+            icon: Icon(
+              Icons.visibility_outlined,
+              size: 20.sp,
+              color: Colors.blue[600],
+            ),
+            tooltip: 'Voir l\'historique',
           ),
         ],
       ),
     );
   }
 
-  void _showMedicineDetails(BuildContext context, MyMedicineEntity medicine) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(
-          'Détails du médicament',
-          style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
-        ),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildDetailRow('Nom', medicine.name, isTitle: true),
-              SizedBox(height: 12.h),
-              _buildDetailRow('Quantité restante', '${medicine.remainingQuantity}'),
-              SizedBox(height: 8.h),
-              _buildDetailRow('Forme', medicine.dosageForm),
-              SizedBox(height: 8.h),
-              _buildDetailRow('Fabricant', medicine.manufacturerName),
-              SizedBox(height: 8.h),
-              _buildDetailRow('Type', medicine.customMedicine ? "Personnalisé" : "Standard"),
-              SizedBox(height: 8.h),
-              _buildDetailRow('Historique d\'achats', '${medicine.purchaseHistoryCount} achats'),
-              if (!medicine.customMedicine && medicine.medicine != null) ...[
-                SizedBox(height: 8.h),
-                _buildDetailRow('Code-barres', medicine.medicine!.barcode),
-                SizedBox(height: 8.h),
-                _buildDetailRow('Prescription requise',
-                    medicine.medicine!.requiresPrescription ? 'Oui' : 'Non'),
-              ],
-              if (medicine.customMedicine) ...[
-                SizedBox(height: 8.h),
-                _buildDetailRow('Prescription requise',
-                    medicine.customRequiresPrescription == true ? 'Oui' : 'Non'),
-              ],
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Fermer'),
-          ),
-        ],
-      ),
-    );
-  }
+  // Commented out - View button now navigates to purchase history screen
+  // void _showMedicineDetails(BuildContext context, MyMedicineEntity medicine) {
+  //   showDialog(
+  //     context: context,
+  //     builder: (context) => AlertDialog(
+  //       title: Text(
+  //         'Détails du médicament',
+  //         style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
+  //       ),
+  //       content: SingleChildScrollView(
+  //         child: Column(
+  //           mainAxisSize: MainAxisSize.min,
+  //           crossAxisAlignment: CrossAxisAlignment.start,
+  //           children: [
+  //             _buildDetailRow('Nom', medicine.name, isTitle: true),
+  //             SizedBox(height: 12.h),
+  //             _buildDetailRow('Quantité restante', '${medicine.remainingQuantity}'),
+  //             SizedBox(height: 8.h),
+  //             _buildDetailRow('Forme', medicine.dosageForm),
+  //             SizedBox(height: 8.h),
+  //             _buildDetailRow('Fabricant', medicine.manufacturerName),
+  //             SizedBox(height: 8.h),
+  //             _buildDetailRow('Type', medicine.customMedicine ? "Personnalisé" : "Standard"),
+  //             SizedBox(height: 8.h),
+  //             _buildDetailRow('Historique d\'achats', '${medicine.purchaseHistoryCount} achats'),
+  //             if (!medicine.customMedicine && medicine.medicine != null) ...[
+  //               SizedBox(height: 8.h),
+  //               _buildDetailRow('Code-barres', medicine.medicine!.barcode),
+  //               SizedBox(height: 8.h),
+  //               _buildDetailRow('Prescription requise',
+  //                   medicine.medicine!.requiresPrescription ? 'Oui' : 'Non'),
+  //             ],
+  //             if (medicine.customMedicine) ...[
+  //               SizedBox(height: 8.h),
+  //               _buildDetailRow('Prescription requise',
+  //                   medicine.customRequiresPrescription == true ? 'Oui' : 'Non'),
+  //             ],
+  //           ],
+  //         ),
+  //       ),
+  //       actions: [
+  //         TextButton(
+  //           onPressed: () => Navigator.pop(context),
+  //           child: const Text('Fermer'),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+  //
+  // Widget _buildDetailRow(String label, String value, {bool isTitle = false}) {
+  //   return Row(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       Text(
+  //         '$label: ',
+  //         style: TextStyle(
+  //           fontWeight: FontWeight.w600,
+  //           fontSize: isTitle ? 16.sp : 14.sp,
+  //           color: Colors.grey[700],
+  //         ),
+  //       ),
+  //       Expanded(
+  //         child: Text(
+  //           value,
+  //           style: TextStyle(
+  //             fontWeight: isTitle ? FontWeight.bold : FontWeight.normal,
+  //             fontSize: isTitle ? 16.sp : 14.sp,
+  //             color: isTitle ? Colors.black87 : Colors.black,
+  //           ),
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 
-  Widget _buildDetailRow(String label, String value, {bool isTitle = false}) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          '$label: ',
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: isTitle ? 16.sp : 14.sp,
-            color: Colors.grey[700],
-          ),
-        ),
-        Expanded(
-          child: Text(
-            value,
-            style: TextStyle(
-              fontWeight: isTitle ? FontWeight.bold : FontWeight.normal,
-              fontSize: isTitle ? 16.sp : 14.sp,
-              color: isTitle ? Colors.black87 : Colors.black,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  void _showUpdateMedicine(BuildContext context, MyMedicineEntity medicine) {
-    final TextEditingController nameController = TextEditingController(text: medicine.name);
-    final TextEditingController quantityController = TextEditingController(
-        text: medicine.remainingQuantity.toString());
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Modifier le médicament'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: nameController,
-              decoration: const InputDecoration(
-                labelText: 'Nom du médicament',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            SizedBox(height: 16.h),
-            TextField(
-              controller: quantityController,
-              decoration: const InputDecoration(
-                labelText: 'Quantité',
-                border: OutlineInputBorder(),
-              ),
-              keyboardType: TextInputType.number,
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Annuler'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('${nameController.text} mis à jour'),
-                  backgroundColor: Colors.green,
-                ),
-              );
-            },
-            child: const Text('Sauvegarder'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showDeleteConfirmation(BuildContext context, MyMedicineEntity medicine) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Supprimer le médicament'),
-        content: RichText(
-          text: TextSpan(
-            style: TextStyle(fontSize: 16.sp, color: Colors.black87),
-            children: [
-              const TextSpan(text: 'Êtes-vous sûr de vouloir supprimer '),
-              TextSpan(
-                text: medicine.name,
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const TextSpan(text: ' ?'),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Annuler'),
-          ),
-          OutlinedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('${medicine.name} supprimé'),
-                  backgroundColor: Colors.red,
-                ),
-              );
-            },
-            style: OutlinedButton.styleFrom(
-              side: const BorderSide(color: Colors.red),
-              foregroundColor: Colors.red,
-            ),
-            child: const Text('Supprimer'),
-          ),
-        ],
-      ),
-    );
-  }
+  // Commented out - Edit and delete functionality removed from UI
+  // void _showUpdateMedicine(BuildContext context, MyMedicineEntity medicine) {
+  //   final TextEditingController nameController = TextEditingController(text: medicine.name);
+  //   final TextEditingController quantityController = TextEditingController(
+  //       text: medicine.remainingQuantity.toString());
+  //
+  //   showDialog(
+  //     context: context,
+  //     builder: (context) => AlertDialog(
+  //       title: const Text('Modifier le médicament'),
+  //       content: Column(
+  //         mainAxisSize: MainAxisSize.min,
+  //         children: [
+  //           TextField(
+  //             controller: nameController,
+  //             decoration: const InputDecoration(
+  //               labelText: 'Nom du médicament',
+  //               border: OutlineInputBorder(),
+  //             ),
+  //           ),
+  //           SizedBox(height: 16.h),
+  //           TextField(
+  //             controller: quantityController,
+  //             decoration: const InputDecoration(
+  //               labelText: 'Quantité',
+  //               border: OutlineInputBorder(),
+  //             ),
+  //             keyboardType: TextInputType.number,
+  //           ),
+  //         ],
+  //       ),
+  //       actions: [
+  //         TextButton(
+  //           onPressed: () => Navigator.pop(context),
+  //           child: const Text('Annuler'),
+  //         ),
+  //         ElevatedButton(
+  //           onPressed: () {
+  //             Navigator.pop(context);
+  //             ScaffoldMessenger.of(context).showSnackBar(
+  //               SnackBar(
+  //                 content: Text('${nameController.text} mis à jour'),
+  //                 backgroundColor: Colors.green,
+  //               ),
+  //             );
+  //           },
+  //           child: const Text('Sauvegarder'),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+  //
+  // void _showDeleteConfirmation(BuildContext context, MyMedicineEntity medicine) {
+  //   showDialog(
+  //     context: context,
+  //     builder: (context) => AlertDialog(
+  //       title: const Text('Supprimer le médicament'),
+  //       content: RichText(
+  //         text: TextSpan(
+  //           style: TextStyle(fontSize: 16.sp, color: Colors.black87),
+  //           children: [
+  //             const TextSpan(text: 'Êtes-vous sûr de vouloir supprimer '),
+  //             TextSpan(
+  //               text: medicine.name,
+  //               style: const TextStyle(fontWeight: FontWeight.bold),
+  //             ),
+  //             const TextSpan(text: ' ?'),
+  //           ],
+  //         ),
+  //       ),
+  //       actions: [
+  //         TextButton(
+  //           onPressed: () => Navigator.pop(context),
+  //           child: const Text('Annuler'),
+  //         ),
+  //         OutlinedButton(
+  //           onPressed: () {
+  //             Navigator.pop(context);
+  //             ScaffoldMessenger.of(context).showSnackBar(
+  //               SnackBar(
+  //                 content: Text('${medicine.name} supprimé'),
+  //                 backgroundColor: Colors.red,
+  //               ),
+  //             );
+  //           },
+  //           style: OutlinedButton.styleFrom(
+  //             side: const BorderSide(color: Colors.red),
+  //             foregroundColor: Colors.red,
+  //           ),
+  //           child: const Text('Supprimer'),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 }
 
 class AddMedicineButton extends StatelessWidget {

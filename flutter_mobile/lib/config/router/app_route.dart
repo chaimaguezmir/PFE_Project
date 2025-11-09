@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_mobile/domain/entities/services/my_medicine_entity.dart';
 import 'package:flutter_mobile/injection_container.dart';
 import 'package:flutter_mobile/presentation/bloc/auth/forgot_password/forgot_password_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/auth/login/login_cubit.dart';
@@ -11,6 +12,7 @@ import 'package:flutter_mobile/presentation/bloc/home/welcome_screen_cubit.dart'
 import 'package:flutter_mobile/presentation/bloc/profile/edit_profile_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/profile/profile_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/services/services_cubit.dart';
+import 'package:flutter_mobile/presentation/bloc/user_management/user_prescription_creation_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/user_management/user_prescription_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/user_management/user_welcome_cubit.dart';
 import 'package:flutter_mobile/presentation/bottom_bar.dart';
@@ -33,14 +35,21 @@ import 'package:flutter_mobile/presentation/screens/home/prescriptions_screen.da
 import 'package:flutter_mobile/presentation/screens/home/welcome_screen.dart';
 
 import 'package:flutter_mobile/presentation/screens/onboarding/onboarding_screen.dart';
+import 'package:flutter_mobile/presentation/screens/profile/contact_support_screen.dart';
 import 'package:flutter_mobile/presentation/screens/profile/edit_profile_screen.dart';
+import 'package:flutter_mobile/presentation/screens/profile/help_faq_screen.dart';
+import 'package:flutter_mobile/presentation/screens/profile/legal_screen.dart';
 import 'package:flutter_mobile/presentation/screens/profile/profile_screen.dart';
 import 'package:flutter_mobile/presentation/screens/services/add_medication_manually_screen.dart';
 import 'package:flutter_mobile/presentation/screens/services/barcode_scanner_screen.dart';
 import 'package:flutter_mobile/presentation/screens/services/medication_tracker_screen.dart';
+import 'package:flutter_mobile/presentation/screens/services/medicine_purchase_history_screen.dart';
 import 'package:flutter_mobile/presentation/screens/services/pharmacy_box_screen.dart';
 import 'package:flutter_mobile/presentation/screens/services/medicine_search_result_screen.dart';
 import 'package:flutter_mobile/presentation/screens/services/services_screen.dart';
+import 'package:flutter_mobile/presentation/screens/user_management/user_medical_prescription_form.dart';
+import 'package:flutter_mobile/presentation/screens/user_management/user_medical_treatment_form.dart';
+import 'package:flutter_mobile/presentation/screens/user_management/user_prescription_detail_screen.dart';
 import 'package:flutter_mobile/presentation/screens/user_management/user_prescriptions_screen.dart';
 import 'package:flutter_mobile/presentation/screens/user_management/user_welcome_screen.dart';
 import 'package:go_router/go_router.dart';
@@ -215,6 +224,16 @@ class AppRouter {
                     builder: (context, state) =>
                         const AddMedicationManuallyScreen(),
                   ),
+                  GoRoute(
+                    name: AppRouteName.purchaseHistory,
+                    path: AppRoutePath.purchaseHistory,
+                    builder: (context, state) {
+                      final medicine = state.extra;
+                      return MedicinePurchaseHistoryScreen(
+                        medicine: medicine as MyMedicineEntity,
+                      );
+                    },
+                  ),
                 ],
               ),
             ],
@@ -256,36 +275,97 @@ class AppRouter {
                       child: const UserWelcomeScreen(),
                     ),
                   ),
+                  // User Management Prescription Routes with UserPrescriptionCubit (nested under GroupCubit)
+                  ShellRoute(
+                builder: (context, state, child) => BlocProvider(
+                  create: (context) => sl<UserPrescriptionCubit>(),
+                  child: child,
+                ),
+                routes: [
                   GoRoute(
                     name: AppRouteName.userManagementPrescriptions,
                     path: AppRoutePath.userManagementPrescriptions,
-                    builder: (context, state) => BlocProvider(
-                      create: (context) => sl<UserPrescriptionCubit>(),
-                      child: const UserPrescriptionsScreen(),
-                    ),
+                    builder: (context, state) => const UserPrescriptionsScreen(),
+                  ),
+                  GoRoute(
+                    name: AppRouteName.userManagementPrescriptionDetail,
+                    path: AppRoutePath.userManagementPrescriptionDetail,
+                    builder: (context, state) => const UserPrescriptionDetailScreen(),
+                  ),
+                ],
+              ),
+              // User Management Prescription/Treatment Creation with UserPrescriptionCreationCubit
+              ShellRoute(
+                builder: (context, state, child) => BlocProvider(
+                  create: (context) => sl<UserPrescriptionCreationCubit>(),
+                  child: child,
+                ),
+                routes: [
+                  GoRoute(
+                    name: AppRouteName.userManagementPrescriptionForm,
+                    path: AppRoutePath.userManagementPrescriptionForm,
+                    builder: (context, state) => const UserMedicalPrescriptionForm(),
+                  ),
+                  GoRoute(
+                    name: AppRouteName.userManagementTreatmentForm,
+                    path: AppRoutePath.userManagementTreatmentForm,
+                    builder: (context, state) {
+                      // Extract parameters from extra
+                      final extra = state.extra as Map<String, dynamic>?;
+                      final isEditMode = extra?['isEditMode'] as bool? ?? false;
+                      final treatmentToEdit = extra?['treatmentToEdit'];
+                      final prescriptionId = extra?['prescriptionId'] as String?;
+                      final groupId = extra?['groupId'] as String?;
+                      final userId = extra?['userId'] as String?;
+
+                      return UserMedicalTreatmentForm(
+                        isEditMode: isEditMode,
+                        treatmentToEdit: treatmentToEdit,
+                        prescriptionId: prescriptionId,
+                        groupId: groupId,
+                        userId: userId,
+                      );
+                    },
                   ),
                 ],
               ),
             ],
           ),
-          StatefulShellBranch(
-            routes: <RouteBase>[
-              GoRoute(
-                name: AppRouteName.profile,
-                path: AppRoutePath.profile,
-                builder: (context, state) => BlocProvider(
-                  create: (context) => sl<ProfileCubit>(),
-                  child: const ProfileScreen(),
-                ),
-              ),
-              GoRoute(
-                name: AppRouteName.editProfile,
-                path: AppRoutePath.editProfile,
-                builder: (context, state) => BlocProvider(
-                  create: (context) => sl<EditProfileCubit>()..init(),
-                  child: const EditProfileScreen(),
-                ),
-              ),
+        ],
+      ),
+      StatefulShellBranch(
+        routes: <RouteBase>[
+          GoRoute(
+            name: AppRouteName.profile,
+            path: AppRoutePath.profile,
+            builder: (context, state) => BlocProvider(
+              create: (context) => sl<ProfileCubit>(),
+              child: const ProfileScreen(),
+            ),
+          ),
+          GoRoute(
+            name: AppRouteName.editProfile,
+            path: AppRoutePath.editProfile,
+            builder: (context, state) => BlocProvider(
+              create: (context) => sl<EditProfileCubit>()..init(),
+              child: const EditProfileScreen(),
+            ),
+          ),
+          GoRoute(
+            name: AppRouteName.helpFaq,
+            path: AppRoutePath.helpFaq,
+            builder: (context, state) => const HelpFaqScreen(),
+          ),
+          GoRoute(
+            name: AppRouteName.contactSupport,
+            path: AppRoutePath.contactSupport,
+            builder: (context, state) => const ContactSupportScreen(),
+          ),
+          GoRoute(
+            name: AppRouteName.legal,
+            path: AppRoutePath.legal,
+            builder: (context, state) => const LegalScreen(),
+          ),
             ],
           ),
         ],

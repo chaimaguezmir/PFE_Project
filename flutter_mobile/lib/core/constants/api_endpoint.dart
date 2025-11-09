@@ -2,8 +2,8 @@
 // ignore_for_file: avoid_classes_with_only_static_members
 abstract class ApiEndpoints {
   // Base URL
-  static const String imageUrl = 'https://a2a7051a18d7.ngrok-free.app';
-  static const String baseurl = 'https://a2a7051a18d7.ngrok-free.app/api';
+  static const String imageUrl = 'https://dea594cbdc11.ngrok-free.app';
+  static const String baseurl = 'https://dea594cbdc11.ngrok-free.app/api';
 
   // Helper method to construct image URLs correctly (handles double slashes)
   static String getImageUrl(String? path) {

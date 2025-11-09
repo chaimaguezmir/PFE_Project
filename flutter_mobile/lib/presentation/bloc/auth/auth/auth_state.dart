@@ -9,16 +9,20 @@ enum AuthStatus {
 }
 
 sealed class AuthState extends Equatable {
-  const AuthState({required this.status});
+  const AuthState({
+    required this.status,
+    this.profileImageUrl,
+  });
 
   final AuthStatus status;
+  final String? profileImageUrl;
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [status, profileImageUrl];
 }
 
 final class AuthInitial extends AuthState {
-  const AuthInitial() : super(status: AuthStatus.initial);
+  const AuthInitial({super.profileImageUrl}) : super(status: AuthStatus.initial);
 }
 
 final class AuthUnauthenticated extends AuthState {
@@ -26,13 +30,13 @@ final class AuthUnauthenticated extends AuthState {
 }
 
 final class AuthAuthenticated extends AuthState {
-  const AuthAuthenticated() : super(status: AuthStatus.authenticated);
+  const AuthAuthenticated({super.profileImageUrl}) : super(status: AuthStatus.authenticated);
 }
 
 final class AuthNoNetwork extends AuthState {
-  const AuthNoNetwork() : super(status: AuthStatus.noNetwork);
+  const AuthNoNetwork({super.profileImageUrl}) : super(status: AuthStatus.noNetwork);
 }
 
 final class AuthBackOnLine extends AuthState {
-  const AuthBackOnLine() : super(status: AuthStatus.backOnLine);
+  const AuthBackOnLine({super.profileImageUrl}) : super(status: AuthStatus.backOnLine);
 }

@@ -88,10 +88,11 @@ Future<void> initInjectionContainer() async {
   // ============================================
 
   // Dio configuration
+  // Increased timeouts for ngrok tunnel latency
   dio.options = BaseOptions(
-    connectTimeout: const Duration(seconds: 20),
-    receiveTimeout: const Duration(seconds: 20),
-    sendTimeout: const Duration(seconds: 30),
+    connectTimeout: const Duration(seconds: 60),
+    receiveTimeout: const Duration(seconds: 60),
+    sendTimeout: const Duration(seconds: 60),
   );
 
   // Shared Preferences
@@ -217,7 +218,7 @@ Future<void> initInjectionContainer() async {
 
   sl.registerFactory<ProfileCubit>(() => ProfileCubit(sl()));
   sl.registerFactory<EditProfileCubit>(
-    () => EditProfileCubit(sl<ProfileRepository>(), sl<SharedPreferences>()),
+    () => EditProfileCubit(sl<ProfileRepository>(), sl<SharedPreferences>(), sl<AuthBloc>()),
   );
 
   // ============================================
@@ -255,6 +256,6 @@ Future<void> initInjectionContainer() async {
     () => UserPrescriptionCubit(sl(), sl()),
   );
   sl.registerFactory<UserPrescriptionCreationCubit>(
-    () => UserPrescriptionCreationCubit(sl(), sl(), sl(), sl(), sl()),
+    () => UserPrescriptionCreationCubit(sl(), sl(), sl(), sl(), sl(), sl()),
   );
 }

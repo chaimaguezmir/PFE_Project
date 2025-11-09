@@ -5,17 +5,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_mobile/core/resources/data_state.dart';
 import 'package:flutter_mobile/domain/entities/profile/user_profile_entity.dart';
 import 'package:flutter_mobile/domain/repositories/profile_repository.dart';
+import 'package:flutter_mobile/presentation/bloc/auth/auth/auth_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 part 'edit_profile_state.dart';
 
 class EditProfileCubit extends Cubit<EditProfileState> {
-  EditProfileCubit(this._profileRepository, this._prefs)
+  EditProfileCubit(this._profileRepository, this._prefs, this._authBloc)
     : super(const EditProfileState());
 
   final ProfileRepository _profileRepository;
   final SharedPreferences _prefs;
+  final AuthBloc _authBloc;
   final ImagePicker _picker = ImagePicker();
 
   void init() {
@@ -204,6 +206,9 @@ class EditProfileCubit extends Cubit<EditProfileState> {
       if (result is DataSuccess && result.data != null) {
         final imageUrl = result.data!.imageUrl;
         await _prefs.setString('profileImageUrl', imageUrl);
+
+        // Notify AuthBloc about profile image update
+        _authBloc.add(ProfileImageUpdated(imageUrl: imageUrl));
 
         emit(
           state.copyWith(

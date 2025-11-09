@@ -240,8 +240,8 @@ class ReminderRemoteDataSourceImpl implements ReminderRemoteDataSource {
     try {
       print('Marking reminder as taken: $id');
       final response = await _dio.put(
-        '${ApiEndpoints.reminderById(id)}/take',
-        data: {'status': 'TAKEN', 'takenAt': DateTime.now().toIso8601String()},
+        '${ApiEndpoints.reminderById(id)}/status',
+        data: {'status': 'TAKEN'},
       );
 
       if (response.statusCode == 200) {
@@ -262,7 +262,7 @@ class ReminderRemoteDataSourceImpl implements ReminderRemoteDataSource {
       print('Unexpected error in markReminderAsTaken: $e');
       throw DioException(
         requestOptions: RequestOptions(
-          path: '${ApiEndpoints.reminderById(id)}/take',
+          path: '${ApiEndpoints.reminderById(id)}/status',
         ),
         message: 'An unexpected error occurred: $e',
       );

@@ -138,37 +138,68 @@ class UserWelcomeCubit extends Cubit<UserWelcomeState> {
   }
 
   /// Mark medication as taken
-  void markMedicationAsTaken(String reminderId) {
+  Future<void> markMedicationAsTaken(String reminderId) async {
     if (isClosed) return;
 
-    final updatedReminders = state.reminders.map((reminder) {
-      if (reminder.id == reminderId) {
-        return reminder.copyWith(status: 'TAKEN', updatedAt: DateTime.now());
+    try {
+      // Call backend to mark as taken
+      final result = await userReminderRepository.markUserReminderAsTaken(
+        groupId: state.groupId,
+        userId: state.userId,
+        reminderId: reminderId,
+      );
+
+      if (result is DataSuccess) {
+        print('✅ User reminder marked as taken successfully: $reminderId');
+
+        // Update local state
+        final updatedReminders = state.reminders.map((reminder) {
+          if (reminder.id == reminderId) {
+            return reminder.copyWith(
+              status: 'TAKEN',
+              updatedAt: DateTime.now(),
+            );
+          }
+          return reminder;
+        }).toList();
+
+        // Recalculate grouped data
+        final groupedReminders = _groupRemindersByTimeSlot(updatedReminders);
+        final todayReminders = _getTodayReminders(updatedReminders);
+        final yesterdayReminders = _getRemindersForDate(
+          updatedReminders,
+          DateTime.now().subtract(const Duration(days: 1)),
+        );
+        final tomorrowReminders = _getRemindersForDate(
+          updatedReminders,
+          DateTime.now().add(const Duration(days: 1)),
+        );
+
+        safeEmit(
+          state.copyWith(
+            reminders: updatedReminders,
+            groupedReminders: groupedReminders,
+            todayReminders: todayReminders,
+            yesterdayReminders: yesterdayReminders,
+            tomorrowReminders: tomorrowReminders,
+          ),
+        );
+      } else if (result is DataError) {
+        print('❌ Failed to mark user reminder as taken: ${result.error}');
+        safeEmit(
+          state.copyWith(
+            errorMessage: result.error ?? 'Échec de la mise à jour du rappel',
+          ),
+        );
       }
-      return reminder;
-    }).toList();
-
-    // Recalculate grouped data
-    final groupedReminders = _groupRemindersByTimeSlot(updatedReminders);
-    final todayReminders = _getTodayReminders(updatedReminders);
-    final yesterdayReminders = _getRemindersForDate(
-      updatedReminders,
-      DateTime.now().subtract(const Duration(days: 1)),
-    );
-    final tomorrowReminders = _getRemindersForDate(
-      updatedReminders,
-      DateTime.now().add(const Duration(days: 1)),
-    );
-
-    safeEmit(
-      state.copyWith(
-        reminders: updatedReminders,
-        groupedReminders: groupedReminders,
-        todayReminders: todayReminders,
-        yesterdayReminders: yesterdayReminders,
-        tomorrowReminders: tomorrowReminders,
-      ),
-    );
+    } catch (e) {
+      print('❌ Exception marking user reminder as taken: $e');
+      safeEmit(
+        state.copyWith(
+          errorMessage: 'Erreur lors de la mise à jour du rappel',
+        ),
+      );
+    }
   }
 
   /// Snooze reminder (placeholder for future implementation)

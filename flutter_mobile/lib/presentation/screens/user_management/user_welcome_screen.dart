@@ -4,7 +4,7 @@ import 'package:flutter_mobile/domain/entities/reminder/reminder_entity.dart';
 import 'package:flutter_mobile/domain/entities/reminder/reminder_extensions.dart';
 import 'package:flutter_mobile/presentation/bloc/group/group_cubit.dart';
 import 'package:flutter_mobile/presentation/bloc/user_management/user_welcome_cubit.dart';
-import 'package:flutter_mobile/presentation/widgets/base_widgets/custom_app_bar.dart';
+import 'package:flutter_mobile/presentation/widgets/base_widgets/dual_user_app_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class UserWelcomeScreen extends StatelessWidget {
@@ -20,7 +20,10 @@ class UserWelcomeScreen extends StatelessWidget {
     });
 
     return Scaffold(
-      appBar: const CustomAppBar(title: "Espace gestionnaire", showLeading: false),
+      appBar: const DualUserAppBar(
+        title: "Gestion des rappels",
+        showLeading: true,
+      ),
       backgroundColor: Colors.grey[50],
       body: BlocBuilder<UserWelcomeCubit, UserWelcomeState>(
         builder: (context, state) {

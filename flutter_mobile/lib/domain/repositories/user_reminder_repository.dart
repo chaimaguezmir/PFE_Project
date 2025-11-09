@@ -1,5 +1,7 @@
 import 'package:flutter_mobile/core/resources/data_state.dart';
 import 'package:flutter_mobile/domain/entities/reminder/reminder_entity.dart';
+import 'package:flutter_mobile/domain/entities/reminder/simple_create_reminder_entity.dart';
+import 'package:flutter_mobile/domain/entities/reminder/simple_reminder_entity.dart';
 
 abstract class UserReminderRepository {
   /// Get reminders with medications for a specific user in a group
@@ -12,6 +14,13 @@ abstract class UserReminderRepository {
   Future<DataState<List<ReminderEntity>>> getUserReminders({
     required String groupId,
     required String userId,
+  });
+
+  /// Create reminders for a user's treatment
+  Future<DataState<List<SimpleReminderEntity>>> createUserReminders({
+    required String groupId,
+    required String userId,
+    required SimpleCreateReminderEntity createReminderEntity,
   });
 
   /// Get specific user's reminder by ID

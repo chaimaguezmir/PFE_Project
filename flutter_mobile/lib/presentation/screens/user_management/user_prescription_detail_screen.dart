@@ -157,8 +157,26 @@ class AddTreatmentHeader extends StatelessWidget {
           ),
           GestureDetector(
             onTap: () {
-              // Navigate directly to medication tracker
-              context.pushNamed(AppRouteName.medicationTracker);
+              // Get the selected prescription ID and user context from state
+              final cubitState = context.read<UserPrescriptionCubit>().state;
+              final prescriptionId = cubitState.selectedPrescriptionId;
+              final groupId = cubitState.groupId;
+              final userId = cubitState.userId;
+
+              print('🟡 Add Treatment clicked.');
+              print('🟡 PrescriptionId: $prescriptionId');
+              print('🟡 GroupId: $groupId, UserId: $userId');
+
+              // Navigate to user management treatment form with all required context
+              context.pushNamed(
+                AppRouteName.userManagementTreatmentForm,
+                extra: {
+                  'isEditMode': false,
+                  'prescriptionId': prescriptionId,
+                  'groupId': groupId,
+                  'userId': userId,
+                },
+              );
             },
             child: Container(
               width: 32.w,
@@ -247,7 +265,6 @@ class MedicationCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(bottom: 16.h),
-      padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
@@ -261,47 +278,65 @@ class MedicationCard extends StatelessWidget {
           ),
         ],
       ),
-      child: Row(
-        children: [
-          // Medication Info
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  treatment.medicationName,
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black87,
-                  ),
-                ),
-                SizedBox(height: 4.h),
-                Text(
-                  treatment.duration,
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    color: Colors.black54,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                SizedBox(height: 2.h),
-                Text(
-                  treatment.instructions,
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: Colors.grey[500],
-                  ),
-                ),
-              ],
-            ),
-          ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            print('🟢 Card tapped! Treatment: ${treatment.medicationName}');
+            print('🟢 IsCompleted: ${treatment.isCompleted}');
 
-          // Progress Circle
-          SizedBox(width: 16.w),
-          GestureDetector(
-            onTap: () => _showTreatmentDetails(context, treatment),
-            child: Container(
+            // Navigate to edit treatment form if not completed
+            if (!treatment.isCompleted) {
+              print('🟢 Going to edit...');
+              _navigateToEditTreatment(context, treatment);
+            } else {
+              // Just show details if completed
+              print('🟢 Showing details (completed)...');
+              _showTreatmentDetails(context, treatment);
+            }
+          },
+          borderRadius: BorderRadius.circular(12.r),
+          child: Padding(
+            padding: EdgeInsets.all(16.w),
+        child: Row(
+          children: [
+            // Medication Info
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    treatment.medicationName,
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  SizedBox(height: 4.h),
+                  Text(
+                    treatment.duration,
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      color: Colors.black54,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  SizedBox(height: 2.h),
+                  Text(
+                    treatment.instructions,
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: Colors.grey[500],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Progress Circle
+            SizedBox(width: 16.w),
+            Container(
               width: 50.w,
               height: 50.w,
               child: Stack(
@@ -349,10 +384,42 @@ class MedicationCard extends StatelessWidget {
                 ],
               ),
             ),
+          ],
+        ),
           ),
-        ],
+        ),
       ),
     );
+  }
+
+  void _navigateToEditTreatment(BuildContext context, TreatmentEntity treatment) {
+    // Navigate to treatment form in edit mode
+    print('🔵 Navigating to edit treatment: ${treatment.id}');
+    print('🔵 Route: ${AppRouteName.userManagementTreatmentForm}');
+    print('🔵 IsCompleted: ${treatment.isCompleted}');
+
+    try {
+      // Get user context from cubit state
+      final cubitState = context.read<UserPrescriptionCubit>().state;
+      final groupId = cubitState.groupId;
+      final userId = cubitState.userId;
+
+      print('🔵 GroupId: $groupId, UserId: $userId');
+
+      context.pushNamed(
+        AppRouteName.userManagementTreatmentForm,
+        extra: {
+          'isEditMode': true,
+          'treatmentToEdit': treatment,
+          'prescriptionId': treatment.prescriptionId,
+          'groupId': groupId,
+          'userId': userId,
+        },
+      );
+      print('🔵 Navigation called successfully');
+    } catch (e) {
+      print('❌ Navigation error: $e');
+    }
   }
 
   void _showTreatmentDetails(BuildContext context, TreatmentEntity treatment) {
@@ -393,14 +460,6 @@ class MedicationCard extends StatelessWidget {
             onPressed: () => Navigator.pop(context),
             child: const Text('Fermer'),
           ),
-          if (!treatment.isCompleted)
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                _showEditTreatment(context, treatment);
-              },
-              child: const Text('Modifier'),
-            ),
         ],
       ),
     );
@@ -429,68 +488,6 @@ class MedicationCard extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-
-  void _showEditTreatment(BuildContext context, TreatmentEntity treatment) {
-    final dosageController = TextEditingController(text: treatment.dosage);
-    final frequencyController = TextEditingController(text: treatment.frequency);
-    final durationController = TextEditingController(text: treatment.durationDays.toString());
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Modifier le traitement'),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: dosageController,
-                decoration: const InputDecoration(
-                  labelText: 'Dosage',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              SizedBox(height: 16.h),
-              TextField(
-                controller: frequencyController,
-                decoration: const InputDecoration(
-                  labelText: 'Fréquence',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              SizedBox(height: 16.h),
-              TextField(
-                controller: durationController,
-                decoration: const InputDecoration(
-                  labelText: 'Durée (jours)',
-                  border: OutlineInputBorder(),
-                ),
-                keyboardType: TextInputType.number,
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Annuler'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              context.read<UserPrescriptionCubit>().updateTreatment(
-                id: treatment.id,
-                dosage: dosageController.text.trim(),
-                frequency: frequencyController.text.trim(),
-                durationDays: int.tryParse(durationController.text) ?? treatment.durationDays,
-              );
-            },
-            child: const Text('Sauvegarder'),
-          ),
-        ],
-      ),
     );
   }
 }

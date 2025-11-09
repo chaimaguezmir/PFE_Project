@@ -141,6 +141,52 @@ class MedicineRepositoryImpl implements MedicineRepository {
     }
   }
 
+  @override
+  Future<DataState<List<PurchaseHistoryEntity>>> getPurchaseHistory(String myMedicineId) async {
+    try {
+      final result = await _remoteDataSource.getPurchaseHistory(myMedicineId);
+      // Convert models to entities
+      final entities = result.map((model) => model.toEntity()).toList();
+      return DataSuccess(entities);
+    } on DioException catch (e) {
+      return DataError(_handleDioError(e));
+    } catch (e) {
+      return DataError('An unexpected error occurred: $e');
+    }
+  }
+
+  @override
+  Future<DataState<PurchaseHistoryEntity>> updatePurchaseHistory({
+    required String purchaseHistoryId,
+    required int quantityPurchased,
+    required DateTime expiryDate,
+  }) async {
+    try {
+      final result = await _remoteDataSource.updatePurchaseHistory(
+        purchaseHistoryId: purchaseHistoryId,
+        quantityPurchased: quantityPurchased,
+        expiryDate: expiryDate,
+      );
+      return DataSuccess(result.toEntity());
+    } on DioException catch (e) {
+      return DataError(_handleDioError(e));
+    } catch (e) {
+      return DataError('An unexpected error occurred: $e');
+    }
+  }
+
+  @override
+  Future<DataState<void>> deletePurchaseHistory(String purchaseHistoryId) async {
+    try {
+      await _remoteDataSource.deletePurchaseHistory(purchaseHistoryId);
+      return DataSuccess(null);
+    } on DioException catch (e) {
+      return DataError(_handleDioError(e));
+    } catch (e) {
+      return DataError('An unexpected error occurred: $e');
+    }
+  }
+
   String _formatDate(DateTime date) {
     return "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
   }

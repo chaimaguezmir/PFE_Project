@@ -21,6 +21,7 @@ class AppRouteName {
   static const String userManagementWelcome = 'userManagementWelcome';
   static const String userManagementPrescriptions = 'userManagementPrescriptions';
   static const String userManagementPrescriptionDetail = 'userManagementPrescriptionDetail';
+  static const String userManagementPrescriptionForm = 'userManagementPrescriptionForm';
   static const String userManagementTreatmentForm = 'userManagementTreatmentForm';
 
 
@@ -31,6 +32,7 @@ class AppRouteName {
   static const String medicineSearchResult = 'medicineSearchResult';
   static const String medicationTracker = 'medicationTracker';
   static const String addMedicationManually = 'addMedicationManually';
+  static const String purchaseHistory = 'purchaseHistory';
   //home
   static const String home = 'home';
   static const String prescription = 'prescription';
@@ -41,6 +43,9 @@ class AppRouteName {
   // profile
   static const String profile = 'profile';
   static const String editProfile = 'editProfile';
+  static const String helpFaq = 'helpFaq';
+  static const String contactSupport = 'contactSupport';
+  static const String legal = 'legal';
 }
 
 class AppRoutePath {
@@ -66,6 +71,7 @@ class AppRoutePath {
   static const String userManagementWelcome = '/groupScreen/groupMembersScreen/userManagementWelcome';
   static const String userManagementPrescriptions = '/groupScreen/groupMembersScreen/userManagementPrescriptions';
   static const String userManagementPrescriptionDetail = '/groupScreen/groupMembersScreen/userManagementPrescriptionDetail';
+  static const String userManagementPrescriptionForm = '/groupScreen/groupMembersScreen/userManagementPrescriptionForm';
   static const String userManagementTreatmentForm = '/groupScreen/groupMembersScreen/userManagementTreatmentForm';
   //services related screens
   static const String services = '/services';
@@ -74,6 +80,7 @@ class AppRoutePath {
   static const String medicineSearchResult = '/services/medicineSearchResult';
   static const String medicationTracker = '/services/medicationTracker';
   static const String addMedicationManually = '/services/addMedicationManually';
+  static const String purchaseHistory = '/services/purchaseHistory';
 
   //home
   static const String home = '/home';
@@ -86,5 +93,8 @@ class AppRoutePath {
   // profile
   static const String profile = '/profile';
   static const String editProfile = '/profile/editProfile';
+  static const String helpFaq = '/profile/helpFaq';
+  static const String contactSupport = '/profile/contactSupport';
+  static const String legal = '/profile/legal';
 
 }

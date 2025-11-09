@@ -52,6 +52,13 @@ class ServicesState extends Equatable {
     this.filteredMedicines = const [],
     this.medicineSearchQuery = '',
     this.currentPharmacyBoxId = '',
+
+    // ============================================
+    // Purchase History Properties
+    // ============================================
+    this.purchaseHistoryStatus = FormzSubmissionStatus.initial,
+    this.purchaseHistoryErrorMessage,
+    this.purchaseHistoryList = const [],
   });
 
   // ============================================
@@ -106,6 +113,13 @@ class ServicesState extends Equatable {
   final String currentPharmacyBoxId;
 
   // ============================================
+  // Purchase History Properties
+  // ============================================
+  final FormzSubmissionStatus purchaseHistoryStatus;
+  final String? purchaseHistoryErrorMessage;
+  final List<PurchaseHistoryEntity> purchaseHistoryList;
+
+  // ============================================
   // Copy With Method
   // ============================================
   ServicesState copyWith({
@@ -153,6 +167,11 @@ class ServicesState extends Equatable {
     List<MyMedicineEntity>? filteredMedicines,
     String? medicineSearchQuery,
     String? currentPharmacyBoxId,
+
+    // Purchase History parameters
+    FormzSubmissionStatus? purchaseHistoryStatus,
+    String? purchaseHistoryErrorMessage,
+    List<PurchaseHistoryEntity>? purchaseHistoryList,
   }) {
     return ServicesState(
       // Medicine Search assignments
@@ -199,6 +218,11 @@ class ServicesState extends Equatable {
       filteredMedicines: filteredMedicines ?? this.filteredMedicines,
       medicineSearchQuery: medicineSearchQuery ?? this.medicineSearchQuery,
       currentPharmacyBoxId: currentPharmacyBoxId ?? this.currentPharmacyBoxId,
+
+      // Purchase History assignments
+      purchaseHistoryStatus: purchaseHistoryStatus ?? this.purchaseHistoryStatus,
+      purchaseHistoryErrorMessage: purchaseHistoryErrorMessage,
+      purchaseHistoryList: purchaseHistoryList ?? this.purchaseHistoryList,
     );
   }
   // ============================================
@@ -252,10 +276,19 @@ class ServicesState extends Equatable {
   bool get hasMedicines => allMedicines.isNotEmpty;
 
   // ============================================
+  // Purchase History Convenience Getters
+  // ============================================
+  bool get hasPurchaseHistoryError => purchaseHistoryErrorMessage != null;
+  bool get isPurchaseHistoryLoading => purchaseHistoryStatus == FormzSubmissionStatus.inProgress;
+  bool get isPurchaseHistorySuccess => purchaseHistoryStatus == FormzSubmissionStatus.success;
+  bool get isPurchaseHistoryFailure => purchaseHistoryStatus == FormzSubmissionStatus.failure;
+  bool get hasPurchaseHistory => purchaseHistoryList.isNotEmpty;
+
+  // ============================================
   // General Convenience Getters
   // ============================================
-  bool get hasAnyLoading => isLoading || isMedicineLoading || isScanLoading || isSearching;
-  bool get hasAnyError => hasError || hasMedicineError || hasScanError || hasSearchError;
+  bool get hasAnyLoading => isLoading || isMedicineLoading || isScanLoading || isSearching || isPurchaseHistoryLoading;
+  bool get hasAnyError => hasError || hasMedicineError || hasScanError || hasSearchError || hasPurchaseHistoryError;
 
   // ============================================
   // Equals and Props
@@ -304,5 +337,10 @@ class ServicesState extends Equatable {
     filteredMedicines,
     medicineSearchQuery,
     currentPharmacyBoxId,
+
+    // Purchase History props
+    purchaseHistoryStatus,
+    purchaseHistoryErrorMessage,
+    purchaseHistoryList,
   ];
 }

@@ -210,6 +210,23 @@ public final class GroupMedicalDocs {
 
 	}
 
+	@Target(ElementType.METHOD)
+	@Retention(RetentionPolicy.RUNTIME)
+	@Documented
+	@Operation(summary = "Create reminders for user",
+			description = "Create reminders for a specific group member's treatment. Only accessible by MANAGERS and RESPONSIBLES in the same group.")
+	@ApiResponses({
+			@ApiResponse(responseCode = "201", description = "Reminders created successfully",
+					content = @Content(mediaType = "application/json", schema = @Schema(
+							implementation = com.idvey.afya.payload.response.CreateReminderBulkResponse.class))),
+			@ApiResponse(responseCode = "400", description = "Invalid input data or validation failed"),
+			@ApiResponse(responseCode = "403", description = "Access denied - insufficient group permissions"),
+			@ApiResponse(responseCode = "404", description = "Treatment, user, or group not found"),
+			@ApiResponse(responseCode = "401", description = "Unauthorized") })
+	public @interface CreateUserReminders {
+
+	}
+
 	// ============== GROUP OVERVIEW ENDPOINTS ==============
 
 	@Target(ElementType.METHOD)

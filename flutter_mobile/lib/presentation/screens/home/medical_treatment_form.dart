@@ -1004,39 +1004,51 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return AppBar(
-      backgroundColor: theme.colorScheme.onSecondary,
-      elevation: 0,
-      automaticallyImplyLeading: false,
-      toolbarHeight: 55.h,
-      leading: Padding(
-        padding: EdgeInsets.all(8.0.w),
-        child: ElevatedButton(
-          onPressed: () => Navigator.of(context).pop(),
-          style: ElevatedButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.r),
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            theme.colorScheme.primary,
+            theme.colorScheme.secondary,
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      child: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        toolbarHeight: 55.h,
+        leading: Padding(
+          padding: EdgeInsets.all(8.0.w),
+          child: ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(),
+            style: ElevatedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.r),
+              ),
+              backgroundColor: Colors.white.withOpacity(0.2),
+              padding: EdgeInsets.zero,
+              elevation: 0,
             ),
-            backgroundColor: theme.colorScheme.onSecondary,
-            padding: EdgeInsets.zero,
-            elevation: 4,
-          ),
-          child: Icon(
-            Icons.arrow_back,
-            color: theme.colorScheme.onPrimary,
-            size: 18.sp,
+            child: Icon(
+              Icons.arrow_back,
+              color: Colors.white,
+              size: 18.sp,
+            ),
           ),
         ),
-      ),
-      title: Text(
-        title,
-        style: TextStyle(
-          color: theme.colorScheme.onPrimary,
-          fontSize: 20.sp,
-          fontWeight: FontWeight.w500,
+        title: Text(
+          title,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20.sp,
+            fontWeight: FontWeight.w500,
+          ),
         ),
+        centerTitle: true,
       ),
-      centerTitle: true,
     );
   }
 

@@ -2,18 +2,19 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_mobile/core/resources/data_state.dart';
-import 'package:flutter_mobile/domain/entities/reminder/simple_reminder_entity.dart';
-import 'package:flutter_mobile/domain/repositories/user_prescription_repository.dart';
+import 'package:flutter_mobile/domain/entities/prescription/create_prescription_entity.dart';
 import 'package:flutter_mobile/domain/entities/prescription/create_treatment_entity.dart';
 import 'package:flutter_mobile/domain/entities/prescription/disease_entity.dart';
+import 'package:flutter_mobile/domain/entities/prescription/prescription_entity.dart';
 import 'package:flutter_mobile/domain/entities/prescription/treatment_entity.dart';
+import 'package:flutter_mobile/domain/entities/reminder/simple_create_reminder_entity.dart';
+import 'package:flutter_mobile/domain/entities/reminder/simple_reminder_entity.dart';
 import 'package:flutter_mobile/domain/entities/services/PharmacyBoxEntity.dart';
 import 'package:flutter_mobile/domain/entities/services/my_medicine_entity.dart';
-import 'package:flutter_mobile/domain/entities/prescription/create_prescription_entity.dart';
-import 'package:flutter_mobile/domain/entities/prescription/prescription_entity.dart';
 import 'package:flutter_mobile/domain/repositories/disease_repository.dart';
 import 'package:flutter_mobile/domain/repositories/medicine_repository.dart';
 import 'package:flutter_mobile/domain/repositories/pharmacy_repository.dart';
+import 'package:flutter_mobile/domain/repositories/user_prescription_repository.dart';
 import 'package:flutter_mobile/domain/repositories/user_reminder_repository.dart';
 import 'package:flutter_mobile/domain/repositories/user_treatment_repository.dart';
 import 'package:formz/formz.dart';
@@ -27,7 +28,7 @@ class UserPrescriptionCreationCubit extends Cubit<UserPrescriptionCreationState>
     this._diseaseRepository,
     this._pharmacyRepository,
     this._medicineRepository,
-     // this._userReminderRepository,
+    this._userReminderRepository,
   ) : super(const UserPrescriptionCreationState());
 
   final UserPrescriptionRepository _userPrescriptionRepository;
@@ -35,7 +36,7 @@ class UserPrescriptionCreationCubit extends Cubit<UserPrescriptionCreationState>
   final DiseaseRepository _diseaseRepository;
   final PharmacyRepository _pharmacyRepository;
   final MedicineRepository _medicineRepository;
-  //final UserReminderRepository _userReminderRepository; // ADD THIS
+  final UserReminderRepository _userReminderRepository;
   // ============================================
   // Set User and Group Context
   // ============================================
@@ -456,10 +457,10 @@ class UserPrescriptionCreationCubit extends Cubit<UserPrescriptionCreationState>
 
     return results;
   }
- /* // ADD THIS METHOD at the end of the cubit
+
   Future<DataState<List<SimpleReminderEntity>>> createSimpleReminders(
-      SimpleCreateReminderEntity createReminderEntity,
-      ) async {
+    SimpleCreateReminderEntity createReminderEntity,
+  ) async {
     if (state.userId.isEmpty || state.groupId.isEmpty) {
       return DataError('User ID and Group ID are required');
     }
@@ -469,10 +470,6 @@ class UserPrescriptionCreationCubit extends Cubit<UserPrescriptionCreationState>
         status: FormzSubmissionStatus.inProgress,
         errorMessage: null,
       ));
-
-      // TODO: You need a createUserReminders method in UserReminderRepository
-      // For now, this won't work because UserReminderRepository doesn't have this method
-      // You need to add it to the repository first
 
       final result = await _userReminderRepository.createUserReminders(
         groupId: state.groupId,
@@ -502,5 +499,4 @@ class UserPrescriptionCreationCubit extends Cubit<UserPrescriptionCreationState>
       return DataError(err);
     }
   }
-*/
 }

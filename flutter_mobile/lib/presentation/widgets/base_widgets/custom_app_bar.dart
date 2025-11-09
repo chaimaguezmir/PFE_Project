@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_mobile/core/utils/shared_prefs_utils.dart';
+import 'package:flutter_mobile/presentation/bloc/auth/auth/auth_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
@@ -25,7 +27,6 @@ class _CustomAppBarState extends State<CustomAppBar> {
   late SharedPrefsUtils _prefsUtils;
   String _displayName = 'User';
   String _email = '';
-  String _avatarPath = 'lib/config/assets/images/default_avatar.jpg';
   bool _isLoading = true;
 
   @override
@@ -47,7 +48,6 @@ class _CustomAppBarState extends State<CustomAppBar> {
       setState(() {
         _displayName = _prefsUtils.getDisplayName();
         _email = profile['email'] as String? ?? '';
-        _avatarPath = _prefsUtils.getAvatarPath();
         _isLoading = false;
       });
     } catch (e) {
@@ -58,16 +58,18 @@ class _CustomAppBarState extends State<CustomAppBar> {
     }
   }
 
+  ImageProvider _getAvatarProvider(String? avatarPath) {
+    final path = avatarPath ?? 'lib/config/assets/images/default_avatar.jpg';
+    if (path.startsWith('http')) {
+      return NetworkImage(path);
+    } else {
+      return AssetImage(path);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
-    ImageProvider avatarProvider;
-    if (_avatarPath.startsWith('http')) {
-      avatarProvider = NetworkImage(_avatarPath);
-    } else {
-      avatarProvider = AssetImage(_avatarPath);
-    }
 
     return Container(
       decoration: BoxDecoration(
@@ -177,88 +179,92 @@ class _CustomAppBarState extends State<CustomAppBar> {
               ],
             ),
           )
-              : Padding(
-            padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 20.h),
-            child: Row(
-              children: [
-                // Avatar with gradient border
-                Container(
-                  width: 64.w,
-                  height: 64.w,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                      colors: [
-                        Colors.white.withOpacity(0.4),
-                        Colors.white.withOpacity(0.2),
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                  ),
-                  padding: EdgeInsets.all(3.w),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                        image: avatarProvider,
-                        fit: BoxFit.cover,
-                        alignment: Alignment.topCenter,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.15),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
+              : BlocBuilder<AuthBloc, AuthState>(
+            builder: (context, authState) {
+              return Padding(
+                padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 20.h),
+                child: Row(
+                  children: [
+                    // Avatar with gradient border - reactive to profile image changes
+                    Container(
+                      width: 64.w,
+                      height: 64.w,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.white.withOpacity(0.4),
+                            Colors.white.withOpacity(0.2),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
                         ),
-                      ],
-                    ),
-                  ),
-                ),
-                SizedBox(width: 16.w),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        _displayName,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18.sp,
-                          letterSpacing: -0.3,
-                        ),
-                        overflow: TextOverflow.ellipsis,
                       ),
-                      SizedBox(height: 6.h),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.email_outlined,
-                            size: 14.sp,
-                            color: Colors.white.withOpacity(0.85),
+                      padding: EdgeInsets.all(3.w),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                            image: _getAvatarProvider(authState.profileImageUrl),
+                            fit: BoxFit.cover,
+                            alignment: Alignment.topCenter,
                           ),
-                          SizedBox(width: 6.w),
-                          Flexible(
-                            child: Text(
-                              _email,
-                              style: TextStyle(
-                                color: Colors.white.withOpacity(0.85),
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w500,
-                                letterSpacing: 0.1,
-                              ),
-                              overflow: TextOverflow.ellipsis,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.15),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
                             ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 16.w),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            _displayName,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18.sp,
+                              letterSpacing: -0.3,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          SizedBox(height: 6.h),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.email_outlined,
+                                size: 14.sp,
+                                color: Colors.white.withOpacity(0.85),
+                              ),
+                              SizedBox(width: 6.w),
+                              Flexible(
+                                child: Text(
+                                  _email,
+                                  style: TextStyle(
+                                    color: Colors.white.withOpacity(0.85),
+                                    fontSize: 14.sp,
+                                    fontWeight: FontWeight.w500,
+                                    letterSpacing: 0.1,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              );
+            },
           ),
         ),
       ),

@@ -2,6 +2,7 @@ package com.idvey.afya.controllers;
 
 import com.idvey.afya.docs.GroupMedicalDocs;
 import com.idvey.afya.payload.request.CreatePrescriptionRequest;
+import com.idvey.afya.payload.request.CreateReminderRequest;
 import com.idvey.afya.payload.request.CreateTreatmentRequest;
 import com.idvey.afya.payload.request.UpdatePrescriptionRequest;
 import com.idvey.afya.payload.request.UpdateTreatmentRequest;
@@ -139,6 +140,25 @@ public class GroupMedicalController {
 			@PathVariable UUID groupId, @PathVariable UUID userId) throws AccessDeniedException {
 		List<ReminderResponse> reminders = groupMedicalService.getUserReminders(currentUser.getId(), groupId, userId);
 		return ResponseEntity.ok(reminders);
+	}
+
+	@GroupMedicalDocs.CreateUserReminders
+	@PostMapping("/groups/{groupId}/users/{userId}/reminders")
+	public ResponseEntity<CreateReminderBulkResponse> createUserReminders(
+			@AuthenticationPrincipal UserDetailsImpl currentUser, @PathVariable UUID groupId, @PathVariable UUID userId,
+			@Valid @RequestBody CreateReminderRequest request) throws AccessDeniedException {
+		CreateReminderBulkResponse response = groupMedicalService.createRemindersForUser(currentUser.getId(), groupId,
+				userId, request);
+		return ResponseEntity.status(HttpStatus.CREATED).body(response);
+	}
+
+	@PatchMapping("/groups/{groupId}/users/{userId}/reminders/{reminderId}/taken")
+	public ResponseEntity<ReminderResponse> markUserReminderAsTaken(
+			@AuthenticationPrincipal UserDetailsImpl currentUser, @PathVariable UUID groupId, @PathVariable UUID userId,
+			@PathVariable UUID reminderId) throws AccessDeniedException {
+		ReminderResponse response = groupMedicalService.markUserReminderAsTaken(currentUser.getId(), groupId, userId,
+				reminderId);
+		return ResponseEntity.ok(response);
 	}
 
 	// ============== GROUP MEDICAL OVERVIEW ==============
