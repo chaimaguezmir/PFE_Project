@@ -1,0 +1,485 @@
+\chapter{Analyse et spécification des besoins}
+
+\section{Introduction}
+Dans ce deuxième chapitre, nous allons approfondir l'étude de notre projet en analysant ses éléments clés. Nous débuterons par une identification des différents acteurs impliqués ainsi que des fonctionnalités qui leur sont attribuées. Par la suite, nous préciserons les besoins fonctionnels et non fonctionnels de l'application. Nous présenterons ensuite le backlog produit complet et la répartition des sprints en releases. Enfin, nous détaillerons l'architecture globale du système ainsi que l'environnement technique dans lequel il sera développé.
+
+\section{Analyse des besoins}
+
+\subsection{Identification des acteurs}
+On définit un acteur comme toute entité qui joue un rôle actif et interagit avec l'application. Dans cette partie, nous soulignons les acteurs majeurs qui participent au fonctionnement de notre système AFYA :
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.3}
+    \begin{tabular}{|p{3.5cm}|p{10.5cm}|}
+        \hline
+        \textbf{Acteur} & \textbf{Description} \\
+        \hline
+        Utilisateur simple (Membre) & Peut créer un compte, s'authentifier, gérer son profil, ajouter ses médicaments, créer et consulter ses traitements et prescriptions, gérer sa boîte à pharmacie, et recevoir des rappels de prise de médicaments. \\
+        \hline
+        Responsable & En plus des fonctionnalités de l'utilisateur simple, peut superviser et gérer les traitements, prescriptions et prises de médicaments d'autres utilisateurs au sein d'un groupe familial. \\
+        \hline
+        Gestionnaire (Manager) & Possède tous les privilèges du responsable, et peut en plus gérer les membres du groupe (ajouter, retirer, assigner des rôles), modifier les informations du groupe et le supprimer. \\
+        \hline
+    \end{tabular}
+    \captionsetup{justification=centering}
+    \caption{Identification des acteurs}
+    \label{tab:actors}
+\end{table}
+
+\subsection{Besoins fonctionnels}
+Les besoins fonctionnels décrivent les fonctionnalités spécifiques que l'application doit fournir. Ils sont directement liés aux actions que les utilisateurs peuvent effectuer. Voici les besoins fonctionnels identifiés pour AFYA :
+
+\begin{itemize}
+    \item \textbf{Gestion du profil :} Création de compte, authentification, réinitialisation de mot de passe, consultation et modification du profil, gestion de la photo de profil, déconnexion.
+
+    \item \textbf{Gestion des médicaments :} Consultation des détails des médicaments, ajout par scan de code-barres/QR ou saisie manuelle, modification et suppression des informations.
+
+    \item \textbf{Gestion des groupes :} Création de groupe familial, modification des informations, ajout et retrait de membres, assignation de responsables, consultation des détails, suppression du groupe, possibilité de quitter un groupe.
+
+    \item \textbf{Gestion des traitements :} Création de traitements avec prescriptions, modification, suppression, consultation de l'historique des traitements passés et en cours, gestion collaborative par les responsables et gestionnaires.
+
+    \item \textbf{Gestion des prescriptions :} Ajout de prescriptions à un traitement, modification, suppression, consultation des détails, marquage des doses prises, suivi des doses restantes, gestion par les responsables et gestionnaires pour les autres utilisateurs.
+
+    \item \textbf{Notifications et rappels :} Rappels de prise de médicaments à heures spécifiques, alertes d'expiration des médicaments, notifications d'information sur les traitements, notifications de suivi, mises à jour de l'application, notifications pour les responsables et gestionnaires concernant les membres du groupe.
+
+    \item \textbf{Gestion de la boîte à pharmacie :} Ajout de médicaments à la boîte, consultation des médicaments disponibles, remplacement de médicaments, suppression, modification des quantités lors de l'utilisation, de la casse ou du don.
+\end{itemize}
+
+\subsection{Besoins non fonctionnels}
+Les besoins non fonctionnels définissent les contraintes et critères de qualité que le système doit respecter, indépendamment de ses fonctionnalités principales. Ils assurent la robustesse, la sécurité et la performance globale de l'application.
+
+\begin{itemize}
+    \item \textbf{Simplicité et ergonomie :} L'interface utilisateur doit être claire, intuitive et accessible à tous les types d'utilisateurs, y compris les personnes âgées ou peu familières avec les technologies. La navigation doit être simple et les actions principales facilement identifiables.
+
+    \item \textbf{Performance :} Le système doit répondre rapidement aux interactions de l'utilisateur. Le temps de chargement des écrans ne doit pas dépasser 2 secondes. Les opérations critiques comme la consultation des médicaments ou l'ajout de doses doivent être quasi-instantanées.
+
+    \item \textbf{Fiabilité :} L'application doit garantir la précision des données liées aux médicaments, aux doses et aux horaires de prise. Le système de notifications doit être fiable à 100\% pour éviter l'oubli de prises de médicaments.
+
+    \item \textbf{Disponibilité :} L'application doit fonctionner de manière stable sans plantages fréquents. Les données doivent être accessibles même en mode hors ligne pour les consultations (synchronisation lors de la reconnexion).
+
+    \item \textbf{Sécurité :} Protection des données personnelles et médicales sensibles. Authentification sécurisée avec JWT et tokens de rafraîchissement. Chiffrement des communications entre le client et le serveur. Gestion des accès basée sur les rôles (RBAC) pour garantir que chaque utilisateur n'accède qu'aux données autorisées.
+
+    \item \textbf{Compatibilité :} L'application mobile doit fonctionner sur Android (version 5.0+) et iOS (version 12.0+). L'interface doit s'adapter aux différentes tailles d'écran (smartphones, tablettes).
+
+    \item \textbf{Maintenabilité :} Le code doit être bien structuré, documenté et facile à maintenir. L'architecture Clean Architecture adoptée facilite les évolutions futures et l'ajout de nouvelles fonctionnalités.
+
+    \item \textbf{Scalabilité :} Le système backend doit pouvoir gérer un nombre croissant d'utilisateurs sans dégradation des performances. L'architecture doit permettre l'ajout de serveurs supplémentaires si nécessaire.
+\end{itemize}
+
+\section{Diagramme de cas d'utilisation global}
+Après avoir identifié les acteurs de l'application, il est essentiel de présenter leurs interactions avec le système à travers un diagramme de cas d'utilisation global.
+
+Ce diagramme est une représentation graphique qui permet de modéliser les interactions entre les différents acteurs et le système. Il met en évidence les fonctionnalités principales offertes par le système (appelées cas d'utilisation) ainsi que les relations entre ces fonctionnalités et les acteurs qui les utilisent.
+
+La figure \ref{fig:use-case-global} illustre le diagramme de cas d'utilisation global de l'application AFYA.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{img/use_case_global_afya.png}
+    \caption{Diagramme de cas d'utilisation global}
+    \label{fig:use-case-global}
+\end{figure}
+
+\section{Diagramme de classes global}
+Le diagramme de classes permet de présenter les classes et les interfaces du système, ainsi que les différentes relations qui les relient. Il constitue la pierre angulaire de la conception orientée objet et représente la structure statique de l'application.
+
+La figure \ref{fig:class-diagram-global} représente le diagramme de classes global de l'application AFYA, montrant les entités principales (User, Group, Medicine, Treatment, Prescription, PharmacyBox, etc.) et leurs relations.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.1\linewidth,height=0.5\textheight]{img/class_diagram_global_afya.png}
+    \caption{Diagramme de classes global}
+    \label{fig:class-diagram-global}
+\end{figure}
+
+\section{Pilotage du projet avec Scrum}
+
+\subsection{Identification de l'équipe Scrum}
+Notre équipe Scrum est composée des membres suivants :
+
+\begin{itemize}[label=\textbullet]
+    \item \textbf{Product Owner :} Monsieur Radhouan Ben Farhat (Propriétaire - IDVEY)
+    \item \textbf{Scrum Master :} Monsieur Mahmoud Somai (Encadrant professionnel - IDVEY)
+    \item \textbf{Équipe de développement :} Walid Zaroui (Développeur - Étudiant)
+\end{itemize}
+
+\subsection{Backlog produit}
+Le backlog produit est une liste priorisée des fonctionnalités à réaliser afin de répondre aux besoins des utilisateurs et aux objectifs du projet.
+
+Pour estimer la complexité des éléments du backlog, nous avons adopté une échelle numérique qui permet de classer les tâches selon leur niveau de difficulté ou d'effort attendu. Les valeurs utilisées sont :
+
+\begin{itemize}[label=\textbullet]
+    \item \textbf{Faible (1)} : Fonctionnalités simples, peu d'interactions ou de logique métier.
+    \item \textbf{Moyenne (2)} : Tâches nécessitant plus d'intégration ou d'interaction.
+    \item \textbf{Haute (3)} : Fonctions complexes qui impliquent plusieurs systèmes ou interactions.
+    \item \textbf{Très Haute (5)} : Fonctionnalités majeures, critiques, ou avec de nombreuses dépendances et éléments à gérer.
+\end{itemize}
+
+Le tableau \ref{tab:backlog} présente le backlog produit complet de l'application AFYA, organisé par modules fonctionnels.
+
+{\scriptsize
+\begin{longtable}{|
+>{\centering\arraybackslash}m{0.7cm}|
+>{\centering\arraybackslash}m{2.2cm}|
+>{\centering\arraybackslash}m{1cm}|
+m{5cm}|
+>{\centering\arraybackslash}m{1cm}|
+>{\centering\arraybackslash}m{1.3cm}|
+>{\centering\arraybackslash}m{1.5cm}|}
+\hline
+\textbf{ID} & \textbf{Module} & \textbf{US ID} & \textbf{User Story} & \textbf{Prio.} & \textbf{Compl.} & \textbf{Nbr jours} \\
+\hline
+\endfirsthead
+
+\hline
+\textbf{ID} & \textbf{Module} & \textbf{US ID} & \textbf{User Story} & \textbf{Priorité} & \textbf{Complexité} & \textbf{Nombre jours} \\
+\hline
+\endhead
+
+\multirow{7}{*}{1} & \multirow{7}{2.2cm}{Gestion du profil}
+& 1.1 & En tant qu'utilisateur, je veux créer un compte. & Haute & 3 & 2 \\
+\cline{3-7}
+& & 1.2 & En tant qu'utilisateur, je dois m'authentifier. & Haute & 5 & 3 \\
+\cline{3-7}
+& & 1.3 & En tant qu'utilisateur, je veux réinitialiser mon mot de passe. & Haute & 3 & 1 \\
+\cline{3-7}
+& & 1.4 & En tant qu'utilisateur, je veux consulter mon profil. & Moyenne & 2 & 2 \\
+\cline{3-7}
+& & 1.5 & En tant qu'utilisateur, je veux modifier mon profil. & Moyenne & 3 & 2 \\
+\cline{3-7}
+& & 1.6 & En tant qu'utilisateur, je veux me déconnecter. & Moyenne & 2 & 1 \\
+\cline{3-7}
+& & 1.7 & En tant qu'utilisateur, je veux modifier ma photo de profil. & Faible & 1 & 1 \\
+\hline
+
+\multirow{5}{*}{2} & \multirow{5}{2.2cm}{Gestion des médicaments}
+& 2.1 & En tant qu'utilisateur, je veux consulter les détails de mes médicaments. & Haute & 3 & 1 \\
+\cline{3-7}
+& & 2.2 & En tant qu'utilisateur, je veux ajouter un médicament par scan QR/code-barres. & Haute & 5 & 3 \\
+\cline{3-7}
+& & 2.3 & En tant qu'utilisateur, je veux ajouter un médicament manuellement. & Haute & 3 & 2 \\
+\cline{3-7}
+& & 2.4 & En tant qu'utilisateur, je veux modifier un médicament. & Moyenne & 3 & 1 \\
+\cline{3-7}
+& & 2.5 & En tant qu'utilisateur, je veux supprimer un médicament. & Moyenne & 2 & 1 \\
+\hline
+
+\multirow{8}{*}{3} & \multirow{8}{2.2cm}{Gestion des groupes}
+& 3.1 & En tant qu'utilisateur, je veux modifier mon groupe. & Moyenne & 3 & 1 \\
+\cline{3-7}
+& & 3.2 & En tant qu'utilisateur, je veux quitter un groupe. & Moyenne & 2 & 1 \\
+\cline{3-7}
+& & 3.3 & En tant qu'utilisateur, je veux supprimer un groupe. & Faible & 1 & 1 \\
+\cline{3-7}
+& & 3.4 & En tant que gestionnaire, je veux ajouter un membre au groupe via scan QR. & Haute & 5 & 4 \\
+\cline{3-7}
+& & 3.5 & En tant que gestionnaire, je veux retirer un membre du groupe. & Haute & 5 & 1 \\
+\cline{3-7}
+& & 3.6 & En tant que gestionnaire, je veux consulter les détails du groupe. & Moyenne & 3 & 1 \\
+\cline{3-7}
+& & 3.7 & En tant que gestionnaire, je veux assigner un membre comme responsable. & Haute & 5 & 2 \\
+\cline{3-7}
+& & 3.8 & En tant que gestionnaire, je veux désassigner un responsable. & Haute & 5 & 1 \\
+\hline
+
+\multirow{12}{*}{4} & \multirow{12}{2.2cm}{Gestion des traitements}
+& 4.1 & En tant qu'utilisateur, je veux ajouter un traitement avec au moins une prescription. & Haute & 5 & 2 \\
+\cline{3-7}
+& & 4.2 & En tant qu'utilisateur, je veux modifier un traitement. & Haute & 5 & 2 \\
+\cline{3-7}
+& & 4.3 & En tant qu'utilisateur, je veux consulter l'historique de mes traitements. & Moyenne & 3 & 2 \\
+\cline{3-7}
+& & 4.4 & En tant qu'utilisateur, je veux supprimer un traitement. & Faible & 1 & 1 \\
+\cline{3-7}
+& & 4.5 & En tant que responsable, je veux ajouter un traitement à un membre. & Haute & 5 & 2 \\
+\cline{3-7}
+& & 4.6 & En tant que responsable, je veux supprimer un traitement d'un membre. & Moyenne & 3 & 1 \\
+\cline{3-7}
+& & 4.7 & En tant que responsable, je veux modifier un traitement d'un membre. & Moyenne & 3 & 2 \\
+\cline{3-7}
+& & 4.8 & En tant que responsable, je veux consulter les traitements d'un membre. & Haute & 5 & 1 \\
+\cline{3-7}
+& & 4.9 & En tant que gestionnaire, je veux ajouter un traitement à un membre. & Haute & 5 & 2 \\
+\cline{3-7}
+& & 4.10 & En tant que gestionnaire, je veux supprimer un traitement d'un membre. & Moyenne & 3 & 1 \\
+\cline{3-7}
+& & 4.11 & En tant que gestionnaire, je veux modifier un traitement d'un membre. & Moyenne & 3 & 2 \\
+\cline{3-7}
+& & 4.12 & En tant que gestionnaire, je veux consulter les traitements d'un membre. & Haute & 5 & 1 \\
+\hline
+
+\multirow{16}{*}{5} & \multirow{16}{2.2cm}{Gestion des prescriptions}
+& 5.1 & En tant qu'utilisateur, je veux ajouter des prescriptions à un traitement. & Haute & 5 & 2 \\
+\cline{3-7}
+& & 5.2 & En tant qu'utilisateur, je veux modifier une prescription. & Moyenne & 3 & 2 \\
+\cline{3-7}
+& & 5.3 & En tant qu'utilisateur, je veux supprimer une prescription. & Moyenne & 3 & 1 \\
+\cline{3-7}
+& & 5.4 & En tant qu'utilisateur, je veux consulter les détails d'une prescription. & Moyenne & 3 & 1 \\
+\cline{3-7}
+& & 5.5 & En tant qu'utilisateur, je veux marquer les doses prises et suivre les restantes. & Haute & 5 & 2 \\
+\cline{3-7}
+& & 5.6 & En tant que responsable, je veux ajouter une prescription à un membre. & Haute & 5 & 2 \\
+\cline{3-7}
+& & 5.7 & En tant que responsable, je veux supprimer une prescription d'un membre. & Moyenne & 3 & 1 \\
+\cline{3-7}
+& & 5.8 & En tant que responsable, je veux modifier une prescription d'un membre. & Moyenne & 3 & 2 \\
+\cline{3-7}
+& & 5.9 & En tant que responsable, je veux consulter les prescriptions d'un membre. & Moyenne & 3 & 1 \\
+\cline{3-7}
+& & 5.10 & En tant que responsable, je veux marquer les doses prises par un membre. & Haute & 5 & 2 \\
+\cline{3-7}
+& & 5.11 & En tant que responsable, je veux suivre les doses restantes d'un membre. & Haute & 5 & 1 \\
+\cline{3-7}
+& & 5.12 & En tant que gestionnaire, je veux supprimer une prescription d'un membre. & Moyenne & 3 & 1 \\
+\cline{3-7}
+& & 5.13 & En tant que gestionnaire, je veux modifier une prescription d'un membre. & Moyenne & 3 & 2 \\
+\cline{3-7}
+& & 5.14 & En tant que gestionnaire, je veux consulter les prescriptions d'un membre. & Moyenne & 3 & 1 \\
+\cline{3-7}
+& & 5.15 & En tant que gestionnaire, je veux marquer les doses prises par un membre. & Haute & 5 & 2 \\
+\cline{3-7}
+& & 5.16 & En tant que gestionnaire, je veux suivre les doses restantes d'un membre. & Haute & 5 & 2 \\
+\hline
+
+\multirow{7}{*}{6} & \multirow{7}{2.2cm}{Notifications et rappels}
+& 6.1 & En tant qu'utilisateur, je veux recevoir des rappels de prise. & Haute & 5 & 4 \\
+\cline{3-7}
+& & 6.2 & En tant qu'utilisateur, je veux recevoir des alertes d'expiration. & Haute & 5 & 2 \\
+\cline{3-7}
+& & 6.3 & En tant qu'utilisateur, je veux recevoir des notifications sur les traitements. & Moyenne & 5 & 2 \\
+\cline{3-7}
+& & 6.4 & En tant qu'utilisateur, je veux recevoir des notifications de suivi. & Moyenne & 5 & 2 \\
+\cline{3-7}
+& & 6.5 & En tant qu'utilisateur, je veux recevoir des notifications de mises à jour. & Moyenne & 5 & 1 \\
+\cline{3-7}
+& & 6.6 & En tant que responsable, je veux recevoir des alertes sur les membres. & Haute & 5 & 2 \\
+\cline{3-7}
+& & 6.7 & En tant que gestionnaire, je veux recevoir des notifications du groupe. & Haute & 5 & 2 \\
+\hline
+
+\multirow{5}{*}{7} & \multirow{5}{2.2cm}{Gestion de la boîte à pharmacie}
+& 7.1 & En tant qu'utilisateur, je veux ajouter un médicament à ma boîte. & Haute & 5 & 2 \\
+\cline{3-7}
+& & 7.2 & En tant qu'utilisateur, je veux remplacer un médicament dans ma boîte. & Moyenne & 3 & 2 \\
+\cline{3-7}
+& & 7.3 & En tant qu'utilisateur, je veux supprimer un médicament de ma boîte. & Moyenne & 3 & 1 \\
+\cline{3-7}
+& & 7.4 & En tant qu'utilisateur, je veux consulter les médicaments dans ma boîte. & Moyenne & 3 & 1 \\
+\cline{3-7}
+& & 7.5 & En tant qu'utilisateur, je veux modifier la quantité d'un médicament. & Faible & 2 & 2 \\
+\hline
+
+\captionsetup{justification=centering}
+\caption{Backlog produit}
+\label{tab:backlog}
+\end{longtable}
+}
+
+\subsection{Répartition des sprints en releases}
+L'adoption de la méthode Scrum implique de diviser le projet en sprints. Une release correspond à la livraison d'une version aboutie du produit, comprenant une succession de sprints. Dans notre cas, nous avons structuré notre projet en \textbf{3 releases} regroupant \textbf{6 sprints}.
+
+Le tableau \ref{tab:releases-sprints} montre comment les sprints sont répartis et combien de jours sont estimés pour chaque sprint.
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{|
+>{\centering\arraybackslash}m{3cm}|
+>{\centering\arraybackslash}m{3cm}|
+m{7cm}|
+>{\centering\arraybackslash}m{3cm}|}
+\hline
+\textbf{Releases} & \textbf{Sprints} & \textbf{Fonctionnalités du Sprint} & \textbf{Estimation en nombre de jours} \\
+\hline
+
+\multirow{2}{*}{Release 1}
+& Sprint 1
+& - Module d'authentification \newline - Gestion du profil \newline - Gestion des groupes (ajout, retrait, assignation)
+& 13 jours \\
+\cline{2-4}
+& Sprint 2
+& - Gestion des médicaments (scan QR, ajout manuel) \newline - Gestion des traitements \newline - Gestion des prescriptions \newline - Gestion de la boîte à pharmacie
+& 18 jours \\
+\hline
+
+\multirow{2}{*}{Release 2}
+& Sprint 3
+& - Gestion collaborative des traitements \newline - Gestion collaborative des prescriptions \newline - Marquage des doses prises
+& 14 jours \\
+\cline{2-4}
+& Sprint 4
+& - Système de notifications et rappels \newline - Alertes d'expiration \newline - Notifications pour responsables et gestionnaires
+& 15 jours \\
+\hline
+
+\multirow{2}{*}{Release 3}
+& Sprint 5
+& - Consultation et modification du profil \newline - Gestion avancée des médicaments \newline - Gestion avancée des groupes \newline - Historique des traitements
+& 18 jours \\
+\cline{2-4}
+& Sprint 6
+& - Photo de profil \newline - Suppression de groupe \newline - Gestion complète des prescriptions \newline - Boîte à pharmacie (remplacement, modification quantités)
+& 20 jours \\
+\hline
+
+\end{tabular}
+\captionsetup{justification=centering}
+\caption{Plan des Releases et Sprints avec estimations en jours}
+\label{tab:releases-sprints}
+\end{table}
+
+\section{Architecture de l'application}
+
+\subsection{Architecture logique}
+Notre projet est basé sur l'architecture \textbf{Clean Architecture} pour le frontend mobile et l'architecture \textbf{MVC (Modèle-Vue-Contrôleur)} pour le backend, visant à séparer clairement les différentes couches de l'application.
+
+\subsubsection{Architecture mobile (Clean Architecture)}
+Pour l'application mobile Flutter, nous adoptons la Clean Architecture qui se compose de trois couches principales :
+
+\begin{itemize}
+    \item \textbf{Domain Layer (Couche Domaine) :} Contient les entités métier et les repository interfaces. Cette couche est indépendante de toute implémentation technique et ne dépend d'aucune autre couche.
+
+    \item \textbf{Data Layer (Couche Données) :} Contient les modèles, les data sources (remote et local) et les implémentations des repositories. Cette couche dépend uniquement de la couche Domain.
+
+    \item \textbf{Presentation Layer (Couche Présentation) :} Contient les widgets, screens, et la logique de gestion d'état (BLoC/Cubit). Cette couche dépend uniquement de la couche Domain pour accéder aux use cases.
+\end{itemize}
+
+Le flux de dépendances suit la règle : \textit{Presentation → Domain ← Data}, garantissant que la logique métier reste indépendante des détails d'implémentation.
+
+\subsubsection{Architecture backend (MVC)}
+Pour le backend Spring Boot, nous utilisons l'architecture MVC :
+
+\begin{itemize}
+    \item \textbf{Modèle :} Représente la structure des données de l'application (entités JPA), assure la gestion des interactions avec la base de données.
+
+    \item \textbf{Vue :} Correspond aux réponses JSON renvoyées par l'API REST, formatées selon les DTOs (Data Transfer Objects).
+
+    \item \textbf{Contrôleur :} Fait le lien entre le modèle et la vue. Il interprète les requêtes HTTP, invoque les services métier appropriés, et renvoie les réponses formatées.
+\end{itemize}
+
+\subsection{Architecture physique}
+L'architecture physique de AFYA suit un modèle \textbf{client-serveur} à trois tiers illustré par la figure \ref{fig:arch-physique}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\linewidth]{img/architecture_physique.png}
+    \caption{Architecture physique}
+    \label{fig:arch-physique}
+\end{figure}
+
+\begin{itemize}
+    \item \textbf{Couche Client :} Application mobile Flutter fonctionnant sur Android et iOS. Elle communique avec le serveur backend via des API REST sécurisées (HTTPS).
+
+    \item \textbf{Couche Application (Backend) :} Serveur Spring Boot hébergeant l'API REST. Il gère la logique métier, l'authentification JWT, et communique avec la base de données.
+
+    \item \textbf{Couche Données :} Base de données MariaDB/MySQL stockant toutes les données de l'application (utilisateurs, groupes, médicaments, traitements, prescriptions, etc.).
+\end{itemize}
+
+\section{Environnement de travail}
+
+\subsection{Environnement matériel}
+Pendant ce stage, nous avons utilisé un ordinateur portable pour développer notre application, dont les caractéristiques sont présentées dans le tableau \ref{tab:env-materiel}.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Caractéristique} & \textbf{Détail} \\
+\hline
+Processeur & AMD Ryzen 5 5500U 2.10 GHz \\
+\hline
+Mémoire RAM & 20 Go DDR4 \\
+\hline
+Stockage & SSD de 512 Go \\
+\hline
+Système d'exploitation & Windows 11 Pro \\
+\hline
+\end{tabular}
+\captionsetup{justification=centering}
+\caption{Environnement matériel}
+\label{tab:env-materiel}
+\end{table}
+
+\subsection{Environnement logiciel}
+Pour atteindre les objectifs de notre projet, nous avons utilisé les technologies et outils suivants :
+
+\subsubsection{Technologies backend}
+
+\begin{itemize}
+    \item \textbf{Java 17 :} Langage de programmation pour le développement du backend, offrant stabilité et performance pour les applications d'entreprise.
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.2\linewidth]{img/java_logo.png}
+        \caption{Logo Java}
+        \label{fig:java-logo}
+    \end{figure}
+
+    \item \textbf{Spring Boot 3.4 :} Framework Java pour le développement d'applications backend robustes et scalables. Il simplifie la configuration et le déploiement des applications Spring.
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.25\linewidth]{img/spring_boot_logo.png}
+        \caption{Logo Spring Boot}
+        \label{fig:spring-logo}
+    \end{figure}
+
+    \item \textbf{Spring Security + JWT :} Pour l'authentification et l'autorisation sécurisées des utilisateurs avec des tokens JWT.
+
+    \item \textbf{Spring Data JPA :} Pour la gestion de la persistance des données et l'interaction avec la base de données via Hibernate.
+
+    \item \textbf{MariaDB/MySQL :} Système de gestion de base de données relationnelle pour stocker toutes les données de l'application.
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.25\linewidth]{img/mariadb_logo.png}
+        \caption{Logo MariaDB}
+        \label{fig:mariadb-logo}
+    \end{figure}
+\end{itemize}
+
+\subsubsection{Technologies frontend}
+
+\begin{itemize}
+    \item \textbf{Flutter 3.8+ :} Framework Google pour le développement d'applications mobiles cross-platform (Android/iOS) avec une seule base de code.
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.25\linewidth]{img/flutter_logo.png}
+        \caption{Logo Flutter}
+        \label{fig:flutter-logo}
+    \end{figure}
+
+    \item \textbf{Dart :} Langage de programmation utilisé par Flutter, optimisé pour le développement d'interfaces utilisateur.
+
+    \item \textbf{BLoC Pattern (flutter\_bloc) :} Pour la gestion d'état de l'application, séparant la logique métier de l'interface utilisateur.
+
+    \item \textbf{GetIt :} Pour l'injection de dépendances, facilitant la gestion des instances et le découplage des composants.
+
+    \item \textbf{Dio :} Client HTTP pour les appels API, avec support des intercepteurs pour la gestion des tokens JWT.
+
+    \item \textbf{go\_router :} Pour la navigation déclarative et la gestion des routes de l'application.
+\end{itemize}
+
+\subsubsection{Outils de développement}
+
+\begin{itemize}
+    \item \textbf{Visual Studio Code :} Éditeur de code principal pour le développement Flutter.
+
+    \item \textbf{IntelliJ IDEA :} IDE pour le développement du backend Spring Boot avec support avancé de Java et Spring.
+
+    \item \textbf{Postman :} Pour tester les API REST du backend.
+
+    \item \textbf{Git \& GitHub :} Pour le contrôle de version et la collaboration sur le code.
+
+    \item \textbf{Figma :} Pour la conception des maquettes et du design de l'interface utilisateur.
+\end{itemize}
+
+\section{Conclusion}
+Dans ce chapitre, nous avons présenté une analyse approfondie du système AFYA, en identifiant les trois types d'acteurs (Utilisateur, Responsable, Gestionnaire) et leurs besoins fonctionnels et non fonctionnels. Nous avons détaillé le backlog produit complet de 60 user stories réparties sur 7 modules fonctionnels et 6 sprints organisés en 3 releases, pour une durée totale de 98 jours.
+
+Nous avons également présenté la méthodologie Scrum adoptée avec l'identification de l'équipe, ainsi que l'architecture de l'application basée sur Clean Architecture pour le mobile et MVC pour le backend. Enfin, nous avons décrit l'environnement technique complet incluant Spring Boot, Flutter, et les outils de développement utilisés.
+
+Cette phase d'analyse et de spécification constitue une base solide pour la conception et le développement structurés de l'application AFYA. Le chapitre suivant détaillera la première release du projet, centrée sur la mise en place des fonctionnalités de base durant les sprints 1 et 2.
