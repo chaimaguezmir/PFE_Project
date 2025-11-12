@@ -12,28 +12,25 @@ L’objectif de ce sprint est de permettre aux utilisateurs d’ajouter des proj
 
 \begin{table}[H]
 \centering
-\scriptsize
-\setlength{\tabcolsep}{4pt} % réduit l'espace interne des cellules
+\renewcommand{\arraystretch}{1.4}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{|
->{\centering\arraybackslash}m{0.9cm}|
->{\centering\arraybackslash}m{3cm}|
->{\centering\arraybackslash}m{1.1cm}|
-m{5.5cm}|
->{\centering\arraybackslash}m{1.4cm}|
->{\centering\arraybackslash}m{1.6cm}|
->{\centering\arraybackslash}m{1.3cm}|}
+>{\centering\arraybackslash}m{1cm}|
+m{8cm}|
+>{\centering\arraybackslash}m{2cm}|
+>{\centering\arraybackslash}m{2cm}|
+>{\centering\arraybackslash}m{2cm}|}
 \hline
-\textbf{ID} & \textbf{Module} & \textbf{Story ID} & \textbf{User Story} & \textbf{Priorité} & \textbf{Complexité} & \textbf{Nb jours} \\
+\textbf{Story ID} & \textbf{User Story} & \textbf{Priorité} & \textbf{Complexité} & \textbf{Nb jours} \\
 \hline
-\multirow{2}{*}{5}
-& \multirow{2}{3cm}{Intégration des projets CI/CD}
-& 5.1 & En tant qu’utilisateur, je veux \newline ajouter des projets depuis GitLab
-& Élevée & L & 20 \\
-\cline{3-7}
-& & 5.2 & En tant qu’utilisateur, je veux \newline consulter les logs des pipelines CI/CD
-& Élevée & L & 5 \\
+
+5.1 & En tant qu'utilisateur, je veux ajouter des projets depuis GitLab & Élevée & L & 20 \\
 \hline
-\end{tabular}
+5.2 & En tant qu'utilisateur, je veux consulter les logs des pipelines CI/CD & Élevée & L & 5 \\
+\hline
+
+\end{tabular}%
+}
 \captionsetup{justification=centering}
 \caption{Backlog Sprint 5}
 \end{table}
@@ -218,34 +215,29 @@ l’administration des droits d’accès.
 
 \begin{table}[H]
 \centering
-\scriptsize
-\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.4}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{|
->{\centering\arraybackslash}m{0.9cm}|
->{\centering\arraybackslash}m{3cm}|
->{\centering\arraybackslash}m{1.1cm}|
-m{5.5cm}|
->{\centering\arraybackslash}m{1.4cm}|
->{\centering\arraybackslash}m{1.6cm}|
->{\centering\arraybackslash}m{1.3cm}|}
+>{\centering\arraybackslash}m{1cm}|
+m{8cm}|
+>{\centering\arraybackslash}m{2cm}|
+>{\centering\arraybackslash}m{2cm}|
+>{\centering\arraybackslash}m{2cm}|}
 \hline
-\textbf{ID} & \textbf{Module} & \textbf{Story ID} & \textbf{User Story} & \textbf{Priorité} & \textbf{Complexité} & \textbf{Nb jours} \\
+\textbf{Story ID} & \textbf{User Story} & \textbf{Priorité} & \textbf{Complexité} & \textbf{Nb jours} \\
 \hline
-\multirow{4}{*}{6}
-& \multirow{4}{3cm}{Gestion des utilisateurs}
-& 6.1 & En tant qu’administrateur, je veux attribuer ou modifier les rôles des utilisateurs afin de contrôler leurs droits d’accès. 
-& Élevée & M & 3 \\
-\cline{3-7}
-& & 6.2 & En tant qu’administrateur, je veux gérer les états des utilisateurs (actif, inactif, suspendu) pour contrôler l’accès au système. 
-& Élevée & L & 4 \\
-\cline{3-7}
-& & 6.3 & En tant qu’administrateur, je veux modifier les informations des utilisateurs.
-& Élevée & M & 2 \\
-\cline{3-7}
-& & 6.4 & En tant qu’administrateur, je veux supprimer des utilisateurs.
-& Élevée & M & 2 \\
+
+6.1 & En tant qu'administrateur, je veux attribuer ou modifier les rôles des utilisateurs afin de contrôler leurs droits d'accès. & Élevée & M & 3 \\
 \hline
-\end{tabular}
+6.2 & En tant qu'administrateur, je veux gérer les états des utilisateurs (actif, inactif, suspendu) pour contrôler l'accès au système. & Élevée & L & 4 \\
+\hline
+6.3 & En tant qu'administrateur, je veux modifier les informations des utilisateurs. & Élevée & M & 2 \\
+\hline
+6.4 & En tant qu'administrateur, je veux supprimer des utilisateurs. & Élevée & M & 2 \\
+\hline
+
+\end{tabular}%
+}
 
 \captionsetup{justification=centering}
 \caption{Backlog Sprint 6}
