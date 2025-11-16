@@ -27,4 +27,17 @@ abstract class MedicineRepository {
 
   // New search method
   Future<DataState<List<MedicineEntity>>> searchMedicinesByName(String query);
+
+  // Get purchase history for a specific medicine
+  Future<DataState<List<PurchaseHistoryEntity>>> getPurchaseHistory(String myMedicineId);
+
+  // Update purchase history
+  Future<DataState<PurchaseHistoryEntity>> updatePurchaseHistory({
+    required String purchaseHistoryId,
+    required int quantityPurchased,
+    required DateTime expiryDate,
+  });
+
+  // Delete purchase history
+  Future<DataState<void>> deletePurchaseHistory(String purchaseHistoryId);
 }

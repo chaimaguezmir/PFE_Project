@@ -7,6 +7,7 @@ import 'package:flutter_mobile/data/model/services/add_purchase_history_request_
 import 'package:flutter_mobile/data/model/services/medicine_model.dart';
 import 'package:flutter_mobile/data/model/services/my_medicine_model.dart';
 import 'package:flutter_mobile/data/model/services/purchase_history_response_model.dart';
+import 'package:flutter_mobile/data/model/services/update_purchase_history_request_model.dart';
 
 class MedicineRemoteDataSourceImpl implements MedicineRemoteDataSource {
   MedicineRemoteDataSourceImpl(this._dio);
@@ -481,5 +482,123 @@ class MedicineRemoteDataSourceImpl implements MedicineRemoteDataSource {
         message: 'An unexpected error occurred: $e',
       );
     }
+  }
+
+  @override
+  Future<List<PurchaseHistoryResponseModel>> getPurchaseHistory(String myMedicineId) async {
+    try {
+      print('Fetching purchase history for medicine: $myMedicineId');
+      final response = await _dio.get(
+        '${ApiEndpoints.purchaseHistory}/my-medicine/$myMedicineId',
+      );
+
+      print('Purchase history response status: ${response.statusCode}');
+      print('Purchase history response data: ${response.data}');
+
+      if (response.statusCode == 200) {
+        final data = response.data as List;
+        print('Successfully fetched ${data.length} purchase history records');
+        return data.map((json) => PurchaseHistoryResponseModel.fromJson(json)).toList();
+      } else {
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          message: 'Failed to fetch purchase history: ${response.statusMessage}',
+        );
+      }
+    } on DioException catch (e) {
+      print('DioException in getPurchaseHistory: ${e.message}');
+      print('Status code: ${e.response?.statusCode}');
+      print('Response data: ${e.response?.data}');
+      rethrow;
+    } catch (e) {
+      print('Unexpected error in getPurchaseHistory: $e');
+      throw DioException(
+        requestOptions: RequestOptions(path: '${ApiEndpoints.purchaseHistory}/my-medicine/$myMedicineId'),
+        message: 'An unexpected error occurred: $e',
+      );
+    }
+  }
+
+  @override
+  Future<PurchaseHistoryResponseModel> updatePurchaseHistory({
+    required String purchaseHistoryId,
+    required int quantityPurchased,
+    required DateTime expiryDate,
+  }) async {
+    try {
+      print('Updating purchase history: $purchaseHistoryId');
+      final request = UpdatePurchaseHistoryRequestModel(
+        quantityPurchased: quantityPurchased,
+        expiryDate: _formatDate(expiryDate),
+      );
+
+      final response = await _dio.put(
+        '${ApiEndpoints.purchaseHistory}/$purchaseHistoryId',
+        data: request.toJson(),
+      );
+
+      print('Update purchase history response status: ${response.statusCode}');
+      print('Update purchase history response data: ${response.data}');
+
+      if (response.statusCode == 200) {
+        print('Successfully updated purchase history');
+        return PurchaseHistoryResponseModel.fromJson(response.data);
+      } else {
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          message: 'Failed to update purchase history: ${response.statusMessage}',
+        );
+      }
+    } on DioException catch (e) {
+      print('DioException in updatePurchaseHistory: ${e.message}');
+      print('Status code: ${e.response?.statusCode}');
+      print('Response data: ${e.response?.data}');
+      rethrow;
+    } catch (e) {
+      print('Unexpected error in updatePurchaseHistory: $e');
+      throw DioException(
+        requestOptions: RequestOptions(path: '${ApiEndpoints.purchaseHistory}/$purchaseHistoryId'),
+        message: 'An unexpected error occurred: $e',
+      );
+    }
+  }
+
+  @override
+  Future<void> deletePurchaseHistory(String purchaseHistoryId) async {
+    try {
+      print('Deleting purchase history: $purchaseHistoryId');
+      final response = await _dio.delete(
+        '${ApiEndpoints.purchaseHistory}/$purchaseHistoryId',
+      );
+
+      print('Delete purchase history response status: ${response.statusCode}');
+      print('Delete purchase history response data: ${response.data}');
+
+      if (response.statusCode != 200 && response.statusCode != 204) {
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          message: 'Failed to delete purchase history: ${response.statusMessage}',
+        );
+      }
+      print('Successfully deleted purchase history');
+    } on DioException catch (e) {
+      print('DioException in deletePurchaseHistory: ${e.message}');
+      print('Status code: ${e.response?.statusCode}');
+      print('Response data: ${e.response?.data}');
+      rethrow;
+    } catch (e) {
+      print('Unexpected error in deletePurchaseHistory: $e');
+      throw DioException(
+        requestOptions: RequestOptions(path: '${ApiEndpoints.purchaseHistory}/$purchaseHistoryId'),
+        message: 'An unexpected error occurred: $e',
+      );
+    }
+  }
+
+  String _formatDate(DateTime date) {
+    return "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
   }
 }

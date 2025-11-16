@@ -18,18 +18,24 @@ class ReminderModel extends ReminderEntity {
 
   factory ReminderModel.fromJson(Map<String, dynamic> json) {
     return ReminderModel(
-      id: json['id'] as String,
-      myMedicineId: json['myMedicineId'] as String,
-      medicationName: json['medicationName'] as String,
-      prescriptionId: json['prescriptionId'] as String,
-      prescriptionName: json['prescriptionName'] as String,
-      reminderTime: DateTime.parse(json['reminderTime'] as String),
-      status: json['status'] as String,
-      message: json['message'] as String,
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      updatedAt: DateTime.parse(json['updatedAt'] as String),
-      treatmentId: json['treatmentId'] as String,
-      timeSlot: json['timeSlot'] as String,
+      id: json['id'] as String? ?? '',
+      myMedicineId: json['myMedicineId'] as String? ?? '',
+      medicationName: json['medicationName'] as String? ?? '',
+      prescriptionId: json['prescriptionId'] as String? ?? '',
+      prescriptionName: json['prescriptionName'] as String? ?? '',
+      reminderTime: json['reminderTime'] != null
+          ? DateTime.parse(json['reminderTime'] as String)
+          : DateTime.now(),
+      status: json['status'] as String? ?? 'PENDING',
+      message: json['message'] as String? ?? '',
+      createdAt: json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'] as String)
+          : DateTime.now(),
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.parse(json['updatedAt'] as String)
+          : DateTime.now(),
+      treatmentId: json['treatmentId'] as String? ?? '',
+      timeSlot: json['timeSlot'] as String? ?? 'MORNING',
     );
   }
 

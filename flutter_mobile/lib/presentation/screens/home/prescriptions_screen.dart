@@ -1,4 +1,4 @@
-// lib/presentation/screens/home/prescriptions_screen.dart
+// lib/presentation/screens/home/user_prescriptions_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_mobile/config/router/app_route_constants.dart';
@@ -30,13 +30,7 @@ class PrescriptionsScreen extends StatelessWidget {
         }
       },
       child: const Scaffold(
-        appBar: CustomAppBar(
-          title: "Vos Prescriptions",
-          username: "Walid Zaroui",
-          email: "zarwi.walid@gmail.com",
-          avatarPath: "lib/config/assets/images/default_avatar.jpg",
-          showLeading: true,
-        ),
+        appBar: CustomAppBar(title: "Vos Prescriptions", showLeading: true),
         body: PrescriptionsBody(),
       ),
     );
@@ -59,11 +53,7 @@ class PrescriptionsBody extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.error_outline,
-                  size: 64.sp,
-                  color: Colors.red[400],
-                ),
+                Icon(Icons.error_outline, size: 64.sp, color: Colors.red[400]),
                 SizedBox(height: 16.h),
                 Text(
                   state.errorMessage ?? 'Une erreur est survenue',
@@ -123,9 +113,7 @@ class PrescriptionsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (prescriptions.isEmpty) {
-      return const Center(
-        child: Text('Aucune prescription disponible'),
-      );
+      return const Center(child: Text('Aucune prescription disponible'));
     }
 
     return RefreshIndicator(
@@ -148,11 +136,7 @@ class PrescriptionCard extends StatelessWidget {
 
   // Simple color mapping based on your original design
   Color _getPrescriptionColor(int index) {
-    const colors = [
-      Color(0xFF5FBEAA),
-      Color(0xFFE8B4CB),
-      Color(0xFF8FA7FF),
-    ];
+    const colors = [Color(0xFF5FBEAA), Color(0xFFE8B4CB), Color(0xFF8FA7FF)];
     return colors[index % colors.length];
   }
 
@@ -176,7 +160,9 @@ class PrescriptionCard extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         // Store prescription ID in state and navigate
-        context.read<PrescriptionCubit>().selectPrescriptionAndFetchTreatments(prescription.id);
+        context.read<PrescriptionCubit>().selectPrescriptionAndFetchTreatments(
+          prescription.id,
+        );
         context.pushNamed(AppRouteName.prescriptionDetail);
       },
       child: Container(
@@ -205,11 +191,7 @@ class PrescriptionCard extends StatelessWidget {
                 color: color.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12.r),
               ),
-              child: Icon(
-                icon,
-                color: color,
-                size: 24.sp,
-              ),
+              child: Icon(icon, color: color, size: 24.sp),
             ),
 
             SizedBox(width: 16.w),
@@ -230,23 +212,92 @@ class PrescriptionCard extends StatelessWidget {
                   SizedBox(height: 4.h),
                   Text(
                     prescription.duration,
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      color: Colors.grey[600],
-                    ),
+                    style: TextStyle(fontSize: 14.sp, color: Colors.grey[600]),
                   ),
                 ],
               ),
             ),
 
-            // Arrow Icon
-            Icon(
-              Icons.arrow_forward_ios,
-              color: Colors.grey[400],
-              size: 16.sp,
+            // Three-dot menu icon
+            PopupMenuButton<String>(
+              icon: Icon(Icons.more_vert, color: Colors.grey[600], size: 20.sp),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+              onSelected: (value) {
+                if (value == 'delete') {
+                  _handleDelete(context);
+                }
+              },
+              itemBuilder: (BuildContext context) => [
+                PopupMenuItem<String>(
+                  value: 'delete',
+                  child: Row(
+                    children: [
+                      Icon(Icons.delete, size: 18.sp, color: Colors.red),
+                      SizedBox(width: 12.w),
+                      Text('Supprimer', style: TextStyle(fontSize: 14.sp)),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _handleDelete(BuildContext context) {
+    // Show confirmation dialog
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+        title: Text(
+          'Supprimer la prescription',
+          style: TextStyle(
+            fontSize: 18.sp,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        content: Text(
+          'Êtes-vous sûr de vouloir supprimer "${prescription.name}" ?\n\nCette action est irréversible.',
+          style: TextStyle(fontSize: 14.sp),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text(
+              'Annuler',
+              style: TextStyle(
+                color: Colors.grey[600],
+                fontSize: 14.sp,
+              ),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              // Close dialog
+              Navigator.pop(dialogContext);
+
+              // Delete prescription
+              context.read<PrescriptionCubit>().deletePrescription(prescription.id);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+            ),
+            child: Text(
+              'Supprimer',
+              style: TextStyle(fontSize: 14.sp, color: Colors.white),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -295,11 +346,7 @@ class AddPrescriptionButton extends StatelessWidget {
                 color: theme().colorScheme.secondary,
                 shape: BoxShape.circle,
               ),
-              child: Icon(
-                Icons.add,
-                color: Colors.white,
-                size: 16.sp,
-              ),
+              child: Icon(Icons.add, color: Colors.white, size: 16.sp),
             ),
           ],
         ),

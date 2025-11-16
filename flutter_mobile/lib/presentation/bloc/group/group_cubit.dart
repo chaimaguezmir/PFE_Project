@@ -34,6 +34,10 @@ class GroupCubit extends Cubit<GroupState> {
     emit(state.copyWith(selectedMemberUsername: value, errorMessage: null));
   }
 
+  void selectedMemberImageUrlChanged(String value) {
+    emit(state.copyWith(selectedMemberImageUrl: value, errorMessage: null));
+  }
+
   void currentGroupNameChanged(String? value) {
     emit(state.copyWith(currentGroupName: value, errorMessage: null));
   }

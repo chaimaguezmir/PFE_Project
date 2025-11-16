@@ -22,15 +22,21 @@ class AuthInterceptor extends Interceptor {
     }
 
     options.headers['Content-Type'] = 'application/json';
+    options.headers['ngrok-skip-browser-warning'] = 'true';
 
     return super.onRequest(options, handler);
   }
 
   @override
-  void onError(DioError err, ErrorInterceptorHandler handler) async {
+  void onError(DioException err, ErrorInterceptorHandler handler) async {
     print(
       '[AuthInterceptor] onError: ${err.response?.statusCode} ${err.requestOptions.path}',
     );
+    print('[AuthInterceptor] Error type: ${err.type}');
+    print('[AuthInterceptor] Error message: ${err.message}');
+    if (err.response != null) {
+      print('[AuthInterceptor] Response data: ${err.response?.data}');
+    }
 
     if (err.response?.statusCode == 401) {
       print('[AuthInterceptor] 401 detected, trying to refresh token');

@@ -1,8 +1,17 @@
 // Stateless MedicalTreatmentForm that uses PrescriptionCreationCubit/state
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_mobile/core/resources/data_state.dart';
+import 'package:flutter_mobile/domain/entities/prescription/create_treatment_entity.dart';
+import 'package:flutter_mobile/domain/entities/prescription/treatment_entity.dart';
+import 'package:flutter_mobile/domain/entities/reminder/reminder_entity.dart';
+import 'package:flutter_mobile/domain/entities/reminder/simple_create_reminder_entity.dart';
+import 'package:flutter_mobile/domain/entities/reminder/simple_reminder_time_entity.dart';
 import 'package:flutter_mobile/domain/entities/services/PharmacyBoxEntity.dart';
 import 'package:flutter_mobile/domain/entities/services/my_medicine_entity.dart';
+import 'package:flutter_mobile/domain/repositories/reminder_repository.dart';
+import 'package:flutter_mobile/domain/repositories/treatment_repository.dart';
+import 'package:flutter_mobile/injection_container.dart';
 import 'package:flutter_mobile/presentation/bloc/home/prescription_creation_cubit.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:formz/formz.dart';
@@ -10,11 +19,89 @@ import 'package:flutter/scheduler.dart';
 import 'package:go_router/go_router.dart';
 
 class MedicalTreatmentForm extends StatelessWidget {
-  const MedicalTreatmentForm({super.key, this.onConfirmTreatment});
+  const MedicalTreatmentForm({
+    super.key,
+    this.onConfirmTreatment,
+    this.prescriptionId,
+    this.treatmentToEdit,
+    this.isEditMode = false,
+  });
 
   final VoidCallback? onConfirmTreatment;
+  final String? prescriptionId;
+  final TreatmentEntity? treatmentToEdit;
+  final bool isEditMode;
 
   String _durationValueString(int days) => '$days jours';
+
+  // Map backend time slot to frontend moment label
+  String _mapTimeSlotToMoment(String timeSlot) {
+    switch (timeSlot.toUpperCase()) {
+      case 'MORNING':
+        return 'Matin';
+      case 'NOON':
+        return 'Après Midi';
+      case 'EVENING':
+        return 'Soir';
+      case 'NIGHT':
+        return 'Nuit';
+      default:
+        return 'Matin'; // Default fallback
+    }
+  }
+
+  // Map frontend moment label to backend time slot
+  String _mapMomentToTimeSlot(String moment) {
+    switch (moment) {
+      case 'Matin':
+        return 'MORNING';
+      case 'Après Midi':
+        return 'NOON';
+      case 'Soir':
+        return 'EVENING';
+      case 'Nuit':
+        return 'NIGHT';
+      default:
+        return 'MORNING';
+    }
+  }
+
+  // Get default time for a moment (used when creating reminders)
+  String _getDefaultTimeForMoment(String moment) {
+    switch (moment) {
+      case 'Matin':
+        return '08:00';
+      case 'Après Midi':
+        return '12:00';
+      case 'Soir':
+        return '18:00';
+      case 'Nuit':
+        return '21:00';
+      default:
+        return '08:00';
+    }
+  }
+
+  // Helper method to fetch reminders and pre-fill moments
+  Future<void> _fetchAndPreFillReminders(
+    PrescriptionCreationCubit cubit,
+    String treatmentId,
+  ) async {
+    final reminderRepo = sl<ReminderRepository>();
+    final result = await reminderRepo.getRemindersByTreatmentId(treatmentId);
+
+    if (result is DataSuccess<List<ReminderEntity>>) {
+      final reminders = result.data ?? [];
+      if (reminders.isNotEmpty) {
+        // Extract unique time slots (moments) from reminders
+        final moments = reminders.map((r) => _mapTimeSlotToMoment(r.timeSlot)).toSet();
+        cubit.updateTreatmentMoments(moments);
+
+        // Note: Meal timing is not stored in reminders in the backend,
+        // so we can't pre-fill it. It defaults to current state value.
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +114,26 @@ class MedicalTreatmentForm extends StatelessWidget {
               state.pharmacyBoxesStatus != FormzSubmissionStatus.inProgress) {
             cubit.fetchPharmacyBoxes();
           }
+
+          // Pre-fill form if in edit mode
+          if (isEditMode && treatmentToEdit != null && state.treatmentSelectedMedicineId.isEmpty) {
+            // Set pharmacy box and fetch medicines
+            final boxId = treatmentToEdit!.myMedicine.pharmacyBoxId;
+            cubit.updateTreatmentSelectedBox(boxId);
+            cubit.selectPharmacyBox(boxId);
+
+            // Set medicine
+            cubit.updateTreatmentSelectedMedicineId(treatmentToEdit!.myMedicine.id);
+
+            // Set dosage, frequency, duration
+            final dosageValue = int.tryParse(treatmentToEdit!.dosage) ?? 1;
+            cubit.updateTreatmentDosage(dosageValue);
+            cubit.updateTreatmentFrequency(treatmentToEdit!.frequency);
+            cubit.updateTreatmentDurationDays(treatmentToEdit!.durationDays);
+
+            // Fetch and pre-fill reminders
+            _fetchAndPreFillReminders(cubit, treatmentToEdit!.id);
+          }
         });
 
         final cubit = context.read<PrescriptionCreationCubit>();
@@ -36,7 +143,9 @@ class MedicalTreatmentForm extends StatelessWidget {
 
         return Scaffold(
           backgroundColor: Colors.white,
-          appBar: const CustomAppBar(title: 'Modifier Prescription'),
+          appBar: CustomAppBar(
+            title: isEditMode ? 'Modifier Traitement' : 'Ajouter Traitement',
+          ),
           body: Column(
             children: [
               SizedBox(height: 20.h),
@@ -126,6 +235,7 @@ class MedicalTreatmentForm extends StatelessWidget {
                         },
                       ),
                       SizedBox(height: 20.h),
+                      // Reminder fields (shown in both create and edit mode)
                       const _FormSectionLabel('Moment de la journée'),
                       SizedBox(height: 12.h),
                       _MomentsSelector(
@@ -174,15 +284,157 @@ class MedicalTreatmentForm extends StatelessWidget {
                 child: Column(
                   children: [
                     ValidateButton(
-                      text: 'Confirmer traitement',
+                      text: isEditMode ? 'Modifier traitement' : 'Confirmer traitement',
                       onPressed: canConfirm
-                          ? () {
-                              cubit.addTreatment();
-                              // call the optional callback (e.g. to pop) if provided
-                              if (onConfirmTreatment != null) {
-                                onConfirmTreatment!();
+                          ? () async {
+                              final scaffold = ScaffoldMessenger.of(context);
+
+                              // EDIT MODE: Update existing treatment
+                              if (isEditMode && treatmentToEdit != null) {
+                                // 1. Update treatment
+                                final repository = sl<TreatmentRepository>();
+                                final result = await repository.updateTreatment(
+                                  id: treatmentToEdit!.id,
+                                  dosage: state.treatmentSelectedDosage.toString(),
+                                  frequency: state.treatmentSelectedFrequency,
+                                  durationDays: state.treatmentSelectedDurationDays,
+                                );
+
+                                if (result is DataSuccess) {
+                                  // 2. Update reminders: delete old ones and create new ones
+                                  final reminderRepo = sl<ReminderRepository>();
+
+                                  // First, fetch existing reminders to preserve their times
+                                  final existingRemindersResult = await reminderRepo.getRemindersByTreatmentId(treatmentToEdit!.id);
+
+                                  // Create a map of existing reminder times by time slot
+                                  final Map<String, String> existingTimesBySlot = {};
+                                  List<ReminderEntity> remindersToDelete = [];
+
+                                  if (existingRemindersResult is DataSuccess<List<ReminderEntity>>) {
+                                    remindersToDelete = existingRemindersResult.data ?? [];
+                                    print('Found ${remindersToDelete.length} existing reminders to delete');
+
+                                    for (var reminder in remindersToDelete) {
+                                      // Extract time from reminderTime DateTime
+                                      final timeStr = '${reminder.reminderTime.hour.toString().padLeft(2, '0')}:${reminder.reminderTime.minute.toString().padLeft(2, '0')}';
+                                      existingTimesBySlot[reminder.timeSlot] = timeStr;
+                                      print('Preserved time for ${reminder.timeSlot}: $timeStr');
+                                    }
+                                  }
+
+                                  // Delete all old reminders and wait for completion
+                                  if (remindersToDelete.isNotEmpty) {
+                                    print('Deleting ${remindersToDelete.length} old reminders...');
+                                    for (var reminder in remindersToDelete) {
+                                      print('Deleting reminder: ${reminder.id}');
+                                      final deleteResult = await reminderRepo.deleteReminder(reminder.id);
+                                      if (deleteResult is DataError) {
+                                        print('Failed to delete reminder ${reminder.id}: ${deleteResult.error}');
+                                      } else {
+                                        print('Successfully deleted reminder: ${reminder.id}');
+                                      }
+                                    }
+                                    print('Finished deleting all old reminders');
+                                  }
+
+                                  // Create new reminders if moments are selected
+                                  if (state.treatmentSelectedMoments.isNotEmpty) {
+                                    print('Creating ${state.treatmentSelectedMoments.length} new reminders...');
+
+                                    // Create new reminders based on selected moments
+                                    // Use existing times if available, otherwise use defaults
+                                    final reminderTimes = state.treatmentSelectedMoments.map((moment) {
+                                      final timeSlot = _mapMomentToTimeSlot(moment);
+                                      // Use existing time if available, otherwise use default
+                                      final time = existingTimesBySlot[timeSlot] ?? _getDefaultTimeForMoment(moment);
+                                      print('Creating reminder for $moment ($timeSlot) at $time');
+                                      return SimpleReminderTimeEntity(
+                                        timeSlot: timeSlot,
+                                        time: time,
+                                      );
+                                    }).toList();
+
+                                    // Use START_NOW to preserve the treatment's original start date and duration
+                                    // This ensures reminders are calculated from the treatment's createdAt date
+                                    final createReminderEntity = SimpleCreateReminderEntity(
+                                      treatmentId: treatmentToEdit!.id,
+                                      reminderTimes: reminderTimes,
+                                      startPreference: 'START_NOW',
+                                    );
+
+                                    final createResult = await reminderRepo.createReminders(createReminderEntity);
+                                    if (createResult is DataSuccess) {
+                                      print('Successfully created new reminders');
+                                    } else if (createResult is DataError) {
+                                      print('Failed to create reminders: ${createResult.error}');
+                                    }
+                                  } else {
+                                    print('No moments selected, skipping reminder creation');
+                                  }
+
+                                  scaffold.showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Traitement modifié avec succès!'),
+                                      backgroundColor: Colors.green,
+                                    ),
+                                  );
+                                  if (context.mounted) {
+                                    context.pop(); // Go back to prescription detail
+                                  }
+                                } else {
+                                  scaffold.showSnackBar(
+                                    SnackBar(
+                                      content: Text('Erreur: ${result.error ?? "Échec de la modification"}'),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                }
+                                return;
                               }
-                              context.pop();
+
+                              // CREATE MODE: Check if we have a prescription ID (adding to existing prescription)
+                              if (prescriptionId != null && prescriptionId!.isNotEmpty) {
+                                // Create treatment for existing prescription
+                                final createTreatmentEntity = CreateTreatmentEntity(
+                                  prescriptionId: prescriptionId!,
+                                  myMedicineId: state.treatmentSelectedMedicineId,
+                                  dosage: state.treatmentSelectedDosage.toString(),
+                                  frequency: state.treatmentSelectedFrequency,
+                                  durationDays: state.treatmentSelectedDurationDays,
+                                );
+
+                                // Call the cubit to create treatment
+                                final result = await cubit.createTreatmentForPrescription(
+                                  createTreatmentEntity,
+                                );
+
+                                if (result is DataSuccess) {
+                                  scaffold.showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Traitement ajouté avec succès!'),
+                                      backgroundColor: Colors.green,
+                                    ),
+                                  );
+                                  if (context.mounted) {
+                                    context.pop(); // Go back to prescription detail
+                                  }
+                                } else {
+                                  scaffold.showSnackBar(
+                                    SnackBar(
+                                      content: Text('Erreur: ${result.error ?? "Échec de l'ajout"}'),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                }
+                              } else {
+                                // Original behavior: add to temp list for prescription creation flow
+                                cubit.addTreatment();
+                                if (onConfirmTreatment != null) {
+                                  onConfirmTreatment!();
+                                }
+                                context.pop();
+                              }
                             }
                           : null,
                       isEnabled: canConfirm,
@@ -752,39 +1004,51 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return AppBar(
-      backgroundColor: theme.colorScheme.onSecondary,
-      elevation: 0,
-      automaticallyImplyLeading: false,
-      toolbarHeight: 55.h,
-      leading: Padding(
-        padding: EdgeInsets.all(8.0.w),
-        child: ElevatedButton(
-          onPressed: () => Navigator.of(context).pop(),
-          style: ElevatedButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.r),
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            theme.colorScheme.primary,
+            theme.colorScheme.secondary,
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      child: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        toolbarHeight: 55.h,
+        leading: Padding(
+          padding: EdgeInsets.all(8.0.w),
+          child: ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(),
+            style: ElevatedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.r),
+              ),
+              backgroundColor: Colors.white.withOpacity(0.2),
+              padding: EdgeInsets.zero,
+              elevation: 0,
             ),
-            backgroundColor: theme.colorScheme.onSecondary,
-            padding: EdgeInsets.zero,
-            elevation: 4,
-          ),
-          child: Icon(
-            Icons.arrow_back,
-            color: theme.colorScheme.onPrimary,
-            size: 18.sp,
+            child: Icon(
+              Icons.arrow_back,
+              color: Colors.white,
+              size: 18.sp,
+            ),
           ),
         ),
-      ),
-      title: Text(
-        title,
-        style: TextStyle(
-          color: theme.colorScheme.onPrimary,
-          fontSize: 20.sp,
-          fontWeight: FontWeight.w500,
+        title: Text(
+          title,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20.sp,
+            fontWeight: FontWeight.w500,
+          ),
         ),
+        centerTitle: true,
       ),
-      centerTitle: true,
     );
   }
 

@@ -13,27 +13,36 @@ class BottomBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final isWelcomeScreen = navigationShell.currentIndex == 0;
     final currentLocation = GoRouterState.of(context).uri.toString();
-    final isOnWelcomeRoute = currentLocation == '/home' || currentLocation == '/';
+    final isOnWelcomeRoute =
+        currentLocation == '/home' || currentLocation == '/';
+    final isOnUserWelcomeRoute =
+        currentLocation ==
+        '/groupScreen/groupMembersScreen/userManagementWelcome';
 
     return Scaffold(
       body: navigationShell,
-      floatingActionButton: (isWelcomeScreen && isOnWelcomeRoute)
+      floatingActionButton:
+          (isWelcomeScreen && isOnWelcomeRoute || isOnUserWelcomeRoute)
           ? SizedBox(
-        width: 48.w,
-        height: 48.h,
-        child: FloatingActionButton(
-          onPressed: () {
-            context.pushNamed(AppRouteName.prescription);
-          },
-          backgroundColor: Theme.of(context).colorScheme.primary,
-          shape: const CircleBorder(),
-          child: Icon(
-            Icons.add,
-            size: 28.sp,
-            color: theme().colorScheme.onSecondary,
-          ),
-        ),
-      )
+              width: 48.w,
+              height: 48.h,
+              child: FloatingActionButton(
+                onPressed: () {
+                  if (isWelcomeScreen && isOnWelcomeRoute) {
+                    context.pushNamed(AppRouteName.prescription);
+                  } else {
+                    context.pushNamed(AppRouteName.userManagementPrescriptions);
+                  }
+                },
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                shape: const CircleBorder(),
+                child: Icon(
+                  Icons.add,
+                  size: 28.sp,
+                  color: theme().colorScheme.onSecondary,
+                ),
+              ),
+            )
           : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomNavigationBar(

@@ -13,47 +13,49 @@ class SimpleCustomAppBar extends StatelessWidget implements PreferredSizeWidget 
   final VoidCallback? onBack;
 
   @override
-  Size get preferredSize => Size.fromHeight(55.h);
+  Size get preferredSize => Size.fromHeight(60.h);
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return AppBar(
-      backgroundColor: theme.colorScheme.onSecondary,
-      foregroundColor: theme.colorScheme.onSecondary,
-      shadowColor: theme.colorScheme.onSecondary,
-      surfaceTintColor: theme.colorScheme.onSecondary,
-      centerTitle: true,
-      scrolledUnderElevation: 0,
-      automaticallyImplyLeading: false,
-      toolbarHeight: 55.h,
-      leading: Padding(
-        padding: EdgeInsets.all(8.0.w),
-        child: ElevatedButton(
-          onPressed: onBack ?? () => context.pop(),
-          style: ElevatedButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.r),
-            ),
-            backgroundColor: theme.colorScheme.onSecondary,
-            padding: EdgeInsets.zero,
-            elevation: 4,
-          ),
-          child: Icon(
-            Icons.arrow_back,
-            color: theme.colorScheme.onPrimary,
-            size: 18.sp,
-          ),
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            theme.colorScheme.primary,
+            theme.colorScheme.secondary,
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
         ),
       ),
-      title: Text(
-        title,
-        style: TextStyle(
-          color: theme.colorScheme.onPrimary,
-          fontSize: 20.sp,
-          fontWeight: FontWeight.w500,
+      child: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        toolbarHeight: 60.h,
+        leading: Padding(
+          padding: EdgeInsets.all(10.w),
+          child: IconButton(
+            onPressed: onBack ?? () => context.pop(),
+            icon: Icon(
+              Icons.arrow_back_ios_new_rounded,
+              color: Colors.white,
+              size: 22.sp,
+            ),
+          ),
         ),
+        title: Text(
+          title,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20.sp,
+            fontWeight: FontWeight.w600,
+            letterSpacing: -0.3,
+          ),
+        ),
+        centerTitle: true,
       ),
     );
   }

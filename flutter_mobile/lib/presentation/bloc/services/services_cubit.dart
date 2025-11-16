@@ -5,6 +5,7 @@ import 'package:flutter_mobile/core/resources/data_state.dart';
 import 'package:flutter_mobile/domain/entities/services/PharmacyBoxEntity.dart';
 import 'package:flutter_mobile/domain/entities/services/medicine_entity.dart';
 import 'package:flutter_mobile/domain/entities/services/my_medicine_entity.dart';
+import 'package:flutter_mobile/domain/entities/services/purchase_history_entity.dart';
 import 'package:flutter_mobile/domain/repositories/medicine_repository.dart';
 import 'package:flutter_mobile/domain/repositories/pharmacy_repository.dart';
 import 'package:formz/formz.dart';
@@ -556,6 +557,124 @@ class ServicesCubit extends Cubit<ServicesState> {
       expirationDate: state.scannedMedicineExpirationDate!,
       pharmacyBoxId: state.selectedPharmacyBoxId,
     );
+  }
+
+  // ============================================
+  // Purchase History Methods
+  // ============================================
+
+  /// Fetch purchase history for a specific medicine
+  Future<void> fetchPurchaseHistory(String myMedicineId) async {
+    emit(state.copyWith(
+      purchaseHistoryStatus: FormzSubmissionStatus.inProgress,
+      purchaseHistoryErrorMessage: null,
+    ));
+
+    try {
+      final result = await _medicineRepository.getPurchaseHistory(myMedicineId);
+
+      if (result is DataSuccess<List<PurchaseHistoryEntity>>) {
+        // Sort by creation date descending (most recent first)
+        final sortedList = List<PurchaseHistoryEntity>.from(result.data ?? []);
+        sortedList.sort((a, b) {
+          if (a.createdAt == null && b.createdAt == null) return 0;
+          if (a.createdAt == null) return 1;
+          if (b.createdAt == null) return -1;
+          return b.createdAt!.compareTo(a.createdAt!);
+        });
+
+        emit(state.copyWith(
+          purchaseHistoryStatus: FormzSubmissionStatus.success,
+          purchaseHistoryList: sortedList,
+          purchaseHistoryErrorMessage: null,
+        ));
+      } else {
+        emit(state.copyWith(
+          purchaseHistoryStatus: FormzSubmissionStatus.failure,
+          purchaseHistoryErrorMessage: result.error ?? 'Failed to fetch purchase history',
+        ));
+      }
+    } catch (e) {
+      emit(state.copyWith(
+        purchaseHistoryStatus: FormzSubmissionStatus.failure,
+        purchaseHistoryErrorMessage: 'An error occurred: $e',
+      ));
+    }
+  }
+
+  /// Clear purchase history
+  void clearPurchaseHistory() {
+    emit(state.copyWith(
+      purchaseHistoryList: [],
+      purchaseHistoryStatus: FormzSubmissionStatus.initial,
+      purchaseHistoryErrorMessage: null,
+    ));
+  }
+
+  /// Update purchase history
+  Future<void> updatePurchaseHistory({
+    required String purchaseHistoryId,
+    required String myMedicineId,
+    required int quantityPurchased,
+    required DateTime expiryDate,
+  }) async {
+    emit(state.copyWith(
+      purchaseHistoryStatus: FormzSubmissionStatus.inProgress,
+      purchaseHistoryErrorMessage: null,
+    ));
+
+    try {
+      final result = await _medicineRepository.updatePurchaseHistory(
+        purchaseHistoryId: purchaseHistoryId,
+        quantityPurchased: quantityPurchased,
+        expiryDate: expiryDate,
+      );
+
+      if (result is DataSuccess<PurchaseHistoryEntity>) {
+        // Refresh the purchase history list after update
+        await fetchPurchaseHistory(myMedicineId);
+      } else {
+        emit(state.copyWith(
+          purchaseHistoryStatus: FormzSubmissionStatus.failure,
+          purchaseHistoryErrorMessage: result.error ?? 'Failed to update purchase history',
+        ));
+      }
+    } catch (e) {
+      emit(state.copyWith(
+        purchaseHistoryStatus: FormzSubmissionStatus.failure,
+        purchaseHistoryErrorMessage: 'An error occurred: $e',
+      ));
+    }
+  }
+
+  /// Delete purchase history
+  Future<void> deletePurchaseHistory({
+    required String purchaseHistoryId,
+    required String myMedicineId,
+  }) async {
+    emit(state.copyWith(
+      purchaseHistoryStatus: FormzSubmissionStatus.inProgress,
+      purchaseHistoryErrorMessage: null,
+    ));
+
+    try {
+      final result = await _medicineRepository.deletePurchaseHistory(purchaseHistoryId);
+
+      if (result is DataSuccess) {
+        // Refresh the purchase history list after deletion
+        await fetchPurchaseHistory(myMedicineId);
+      } else {
+        emit(state.copyWith(
+          purchaseHistoryStatus: FormzSubmissionStatus.failure,
+          purchaseHistoryErrorMessage: result.error ?? 'Failed to delete purchase history',
+        ));
+      }
+    } catch (e) {
+      emit(state.copyWith(
+        purchaseHistoryStatus: FormzSubmissionStatus.failure,
+        purchaseHistoryErrorMessage: 'An error occurred: $e',
+      ));
+    }
   }
 
   // ============================================

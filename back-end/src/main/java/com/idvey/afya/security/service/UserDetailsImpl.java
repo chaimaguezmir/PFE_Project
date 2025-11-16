@@ -67,6 +67,9 @@ public class UserDetailsImpl implements UserDetails {
 
 	private boolean allergies;
 
+	// ADD THIS FIELD
+	private String profileImageUrl;
+
 	private Collection<? extends GrantedAuthority> authorities;
 
 	public static UserDetailsImpl build(User user) {
@@ -80,7 +83,8 @@ public class UserDetailsImpl implements UserDetails {
 				user.getBloodGroup(), user.getGender(), user.getBirthDate(), user.isSmokingStatus(),
 				user.isAlcoholConsumption(), user.isExerciseRegularly(), user.isFamilyHistoryHeartDisease(),
 				user.isHypertensionHistory(), user.isHeartDisease(), user.isDiabetes(), user.isCholesterol(),
-				user.isAllergies(), authorities);
+				user.isAllergies(), user.getProfileImageUrl(), // ADD THIS
+				authorities);
 	}
 
 	@Override

@@ -26,4 +26,17 @@ abstract class MedicineRemoteDataSource {
     required String medicineId,
     required String barcode,
   });
+
+  // Get purchase history for a specific medicine
+  Future<List<PurchaseHistoryResponseModel>> getPurchaseHistory(String myMedicineId);
+
+  // Update purchase history
+  Future<PurchaseHistoryResponseModel> updatePurchaseHistory({
+    required String purchaseHistoryId,
+    required int quantityPurchased,
+    required DateTime expiryDate,
+  });
+
+  // Delete purchase history
+  Future<void> deletePurchaseHistory(String purchaseHistoryId);
 }

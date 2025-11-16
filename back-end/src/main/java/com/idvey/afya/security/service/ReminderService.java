@@ -386,11 +386,43 @@ public class ReminderService {
 			throw new IllegalArgumentException("Reminder does not belong to user");
 		}
 
+		// If marking as TAKEN, consume the dosage from medicine stock
+		if (newStatus == ReminderStatus.TAKEN && reminder.getStatus() != ReminderStatus.TAKEN) {
+			consumeMedicineDosage(reminder);
+		}
+
 		reminder.setStatus(newStatus);
 		Reminder updated = reminderRepository.save(reminder);
 
 		log.info("Updated reminder {} status to {} for user {}", reminderId, newStatus, userId);
 		return toResponse(updated);
+	}
+
+	private void consumeMedicineDosage(Reminder reminder) {
+		Treatment treatment = reminder.getTreatment();
+		MyMedicine myMedicine = treatment.getMyMedicine();
+
+		// Parse dosage (e.g., "2" means 2 pills/tablets)
+		int dosageAmount;
+		try {
+			dosageAmount = Integer.parseInt(treatment.getDosage().trim());
+		}
+		catch (NumberFormatException e) {
+			log.warn("Could not parse dosage '{}' for treatment {}, defaulting to 1", treatment.getDosage(),
+					treatment.getId());
+			dosageAmount = 1;
+		}
+
+		// Create a consumption record (negative quantity)
+		MedicinePurchaseHistory consumptionRecord = MedicinePurchaseHistory.builder()
+			.quantityPurchased(-dosageAmount) // Negative for consumption
+			.myMedicine(myMedicine)
+			.build();
+
+		myMedicine.getPurchaseHistory().add(consumptionRecord);
+
+		log.info("Consumed {} units of medicine {} for reminder {}", dosageAmount, myMedicine.getName(),
+				reminder.getId());
 	}
 
 	@Transactional(readOnly = true)

@@ -121,10 +121,13 @@ public class AuthController {
 			.stream()
 			.map(GrantedAuthority::getAuthority)
 			.collect(Collectors.toList());
+
 		try {
 			RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId(),
 					loginRequest.getDeviceId(), loginRequest.getDeviceName());
+
 			System.out.println(" logged in successfully!");
+
 			JwtResponse jtr = JwtResponse.builder()
 				.token(jwt)
 				.refreshToken(refreshToken.getToken())
@@ -133,18 +136,34 @@ public class AuthController {
 				.email(userDetails.getEmail())
 				.firstName(userDetails.getFirstName())
 				.LastName(userDetails.getLastName())
+				.phoneNumber(userDetails.getPhoneNumber())
+				.weight(userDetails.getWeight())
+				.height(userDetails.getHeight())
+				.bloodGroup(userDetails.getBloodGroup())
+				.gender(userDetails.getGender())
+				.birthDate(userDetails.getBirthDate())
+				.smokingStatus(userDetails.isSmokingStatus())
+				.alcoholConsumption(userDetails.isAlcoholConsumption())
+				.exerciseRegularly(userDetails.isExerciseRegularly())
+				.familyHistoryHeartDisease(userDetails.isFamilyHistoryHeartDisease())
+				.hypertensionHistory(userDetails.isHypertensionHistory())
+				.heartDisease(userDetails.isHeartDisease())
+				.diabetes(userDetails.isDiabetes())
+				.cholesterol(userDetails.isCholesterol())
+				.allergies(userDetails.isAllergies())
+				.profileImageUrl(userDetails.getProfileImageUrl()) // NOW IT WORKS!
 				.deviceName(refreshToken.getDeviceName())
 				.deviceId(refreshToken.getDeviceId())
 				.roles(roles)
 				.type("Bearer")
 				.build();
+
 			return ResponseEntity.ok(jtr);
 
 		}
 		catch (TokenRefreshException tre) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponse(tre.getMessage()));
 		}
-
 	}
 
 	@Transactional

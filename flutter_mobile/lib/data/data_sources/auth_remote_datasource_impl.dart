@@ -65,8 +65,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           message: 'Failed to activate account: ${response.statusMessage}',
         );
       }
-    } on DioException {
-      rethrow;
+    } on DioException {      rethrow;
     } catch (e) {
       throw DioException(
         requestOptions: RequestOptions(path: ApiEndpoints.activateAccount),

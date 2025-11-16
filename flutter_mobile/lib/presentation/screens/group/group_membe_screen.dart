@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_mobile/config/router/app_route_constants.dart';
 import 'package:flutter_mobile/config/theme/theme_data_config.dart';
+import 'package:flutter_mobile/core/constants/api_endpoint.dart';
 import 'package:flutter_mobile/domain/entities/group/member_entity.dart';
 import 'package:flutter_mobile/injection_container.dart';
 import 'package:flutter_mobile/presentation/bloc/group/group_cubit.dart';
@@ -34,20 +35,14 @@ class GroupMembersScreen extends StatelessWidget {
         }
       },
       child: Scaffold(
-        appBar: const CustomAppBar(
-          title: "Groupes",
-          username: "Walid Zaroui",
-          email: "zarwi.walid@gmail.com",
-          avatarPath: "lib/config/assets/images/default_avatar.jpg",
-          showLeading: true,
-        ),
+        appBar: const CustomAppBar(title: "Groupes", showLeading: true),
         body: SafeArea(
           child: Container(
             padding: EdgeInsets.only(
               left: 20.w,
               right: 20.w,
               top: 20.h,
-            ), // Reduced from 70.w, 70.w, 50.w
+            ),
             width: double.infinity,
             child: const _GroupMemberBody(),
           ),
@@ -65,7 +60,7 @@ class _GroupMemberBody extends StatelessWidget {
     return Column(
       children: [
         const _GroupNameComponent(),
-        SizedBox(height: 20.h), // Reduced from 40.h
+        SizedBox(height: 20.h),
         const _MembersList(),
       ],
     );
@@ -83,7 +78,7 @@ class _GroupNameComponent extends StatelessWidget {
         Text(
           context.read<GroupCubit>().state.currentGroupName,
           style: TextStyle(
-            fontSize: 20.sp, // Reduced from 47.sp
+            fontSize: 20.sp,
             color: theme().colorScheme.onPrimary,
             fontWeight: FontWeight.bold,
           ),
@@ -124,30 +119,26 @@ class _MembersList extends StatelessWidget {
                 return Column(
                   children: [
                     ElevatedButton(
-
                       onPressed: () {},
                       style: ElevatedButton.styleFrom(
                         elevation: 0,
                         shape: RoundedRectangleBorder(
                           side: BorderSide(
                             color: theme().colorScheme.tertiary,
-                            width: 1.w, // Reduced from 2.w
+                            width: 1.w,
                           ),
-                          borderRadius: BorderRadius.circular(
-                            12.r,
-                          ), // Reduced from 20.r
+                          borderRadius: BorderRadius.circular(12.r),
                         ),
-                        padding: EdgeInsets.all(10.w), // Reduced from 30.0.w
+                        padding: EdgeInsets.all(10.w),
                       ),
                       child: _MemberItem(
                         memberId: member.userId,
-                        imagePath:
-                            'lib/config/assets/images/default_avatar.jpg',
+                        imagePath: member.profileImageUrl,
                         memberName: member.username,
                         memberRole: member.role,
                       ),
                     ),
-                    SizedBox(height: 16.h), // Reduced from 30.h
+                    SizedBox(height: 16.h),
                   ],
                 );
               }
@@ -168,27 +159,49 @@ class _MemberItem extends StatelessWidget {
   });
 
   final String memberId;
-  final String imagePath;
+  final String? imagePath;
   final String memberName;
   final String memberRole;
+
+  ImageProvider _getImageProvider() {
+    final defaultImage = 'lib/config/assets/images/default_avatar.jpg';
+
+    if (imagePath != null && imagePath!.isNotEmpty) {
+      if (imagePath!.startsWith('http') || imagePath!.startsWith('/uploads')) {
+        // Network image (full or relative URL)
+        final cleanUrl = ApiEndpoints.getImageUrl(imagePath!);
+        return NetworkImage(cleanUrl);
+      } else {
+        // Local asset path
+        return AssetImage(imagePath!);
+      }
+    } else {
+      // Default avatar
+      return AssetImage(defaultImage);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
         Container(
-          width: 50.sp, // Reduced from 120.w
-          height: 50.sp, // Reduced from 120.w
+          width: 50.sp,
+          height: 50.sp,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             image: DecorationImage(
-              image: AssetImage(imagePath),
+              image: _getImageProvider(),
               fit: BoxFit.cover,
               alignment: Alignment.topCenter,
+              onError: (exception, stackTrace) {
+                // Fallback to default image on error
+                print('Error loading image: $exception');
+              },
             ),
           ),
         ),
-        SizedBox(width: 16.w), // Reduced from 30.w
+        SizedBox(width: 16.w),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -196,7 +209,7 @@ class _MemberItem extends StatelessWidget {
               Text(
                 memberName,
                 style: TextStyle(
-                  fontSize: 16.sp, // Reduced from 45.sp
+                  fontSize: 16.sp,
                   color: theme().colorScheme.onPrimary,
                   fontWeight: FontWeight.bold,
                 ),
@@ -204,7 +217,7 @@ class _MemberItem extends StatelessWidget {
               Text(
                 memberRole,
                 style: TextStyle(
-                  fontSize: 12.sp, // Reduced from 30.sp
+                  fontSize: 12.sp,
                   color: theme().colorScheme.onPrimary.withOpacity(0.6),
                 ),
               ),
@@ -212,14 +225,15 @@ class _MemberItem extends StatelessWidget {
           ),
         ),
         if (context.read<GroupCubit>().state.currentGroupUserRole ==
-                'MANAGER' ||
+            'MANAGER' ||
             context.read<GroupCubit>().state.currentGroupUserRole ==
-                    'RESPONSIBLE' &&
+                'RESPONSIBLE' &&
                 memberRole == 'MEMBER')
           _CustomPopUpMenuButtonForMembers(
             memberId: memberId,
             role: memberRole,
             memberUsername: memberName,
+            memberImageUrl: imagePath,
           ),
       ],
     );
@@ -231,10 +245,12 @@ class _CustomPopUpMenuButtonForMembers extends StatelessWidget {
     required this.memberId,
     required this.role,
     required this.memberUsername,
+    this.memberImageUrl,
   });
   final String memberUsername;
   final String memberId;
   final String role;
+  final String? memberImageUrl;
 
   void _handleMenuAction(BuildContext context, String value, GroupState state) {
     final cubit = context.read<GroupCubit>();
@@ -251,6 +267,11 @@ class _CustomPopUpMenuButtonForMembers extends StatelessWidget {
         cubit.selectedMemberUsernameChanged(memberUsername);
         cubit.selectedMemberIdChanged(memberId);
         cubit.removeMember(context);
+      case 'manage':
+        cubit.selectedMemberIdChanged(memberId);
+        cubit.selectedMemberUsernameChanged(memberUsername);
+        cubit.selectedMemberImageUrlChanged(memberImageUrl ?? '');
+        context.pushNamed(AppRouteName.userManagementWelcome);
         break;
     }
   }
@@ -263,21 +284,21 @@ class _CustomPopUpMenuButtonForMembers extends StatelessWidget {
     return PopupMenuItem(
       value: value,
       child: Padding(
-        padding: EdgeInsets.all(12.sp), // Reduced from 20.0.sp
+        padding: EdgeInsets.all(12.sp),
         child: Row(
           children: [
             Image.asset(
               iconPath,
               width: 24.w,
               height: 24.h,
-            ), // Reduced from 70.w, 70.h
-            SizedBox(width: 12.w), // Reduced from 20.w
+            ),
+            SizedBox(width: 12.w),
             Expanded(
               child: Text(
                 text,
                 maxLines: 2,
                 style: TextStyle(
-                  fontSize: 14.sp, // Reduced from 35.sp
+                  fontSize: 14.sp,
                   color: theme().colorScheme.onPrimary.withOpacity(0.6),
                 ),
               ),
@@ -308,6 +329,11 @@ class _CustomPopUpMenuButtonForMembers extends StatelessWidget {
                 iconPath: 'lib/config/assets/icons/CrownMinus.png',
                 text: 'Désassigner un responsable',
               ),
+              _buildMenuItem(
+                value: 'manage',
+                iconPath: 'lib/config/assets/icons/CrownMinus.png',
+                text: 'Suivi et gestion d’un traitement',
+              ),
             ],
             if (role == 'MEMBER') ...[
               _buildMenuItem(
@@ -319,6 +345,11 @@ class _CustomPopUpMenuButtonForMembers extends StatelessWidget {
                 value: 'toggle',
                 iconPath: 'lib/config/assets/icons/CrownMinus.png',
                 text: 'Assigner un responsable',
+              ),
+              _buildMenuItem(
+                value: 'manage',
+                iconPath: 'lib/config/assets/icons/CrownMinus.png',
+                text: 'Suivi et gestion d’un traitement',
               ),
             ],
           ],
@@ -335,32 +366,32 @@ class _CustomGroupPopUpMenuButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<GroupCubit, GroupState>(
       buildWhen: (previous, current) =>
-          previous.isIconSelected != current.isIconSelected,
+      previous.isIconSelected != current.isIconSelected,
       builder: (context, state) {
         return PopupMenuButton<String>(
           icon: state.isIconSelected
               ? ColorFiltered(
-                  colorFilter: ColorFilter.mode(
-                    theme().colorScheme.secondary,
-                    BlendMode.srcIn,
-                  ),
-                  child: Image.asset(
-                    'lib/config/assets/icons/UserCircleGear.png',
-                    width: 24.w, // Reduced from 60.w
-                    height: 24.w, // Reduced from 60.w
-                  ),
-                )
+            colorFilter: ColorFilter.mode(
+              theme().colorScheme.secondary,
+              BlendMode.srcIn,
+            ),
+            child: Image.asset(
+              'lib/config/assets/icons/UserCircleGear.png',
+              width: 24.w,
+              height: 24.w,
+            ),
+          )
               : ColorFiltered(
-                  colorFilter: ColorFilter.mode(
-                    theme().colorScheme.onTertiary,
-                    BlendMode.srcIn,
-                  ),
-                  child: Image.asset(
-                    'lib/config/assets/icons/UserCircleGear.png',
-                    width: 24.w, // Reduced from 60.w
-                    height: 24.w, // Reduced from 60.w
-                  ),
-                ),
+            colorFilter: ColorFilter.mode(
+              theme().colorScheme.onTertiary,
+              BlendMode.srcIn,
+            ),
+            child: Image.asset(
+              'lib/config/assets/icons/UserCircleGear.png',
+              width: 24.w,
+              height: 24.w,
+            ),
+          ),
           onOpened: () {
             context.read<GroupCubit>().toggleIconSelected();
           },
@@ -368,33 +399,35 @@ class _CustomGroupPopUpMenuButton extends StatelessWidget {
           onCanceled: () {
             context.read<GroupCubit>().toggleIconSelected();
           },
-          onSelected: (value) {
+          onSelected: (value) async {
             context.read<GroupCubit>().toggleIconSelected();
             // Handle action
             if (value == 'add') {
-              // Handle edit action
-              context.pushNamed(AppRouteName.addMemberScreen);
+              // Navigate to add member screen and wait for it to pop
+              await context.pushNamed(AppRouteName.addMemberScreen);
+              // Refresh members when returning
+              context.read<GroupCubit>().fetchGroupMembers();
             }
           },
           itemBuilder: (context) => [
             PopupMenuItem(
               value: 'add',
               child: Padding(
-                padding: EdgeInsets.all(12.0.sp), // Reduced from 20.0.sp
+                padding: EdgeInsets.all(12.0.sp),
                 child: Row(
                   children: [
                     Image.asset(
                       'lib/config/assets/icons/addUsers.png',
-                      width: 24.w, // Reduced from 70.w
-                      height: 24.h, // Reduced from 70.h
+                      width: 24.w,
+                      height: 24.h,
                     ),
-                    SizedBox(width: 12.w), // Reduced from 20.w
+                    SizedBox(width: 12.w),
                     Expanded(
                       child: Text(
                         'Ajouter un membre',
                         maxLines: 2,
                         style: TextStyle(
-                          fontSize: 14.sp, // Reduced from 35.sp
+                          fontSize: 14.sp,
                           color: theme().colorScheme.onPrimary.withOpacity(0.6),
                         ),
                       ),

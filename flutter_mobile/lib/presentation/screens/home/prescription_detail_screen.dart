@@ -1,4 +1,4 @@
-// lib/presentation/screens/home/prescription_detail_screen.dart
+// lib/presentation/screens/home/user_prescription_detail_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_mobile/config/router/app_route_constants.dart';
@@ -11,19 +11,39 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:formz/formz.dart';
 import 'package:go_router/go_router.dart';
 
-class PrescriptionDetailScreen extends StatelessWidget {
+class PrescriptionDetailScreen extends StatefulWidget {
   const PrescriptionDetailScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    // Fetch treatments when screen loads using the stored selectedPrescriptionId
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final selectedId = context.read<PrescriptionCubit>().state.selectedPrescriptionId;
-      if (selectedId.isNotEmpty) {
-        context.read<PrescriptionCubit>().fetchTreatments(selectedId);
-      }
-    });
+  State<PrescriptionDetailScreen> createState() => _PrescriptionDetailScreenState();
+}
 
+class _PrescriptionDetailScreenState extends State<PrescriptionDetailScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Fetch treatments when screen first loads
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _refreshTreatments();
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Refresh treatments when returning to this screen
+    _refreshTreatments();
+  }
+
+  void _refreshTreatments() {
+    final selectedId = context.read<PrescriptionCubit>().state.selectedPrescriptionId;
+    if (selectedId.isNotEmpty) {
+      context.read<PrescriptionCubit>().fetchTreatments(selectedId);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return BlocListener<PrescriptionCubit, PrescriptionState>(
       listener: (context, state) {
         if (state.treatmentErrorMessage != null) {
@@ -154,24 +174,34 @@ class AddTreatmentHeader extends StatelessWidget {
               color: Colors.black87,
             ),
           ),
-          GestureDetector(
-            onTap: () {
-              // Navigate directly to medication tracker
-              context.pushNamed(AppRouteName.medicationTracker);
+          BlocBuilder<PrescriptionCubit, PrescriptionState>(
+            builder: (context, state) {
+              return GestureDetector(
+                onTap: () {
+                  // Navigate to treatment form with prescription ID
+                  final prescriptionId = state.selectedPrescriptionId;
+                  if (prescriptionId.isNotEmpty) {
+                    context.pushNamed(
+                      AppRouteName.treatmentForm,
+                      extra: {'prescriptionId': prescriptionId},
+                    );
+                  }
+                },
+                child: Container(
+                  width: 32.w,
+                  height: 32.w,
+                  decoration: BoxDecoration(
+                    color: theme().colorScheme.secondary,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.add,
+                    color: Colors.white,
+                    size: 20.sp,
+                  ),
+                ),
+              );
             },
-            child: Container(
-              width: 32.w,
-              height: 32.w,
-              decoration: BoxDecoration(
-                color: theme().colorScheme.secondary,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.add,
-                color: Colors.white,
-                size: 20.sp,
-              ),
-            ),
           ),
         ],
       ),
@@ -244,23 +274,36 @@ class MedicationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 16.h),
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: Colors.grey[200]!),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
-            spreadRadius: 1,
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
+    return GestureDetector(
+      onTap: () {
+        // Navigate to treatment form with treatment data for editing
+        final prescriptionId = context.read<PrescriptionCubit>().state.selectedPrescriptionId;
+        context.pushNamed(
+          AppRouteName.treatmentForm,
+          extra: {
+            'prescriptionId': prescriptionId,
+            'treatment': treatment,
+            'isEdit': true,
+          },
+        );
+      },
+      child: Container(
+        margin: EdgeInsets.only(bottom: 16.h),
+        padding: EdgeInsets.all(16.w),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(color: Colors.grey[200]!),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.08),
+              spreadRadius: 1,
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
         children: [
           // Medication Info
           Expanded(
@@ -350,6 +393,7 @@ class MedicationCard extends StatelessWidget {
             ),
           ),
         ],
+        ),
       ),
     );
   }
