@@ -1,0 +1,276 @@
+@startuml
+title Diagramme de classes professionnel - AFYA
+
+' =========================================================
+' Style presentation
+' =========================================================
+left to right direction
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam linetype ortho
+hide empty methods
+
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #1F4E79
+  FontColor #17324D
+  HeaderBackgroundColor #EAF4FF
+  HeaderFontColor #17324D
+}
+
+skinparam package {
+  BackgroundColor #FAFCFF
+  BorderColor #B7D7F2
+  FontColor #17324D
+}
+
+skinparam note {
+  BackgroundColor #FFFBEA
+  BorderColor #D6B656
+}
+
+skinparam ArrowColor #334155
+
+' =========================================================
+' Utilisateurs et roles
+' =========================================================
+package "Utilisateurs & accès" {
+
+  class User <<entity>> {
+    +id: UUID
+    +username: String
+    +email: String
+    +password: String
+    +firstName: String
+    +lastName: String
+    +phoneNumber: String
+    +enabled: boolean
+    --
+    +numeroPatient: String
+    +antecedents: String
+    +specialite: String
+    +numeroOrdre: String
+    +nomPharmacie: String
+    +numeroBrevet: String
+    +service: String
+    +grade: String
+  }
+
+  class Role <<entity>> {
+    +id: Integer
+    +name: ERole
+  }
+
+  enum ERole {
+    ROLE_USER
+    ROLE_ADMIN
+    ROLE_ADMIN_ETABLISSEMENT
+    ROLE_MEDECIN
+    ROLE_MEDECIN_PARTICULIER
+    ROLE_PHARMACIEN
+    ROLE_PHARMACIEN_PARTICULIER
+    ROLE_INFIRMIER
+  }
+}
+
+' =========================================================
+' Collaboration familiale / medicale
+' =========================================================
+package "Groupes & boîte pharmacie" {
+
+  class Group <<entity>> {
+    +id: UUID
+    +name: String
+    +createdBy: UUID
+  }
+
+  class GroupMember <<association>> {
+    +groupId: UUID
+    +userId: UUID
+    +role: GroupRole
+    +joinedAt: Instant
+  }
+
+  class PharmacyBox <<entity>> {
+    +id: UUID
+  }
+
+  class MyMedicine <<entity>> {
+    +id: UUID
+    +name: String
+    +form: String
+    +source: MedicineSource
+  }
+
+  class MedicinePurchaseHistory <<entity>> {
+    +id: UUID
+    +quantity: Integer
+    +unitPrice: Double
+    +purchaseDate: LocalDateTime
+    +expiryDate: LocalDateTime
+  }
+}
+
+' =========================================================
+' Parcours medical
+' =========================================================
+package "Suivi médical" {
+
+  class Prescription <<entity>> {
+    +id: UUID
+    +name: String
+    +startDate: LocalDate
+    +endDate: LocalDate
+    +createdAt: LocalDateTime
+  }
+
+  class Treatment <<entity>> {
+    +id: UUID
+    +dosage: String
+    +frequency: String
+    +durationDays: Integer
+    +mealTiming: String
+  }
+
+  class Reminder <<entity>> {
+    +id: UUID
+    +reminderDateTime: LocalDateTime
+    +timeSlot: TimeSlot
+    +status: ReminderStatus
+  }
+
+  class Ordonnance <<entity>> {
+    +id: UUID
+    +publicToken: String
+    +pdfPath: String
+    +generatedAt: LocalDateTime
+  }
+
+  class PrescriptionTemplate <<entity>> {
+    +id: UUID
+    +organizationName: String
+    +professionalId: String
+    +phone: String
+    +email: String
+  }
+}
+
+' =========================================================
+' Medicaments / pharmacie
+' =========================================================
+package "Médicaments & pharmacie" {
+
+  class Medicine <<entity>> {
+    +id: UUID
+    +medicationName: String
+    +dosage: String
+    +form: String
+    +dci: String
+    +barcode: String
+    +medicationType: String
+  }
+
+  class Stock <<entity>> {
+    +id: UUID
+    +currentStock: Integer
+    +minStockLevel: Integer
+    +expiryDate: LocalDateTime
+    +unitPrice: Double
+  }
+
+  class StockRequest <<entity>> {
+    +id: UUID
+    +quantityRequested: Integer
+    +status: StockRequestStatus
+    +requestDate: LocalDateTime
+  }
+
+  class MedicineTransferRequest <<entity>> {
+    +id: UUID
+    +status: MedicineTransferStatus
+    +createdAt: LocalDateTime
+    +acceptedAt: LocalDateTime
+  }
+
+  class MedicineTransferItem <<entity>> {
+    +id: UUID
+    +medicineName: String
+    +dosage: String
+    +form: String
+    +duration: String
+  }
+}
+
+' =========================================================
+' Assistance intelligente
+' =========================================================
+package "Assistance intelligente" {
+  class ChatMessage <<entity>> {
+    +id: UUID
+    +sessionId: String
+    +role: String
+    +content: String
+    +createdAt: LocalDateTime
+  }
+}
+
+' =========================================================
+' Relations - utilisateurs
+' =========================================================
+User "0..*" -- "0..*" Role : possède >
+Role --> ERole : type
+
+' =========================================================
+' Relations - groupes
+' =========================================================
+User "1" -- "0..*" GroupMember : adhère >
+Group "1" -- "0..*" GroupMember : contient >
+Group "1" *-- "1" PharmacyBox : possède
+PharmacyBox "1" *-- "0..*" MyMedicine : contient
+MyMedicine "0..*" --> "0..1" Medicine : référence
+MyMedicine "1" *-- "0..*" MedicinePurchaseHistory : historique
+
+' =========================================================
+' Relations - suivi medical
+' =========================================================
+User "1" -- "0..*" Prescription : patient
+User "0..1" -- "0..*" Prescription : prescripteur
+Prescription "1" *-- "1..*" Treatment : définit
+Treatment "1" *-- "0..*" Reminder : planifie
+Treatment "0..*" --> "0..1" Medicine : médicament
+Treatment "0..*" --> "0..1" MyMedicine : médicament personnel
+
+Prescription "1" -- "0..1" Ordonnance : génère
+Ordonnance "0..*" --> "1" User : médecin
+Ordonnance "0..*" --> "1" User : patient
+Ordonnance "0..*" --> "1" PrescriptionTemplate : utilise
+User "1" -- "0..1" PrescriptionTemplate : configure
+
+' =========================================================
+' Relations - pharmacie
+' =========================================================
+User "1" -- "0..*" Stock : pharmacien
+Stock "0..*" --> "1" Medicine : concerne
+User "1" -- "0..*" StockRequest : infirmier
+Stock "1" -- "0..*" StockRequest : demande
+
+User "1" -- "0..*" MedicineTransferRequest : pharmacien
+User "1" -- "0..*" MedicineTransferRequest : patient cible
+MedicineTransferRequest "1" *-- "1..*" MedicineTransferItem : contient
+MedicineTransferItem "0..*" --> "0..1" Medicine : référence
+
+' =========================================================
+' Relations - assistance
+' =========================================================
+User "1" -- "0..*" ChatMessage : échange
+
+note bottom of User
+Conception de présentation :
+- un seul compte User central ;
+- les profils métier sont portés par Role ;
+- pas d'héritage Patient / Médecin / Pharmacien / Infirmier.
+end note
+
+@enduml

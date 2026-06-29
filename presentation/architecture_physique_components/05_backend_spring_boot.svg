@@ -1,0 +1,25 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" width="720" height="560" viewBox="0 0 720 560">
+  <defs>
+    <linearGradient id="grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#31b057"/>
+      <stop offset="1" stop-color="#176b36"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#173a73" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+  <rect x="32" y="32" width="656" height="496" rx="46" fill="#ffffff" stroke="#dbe7f4" stroke-width="4" filter="url(#shadow)"/>
+  <circle cx="360" cy="238" r="166" fill="url(#grad)"/>
+  <circle cx="360" cy="238" r="132" fill="none" stroke="#ffffff" stroke-width="14" opacity="0.2"/>
+  <g transform="translate(88 -10)">
+      <rect x="154" y="98" width="236" height="92" rx="18" fill="#ffffff"/>
+      <rect x="154" y="218" width="236" height="92" rx="18" fill="#ffffff"/>
+      <rect x="154" y="338" width="236" height="92" rx="18" fill="#ffffff"/>
+      <circle cx="190" cy="144" r="12" fill="#31b057"/>
+      <circle cx="190" cy="264" r="12" fill="#31b057"/>
+      <circle cx="190" cy="384" r="12" fill="#31b057"/>
+      <path d="M224 144h116M224 264h116M224 384h116" stroke="#173a73" stroke-width="14" stroke-linecap="round"/>
+  </g>
+  <text x="360" y="456" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="38" font-weight="800" fill="#173a73">Serveur applicatif</text>
+  <text x="360" y="500" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="500" fill="#5f7189">Spring Boot API / Port 8081</text>
+</svg>

@@ -1,0 +1,79 @@
+Flutter crash report.
+Please report a bug at https://github.com/flutter/flutter/issues.
+
+## command
+
+flutter run -d chrome
+
+## exception
+
+PathAccessException: PathAccessException: Deletion failed, path = 'build\8730b13ca0249799964d0a71255a8f3b.cache.dill.track.dill' (OS Error: Le processus ne peut pas accéder au fichier car ce fichier est utilisé par un autre processus, errno = 32)
+
+```
+#0      _Directory._deleteSync (dart:io/directory_impl.dart:216:7)
+#1      FileSystemEntity.deleteSync (dart:io/file_system_entity.dart:425:7)
+#2      _File._deleteSync (dart:io/file_impl.dart:361:50)
+#3      FileSystemEntity.deleteSync (dart:io/file_system_entity.dart:425:7)
+#4      ForwardingFileSystemEntity.deleteSync (package:file/src/forwarding/forwarding_file_system_entity.dart:70:16)
+#5      ForwardingFileSystemEntity.deleteSync (package:file/src/forwarding/forwarding_file_system_entity.dart:70:16)
+#6      ErrorHandlingFileSystem.deleteIfExists (package:flutter_tools/src/base/error_handling_io.dart:90:14)
+#7      ErrorHandlingFile.copySync.<anonymous closure> (package:flutter_tools/src/base/error_handling_io.dart:330:35)
+#8      _runSync (package:flutter_tools/src/base/error_handling_io.dart:552:14)
+#9      ErrorHandlingFile.copySync (package:flutter_tools/src/base/error_handling_io.dart:313:5)
+#10     ResidentRunner.cacheInitialDillCompilation (package:flutter_tools/src/resident_runner.dart:1319:18)
+#11     ResidentWebRunner.run.<anonymous closure> (package:flutter_tools/src/isolated/resident_web_runner.dart:341:11)
+<asynchronous suspension>
+#12     asyncGuard.<anonymous closure> (package:flutter_tools/src/base/async_guard.dart:108:24)
+<asynchronous suspension>
+```
+
+## flutter doctor
+
+```
+[32m[✓][39m Flutter (Channel stable, 3.41.4, on Microsoft Windows [version 10.0.22631.5624],
+    locale fr-FR) [930ms]
+    [32m•[39m Flutter version 3.41.4 on channel stable at C:\Program
+      Files\flutter_windows_3.41.4-stable\flutter
+    [32m•[39m Upstream repository https://github.com/flutter/flutter.git
+    [32m•[39m Framework revision ff37bef603 (3 months ago), 2026-03-03 16:03:22 -0800
+    [32m•[39m Engine revision e4b8dca3f1
+    [32m•[39m Dart version 3.11.1
+    [32m•[39m DevTools version 2.54.1
+    [32m•[39m Feature flags: enable-web, enable-linux-desktop, enable-macos-desktop,
+      enable-windows-desktop, enable-android, enable-ios, cli-animations,
+      enable-native-assets, omit-legacy-version-file, enable-lldb-debugging,
+      enable-uiscene-migration
+
+[32m[✓][39m Windows Version (11 Famille Unilingue 64-bit, 23H2, 2009) [12,3s]
+
+[32m[✓][39m Android toolchain - develop for Android devices (Android SDK version 36.1.0)
+    [7,2s]
+    [32m•[39m Android SDK at C:\Users\chaima\AppData\Local\Android\sdk
+    [32m•[39m Emulator version 36.4.10.0 (build_id 15004761) (CL:N/A)
+    [32m•[39m Platform android-36.1, build-tools 36.1.0
+    [32m•[39m Java binary at: C:\Program Files\Java\jdk-20\bin\java
+      This JDK is specified by the JAVA_HOME environment variable.
+      To manually set the JDK path, use: `flutter config --jdk-dir="path/to/jdk"`.
+    [32m•[39m Java version Java(TM) SE Runtime Environment (build 20.0.2+9-78)
+    [32m•[39m All Android licenses accepted.
+
+[32m[✓][39m Chrome - develop for the web [292ms]
+    [32m•[39m Chrome at C:\Program Files\Google\Chrome\Application\chrome.exe
+
+[32m[✓][39m Visual Studio - develop Windows apps (Visual Studio Community 2022 17.14.31
+    (April 2026)) [291ms]
+    [32m•[39m Visual Studio at C:\Program Files\Microsoft Visual Studio\2022\Community
+    [32m•[39m Visual Studio Community 2022 version 17.14.37216.2
+    [32m•[39m Windows 10 SDK version 10.0.26100.0
+
+[32m[✓][39m Connected device (3 available) [321ms]
+    [32m•[39m Windows (desktop) • windows • windows-x64    • Microsoft Windows [version
+      10.0.22631.5624]
+    [32m•[39m Chrome (web)      • chrome  • web-javascript • Google Chrome 149.0.7827.103
+    [32m•[39m Edge (web)        • edge    • web-javascript • Microsoft Edge 149.0.4022.69
+
+[32m[✓][39m Network resources [415ms]
+    [32m•[39m All expected network resources are available.
+
+[32m•[39m No issues found!
+```

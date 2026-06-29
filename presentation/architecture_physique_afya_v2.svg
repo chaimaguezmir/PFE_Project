@@ -1,0 +1,159 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#fdeaf4"/>
+    </linearGradient>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#17345c" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#17345c"/>
+    </marker>
+    <style>
+      .title { font: 700 50px Arial, sans-serif; fill: #17345c; }
+      .subtitle { font: 500 21px Arial, sans-serif; fill: #5d6f86; }
+      .zone-title { font: 700 27px Arial, sans-serif; fill: #ffffff; }
+      .card-title { font: 700 25px Arial, sans-serif; fill: #17345c; }
+      .text { font: 400 22px Arial, sans-serif; fill: #253a55; }
+      .small { font: 400 19px Arial, sans-serif; fill: #52677f; }
+      .label { font: 700 19px Arial, sans-serif; fill: #17345c; }
+      .footer { font: 700 22px Arial, sans-serif; fill: #17345c; }
+      .zone { fill: #ffffff; fill-opacity: 0.52; stroke: #0f8a9d; stroke-width: 3; stroke-dasharray: 12 10; }
+      .card { fill: #ffffff; stroke: #b7d7f2; stroke-width: 2; filter: url(#softShadow); }
+      .icon-circle { fill: #eef8fb; stroke: #0f8a9d; stroke-width: 2; }
+      .icon-text { font: 800 20px Arial, sans-serif; fill: #0f8a9d; }
+      .arrow { stroke: #17345c; stroke-width: 4; fill: none; marker-end: url(#arrow); }
+      .thin-line { stroke: #7fa1c4; stroke-width: 3; fill: none; }
+    </style>
+  </defs>
+
+  <rect width="1920" height="1080" fill="url(#bg)"/>
+
+  <path d="M65 100 H600" stroke="#0f8a9d" stroke-width="3" opacity="0.45"/>
+  <path d="M1320 100 H1855" stroke="#0f8a9d" stroke-width="3" opacity="0.45"/>
+  <path d="M85 92 c18 -24 34 24 52 0 c18 -24 34 24 52 0" fill="none" stroke="#0f8a9d" stroke-width="3" opacity="0.8"/>
+  <text x="960" y="75" text-anchor="middle" class="title">Architecture physique - Projet AFYA</text>
+  <text x="960" y="112" text-anchor="middle" class="subtitle">Mobile, web, backend et services externes</text>
+
+  <!-- Main zones -->
+  <rect x="68" y="155" width="505" height="775" rx="28" class="zone"/>
+  <rect x="708" y="155" width="505" height="775" rx="28" class="zone"/>
+  <rect x="1348" y="155" width="505" height="775" rx="28" class="zone"/>
+
+  <rect x="122" y="182" width="397" height="52" rx="16" fill="#0f8a9d"/>
+  <text x="320" y="217" text-anchor="middle" class="zone-title">Terminaux utilisateurs</text>
+
+  <rect x="762" y="182" width="397" height="52" rx="16" fill="#17345c"/>
+  <text x="960" y="217" text-anchor="middle" class="zone-title">Serveur applicatif</text>
+
+  <rect x="1402" y="182" width="397" height="52" rx="16" fill="#0f8a9d"/>
+  <text x="1600" y="217" text-anchor="middle" class="zone-title">Services externes</text>
+
+  <!-- Left cards -->
+  <rect x="118" y="285" width="405" height="155" rx="18" class="card"/>
+  <circle cx="172" cy="333" r="28" class="icon-circle"/>
+  <text x="172" y="341" text-anchor="middle" class="icon-text">APP</text>
+  <text x="215" y="325" class="card-title">Application Flutter</text>
+  <text x="215" y="365" class="text">Patients, médecins, infirmiers</text>
+  <text x="215" y="398" class="text">Pharmaciens, admin établissement</text>
+  <text x="215" y="428" class="small">Accès mobile + switch role</text>
+
+  <rect x="118" y="500" width="405" height="145" rx="18" class="card"/>
+  <circle cx="172" cy="548" r="28" class="icon-circle"/>
+  <text x="172" y="556" text-anchor="middle" class="icon-text">WEB</text>
+  <text x="215" y="540" class="card-title">Back-office React</text>
+  <text x="215" y="580" class="text">Administration système</text>
+  <text x="215" y="613" class="text">Supervision, audit, alertes</text>
+
+  <rect x="118" y="705" width="405" height="145" rx="18" class="card"/>
+  <circle cx="172" cy="753" r="28" class="icon-circle"/>
+  <text x="172" y="761" text-anchor="middle" class="icon-text">QR</text>
+  <text x="215" y="745" class="card-title">Module scanner</text>
+  <text x="215" y="785" class="text">QR ordonnance et affectation</text>
+  <text x="215" y="818" class="text">Code-barres médicament</text>
+
+  <!-- Center backend -->
+  <rect x="758" y="280" width="405" height="250" rx="20" class="card"/>
+  <circle cx="818" cy="330" r="30" fill="#edf4ff" stroke="#17345c" stroke-width="2"/>
+  <text x="818" y="339" text-anchor="middle" font-family="Arial" font-size="24" font-weight="800" fill="#17345c">API</text>
+  <text x="865" y="323" class="card-title">Backend Spring Boot</text>
+  <text x="865" y="370" class="text">API REST sécurisée /api</text>
+  <text x="865" y="404" class="text">Port 8081</text>
+  <text x="865" y="438" class="text">JWT + Spring Security</text>
+  <text x="865" y="472" class="text">Rôles &amp; permissions</text>
+  <text x="865" y="506" class="text">Synchronisation mobile/web</text>
+
+  <!-- Storage -->
+  <path d="M960 530 V590" class="thin-line"/>
+  <path d="M820 590 H1100" class="thin-line"/>
+  <path d="M820 590 V620 M960 590 V620 M1100 590 V620" class="thin-line"/>
+
+  <rect x="755" y="620" width="130" height="145" rx="16" class="card"/>
+  <circle cx="820" cy="653" r="24" fill="#eef8fb" stroke="#0f8a9d" stroke-width="2"/>
+  <text x="820" y="661" text-anchor="middle" class="icon-text">DB</text>
+  <text x="820" y="696" text-anchor="middle" class="card-title">MySQL</text>
+  <text x="820" y="731" text-anchor="middle" class="small">Données</text>
+  <text x="820" y="758" text-anchor="middle" class="small">métier</text>
+
+  <rect x="895" y="620" width="130" height="145" rx="16" class="card"/>
+  <circle cx="960" cy="653" r="24" fill="#eef8fb" stroke="#0f8a9d" stroke-width="2"/>
+  <text x="960" y="661" text-anchor="middle" class="icon-text">PDF</text>
+  <text x="960" y="696" text-anchor="middle" class="card-title">PDF</text>
+  <text x="960" y="731" text-anchor="middle" class="small">uploads /</text>
+  <text x="960" y="758" text-anchor="middle" class="small">ordonnances</text>
+
+  <rect x="1035" y="620" width="130" height="145" rx="16" class="card"/>
+  <circle cx="1100" cy="653" r="24" fill="#eef8fb" stroke="#0f8a9d" stroke-width="2"/>
+  <text x="1100" y="661" text-anchor="middle" class="icon-text">LOG</text>
+  <text x="1100" y="696" text-anchor="middle" class="card-title">Logs</text>
+  <text x="1100" y="731" text-anchor="middle" class="small">afya.log</text>
+  <text x="1100" y="758" text-anchor="middle" class="small">audit</text>
+
+  <rect x="792" y="830" width="335" height="58" rx="18" fill="#eef8fb" stroke="#b7d7f2" stroke-width="2"/>
+  <text x="960" y="866" text-anchor="middle" class="footer">Backend local : 192.168.100.6:8081</text>
+
+  <!-- Right services -->
+  <rect x="1410" y="268" width="380" height="95" rx="16" class="card"/>
+  <circle cx="1460" cy="315" r="25" class="icon-circle"/>
+  <text x="1460" y="322" text-anchor="middle" class="icon-text">FCM</text>
+  <text x="1500" y="306" class="card-title">Firebase FCM</text>
+  <text x="1500" y="337" class="small">Notifications push</text>
+
+  <rect x="1410" y="395" width="380" height="95" rx="16" class="card"/>
+  <circle cx="1460" cy="442" r="25" class="icon-circle"/>
+  <text x="1460" y="449" text-anchor="middle" class="icon-text">@</text>
+  <text x="1500" y="433" class="card-title">SMTP Gmail</text>
+  <text x="1500" y="464" class="small">Emails d’activation</text>
+
+  <rect x="1410" y="522" width="380" height="95" rx="16" class="card"/>
+  <circle cx="1460" cy="569" r="25" class="icon-circle"/>
+  <text x="1460" y="576" text-anchor="middle" class="icon-text">FDA</text>
+  <text x="1500" y="560" class="card-title">OpenFDA</text>
+  <text x="1500" y="591" class="small">Informations médicaments</text>
+
+  <rect x="1410" y="649" width="380" height="95" rx="16" class="card"/>
+  <circle cx="1460" cy="696" r="25" class="icon-circle"/>
+  <text x="1460" y="703" text-anchor="middle" class="icon-text">IA</text>
+  <text x="1500" y="687" class="card-title">Groq / LLM</text>
+  <text x="1500" y="718" class="small">Assistant intelligent</text>
+
+  <rect x="1410" y="776" width="380" height="95" rx="16" class="card"/>
+  <circle cx="1460" cy="823" r="25" class="icon-circle"/>
+  <text x="1460" y="830" text-anchor="middle" class="icon-text">MAP</text>
+  <text x="1500" y="814" class="card-title">OpenStreetMap</text>
+  <text x="1500" y="845" class="small">Pharmacies proches</text>
+
+  <!-- Arrows -->
+  <path d="M573 510 H708" class="arrow"/>
+  <rect x="592" y="458" width="102" height="56" rx="12" fill="#ffffff" stroke="#b7d7f2"/>
+  <text x="643" y="481" text-anchor="middle" class="label">HTTP/JSON</text>
+  <text x="643" y="505" text-anchor="middle" class="label">+ JWT</text>
+
+  <path d="M1213 390 H1348" class="arrow"/>
+  <rect x="1230" y="338" width="102" height="56" rx="12" fill="#ffffff" stroke="#b7d7f2"/>
+  <text x="1281" y="361" text-anchor="middle" class="label">API / SMTP</text>
+  <text x="1281" y="385" text-anchor="middle" class="label">/ Push</text>
+
+  <text x="960" y="1010" text-anchor="middle" class="small">Architecture locale utilisée pour les tests APK sur téléphone connecté au même réseau Wi-Fi.</text>
+</svg>

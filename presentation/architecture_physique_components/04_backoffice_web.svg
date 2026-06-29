@@ -1,0 +1,25 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" width="720" height="560" viewBox="0 0 720 560">
+  <defs>
+    <linearGradient id="grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7357e8"/>
+      <stop offset="1" stop-color="#352180"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#173a73" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+  <rect x="32" y="32" width="656" height="496" rx="46" fill="#ffffff" stroke="#dbe7f4" stroke-width="4" filter="url(#shadow)"/>
+  <circle cx="360" cy="238" r="166" fill="url(#grad)"/>
+  <circle cx="360" cy="238" r="132" fill="none" stroke="#ffffff" stroke-width="14" opacity="0.2"/>
+  <g transform="translate(88 -10)">
+      <rect x="114" y="124" width="316" height="226" rx="24" fill="#ffffff"/>
+      <rect x="114" y="124" width="316" height="54" rx="24" fill="#e8eff8"/>
+      <circle cx="150" cy="151" r="8" fill="#ef4c86"/>
+      <circle cx="178" cy="151" r="8" fill="#f2a93b"/>
+      <circle cx="206" cy="151" r="8" fill="#42b883"/>
+      <rect x="154" y="218" width="104" height="74" rx="14" fill="#7357e8" opacity="0.9"/>
+      <path d="M286 226h80M286 260h62M286 294h92" stroke="#173a73" stroke-width="14" stroke-linecap="round"/>
+  </g>
+  <text x="360" y="456" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="38" font-weight="800" fill="#173a73">Back-office web</text>
+  <text x="360" y="500" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="500" fill="#5f7189">React + Vite / Port 5174</text>
+</svg>

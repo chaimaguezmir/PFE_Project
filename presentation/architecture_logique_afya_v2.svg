@@ -1,0 +1,191 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#fdeaf4"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="7" stdDeviation="7" flood-color="#17345c" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#17345c"/>
+    </marker>
+    <style>
+      .title { font: 700 48px Arial, sans-serif; fill: #17345c; }
+      .subtitle { font: 500 20px Arial, sans-serif; fill: #5d6f86; }
+      .zone-title { font: 700 24px Arial, sans-serif; fill: #ffffff; }
+      .card-title { font: 700 22px Arial, sans-serif; fill: #17345c; }
+      .text { font: 400 18px Arial, sans-serif; fill: #253a55; }
+      .small { font: 400 16px Arial, sans-serif; fill: #52677f; }
+      .label { font: 700 17px Arial, sans-serif; fill: #17345c; }
+      .zone { fill: #ffffff; fill-opacity: 0.55; stroke: #0f8a9d; stroke-width: 3; stroke-dasharray: 11 9; }
+      .layer { fill: #ffffff; stroke: #b7d7f2; stroke-width: 2; filter: url(#shadow); }
+      .domain { fill: #f8fffb; stroke: #98d9b6; stroke-width: 2; }
+      .icon { fill: #eef8fb; stroke: #0f8a9d; stroke-width: 2; }
+      .icon-text { font: 800 16px Arial, sans-serif; fill: #0f8a9d; }
+      .arrow { stroke: #17345c; stroke-width: 4; fill: none; marker-end: url(#arrow); }
+      .thin { stroke: #7fa1c4; stroke-width: 2.4; fill: none; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <rect width="1920" height="1080" fill="url(#bg)"/>
+  <text x="960" y="64" text-anchor="middle" class="title">Architecture logique - Projet AFYA</text>
+  <text x="960" y="98" text-anchor="middle" class="subtitle">Organisation en couches : interfaces, logique métier, accès aux données et services externes</text>
+
+  <!-- Main zones -->
+  <rect x="55" y="125" width="560" height="670" rx="26" class="zone"/>
+  <rect x="690" y="125" width="500" height="670" rx="26" class="zone"/>
+  <rect x="1265" y="125" width="600" height="670" rx="26" class="zone"/>
+
+  <rect x="100" y="150" width="470" height="48" rx="14" fill="#0f8a9d"/>
+  <text x="335" y="183" text-anchor="middle" class="zone-title">Applications clientes</text>
+
+  <rect x="735" y="150" width="410" height="48" rx="14" fill="#17345c"/>
+  <text x="940" y="183" text-anchor="middle" class="zone-title">Backend Spring Boot</text>
+
+  <rect x="1310" y="150" width="510" height="48" rx="14" fill="#0f8a9d"/>
+  <text x="1565" y="183" text-anchor="middle" class="zone-title">Données &amp; intégrations</text>
+
+  <!-- Client architecture -->
+  <rect x="90" y="235" width="245" height="500" rx="18" class="layer"/>
+  <text x="212" y="270" text-anchor="middle" class="card-title">Flutter Mobile</text>
+  <rect x="115" y="300" width="195" height="55" rx="12" fill="#eff8ff" stroke="#b7d7f2"/>
+  <text x="212" y="323" text-anchor="middle" class="label">Présentation</text>
+  <text x="212" y="346" text-anchor="middle" class="small">écrans, widgets</text>
+  <rect x="115" y="375" width="195" height="55" rx="12" fill="#f3fff6" stroke="#98d9b6"/>
+  <text x="212" y="398" text-anchor="middle" class="label">BLoC / Cubit</text>
+  <text x="212" y="421" text-anchor="middle" class="small">états, événements</text>
+  <rect x="115" y="450" width="195" height="55" rx="12" fill="#fffaf0" stroke="#f3c77b"/>
+  <text x="212" y="473" text-anchor="middle" class="label">Domain</text>
+  <text x="212" y="496" text-anchor="middle" class="small">entités, contrats</text>
+  <rect x="115" y="525" width="195" height="55" rx="12" fill="#f7f4ff" stroke="#c7b7f2"/>
+  <text x="212" y="548" text-anchor="middle" class="label">Data</text>
+  <text x="212" y="571" text-anchor="middle" class="small">models, sources API</text>
+  <rect x="115" y="600" width="195" height="55" rx="12" fill="#f9fbff" stroke="#b7d7f2"/>
+  <text x="212" y="623" text-anchor="middle" class="label">Core / Config</text>
+  <text x="212" y="646" text-anchor="middle" class="small">router, network, services</text>
+  <text x="212" y="705" text-anchor="middle" class="small">Clean Architecture + BLoC</text>
+
+  <rect x="365" y="235" width="220" height="230" rx="18" class="layer"/>
+  <text x="475" y="270" text-anchor="middle" class="card-title">Scanner</text>
+  <rect x="390" y="305" width="170" height="46" rx="11" fill="#eff8ff" stroke="#b7d7f2"/>
+  <text x="475" y="334" text-anchor="middle" class="label">Présentation</text>
+  <rect x="390" y="365" width="170" height="46" rx="11" fill="#f3fff6" stroke="#98d9b6"/>
+  <text x="475" y="394" text-anchor="middle" class="label">BLoC / Cubit</text>
+  <rect x="390" y="425" width="170" height="46" rx="11" fill="#f7f4ff" stroke="#c7b7f2"/>
+  <text x="475" y="454" text-anchor="middle" class="label">Data &amp; API</text>
+
+  <rect x="365" y="505" width="220" height="230" rx="18" class="layer"/>
+  <text x="475" y="540" text-anchor="middle" class="card-title">Back-office React</text>
+  <rect x="390" y="575" width="170" height="46" rx="11" fill="#eff8ff" stroke="#b7d7f2"/>
+  <text x="475" y="604" text-anchor="middle" class="label">Pages / composants</text>
+  <rect x="390" y="635" width="170" height="46" rx="11" fill="#f3fff6" stroke="#98d9b6"/>
+  <text x="475" y="664" text-anchor="middle" class="label">Auth &amp; routes</text>
+  <rect x="390" y="695" width="170" height="46" rx="11" fill="#f7f4ff" stroke="#c7b7f2"/>
+  <text x="475" y="724" text-anchor="middle" class="label">API Axios</text>
+
+  <!-- API arrow -->
+  <path d="M615 455 H690" class="arrow"/>
+  <rect x="612" y="395" width="85" height="52" rx="25" fill="#ffffff" stroke="#0f8a9d" stroke-width="2"/>
+  <text x="654" y="417" text-anchor="middle" class="label">API</text>
+  <text x="654" y="440" text-anchor="middle" class="label">REST</text>
+  <text x="652" y="485" text-anchor="middle" class="small">HTTP/JSON + JWT</text>
+
+  <!-- Backend architecture -->
+  <rect x="740" y="235" width="400" height="520" rx="18" class="layer"/>
+  <text x="940" y="270" text-anchor="middle" class="card-title">Couches backend</text>
+  <rect x="785" y="305" width="310" height="54" rx="12" fill="#eff8ff" stroke="#b7d7f2"/>
+  <text x="940" y="338" text-anchor="middle" class="label">Controllers REST</text>
+  <rect x="785" y="380" width="310" height="54" rx="12" fill="#fffaf0" stroke="#f3c77b"/>
+  <text x="940" y="413" text-anchor="middle" class="label">Security : JWT, Spring Security</text>
+  <rect x="785" y="455" width="310" height="54" rx="12" fill="#f3fff6" stroke="#98d9b6"/>
+  <text x="940" y="488" text-anchor="middle" class="label">Services métier</text>
+  <rect x="785" y="530" width="310" height="54" rx="12" fill="#f7f4ff" stroke="#c7b7f2"/>
+  <text x="940" y="563" text-anchor="middle" class="label">Repositories JPA</text>
+  <rect x="785" y="605" width="310" height="54" rx="12" fill="#f9fbff" stroke="#b7d7f2"/>
+  <text x="940" y="638" text-anchor="middle" class="label">Entities + DTO / Payload</text>
+  <rect x="785" y="680" width="310" height="54" rx="12" fill="#eef8fb" stroke="#86cdda"/>
+  <text x="940" y="713" text-anchor="middle" class="label">Config / Scheduler / FCM</text>
+
+  <!-- Data and integrations -->
+  <rect x="1315" y="250" width="230" height="185" rx="18" class="layer"/>
+  <circle cx="1364" cy="300" r="28" class="icon"/>
+  <text x="1364" y="307" text-anchor="middle" class="icon-text">DB</text>
+  <text x="1410" y="297" class="card-title">Base de données</text>
+  <text x="1360" y="340" class="text">Données utilisateurs</text>
+  <text x="1360" y="370" class="text">prescriptions, stock, rôles</text>
+  <text x="1360" y="400" class="small">Accès via JPA</text>
+
+  <rect x="1585" y="250" width="230" height="185" rx="18" class="layer"/>
+  <circle cx="1634" cy="300" r="28" class="icon"/>
+  <text x="1634" y="307" text-anchor="middle" class="icon-text">FS</text>
+  <text x="1680" y="297" class="card-title">Fichiers serveur</text>
+  <text x="1630" y="340" class="text">PDF ordonnances</text>
+  <text x="1630" y="370" class="text">uploads, logs</text>
+  <text x="1630" y="400" class="small">filesystem serveur</text>
+
+  <rect x="1315" y="485" width="500" height="260" rx="18" class="layer"/>
+  <text x="1565" y="525" text-anchor="middle" class="card-title">Services externes</text>
+  <rect x="1350" y="555" width="190" height="50" rx="12" fill="#ffffff" stroke="#b7d7f2"/>
+  <text x="1445" y="587" text-anchor="middle" class="label">Firebase FCM</text>
+  <rect x="1590" y="555" width="190" height="50" rx="12" fill="#ffffff" stroke="#b7d7f2"/>
+  <text x="1685" y="587" text-anchor="middle" class="label">SMTP Gmail</text>
+  <rect x="1350" y="625" width="190" height="50" rx="12" fill="#ffffff" stroke="#b7d7f2"/>
+  <text x="1445" y="657" text-anchor="middle" class="label">OpenFDA</text>
+  <rect x="1590" y="625" width="190" height="50" rx="12" fill="#ffffff" stroke="#b7d7f2"/>
+  <text x="1685" y="657" text-anchor="middle" class="label">Groq / LLM</text>
+  <rect x="1470" y="695" width="190" height="50" rx="12" fill="#ffffff" stroke="#b7d7f2"/>
+  <text x="1565" y="727" text-anchor="middle" class="label">OpenStreetMap</text>
+
+  <!-- backend to data arrows -->
+  <path d="M1190 360 H1315" class="arrow"/>
+  <path d="M1190 545 H1315" class="arrow"/>
+  <rect x="1208" y="392" width="92" height="52" rx="12" fill="#ffffff" stroke="#b7d7f2"/>
+  <text x="1254" y="414" text-anchor="middle" class="small">JPA</text>
+  <text x="1254" y="436" text-anchor="middle" class="small">+ fichiers</text>
+  <rect x="1208" y="580" width="92" height="52" rx="12" fill="#ffffff" stroke="#b7d7f2"/>
+  <text x="1254" y="602" text-anchor="middle" class="small">API</text>
+  <text x="1254" y="624" text-anchor="middle" class="small">externes</text>
+
+  <!-- Functional domains -->
+  <rect x="105" y="825" width="1710" height="190" rx="22" fill="#ffffff" stroke="#98d9b6" stroke-width="2" filter="url(#shadow)"/>
+  <text x="960" y="862" text-anchor="middle" class="card-title">Domaines fonctionnels couverts</text>
+
+  <g class="domain-row">
+    <rect x="145" y="890" width="155" height="42" rx="11" class="domain"/>
+    <text x="222" y="917" text-anchor="middle" class="label">Auth &amp; rôles</text>
+    <rect x="315" y="890" width="155" height="42" rx="11" class="domain"/>
+    <text x="392" y="917" text-anchor="middle" class="label">Switch role</text>
+    <rect x="485" y="890" width="155" height="42" rx="11" class="domain"/>
+    <text x="562" y="917" text-anchor="middle" class="label">Groupes</text>
+    <rect x="655" y="890" width="155" height="42" rx="11" class="domain"/>
+    <text x="732" y="917" text-anchor="middle" class="label">Prescriptions</text>
+    <rect x="825" y="890" width="155" height="42" rx="11" class="domain"/>
+    <text x="902" y="917" text-anchor="middle" class="label">Traitements</text>
+    <rect x="995" y="890" width="155" height="42" rx="11" class="domain"/>
+    <text x="1072" y="917" text-anchor="middle" class="label">Rappels</text>
+    <rect x="1165" y="890" width="155" height="42" rx="11" class="domain"/>
+    <text x="1242" y="917" text-anchor="middle" class="label">Ordonnances QR</text>
+    <rect x="1335" y="890" width="155" height="42" rx="11" class="domain"/>
+    <text x="1412" y="917" text-anchor="middle" class="label">Médicaments</text>
+    <rect x="1505" y="890" width="155" height="42" rx="11" class="domain"/>
+    <text x="1582" y="917" text-anchor="middle" class="label">Pharmacy box</text>
+  </g>
+
+  <g class="domain-row">
+    <rect x="315" y="950" width="175" height="42" rx="11" class="domain"/>
+    <text x="402" y="977" text-anchor="middle" class="label">Stock pharmacie</text>
+    <rect x="505" y="950" width="175" height="42" rx="11" class="domain"/>
+    <text x="592" y="977" text-anchor="middle" class="label">Transferts</text>
+    <rect x="695" y="950" width="175" height="42" rx="11" class="domain"/>
+    <text x="782" y="977" text-anchor="middle" class="label">Scan QR / code</text>
+    <rect x="885" y="950" width="175" height="42" rx="11" class="domain"/>
+    <text x="972" y="977" text-anchor="middle" class="label">Notifications</text>
+    <rect x="1075" y="950" width="175" height="42" rx="11" class="domain"/>
+    <text x="1162" y="977" text-anchor="middle" class="label">Chat IA / vocal</text>
+    <rect x="1265" y="950" width="175" height="42" rx="11" class="domain"/>
+    <text x="1352" y="977" text-anchor="middle" class="label">Back-office</text>
+    <rect x="1455" y="950" width="175" height="42" rx="11" class="domain"/>
+    <text x="1542" y="977" text-anchor="middle" class="label">Audit &amp; alertes</text>
+  </g>
+</svg>

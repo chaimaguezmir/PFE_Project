@@ -1,0 +1,182 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#f7dce9"/>
+    </linearGradient>
+    <linearGradient id="blue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#17a8c7"/>
+      <stop offset="1" stop-color="#173a73"/>
+    </linearGradient>
+    <linearGradient id="green" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#45c56f"/>
+      <stop offset="1" stop-color="#176b36"/>
+    </linearGradient>
+    <linearGradient id="pink" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ef4c86"/>
+      <stop offset="1" stop-color="#b31349"/>
+    </linearGradient>
+    <linearGradient id="orange" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffc857"/>
+      <stop offset="1" stop-color="#f57c00"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="12" flood-color="#173a73" flood-opacity="0.13"/>
+    </filter>
+    <marker id="arrowBlue" markerWidth="14" markerHeight="14" refX="12" refY="7" orient="auto">
+      <path d="M1,1 L13,7 L1,13 Z" fill="#173a73"/>
+    </marker>
+    <marker id="arrowPink" markerWidth="14" markerHeight="14" refX="12" refY="7" orient="auto">
+      <path d="M1,1 L13,7 L1,13 Z" fill="#b31349"/>
+    </marker>
+    <style>
+      .title { font-family: "Segoe UI", Arial, sans-serif; font-size: 46px; font-weight: 800; fill: #173a73; }
+      .h { font-family: "Segoe UI", Arial, sans-serif; font-size: 27px; font-weight: 800; fill: #173a73; }
+      .s { font-family: "Segoe UI", Arial, sans-serif; font-size: 18px; fill: #566a84; }
+      .tiny { font-family: "Segoe UI", Arial, sans-serif; font-size: 15px; fill: #66758b; }
+      .arrowText { font-family: "Segoe UI", Arial, sans-serif; font-size: 17px; font-weight: 700; fill: #173a73; }
+      .whiteLine { stroke: #ffffff; stroke-width: 10; stroke-linecap: round; stroke-linejoin: round; }
+    </style>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <text class="title" x="800" y="64" text-anchor="middle">Architecture physique - Projet AFYA</text>
+  <line x1="80" y1="92" x2="1520" y2="92" stroke="#b31349" stroke-width="3" opacity="0.75"/>
+
+  <!-- Users -->
+  <g transform="translate(76,180)" filter="url(#shadow)">
+    <rect x="0" y="0" width="260" height="250" rx="26" fill="#ffffff" stroke="#d7e5f2" stroke-width="3"/>
+    <circle cx="130" cy="88" r="68" fill="url(#blue)"/>
+    <circle cx="130" cy="70" r="28" fill="#ffffff"/>
+    <path d="M72 144c7-42 32-70 58-70s51 28 58 70c3 16-10 30-26 30H98c-16 0-29-14-26-30z" fill="#ffffff"/>
+    <circle cx="74" cy="92" r="22" fill="#ffffff" opacity="0.86"/>
+    <circle cx="186" cy="92" r="22" fill="#ffffff" opacity="0.86"/>
+    <text class="h" x="130" y="190" text-anchor="middle">Utilisateurs</text>
+    <text class="s" x="130" y="220" text-anchor="middle">patients + acteurs santé</text>
+  </g>
+
+  <!-- Client terminals -->
+  <g transform="translate(440,116)">
+    <g filter="url(#shadow)">
+      <rect x="0" y="0" width="320" height="190" rx="24" fill="#ffffff" stroke="#d7e5f2" stroke-width="3"/>
+      <circle cx="62" cy="72" r="44" fill="url(#blue)"/>
+      <rect x="42" y="36" width="40" height="72" rx="10" fill="#ffffff"/>
+      <circle cx="62" cy="100" r="4" fill="#173a73"/>
+      <text class="h" x="208" y="66" text-anchor="middle" font-size="25">Mobile Flutter</text>
+      <text class="s" x="208" y="98" text-anchor="middle">Android / Web mobile</text>
+      <text class="tiny" x="208" y="130" text-anchor="middle">Patient - Médecin - Pharmacien</text>
+      <text class="tiny" x="208" y="154" text-anchor="middle">Infirmier - Admin établissement</text>
+    </g>
+    <g transform="translate(0,245)" filter="url(#shadow)">
+      <rect x="0" y="0" width="320" height="190" rx="24" fill="#ffffff" stroke="#d7e5f2" stroke-width="3"/>
+      <circle cx="62" cy="72" r="44" fill="url(#pink)"/>
+      <rect x="34" y="42" width="56" height="44" rx="8" fill="#ffffff"/>
+      <path d="M42 98h40" stroke="#ffffff" stroke-width="9" stroke-linecap="round"/>
+      <text class="h" x="210" y="62" text-anchor="middle" font-size="25">Back-office web</text>
+      <text class="s" x="210" y="96" text-anchor="middle">React + Vite</text>
+      <text class="tiny" x="210" y="128" text-anchor="middle">Port 5174</text>
+      <text class="tiny" x="210" y="152" text-anchor="middle">administration &amp; suivi</text>
+    </g>
+    <g transform="translate(0,490)" filter="url(#shadow)">
+      <rect x="0" y="0" width="320" height="190" rx="24" fill="#ffffff" stroke="#d7e5f2" stroke-width="3"/>
+      <circle cx="62" cy="72" r="44" fill="url(#green)"/>
+      <path d="M36 48V34h20M88 34h20v14M108 96v14H88M56 110H36V96" fill="none" stroke="#ffffff" stroke-width="8" stroke-linecap="round"/>
+      <path d="M44 72h76" stroke="#ffffff" stroke-width="8" stroke-linecap="round"/>
+      <text class="h" x="226" y="62" text-anchor="middle" font-size="22">Application scanner</text>
+      <text class="s" x="226" y="96" text-anchor="middle">Scan code-barres</text>
+      <text class="tiny" x="226" y="128" text-anchor="middle">médicaments &amp; affectation</text>
+    </g>
+  </g>
+
+  <!-- Backend server -->
+  <g transform="translate(920,255)" filter="url(#shadow)">
+    <rect x="0" y="0" width="330" height="255" rx="28" fill="#ffffff" stroke="#d7e5f2" stroke-width="3"/>
+    <circle cx="165" cy="72" r="54" fill="url(#green)"/>
+    <rect x="124" y="42" width="82" height="28" rx="9" fill="#ffffff"/>
+    <rect x="124" y="82" width="82" height="28" rx="9" fill="#ffffff"/>
+    <circle cx="139" cy="56" r="5" fill="#176b36"/>
+    <circle cx="139" cy="96" r="5" fill="#176b36"/>
+    <text class="h" x="165" y="158" text-anchor="middle">Serveur applicatif</text>
+    <text class="s" x="165" y="192" text-anchor="middle">Spring Boot API REST</text>
+    <text class="tiny" x="165" y="222" text-anchor="middle">Port 8081 - JWT - sécurité</text>
+  </g>
+
+  <!-- Database and storage -->
+  <g transform="translate(838,625)" filter="url(#shadow)">
+    <rect x="0" y="0" width="250" height="170" rx="24" fill="#ffffff" stroke="#d7e5f2" stroke-width="3"/>
+    <text class="h" x="125" y="40" text-anchor="middle" font-size="22">MySQL : 3306</text>
+    <ellipse cx="125" cy="82" rx="58" ry="22" fill="url(#blue)"/>
+    <path d="M67 82v46c0 13 26 22 58 22s58-9 58-22V82" fill="#173a73"/>
+    <path d="M67 106c0 13 26 22 58 22s58-9 58-22" fill="none" stroke="#ffffff" stroke-width="5" opacity="0.32"/>
+  </g>
+
+  <g transform="translate(1132,625)" filter="url(#shadow)">
+    <rect x="0" y="0" width="250" height="170" rx="24" fill="#ffffff" stroke="#d7e5f2" stroke-width="3"/>
+    <text class="h" x="125" y="40" text-anchor="middle" font-size="22">Fichiers locaux</text>
+    <path d="M62 58c0-13 11-24 24-24h48l18 22h60c14 0 26 12 26 26v46c0 14-12 26-26 26H88c-15 0-26-12-26-26z" fill="url(#orange)"/>
+    <path d="M80 94h92M80 120h62" stroke="#ffffff" stroke-width="9" stroke-linecap="round"/>
+  </g>
+
+  <!-- External services -->
+  <g transform="translate(1320,165)" filter="url(#shadow)">
+    <rect x="0" y="0" width="220" height="410" rx="28" fill="#ffffff" stroke="#d7e5f2" stroke-width="3"/>
+    <text class="h" x="110" y="48" text-anchor="middle" font-size="24">Services externes</text>
+
+    <g transform="translate(25,82)">
+      <rect x="0" y="0" width="170" height="48" rx="14" fill="#fff6df"/>
+      <circle cx="25" cy="24" r="13" fill="#f57c00"/>
+      <text class="s" x="50" y="31">Firebase FCM</text>
+    </g>
+    <g transform="translate(25,146)">
+      <rect x="0" y="0" width="170" height="48" rx="14" fill="#fff1f2"/>
+      <circle cx="25" cy="24" r="13" fill="#ea4335"/>
+      <text class="s" x="50" y="31">SMTP Gmail</text>
+    </g>
+    <g transform="translate(25,210)">
+      <rect x="0" y="0" width="170" height="48" rx="14" fill="#e9fbff"/>
+      <circle cx="25" cy="24" r="13" fill="#0097a7"/>
+      <text class="s" x="50" y="31">OpenFDA</text>
+    </g>
+    <g transform="translate(25,274)">
+      <rect x="0" y="0" width="170" height="48" rx="14" fill="#fff4fa"/>
+      <circle cx="25" cy="24" r="13" fill="#b31349"/>
+      <text class="s" x="50" y="31">Groq / LLM</text>
+    </g>
+    <g transform="translate(25,338)">
+      <rect x="0" y="0" width="170" height="48" rx="14" fill="#effbf4"/>
+      <circle cx="25" cy="24" r="13" fill="#42b883"/>
+      <text class="s" x="50" y="31">OpenStreetMap</text>
+    </g>
+  </g>
+
+  <!-- Arrows -->
+  <path d="M336 304 C374 250 394 220 440 210" fill="none" stroke="#173a73" stroke-width="4" marker-end="url(#arrowBlue)"/>
+  <path d="M336 304 C376 344 394 450 440 456" fill="none" stroke="#173a73" stroke-width="4" marker-end="url(#arrowBlue)"/>
+  <path d="M336 304 C378 416 392 652 440 701" fill="none" stroke="#173a73" stroke-width="4" marker-end="url(#arrowBlue)"/>
+
+  <path d="M760 210 C830 224 865 278 920 324" fill="none" stroke="#173a73" stroke-width="4" marker-end="url(#arrowBlue)"/>
+  <path d="M760 456 C820 450 860 426 920 392" fill="none" stroke="#173a73" stroke-width="4" marker-end="url(#arrowBlue)"/>
+  <path d="M760 701 C830 660 872 552 920 472" fill="none" stroke="#173a73" stroke-width="4" marker-end="url(#arrowBlue)"/>
+
+  <path d="M1084 510 L1015 625" fill="none" stroke="#b31349" stroke-width="4" marker-end="url(#arrowPink)"/>
+  <path d="M1138 510 L1230 625" fill="none" stroke="#b31349" stroke-width="4" marker-end="url(#arrowPink)"/>
+  <path d="M1250 382 L1320 370" fill="none" stroke="#173a73" stroke-width="4" marker-end="url(#arrowBlue)"/>
+
+  <!-- Labels -->
+  <g>
+    <rect x="790" y="254" width="122" height="36" rx="18" fill="#ffffff" stroke="#d7e5f2"/>
+    <text class="arrowText" x="851" y="278" text-anchor="middle">HTTP/JSON</text>
+  </g>
+  <g>
+    <rect x="792" y="415" width="94" height="36" rx="18" fill="#ffffff" stroke="#d7e5f2"/>
+    <text class="arrowText" x="839" y="439" text-anchor="middle">JWT</text>
+  </g>
+  <g>
+    <rect x="940" y="562" width="76" height="34" rx="17" fill="#ffffff" stroke="#d7e5f2"/>
+    <text class="arrowText" x="978" y="585" text-anchor="middle">JDBC</text>
+  </g>
+  <g>
+    <rect x="1260" y="330" width="70" height="34" rx="17" fill="#ffffff" stroke="#d7e5f2"/>
+    <text class="arrowText" x="1295" y="353" text-anchor="middle">HTTPS</text>
+  </g>
+</svg>

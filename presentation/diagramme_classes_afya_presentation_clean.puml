@@ -1,0 +1,211 @@
+@startuml
+title Diagramme de classes simplifié - AFYA
+
+left to right direction
+
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+skinparam packageStyle rectangle
+skinparam backgroundColor #FFFFFF
+
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #1F4E79
+  FontColor #17324D
+  HeaderBackgroundColor #EAF4FF
+  HeaderFontColor #17324D
+}
+
+skinparam package {
+  BackgroundColor #FAFCFF
+  BorderColor #B7D7F2
+  FontColor #17324D
+}
+
+skinparam ArrowColor #334155
+
+package "Utilisateurs et sécurité" {
+
+  class User {
+    +id: UUID
+    +username: String
+    +email: String
+    +password: String
+    +firstName: String
+    +lastName: String
+    +phoneNumber: String
+    +enabled: boolean
+    --
+    +numeroPatient: String
+    +antecedents: String
+    +specialite: String
+    +numeroOrdre: String
+    +nomPharmacie: String
+    +numeroBrevet: String
+    +service: String
+    +grade: String
+  }
+
+  class Role {
+    +id: Integer
+    +name: ERole
+  }
+
+  enum ERole {
+    ROLE_USER
+    ROLE_ADMIN
+    ROLE_ADMIN_ETABLISSEMENT
+    ROLE_MEDECIN
+    ROLE_MEDECIN_PARTICULIER
+    ROLE_PHARMACIEN
+    ROLE_PHARMACIEN_PARTICULIER
+    ROLE_INFIRMIER
+  }
+}
+
+package "Groupes et boîte pharmacie" {
+
+  class Group {
+    +id: UUID
+    +name: String
+    +createdBy: UUID
+  }
+
+  class GroupMember {
+    +groupId: UUID
+    +userId: UUID
+    +role: GroupRole
+    +joinedAt: Instant
+  }
+
+  class PharmacyBox {
+    +id: UUID
+  }
+
+  class MyMedicine {
+    +id: UUID
+    +name: String
+    +form: String
+    +source: MedicineSource
+  }
+}
+
+package "Suivi médical" {
+
+  class Prescription {
+    +id: UUID
+    +name: String
+    +startDate: LocalDate
+    +endDate: LocalDate
+  }
+
+  class Treatment {
+    +id: UUID
+    +dosage: String
+    +frequency: String
+    +durationDays: Integer
+    +mealTiming: String
+  }
+
+  class Reminder {
+    +id: UUID
+    +reminderDateTime: LocalDateTime
+    +timeSlot: TimeSlot
+    +status: ReminderStatus
+  }
+
+  class Ordonnance {
+    +id: UUID
+    +publicToken: String
+    +pdfPath: String
+    +generatedAt: LocalDateTime
+  }
+}
+
+package "Médicaments et pharmacie" {
+
+  class Medicine {
+    +id: UUID
+    +medicationName: String
+    +dosage: String
+    +form: String
+    +barcode: String
+    +medicationType: String
+  }
+
+  class Stock {
+    +id: UUID
+    +currentStock: Integer
+    +minStockLevel: Integer
+    +expiryDate: LocalDateTime
+    +unitPrice: Double
+  }
+
+  class MedicineTransferRequest {
+    +id: UUID
+    +status: MedicineTransferStatus
+    +createdAt: LocalDateTime
+    +acceptedAt: LocalDateTime
+  }
+
+  class MedicineTransferItem {
+    +id: UUID
+    +medicineName: String
+    +dosage: String
+    +form: String
+    +duration: String
+  }
+}
+
+package "Assistance intelligente" {
+
+  class ChatMessage {
+    +id: UUID
+    +sessionId: String
+    +role: String
+    +content: String
+    +createdAt: LocalDateTime
+  }
+}
+
+' Relations utilisateur / sécurité
+User "*" -- "*" Role : possède
+Role --> ERole : type
+
+' Relations groupes
+User "1" -- "0..*" GroupMember : adhère
+Group "1" -- "0..*" GroupMember : contient
+Group "1" *-- "1" PharmacyBox : possède
+PharmacyBox "1" *-- "0..*" MyMedicine : contient
+MyMedicine "0..*" --> "0..1" Medicine : référence
+
+' Relations suivi médical
+User "1" -- "0..*" Prescription : patient
+User "0..1" -- "0..*" Prescription : prescripteur
+Prescription "1" *-- "1..*" Treatment : définit
+Treatment "1" *-- "0..*" Reminder : planifie
+Treatment "0..*" --> "0..1" Medicine : médicament
+Prescription "1" -- "0..1" Ordonnance : génère
+Ordonnance "0..*" --> "1" User : médecin
+Ordonnance "0..*" --> "1" User : patient
+
+' Relations pharmacie / stock
+User "1" -- "0..*" Stock : pharmacien
+Stock "0..*" --> "1" Medicine : concerne
+
+User "1" -- "0..*" MedicineTransferRequest : pharmacien
+User "1" -- "0..*" MedicineTransferRequest : patient cible
+MedicineTransferRequest "1" *-- "1..*" MedicineTransferItem : contient
+MedicineTransferItem "0..*" --> "0..1" Medicine : référence
+
+' Assistance IA
+User "1" -- "0..*" ChatMessage : échange
+
+note bottom of User
+Les profils métier ne sont pas modélisés comme classes séparées.
+Ils sont distingués par Role.
+Les attributs métier utiles sont centralisés dans User.
+end note
+
+@enduml

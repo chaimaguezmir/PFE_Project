@@ -1,0 +1,233 @@
+classDiagram
+direction LR
+
+class User {
+  +UUID id
+  +String username
+  +String email
+  +String password
+  +String firstName
+  +String lastName
+  +String phoneNumber
+  +String profileImageUrl
+  +Boolean enabled
+  +Double weight
+  +Double height
+  +String bloodGroup
+  +String gender
+  +String birthDate
+  +Boolean smokingStatus
+  +Boolean alcoholConsumption
+  +Boolean exerciseRegularly
+  +Boolean heartDisease
+  +Boolean diabetes
+  +Boolean cholesterol
+  +Boolean allergies
+  +String numeroPatient
+  +String adresse
+  +String antecedents
+  +String planDeTraitement
+  +String specialite
+  +String numeroOrdre
+  +String adresseCabinet
+  +String numeroBrevet
+  +String nomPharmacie
+  +String adressePharmacie
+  +String telephonePharmacie
+  +String service
+  +String grade
+  +String zoneAdministrative
+  +String organisation
+  +String poste
+}
+
+class Role {
+  +Integer id
+  +ERole name
+}
+
+class EtablissementSante {
+  +UUID id
+  +String nom
+  +String adresse
+  +String type
+  +String telephone
+  +String email
+  +Boolean active
+  +Boolean deleted
+}
+
+class Group {
+  +UUID id
+  +String name
+  +UUID createdBy
+}
+
+class GroupMember {
+  +UUID groupId
+  +UUID userId
+  +GroupRole role
+  +Instant joinedAt
+}
+
+class PharmacyBox {
+  +UUID id
+}
+
+class Medicine {
+  +UUID id
+  +String medicationName
+  +String dosage
+  +String form
+  +String dci
+  +String therapeuticClass
+  +String laboratory
+  +String barcode
+  +String medicationType
+}
+
+class MyMedicine {
+  +UUID id
+  +String name
+  +String form
+  +String customManufacturer
+  +String customForm
+  +MedicineSource source
+  +LocalDateTime createdAt
+}
+
+class MedicinePurchaseHistory {
+  +UUID id
+  +Integer quantity
+  +Double unitPrice
+  +LocalDateTime purchaseDate
+  +LocalDateTime expiryDate
+}
+
+class Prescription {
+  +UUID id
+  +String name
+  +LocalDate startDate
+  +LocalDate endDate
+  +LocalDateTime createdAt
+}
+
+class Disease {
+  +UUID id
+  +String name
+  +String description
+}
+
+class Treatment {
+  +UUID id
+  +String dosage
+  +String frequency
+  +Integer durationDays
+  +String mealTiming
+  +String medicineName
+  +String medicineForm
+}
+
+class Reminder {
+  +UUID id
+  +LocalDateTime reminderDateTime
+  +TimeSlot timeSlot
+  +ReminderStatus status
+  +String message
+}
+
+class PrescriptionTemplate {
+  +UUID id
+  +String organizationName
+  +String professionalId
+  +String address
+  +String phone
+  +String email
+}
+
+class Ordonnance {
+  +UUID id
+  +String publicToken
+  +String pdfPath
+  +LocalDateTime generatedAt
+}
+
+class Stock {
+  +UUID id
+  +Integer currentStock
+  +Integer minStockLevel
+  +Integer maxStockLevel
+  +Double unitPrice
+  +LocalDateTime expiryDate
+  +String supplier
+  +String batchNumber
+  +String storageLocation
+}
+
+class StockRequest {
+  +UUID id
+  +Integer quantityRequested
+  +StockRequestStatus status
+  +LocalDateTime requestDate
+  +String notes
+}
+
+class MedicineTransferRequest {
+  +UUID id
+  +MedicineTransferStatus status
+  +LocalDateTime createdAt
+  +LocalDateTime acceptedAt
+}
+
+class MedicineTransferItem {
+  +UUID id
+  +String medicineName
+  +String dosage
+  +String form
+  +String frequency
+  +String duration
+  +String remarks
+}
+
+class ChatMessage {
+  +UUID id
+  +String sessionId
+  +String role
+  +String content
+  +LocalDateTime createdAt
+}
+
+User "*" -- "*" Role : possede
+EtablissementSante "1" -- "*" User : emploie / affecte
+User "1" -- "*" GroupMember : adhesion
+Group "1" -- "*" GroupMember : contient
+Group "1" -- "1" PharmacyBox : possede
+PharmacyBox "1" -- "*" MyMedicine : contient
+Medicine "0..1" -- "*" MyMedicine : reference
+MyMedicine "1" -- "*" MedicinePurchaseHistory : historique
+
+User "1" -- "*" Prescription : patient
+User "0..1" -- "*" Prescription : prescripteur
+Prescription "*" -- "*" Disease : concerne
+Prescription "1" -- "*" Treatment : definit
+Treatment "0..1" -- "1" Medicine : medicament
+Treatment "0..1" -- "1" MyMedicine : boite
+Treatment "1" -- "*" Reminder : planifie
+
+User "1" -- "0..1" PrescriptionTemplate : modele ordonnance
+Prescription "1" -- "0..1" Ordonnance : genere
+User "1" -- "*" Ordonnance : medecin
+User "1" -- "*" Ordonnance : patient
+PrescriptionTemplate "1" -- "*" Ordonnance : utilise
+
+User "1" -- "*" Stock : pharmacien
+Medicine "1" -- "*" Stock : stocke
+User "1" -- "*" StockRequest : infirmier
+Stock "1" -- "*" StockRequest : demande
+
+User "1" -- "*" MedicineTransferRequest : pharmacien
+User "1" -- "*" MedicineTransferRequest : patient cible
+MedicineTransferRequest "1" -- "*" MedicineTransferItem : contient
+Medicine "0..1" -- "*" MedicineTransferItem : reference
+
+User "1" -- "*" ChatMessage : discute

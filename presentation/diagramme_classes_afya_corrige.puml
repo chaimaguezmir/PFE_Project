@@ -1,0 +1,265 @@
+@startuml
+title Diagramme de classes corrigé - AFYA
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam class {
+  BackgroundColor White
+  BorderColor #1f3f66
+  ArrowColor #334155
+}
+
+enum ERole {
+  ROLE_USER
+  ROLE_ADMIN
+  ROLE_ETABLISSEMENT
+  ROLE_MEDECIN
+  ROLE_MEDECIN_PARTICULIER
+  ROLE_PHARMACIEN
+  ROLE_PHARMACIEN_PARTICULIER
+  ROLE_INFIRMIER
+  ROLE_INSPECTEUR
+}
+
+class User {
+  +id: UUID
+  +username: String
+  +email: String
+  +password: String
+  +firstName: String
+  +lastName: String
+  +phoneNumber: String
+  +profileImageUrl: String
+  +enabled: boolean
+  --
+  +weight: Double
+  +height: Double
+  +bloodGroup: String
+  +gender: String
+  +birthDate: String
+  +antecedents: String
+  +allergies: boolean
+  +diabetes: boolean
+  +heartDisease: boolean
+  --
+  +numeroPatient: String
+  +adresse: String
+  +planDeTraitement: String
+  --
+  +specialite: String
+  +numeroOrdre: String
+  +adresseCabinet: String
+  --
+  +numeroBrevet: String
+  +nomPharmacie: String
+  +adressePharmacie: String
+  +telephonePharmacie: String
+  --
+  +service: String
+  +grade: String
+  +zoneAdministrative: String
+  +organisation: String
+  +poste: String
+}
+
+class Role {
+  +id: Integer
+  +name: ERole
+}
+
+class EtablissementSante {
+  +id: UUID
+  +nom: String
+  +adresse: String
+  +type: String
+  +telephone: String
+  +email: String
+  +active: Boolean
+  +deleted: Boolean
+}
+
+class Group {
+  +id: UUID
+  +name: String
+  +createdBy: UUID
+}
+
+class GroupMember {
+  +groupId: UUID
+  +userId: UUID
+  +role: GroupRole
+  +joinedAt: Instant
+}
+
+class PharmacyBox {
+  +id: UUID
+}
+
+class Medicine {
+  +id: UUID
+  +medicationName: String
+  +dosage: String
+  +form: String
+  +dci: String
+  +therapeuticClass: String
+  +laboratory: String
+  +barcode: String
+  +medicationType: String
+}
+
+class MyMedicine {
+  +id: UUID
+  +name: String
+  +form: String
+  +customManufacturer: String
+  +customForm: String
+  +source: MedicineSource
+  +createdAt: LocalDateTime
+}
+
+class MedicinePurchaseHistory {
+  +id: UUID
+  +quantity: Integer
+  +unitPrice: Double
+  +purchaseDate: LocalDateTime
+  +expiryDate: LocalDateTime
+}
+
+class Prescription {
+  +id: UUID
+  +name: String
+  +startDate: LocalDate
+  +endDate: LocalDate
+  +createdAt: LocalDateTime
+}
+
+class Disease {
+  +id: UUID
+  +name: String
+  +description: String
+}
+
+class Treatment {
+  +id: UUID
+  +dosage: String
+  +frequency: String
+  +durationDays: Integer
+  +mealTiming: String
+  +medicineName: String
+  +medicineForm: String
+}
+
+class Reminder {
+  +id: UUID
+  +reminderDateTime: LocalDateTime
+  +timeSlot: TimeSlot
+  +status: ReminderStatus
+  +message: String
+}
+
+class PrescriptionTemplate {
+  +id: UUID
+  +organizationName: String
+  +professionalId: String
+  +address: String
+  +phone: String
+  +email: String
+}
+
+class Ordonnance {
+  +id: UUID
+  +publicToken: String
+  +pdfPath: String
+  +generatedAt: LocalDateTime
+}
+
+class Stock {
+  +id: UUID
+  +currentStock: Integer
+  +minStockLevel: Integer
+  +maxStockLevel: Integer
+  +unitPrice: Double
+  +expiryDate: LocalDateTime
+  +supplier: String
+  +batchNumber: String
+}
+
+class StockRequest {
+  +id: UUID
+  +quantityRequested: Integer
+  +status: StockRequestStatus
+  +requestDate: LocalDateTime
+  +notes: String
+}
+
+class MedicineTransferRequest {
+  +id: UUID
+  +status: MedicineTransferStatus
+  +createdAt: LocalDateTime
+  +acceptedAt: LocalDateTime
+}
+
+class MedicineTransferItem {
+  +id: UUID
+  +medicineName: String
+  +dosage: String
+  +form: String
+  +frequency: String
+  +duration: String
+  +remarks: String
+}
+
+class ChatMessage {
+  +id: UUID
+  +sessionId: String
+  +role: String
+  +content: String
+  +createdAt: LocalDateTime
+}
+
+User "*" -- "*" Role : possède
+Role --> ERole
+
+EtablissementSante "1" -- "*" User : affecte personnel
+
+User "1" -- "*" GroupMember : adhésion
+Group "1" -- "*" GroupMember : contient
+Group "1" -- "1" PharmacyBox : possède
+PharmacyBox "1" -- "*" MyMedicine : contient
+Medicine "0..1" -- "*" MyMedicine : référence
+MyMedicine "1" -- "*" MedicinePurchaseHistory : historique
+
+User "1" -- "*" Prescription : patient
+User "0..1" -- "*" Prescription : prescripteur
+Prescription "*" -- "*" Disease : concerne
+Prescription "1" -- "*" Treatment : définit
+Treatment "0..1" -- "1" Medicine : médicament
+Treatment "0..1" -- "1" MyMedicine : boîte pharmacie
+Treatment "1" -- "*" Reminder : planifie
+
+User "1" -- "0..1" PrescriptionTemplate : modèle médecin
+Prescription "1" -- "0..1" Ordonnance : génère
+User "1" -- "*" Ordonnance : médecin
+User "1" -- "*" Ordonnance : patient
+PrescriptionTemplate "1" -- "*" Ordonnance : utilise
+
+User "1" -- "*" Stock : pharmacien
+Medicine "1" -- "*" Stock : stocké
+User "1" -- "*" StockRequest : infirmier
+Stock "1" -- "*" StockRequest : demande
+
+User "1" -- "*" MedicineTransferRequest : pharmacien
+User "1" -- "*" MedicineTransferRequest : patient cible
+MedicineTransferRequest "1" -- "*" MedicineTransferItem : contient
+Medicine "0..1" -- "*" MedicineTransferItem : référence
+
+User "1" -- "*" ChatMessage : assistant IA
+
+note bottom of User
+Patient, Médecin, Pharmacien, Infirmier, Inspecteur
+et Administrateur ne sont plus représentés comme classes séparées.
+Le type d'utilisateur est porté par Role.
+Les attributs spécifiques sont intégrés dans User.
+end note
+
+@enduml

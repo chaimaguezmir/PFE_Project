@@ -1,0 +1,568 @@
+[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for com.idvey:afya:jar:0.0.1-SNAPSHOT
+[WARNING] 'dependencies.dependency.(groupId:artifactId:type:classifier)' must be unique: io.jsonwebtoken:jjwt-impl:jar -> duplicate declaration of version 0.11.5 @ line 73, column 15
+[WARNING] 'dependencies.dependency.(groupId:artifactId:type:classifier)' must be unique: io.jsonwebtoken:jjwt-jackson:jar -> duplicate declaration of version 0.11.5 @ line 80, column 15
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[INFO] 
+[INFO] ---------------------------< com.idvey:afya >---------------------------
+[INFO] Building afya 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] >>> spring-boot:3.4.5:run (default-cli) > test-compile @ afya >>>
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ afya ---
+[INFO] Copying 3 resources from src\main\resources to target\classes
+[INFO] Copying 7 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ afya ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ afya ---
+[INFO] skip non existing resourceDirectory C:\Users\chaima\Desktop\Projets\afya\back-end\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.13.0:testCompile (default-testCompile) @ afya ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] <<< spring-boot:3.4.5:run (default-cli) < test-compile @ afya <<<
+[INFO] 
+[INFO] 
+[INFO] --- spring-boot:3.4.5:run (default-cli) @ afya ---
+[INFO] Attaching agents: []
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.4.5)
+
+2026-06-25T10:36:19.378+01:00  INFO 38296 --- [afya] [           main] com.idvey.afya.AfyaApplication           : Starting AfyaApplication using Java 20.0.2 with PID 38296 (C:\Users\chaima\Desktop\Projets\afya\back-end\target\classes started by chaima in C:\Users\chaima\Desktop\Projets\afya\back-end)
+2026-06-25T10:36:19.382+01:00  INFO 38296 --- [afya] [           main] com.idvey.afya.AfyaApplication           : The following 1 profile is active: "dev"
+2026-06-25T10:36:22.022+01:00  INFO 38296 --- [afya] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-06-25T10:36:22.286+01:00  INFO 38296 --- [afya] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 245 ms. Found 31 JPA repository interfaces.
+2026-06-25T10:36:24.092+01:00  INFO 38296 --- [afya] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8081 (http)
+2026-06-25T10:36:24.124+01:00  INFO 38296 --- [afya] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-06-25T10:36:24.125+01:00  INFO 38296 --- [afya] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.40]
+2026-06-25T10:36:24.279+01:00  INFO 38296 --- [afya] [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-06-25T10:36:24.280+01:00  INFO 38296 --- [afya] [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 4796 ms
+2026-06-25T10:36:25.801+01:00  INFO 38296 --- [afya] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-06-25T10:36:25.866+01:00  INFO 38296 --- [afya] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-06-25T10:36:26.234+01:00  INFO 38296 --- [afya] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@1d7af82
+2026-06-25T10:36:26.238+01:00  INFO 38296 --- [afya] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-06-25T10:36:26.341+01:00  WARN 38296 --- [afya] [           main] org.hibernate.dialect.Dialect            : HHH000511: The 5.5.5 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2026-06-25T10:36:26.349+01:00  WARN 38296 --- [afya] [           main] org.hibernate.orm.deprecation            : HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-06-25T10:36:30.308+01:00  INFO 38296 --- [afya] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-06-25T10:36:30.911+01:00  INFO 38296 --- [afya] [           main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-06-25T10:36:33.504+01:00  INFO 38296 --- [afya] [           main] com.idvey.afya.config.FirebaseConfig     : Firebase: cle service chargee depuis C:\Users\chaima\Desktop\Projets\afya\back-end\src\main\resources\firebase\serviceAccountKey.json
+2026-06-25T10:36:33.916+01:00  INFO 38296 --- [afya] [           main] com.idvey.afya.config.FirebaseConfig     : Firebase Admin SDK initialise avec succes pour projectId=flutter-ai-playground-53d64
+2026-06-25T10:36:39.934+01:00  INFO 38296 --- [afya] [           main] c.i.a.scheduler.NotificationScheduler    : 🚀 [Scheduler] Le système de notifications est initialisé et prêt !
+2026-06-25T10:36:41.432+01:00  INFO 38296 --- [afya] [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 16 endpoints beneath base path '/actuator'
+2026-06-25T10:36:43.342+01:00  INFO 38296 --- [afya] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8081 (http) with context path '/'
+2026-06-25T10:36:43.378+01:00  INFO 38296 --- [afya] [           main] com.idvey.afya.AfyaApplication           : Started AfyaApplication in 24.866 seconds (process running for 25.757)
+2026-06-25T10:36:43.404+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:36)
+2026-06-25T10:36:43.558+01:00  INFO 38296 --- [afya] [           main] c.i.a.config.SchemaCompatibilityRunner   : Schema compatibility - treatments.my_medicine_id is nullable
+2026-06-25T10:36:43.846+01:00  INFO 38296 --- [afya] [0.0-8081-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-06-25T10:36:43.847+01:00  INFO 38296 --- [afya] [0.0-8081-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-06-25T10:36:43.852+01:00  INFO 38296 --- [afya] [0.0-8081-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 4 ms
+2026-06-25T10:36:53.380+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:36)
+2026-06-25T10:37:03.378+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:37)
+2026-06-25T10:37:13.389+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:37)
+2026-06-25T10:37:13.477+01:00  INFO 38296 --- [afya] [   scheduling-1] com.idvey.afya.services.FcmService       : FCM - Envoi alerte PERSONAL_BOX_STOCK_RUPTURE a 9 appareil(s) pour userId: 5476d40c-32bb-47d7-b51d-57fe2051d127
+2026-06-25T10:37:14.908+01:00  INFO 38296 --- [afya] [   scheduling-1] com.idvey.afya.services.FcmService       : FCM - Succès: 9 | Échec: 0
+2026-06-25T10:37:14.909+01:00  INFO 38296 --- [afya] [   scheduling-1] com.idvey.afya.services.FcmService       : FCM - Message accepte pour token d0q5jXvM6GUvjkyMCkaV...
+2026-06-25T10:37:14.909+01:00  INFO 38296 --- [afya] [   scheduling-1] com.idvey.afya.services.FcmService       : FCM - Message accepte pour token ckvTapYp9cvCQHM2k8lU...
+2026-06-25T10:37:14.909+01:00  INFO 38296 --- [afya] [   scheduling-1] com.idvey.afya.services.FcmService       : FCM - Message accepte pour token dfVODGXjqdUKDLVk2qVA...
+2026-06-25T10:37:14.909+01:00  INFO 38296 --- [afya] [   scheduling-1] com.idvey.afya.services.FcmService       : FCM - Message accepte pour token cJ-4dH24e73muI9RpDae...
+2026-06-25T10:37:14.909+01:00  INFO 38296 --- [afya] [   scheduling-1] com.idvey.afya.services.FcmService       : FCM - Message accepte pour token dQWTmlvIRB9ie6V80JjK...
+2026-06-25T10:37:14.909+01:00  INFO 38296 --- [afya] [   scheduling-1] com.idvey.afya.services.FcmService       : FCM - Message accepte pour token eissec_Av4VGL1i2A0v9...
+2026-06-25T10:37:14.909+01:00  INFO 38296 --- [afya] [   scheduling-1] com.idvey.afya.services.FcmService       : FCM - Message accepte pour token cdUSPzkfnBWnkrlpUaLe...
+2026-06-25T10:37:14.910+01:00  INFO 38296 --- [afya] [   scheduling-1] com.idvey.afya.services.FcmService       : FCM - Message accepte pour token eT4ugBMT_7yrJXhwsBcP...
+2026-06-25T10:37:14.910+01:00  INFO 38296 --- [afya] [   scheduling-1] com.idvey.afya.services.FcmService       : FCM - Message accepte pour token cWbzYvWFxY9LoJL-L_Q7...
+2026-06-25T10:37:14.920+01:00  INFO 38296 --- [afya] [   scheduling-1] com.idvey.afya.services.FcmService       : FCM - Envoi alerte PERSONAL_BOX_STOCK_RUPTURE a 9 appareil(s) pour userId: 5476d40c-32bb-47d7-b51d-57fe2051d127
+2026-06-25T10:37:15.084+01:00  INFO 38296 --- [afya] [   scheduling-1] com.idvey.afya.services.FcmService       : FCM - Succès: 9 | Échec: 0
+2026-06-25T10:37:15.084+01:00  INFO 38296 --- [afya] [   scheduling-1] com.idvey.afya.services.FcmService       : FCM - Message accepte pour token d0q5jXvM6GUvjkyMCkaV...
+2026-06-25T10:37:15.084+01:00  INFO 38296 --- [afya] [   scheduling-1] com.idvey.afya.services.FcmService       : FCM - Message accepte pour token ckvTapYp9cvCQHM2k8lU...
+2026-06-25T10:37:15.084+01:00  INFO 38296 --- [afya] [   scheduling-1] com.idvey.afya.services.FcmService       : FCM - Message accepte pour token dfVODGXjqdUKDLVk2qVA...
+2026-06-25T10:37:15.085+01:00  INFO 38296 --- [afya] [   scheduling-1] com.idvey.afya.services.FcmService       : FCM - Message accepte pour token cJ-4dH24e73muI9RpDae...
+2026-06-25T10:37:15.085+01:00  INFO 38296 --- [afya] [   scheduling-1] com.idvey.afya.services.FcmService       : FCM - Message accepte pour token dQWTmlvIRB9ie6V80JjK...
+2026-06-25T10:37:15.085+01:00  INFO 38296 --- [afya] [   scheduling-1] com.idvey.afya.services.FcmService       : FCM - Message accepte pour token eissec_Av4VGL1i2A0v9...
+2026-06-25T10:37:15.085+01:00  INFO 38296 --- [afya] [   scheduling-1] com.idvey.afya.services.FcmService       : FCM - Message accepte pour token cdUSPzkfnBWnkrlpUaLe...
+2026-06-25T10:37:15.085+01:00  INFO 38296 --- [afya] [   scheduling-1] com.idvey.afya.services.FcmService       : FCM - Message accepte pour token eT4ugBMT_7yrJXhwsBcP...
+2026-06-25T10:37:15.085+01:00  INFO 38296 --- [afya] [   scheduling-1] com.idvey.afya.services.FcmService       : FCM - Message accepte pour token cWbzYvWFxY9LoJL-L_Q7...
+2026-06-25T10:37:15.098+01:00  INFO 38296 --- [afya] [   scheduling-1] com.idvey.afya.services.FcmService       : FCM - Envoi alerte PERSONAL_BOX_STOCK_RUPTURE a 9 appareil(s) pour userId: 5476d40c-32bb-47d7-b51d-57fe2051d127
+2026-06-25T10:37:15.303+01:00  INFO 38296 --- [afya] [   scheduling-1] com.idvey.afya.services.FcmService       : FCM - Succès: 9 | Échec: 0
+2026-06-25T10:37:15.303+01:00  INFO 38296 --- [afya] [   scheduling-1] com.idvey.afya.services.FcmService       : FCM - Message accepte pour token d0q5jXvM6GUvjkyMCkaV...
+2026-06-25T10:37:15.304+01:00  INFO 38296 --- [afya] [   scheduling-1] com.idvey.afya.services.FcmService       : FCM - Message accepte pour token ckvTapYp9cvCQHM2k8lU...
+2026-06-25T10:37:15.304+01:00  INFO 38296 --- [afya] [   scheduling-1] com.idvey.afya.services.FcmService       : FCM - Message accepte pour token dfVODGXjqdUKDLVk2qVA...
+2026-06-25T10:37:15.304+01:00  INFO 38296 --- [afya] [   scheduling-1] com.idvey.afya.services.FcmService       : FCM - Message accepte pour token cJ-4dH24e73muI9RpDae...
+2026-06-25T10:37:15.304+01:00  INFO 38296 --- [afya] [   scheduling-1] com.idvey.afya.services.FcmService       : FCM - Message accepte pour token dQWTmlvIRB9ie6V80JjK...
+2026-06-25T10:37:15.304+01:00  INFO 38296 --- [afya] [   scheduling-1] com.idvey.afya.services.FcmService       : FCM - Message accepte pour token eissec_Av4VGL1i2A0v9...
+2026-06-25T10:37:15.304+01:00  INFO 38296 --- [afya] [   scheduling-1] com.idvey.afya.services.FcmService       : FCM - Message accepte pour token cdUSPzkfnBWnkrlpUaLe...
+2026-06-25T10:37:15.304+01:00  INFO 38296 --- [afya] [   scheduling-1] com.idvey.afya.services.FcmService       : FCM - Message accepte pour token eT4ugBMT_7yrJXhwsBcP...
+2026-06-25T10:37:15.304+01:00  INFO 38296 --- [afya] [   scheduling-1] com.idvey.afya.services.FcmService       : FCM - Message accepte pour token cWbzYvWFxY9LoJL-L_Q7...
+2026-06-25T10:37:15.436+01:00  INFO 38296 --- [afya] [   scheduling-1] com.idvey.afya.services.FcmService       : FCM - Envoi alerte ESTABLISHMENT_STOCK_LOW a 3 appareil(s) pour userId: 71ad1bcc-ac20-4f5d-bb36-8c0c9fd87545
+2026-06-25T10:37:15.608+01:00  INFO 38296 --- [afya] [   scheduling-1] com.idvey.afya.services.FcmService       : FCM - Succès: 3 | Échec: 0
+2026-06-25T10:37:15.609+01:00  INFO 38296 --- [afya] [   scheduling-1] com.idvey.afya.services.FcmService       : FCM - Message accepte pour token dmTFd3MMhgQoayDfK6fe...
+2026-06-25T10:37:15.609+01:00  INFO 38296 --- [afya] [   scheduling-1] com.idvey.afya.services.FcmService       : FCM - Message accepte pour token drY8QK_fzvzc_hhXccS0...
+2026-06-25T10:37:15.609+01:00  INFO 38296 --- [afya] [   scheduling-1] com.idvey.afya.services.FcmService       : FCM - Message accepte pour token dxoa5TNnBGp2LfFn6itv...
+2026-06-25T10:37:15.609+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.s.StockAlertNotificationService    : [StockAlerts] Alertes envoyees - boites personnelles=3 etablissements=1
+2026-06-25T10:37:23.389+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:37)
+2026-06-25T10:37:33.379+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:37)
+2026-06-25T10:37:43.389+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:37)
+2026-06-25T10:37:53.380+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:37)
+2026-06-25T10:38:03.380+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:38)
+2026-06-25T10:38:13.380+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:38)
+2026-06-25T10:38:23.375+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:38)
+2026-06-25T10:38:33.377+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:38)
+2026-06-25T10:38:43.385+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:38)
+2026-06-25T10:38:53.373+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:38)
+2026-06-25T10:39:03.378+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:39)
+[AUTH] Login attempt: chaima.guezmir20@gmail.com | deviceId=Mozilla/5.0 (Windows NT 10.0; Win64; | deviceName=BrowserName.chrome - Win32
+[AUTH] Login success: chaima.guezmir20@gmail.com | userId=0a4f7964-739f-4f2c-a6e0-43a299d6394c
+2026-06-25T10:39:05.235+01:00  INFO 38296 --- [afya] [0.0-8081-exec-1] c.i.afya.controllers.FcmTokenController  : FCM Token enregistre pour userId=0a4f7964-739f-4f2c-a6e0-43a299d6394c device=WEB
+2026-06-25T10:39:05.319+01:00  INFO 38296 --- [afya] [0.0-8081-exec-1] c.i.a.s.StockAlertNotificationService    : [StockAlerts] 0 alerte(s) envoyee(s) pour userId=0a4f7964-739f-4f2c-a6e0-43a299d6394c
+2026-06-25T10:39:05.472+01:00  INFO 38296 --- [afya] [0.0-8081-exec-4] c.i.a.s.service.OrdonnanceService        : Fetching ordonnances for user 0a4f7964-739f-4f2c-a6e0-43a299d6394c
+2026-06-25T10:39:05.588+01:00  INFO 38296 --- [afya] [0.0-8081-exec-5] c.i.a.security.service.ReminderService   : Getting all reminders with medication details for user: 0a4f7964-739f-4f2c-a6e0-43a299d6394c
+2026-06-25T10:39:07.423+01:00  INFO 38296 --- [afya] [0.0-8081-exec-8] c.i.a.s.EtablissementSanteService        : Fetching etablissement for user: 0a4f7964-739f-4f2c-a6e0-43a299d6394c
+2026-06-25T10:39:07.431+01:00  INFO 38296 --- [afya] [0.0-8081-exec-8] c.i.a.s.EtablissementSanteService        : Found etablissement via admin: 755da7d4-4344-11f1-86d1-005056c00001
+2026-06-25T10:39:07.431+01:00  INFO 38296 --- [afya] [0.0-8081-exec-8] c.i.a.s.EtablissementSanteService        : Fetching all personnels for etablissement: 755da7d4-4344-11f1-86d1-005056c00001
+2026-06-25T10:39:07.431+01:00  INFO 38296 --- [afya] [0.0-8081-exec-8] c.i.a.s.EtablissementSanteService        : Etablissement found: Hôpital Charles (ID: 755da7d4-4344-11f1-86d1-005056c00001)
+2026-06-25T10:39:07.446+01:00  INFO 38296 --- [afya] [0.0-8081-exec-8] c.i.a.s.EtablissementSanteService        : Found 1 medecins for etablissement Hôpital Charles
+2026-06-25T10:39:13.377+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:39)
+2026-06-25T10:39:23.387+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:39)
+2026-06-25T10:39:33.383+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:39)
+2026-06-25T10:39:43.377+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:39)
+2026-06-25T10:39:53.373+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:39)
+2026-06-25T10:40:03.376+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:40)
+2026-06-25T10:40:13.380+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:40)
+2026-06-25T10:40:23.387+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:40)
+2026-06-25T10:40:33.374+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:40)
+2026-06-25T10:40:43.379+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:40)
+2026-06-25T10:40:53.384+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:40)
+2026-06-25T10:41:03.381+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:41)
+2026-06-25T10:41:13.377+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:41)
+2026-06-25T10:41:23.376+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:41)
+2026-06-25T10:41:33.385+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:41)
+2026-06-25T10:41:43.376+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:41)
+2026-06-25T10:41:53.387+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:41)
+2026-06-25T10:42:03.376+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:42)
+2026-06-25T10:42:13.383+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:42)
+2026-06-25T10:42:23.380+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:42)
+2026-06-25T10:42:33.381+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:42)
+2026-06-25T10:42:43.386+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:42)
+2026-06-25T10:42:53.385+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:42)
+2026-06-25T10:43:03.379+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:43)
+2026-06-25T10:43:13.375+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:43)
+2026-06-25T10:43:23.387+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:43)
+2026-06-25T10:43:33.383+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:43)
+2026-06-25T10:43:43.387+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:43)
+2026-06-25T10:43:53.382+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:43)
+2026-06-25T10:44:03.379+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:44)
+2026-06-25T10:44:13.380+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:44)
+2026-06-25T10:44:23.377+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:44)
+2026-06-25T10:44:33.374+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:44)
+2026-06-25T10:44:43.389+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:44)
+2026-06-25T10:44:53.379+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:44)
+2026-06-25T10:45:03.376+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:45)
+2026-06-25T10:45:13.384+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:45)
+2026-06-25T10:45:23.376+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:45)
+2026-06-25T10:45:33.375+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:45)
+2026-06-25T10:45:43.386+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:45)
+2026-06-25T10:45:53.381+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:45)
+2026-06-25T10:46:03.386+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:46)
+2026-06-25T10:46:13.385+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:46)
+2026-06-25T10:46:23.374+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:46)
+2026-06-25T10:46:33.388+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:46)
+2026-06-25T10:46:43.377+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:46)
+2026-06-25T10:46:53.388+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:46)
+2026-06-25T10:47:03.384+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:47)
+2026-06-25T10:47:13.386+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:47)
+2026-06-25T10:47:23.386+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:47)
+2026-06-25T10:47:33.388+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:47)
+2026-06-25T10:47:43.383+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:47)
+2026-06-25T10:47:53.375+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:47)
+2026-06-25T10:48:03.378+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:48)
+2026-06-25T10:48:13.384+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:48)
+2026-06-25T10:48:23.386+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:48)
+2026-06-25T10:48:33.385+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:48)
+2026-06-25T10:48:43.373+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:48)
+2026-06-25T10:48:53.376+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:48)
+2026-06-25T10:49:03.382+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:49)
+2026-06-25T10:49:13.378+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:49)
+2026-06-25T10:49:23.381+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:49)
+2026-06-25T10:49:33.381+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:49)
+2026-06-25T10:49:43.376+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:49)
+2026-06-25T10:49:53.388+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:49)
+2026-06-25T10:50:03.375+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:50)
+2026-06-25T10:50:13.379+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:50)
+2026-06-25T10:50:23.381+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:50)
+2026-06-25T10:50:33.374+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:50)
+2026-06-25T10:50:43.377+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:50)
+2026-06-25T10:50:53.381+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:50)
+2026-06-25T10:51:03.387+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:51)
+2026-06-25T10:51:13.373+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:51)
+2026-06-25T10:51:23.385+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 10:51)
+2026-06-25T11:04:56.457+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.461+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.474+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.477+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.477+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.490+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.493+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.493+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.509+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.509+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.523+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.528+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.528+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.540+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.544+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.552+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.556+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.556+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.569+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.574+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.584+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.590+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.594+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.603+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.608+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.613+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.618+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.631+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.633+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.642+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.648+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.653+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.666+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.667+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.674+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.674+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.682+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.691+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.698+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.698+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.709+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.716+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.718+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.730+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.741+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.746+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.752+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.754+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.763+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.763+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.780+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.783+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.791+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.796+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.801+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.806+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.811+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.811+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.827+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.827+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.827+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.840+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.849+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.857+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.865+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.865+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.875+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.880+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.886+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.893+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.898+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.902+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.911+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.917+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.926+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.926+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.934+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.942+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.947+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.950+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:04:56.959+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:04)
+2026-06-25T11:05:03.389+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:05)
+2026-06-25T11:05:13.381+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:05)
+2026-06-25T11:05:19.654+01:00  WARN 38296 --- [afya] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=13m53s85ms858µs300ns).
+2026-06-25T11:05:23.386+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:05)
+2026-06-25T11:05:33.388+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:05)
+2026-06-25T11:05:43.375+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:05)
+2026-06-25T11:05:53.378+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:05)
+2026-06-25T11:06:03.386+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:06)
+2026-06-25T11:06:13.382+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:06)
+2026-06-25T11:06:23.381+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:06)
+2026-06-25T11:06:33.383+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:06)
+2026-06-25T11:06:43.384+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:06)
+2026-06-25T11:06:53.378+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:06)
+2026-06-25T11:07:03.381+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:07)
+2026-06-25T11:07:13.377+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:07)
+2026-06-25T11:07:23.375+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:07)
+2026-06-25T11:07:33.384+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:07)
+2026-06-25T11:07:43.378+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:07)
+2026-06-25T11:07:53.383+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:07)
+2026-06-25T11:08:03.380+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:08)
+2026-06-25T11:08:13.385+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:08)
+2026-06-25T11:08:23.379+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:08)
+2026-06-25T11:08:33.391+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:08)
+2026-06-25T11:08:43.378+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:08)
+2026-06-25T11:08:53.386+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:08)
+2026-06-25T11:09:03.374+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:09)
+2026-06-25T11:09:13.385+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:09)
+[AUTH] Login attempt: chaima.guezmir20@gmail.com | deviceId=Mozilla/5.0 (Windows NT 10.0; Win64; | deviceName=BrowserName.chrome - Win32
+[AUTH] Login success: chaima.guezmir20@gmail.com | userId=0a4f7964-739f-4f2c-a6e0-43a299d6394c
+2026-06-25T11:09:18.525+01:00  INFO 38296 --- [afya] [0.0-8081-exec-2] c.i.a.s.EtablissementSanteService        : Fetching etablissement for user: 0a4f7964-739f-4f2c-a6e0-43a299d6394c
+2026-06-25T11:09:18.525+01:00  INFO 38296 --- [afya] [0.0-8081-exec-2] c.i.a.s.EtablissementSanteService        : Found etablissement via admin: 755da7d4-4344-11f1-86d1-005056c00001
+2026-06-25T11:09:18.525+01:00  INFO 38296 --- [afya] [0.0-8081-exec-2] c.i.a.s.EtablissementSanteService        : Fetching all personnels for etablissement: 755da7d4-4344-11f1-86d1-005056c00001
+2026-06-25T11:09:18.533+01:00  INFO 38296 --- [afya] [0.0-8081-exec-2] c.i.a.s.EtablissementSanteService        : Etablissement found: Hôpital Charles (ID: 755da7d4-4344-11f1-86d1-005056c00001)
+2026-06-25T11:09:18.540+01:00  INFO 38296 --- [afya] [0.0-8081-exec-2] c.i.a.s.EtablissementSanteService        : Found 1 medecins for etablissement Hôpital Charles
+2026-06-25T11:09:20.616+01:00  INFO 38296 --- [afya] [0.0-8081-exec-5] c.i.afya.controllers.FcmTokenController  : FCM Token enregistre pour userId=0a4f7964-739f-4f2c-a6e0-43a299d6394c device=WEB
+2026-06-25T11:09:20.688+01:00  INFO 38296 --- [afya] [0.0-8081-exec-5] c.i.a.s.StockAlertNotificationService    : [StockAlerts] 0 alerte(s) envoyee(s) pour userId=0a4f7964-739f-4f2c-a6e0-43a299d6394c
+2026-06-25T11:09:20.921+01:00  INFO 38296 --- [afya] [0.0-8081-exec-7] c.i.a.s.service.OrdonnanceService        : Fetching ordonnances for user 0a4f7964-739f-4f2c-a6e0-43a299d6394c
+2026-06-25T11:09:21.034+01:00  INFO 38296 --- [afya] [0.0-8081-exec-8] c.i.a.security.service.ReminderService   : Getting all reminders with medication details for user: 0a4f7964-739f-4f2c-a6e0-43a299d6394c
+2026-06-25T11:09:23.374+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:09)
+2026-06-25T11:09:33.388+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:09)
+2026-06-25T11:09:34.188+01:00  INFO 38296 --- [afya] [0.0-8081-exec-8] c.i.afya.controllers.FcmTokenController  : FCM Token enregistre pour userId=0a4f7964-739f-4f2c-a6e0-43a299d6394c device=WEB
+2026-06-25T11:09:34.249+01:00  INFO 38296 --- [afya] [0.0-8081-exec-8] c.i.a.s.StockAlertNotificationService    : [StockAlerts] 0 alerte(s) envoyee(s) pour userId=0a4f7964-739f-4f2c-a6e0-43a299d6394c
+2026-06-25T11:09:43.377+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:09)
+2026-06-25T11:09:53.377+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:09)
+2026-06-25T11:10:03.377+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:10)
+2026-06-25T11:10:13.385+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:10)
+2026-06-25T11:10:23.378+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:10)
+2026-06-25T11:10:33.380+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:10)
+2026-06-25T11:10:43.378+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:10)
+2026-06-25T11:10:53.377+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:10)
+2026-06-25T11:11:03.377+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:11)
+2026-06-25T11:11:13.373+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:11)
+2026-06-25T11:11:23.388+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:11)
+2026-06-25T11:11:33.380+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:11)
+2026-06-25T11:11:43.376+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:11)
+2026-06-25T11:11:53.375+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:11)
+2026-06-25T11:12:03.388+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:12)
+2026-06-25T11:12:13.376+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:12)
+2026-06-25T11:12:23.382+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:12)
+2026-06-25T11:12:33.381+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:12)
+2026-06-25T11:12:43.378+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:12)
+2026-06-25T11:12:53.382+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:12)
+2026-06-25T11:13:03.379+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:13)
+2026-06-25T11:13:13.381+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:13)
+2026-06-25T11:13:23.388+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:13)
+2026-06-25T11:13:33.385+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:13)
+2026-06-25T11:13:43.377+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:13)
+2026-06-25T11:13:53.380+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:13)
+2026-06-25T11:14:03.387+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:14)
+2026-06-25T11:14:13.380+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:14)
+2026-06-25T11:14:23.386+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:14)
+2026-06-25T11:14:33.387+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:14)
+2026-06-25T11:14:43.380+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:14)
+2026-06-25T11:14:53.388+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:14)
+2026-06-25T11:15:03.385+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:15)
+2026-06-25T11:15:13.380+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:15)
+2026-06-25T11:15:23.387+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:15)
+2026-06-25T11:15:33.382+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:15)
+2026-06-25T11:15:43.385+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:15)
+2026-06-25T11:15:53.384+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:15)
+2026-06-25T11:16:03.375+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:16)
+2026-06-25T11:16:13.381+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:16)
+2026-06-25T11:16:23.388+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:16)
+2026-06-25T11:16:33.383+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:16)
+2026-06-25T11:16:43.384+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:16)
+2026-06-25T11:16:53.380+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:16)
+2026-06-25T11:17:03.380+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:17)
+2026-06-25T11:17:13.375+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:17)
+2026-06-25T11:17:23.381+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:17)
+2026-06-25T11:17:33.389+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:17)
+2026-06-25T11:17:43.383+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:17)
+2026-06-25T11:17:53.387+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:17)
+2026-06-25T11:18:03.377+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:18)
+2026-06-25T11:18:13.375+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:18)
+2026-06-25T11:18:23.387+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:18)
+2026-06-25T11:18:33.376+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:18)
+2026-06-25T11:18:43.383+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:18)
+2026-06-25T11:18:53.379+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:18)
+2026-06-25T11:19:03.382+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:19)
+2026-06-25T11:19:13.375+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:19)
+2026-06-25T11:19:23.388+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:19)
+2026-06-25T11:19:33.375+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:19)
+2026-06-25T11:19:43.374+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:19)
+2026-06-25T11:19:53.380+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:19)
+2026-06-25T11:20:03.382+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:20)
+2026-06-25T11:20:13.386+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:20)
+2026-06-25T11:20:23.375+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:20)
+2026-06-25T11:20:33.386+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:20)
+2026-06-25T11:20:43.386+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:20)
+2026-06-25T11:20:53.384+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:20)
+2026-06-25T11:21:03.376+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:21)
+2026-06-25T11:21:13.377+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:21)
+2026-06-25T11:21:23.387+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:21)
+2026-06-25T11:21:33.405+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:21)
+2026-06-25T11:21:43.378+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:21)
+2026-06-25T11:21:53.377+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:21)
+[AUTH] Login attempt: chaima.guezmir20@gmail.com | deviceId=Mozilla/5.0 (Windows NT 10.0; Win64; | deviceName=BrowserName.chrome - Win32
+[AUTH] Login success: chaima.guezmir20@gmail.com | userId=0a4f7964-739f-4f2c-a6e0-43a299d6394c
+2026-06-25T11:21:56.439+01:00  INFO 38296 --- [afya] [0.0-8081-exec-3] c.i.a.s.EtablissementSanteService        : Fetching etablissement for user: 0a4f7964-739f-4f2c-a6e0-43a299d6394c
+2026-06-25T11:21:56.445+01:00  INFO 38296 --- [afya] [0.0-8081-exec-3] c.i.a.s.EtablissementSanteService        : Found etablissement via admin: 755da7d4-4344-11f1-86d1-005056c00001
+2026-06-25T11:21:56.445+01:00  INFO 38296 --- [afya] [0.0-8081-exec-3] c.i.a.s.EtablissementSanteService        : Fetching all personnels for etablissement: 755da7d4-4344-11f1-86d1-005056c00001
+2026-06-25T11:21:56.448+01:00  INFO 38296 --- [afya] [0.0-8081-exec-3] c.i.a.s.EtablissementSanteService        : Etablissement found: Hôpital Charles (ID: 755da7d4-4344-11f1-86d1-005056c00001)
+2026-06-25T11:21:56.455+01:00  INFO 38296 --- [afya] [0.0-8081-exec-3] c.i.a.s.EtablissementSanteService        : Found 1 medecins for etablissement Hôpital Charles
+2026-06-25T11:21:58.856+01:00  INFO 38296 --- [afya] [0.0-8081-exec-8] c.i.afya.controllers.FcmTokenController  : FCM Token enregistre pour userId=0a4f7964-739f-4f2c-a6e0-43a299d6394c device=WEB
+2026-06-25T11:21:58.905+01:00  INFO 38296 --- [afya] [0.0-8081-exec-8] c.i.a.s.StockAlertNotificationService    : [StockAlerts] 0 alerte(s) envoyee(s) pour userId=0a4f7964-739f-4f2c-a6e0-43a299d6394c
+2026-06-25T11:21:59.053+01:00  INFO 38296 --- [afya] [0.0-8081-exec-1] c.i.a.s.service.OrdonnanceService        : Fetching ordonnances for user 0a4f7964-739f-4f2c-a6e0-43a299d6394c
+2026-06-25T11:21:59.245+01:00  INFO 38296 --- [afya] [0.0-8081-exec-4] c.i.a.security.service.ReminderService   : Getting all reminders with medication details for user: 0a4f7964-739f-4f2c-a6e0-43a299d6394c
+2026-06-25T11:22:03.378+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:22)
+2026-06-25T11:22:13.378+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:22)
+2026-06-25T11:22:13.865+01:00  INFO 38296 --- [afya] [0.0-8081-exec-4] c.i.afya.controllers.FcmTokenController  : FCM Token enregistre pour userId=0a4f7964-739f-4f2c-a6e0-43a299d6394c device=WEB
+2026-06-25T11:22:13.919+01:00  INFO 38296 --- [afya] [0.0-8081-exec-4] c.i.a.s.StockAlertNotificationService    : [StockAlerts] 0 alerte(s) envoyee(s) pour userId=0a4f7964-739f-4f2c-a6e0-43a299d6394c
+2026-06-25T11:22:23.378+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:22)
+2026-06-25T11:22:33.375+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:22)
+2026-06-25T11:22:43.373+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:22)
+2026-06-25T11:22:53.383+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:22)
+2026-06-25T11:23:03.376+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:23)
+2026-06-25T11:23:13.388+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:23)
+2026-06-25T11:23:23.382+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:23)
+2026-06-25T11:23:33.377+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:23)
+2026-06-25T11:23:43.374+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:23)
+2026-06-25T11:23:53.379+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:23)
+2026-06-25T11:24:03.375+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:24)
+2026-06-25T11:24:13.387+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:24)
+2026-06-25T11:24:23.384+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:24)
+2026-06-25T11:24:33.383+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:24)
+2026-06-25T11:24:43.374+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:24)
+2026-06-25T11:24:53.380+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:24)
+2026-06-25T11:25:03.377+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:25)
+2026-06-25T11:25:13.387+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:25)
+2026-06-25T11:25:23.386+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:25)
+2026-06-25T11:25:33.387+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:25)
+2026-06-25T11:25:43.382+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:25)
+2026-06-25T11:25:53.374+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:25)
+2026-06-25T11:26:03.381+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:26)
+2026-06-25T11:26:13.387+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:26)
+2026-06-25T11:26:23.378+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:26)
+2026-06-25T11:26:33.379+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:26)
+2026-06-25T11:26:43.384+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:26)
+2026-06-25T11:26:53.377+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:26)
+2026-06-25T11:27:03.396+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:27)
+2026-06-25T11:27:13.382+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:27)
+2026-06-25T11:27:23.385+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:27)
+2026-06-25T11:27:33.375+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:27)
+2026-06-25T11:27:43.380+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:27)
+2026-06-25T11:27:53.383+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:27)
+2026-06-25T11:28:03.378+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:28)
+2026-06-25T11:28:13.376+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:28)
+2026-06-25T11:28:23.390+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:28)
+2026-06-25T11:28:33.377+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:28)
+2026-06-25T11:28:43.376+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:28)
+2026-06-25T11:28:53.381+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:28)
+2026-06-25T11:29:03.386+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:29)
+2026-06-25T11:29:13.386+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:29)
+2026-06-25T11:29:23.388+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:29)
+2026-06-25T11:29:33.386+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:29)
+2026-06-25T11:29:43.382+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:29)
+2026-06-25T11:29:53.381+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:29)
+2026-06-25T11:30:03.381+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:30)
+2026-06-25T11:30:13.385+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:30)
+2026-06-25T11:30:23.380+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:30)
+2026-06-25T11:30:33.378+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:30)
+2026-06-25T11:30:43.377+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:30)
+2026-06-25T11:30:53.385+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:30)
+2026-06-25T11:31:03.374+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:31)
+2026-06-25T11:31:13.382+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:31)
+2026-06-25T11:31:23.375+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:31)
+2026-06-25T11:31:33.385+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:31)
+2026-06-25T11:31:43.374+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:31)
+2026-06-25T11:31:53.383+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:31)
+2026-06-25T11:32:03.378+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:32)
+2026-06-25T11:32:13.377+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:32)
+2026-06-25T11:32:23.380+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:32)
+2026-06-25T11:32:33.384+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:32)
+2026-06-25T11:32:43.374+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:32)
+2026-06-25T11:32:53.382+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:32)
+2026-06-25T11:33:03.388+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:33)
+2026-06-25T11:33:13.384+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:33)
+2026-06-25T11:33:23.384+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:33)
+2026-06-25T11:33:33.378+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:33)
+2026-06-25T11:33:43.386+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:33)
+2026-06-25T11:33:53.382+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:33)
+2026-06-25T11:34:03.389+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:34)
+2026-06-25T11:34:13.381+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:34)
+2026-06-25T11:34:23.387+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:34)
+2026-06-25T11:34:33.384+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:34)
+2026-06-25T11:34:43.385+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:34)
+2026-06-25T11:34:53.388+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:34)
+2026-06-25T11:35:03.382+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:35)
+2026-06-25T11:35:13.381+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:35)
+2026-06-25T11:35:23.377+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:35)
+2026-06-25T11:35:33.377+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:35)
+2026-06-25T11:35:43.387+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:35)
+2026-06-25T11:35:53.381+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:35)
+2026-06-25T11:36:03.385+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:36)
+2026-06-25T11:36:13.381+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:36)
+2026-06-25T11:36:23.383+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:36)
+2026-06-25T11:36:33.376+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:36)
+2026-06-25T11:36:43.391+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:36)
+2026-06-25T11:36:53.380+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:36)
+2026-06-25T11:37:03.388+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:37)
+2026-06-25T11:37:13.379+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:37)
+2026-06-25T11:37:23.381+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:37)
+2026-06-25T11:37:33.388+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:37)
+2026-06-25T11:37:43.376+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:37)
+2026-06-25T11:37:53.377+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:37)
+2026-06-25T11:38:03.383+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:38)
+2026-06-25T11:38:13.388+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:38)
+2026-06-25T11:38:23.383+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:38)
+2026-06-25T11:38:33.377+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:38)
+2026-06-25T11:38:43.383+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:38)
+2026-06-25T11:38:53.385+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:38)
+2026-06-25T11:39:03.382+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:39)
+2026-06-25T11:39:13.387+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:39)
+2026-06-25T11:39:23.381+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:39)
+2026-06-25T11:39:33.376+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:39)
+2026-06-25T11:39:43.379+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:39)
+[AUTH] Login attempt: chaima.guezmir20@gmail.com | deviceId=Mozilla/5.0 (Windows NT 10.0; Win64; | deviceName=BrowserName.chrome - Win32
+[AUTH] Login success: chaima.guezmir20@gmail.com | userId=0a4f7964-739f-4f2c-a6e0-43a299d6394c
+2026-06-25T11:39:46.098+01:00  INFO 38296 --- [afya] [0.0-8081-exec-7] c.i.afya.controllers.FcmTokenController  : FCM Token enregistre pour userId=0a4f7964-739f-4f2c-a6e0-43a299d6394c device=WEB
+2026-06-25T11:39:46.162+01:00  INFO 38296 --- [afya] [0.0-8081-exec-7] c.i.a.s.StockAlertNotificationService    : [StockAlerts] 0 alerte(s) envoyee(s) pour userId=0a4f7964-739f-4f2c-a6e0-43a299d6394c
+2026-06-25T11:39:46.259+01:00  INFO 38296 --- [afya] [0.0-8081-exec-8] c.i.a.s.service.OrdonnanceService        : Fetching ordonnances for user 0a4f7964-739f-4f2c-a6e0-43a299d6394c
+2026-06-25T11:39:46.364+01:00  INFO 38296 --- [afya] [0.0-8081-exec-1] c.i.a.security.service.ReminderService   : Getting all reminders with medication details for user: 0a4f7964-739f-4f2c-a6e0-43a299d6394c
+2026-06-25T11:39:48.226+01:00  INFO 38296 --- [afya] [0.0-8081-exec-3] c.i.a.s.EtablissementSanteService        : Fetching etablissement for user: 0a4f7964-739f-4f2c-a6e0-43a299d6394c
+2026-06-25T11:39:48.228+01:00  INFO 38296 --- [afya] [0.0-8081-exec-3] c.i.a.s.EtablissementSanteService        : Found etablissement via admin: 755da7d4-4344-11f1-86d1-005056c00001
+2026-06-25T11:39:48.228+01:00  INFO 38296 --- [afya] [0.0-8081-exec-3] c.i.a.s.EtablissementSanteService        : Fetching all personnels for etablissement: 755da7d4-4344-11f1-86d1-005056c00001
+2026-06-25T11:39:48.231+01:00  INFO 38296 --- [afya] [0.0-8081-exec-3] c.i.a.s.EtablissementSanteService        : Etablissement found: Hôpital Charles (ID: 755da7d4-4344-11f1-86d1-005056c00001)
+2026-06-25T11:39:48.234+01:00  INFO 38296 --- [afya] [0.0-8081-exec-3] c.i.a.s.EtablissementSanteService        : Found 1 medecins for etablissement Hôpital Charles
+2026-06-25T11:39:53.377+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:39)
+2026-06-25T11:40:03.376+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:40)
+2026-06-25T11:40:13.375+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:40)
+2026-06-25T11:40:23.374+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:40)
+2026-06-25T11:40:33.375+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:40)
+2026-06-25T11:40:43.380+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:40)
+2026-06-25T11:40:53.376+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:40)
+2026-06-25T11:41:03.375+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:41)
+2026-06-25T11:41:13.375+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:41)
+2026-06-25T11:41:23.379+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:41)
+2026-06-25T11:41:33.377+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:41)
+2026-06-25T11:41:43.375+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:41)
+2026-06-25T11:41:53.374+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:41)
+2026-06-25T11:42:03.383+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:42)
+2026-06-25T11:42:13.382+01:00  INFO 38296 --- [afya] [   scheduling-1] c.i.a.scheduler.NotificationScheduler    : [Scheduler] 🔍 Scan des rappels en cours... (Heure serveur: 25/06 11:42)
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  01:06 h
+[INFO] Finished at: 2026-06-25T11:42:15+01:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.springframework.boot:spring-boot-maven-plugin:3.4.5:run (default-cli) on project afya: Process terminated with exit code: -1 -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException

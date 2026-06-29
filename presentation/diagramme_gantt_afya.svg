@@ -1,0 +1,153 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Diagramme de Gantt professionnel du projet Afya</title>
+  <desc id="desc">Planning du projet Afya sur 6 mois, du 1er mars a aout 2026, pour les applications mobile et web.</desc>
+  <defs>
+    <linearGradient id="pageBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f8fafc"/>
+      <stop offset="100%" stop-color="#eef6f4"/>
+    </linearGradient>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#0f172a" flood-opacity="0.10"/>
+    </filter>
+    <style>
+      .title { font-family: Inter, Segoe UI, Arial, sans-serif; font-size: 46px; font-weight: 800; fill: #0f172a; }
+      .subtitle { font-family: Inter, Segoe UI, Arial, sans-serif; font-size: 22px; font-weight: 500; fill: #475569; }
+      .label { font-family: Inter, Segoe UI, Arial, sans-serif; font-size: 21px; font-weight: 650; fill: #172033; }
+      .small { font-family: Inter, Segoe UI, Arial, sans-serif; font-size: 17px; font-weight: 500; fill: #64748b; }
+      .month { font-family: Inter, Segoe UI, Arial, sans-serif; font-size: 19px; font-weight: 800; fill: #334155; }
+      .week { font-family: Inter, Segoe UI, Arial, sans-serif; font-size: 12px; font-weight: 650; fill: #94a3b8; }
+      .barText { font-family: Inter, Segoe UI, Arial, sans-serif; font-size: 16px; font-weight: 750; fill: #ffffff; }
+      .milestoneText { font-family: Inter, Segoe UI, Arial, sans-serif; font-size: 15px; font-weight: 750; fill: #1e293b; }
+      .grid { stroke: #dbe5ea; stroke-width: 1; }
+      .monthLine { stroke: #cbd5e1; stroke-width: 2; }
+      .rowLine { stroke: #e8eef2; stroke-width: 1; }
+    </style>
+  </defs>
+  <rect width="1600" height="900" fill="url(#pageBg)"/>
+  <g transform="translate(70 54)">
+    <text class="title" x="0" y="0" dominant-baseline="hanging">Planning du projet Afya</text>
+    <text class="subtitle" x="0" y="62" dominant-baseline="hanging">Diagramme de Gantt - Application mobile et web - 1er mars 2026 a aout 2026</text>
+    <g transform="translate(1224 0)">
+      <rect x="0" y="0" width="236" height="58" rx="10" fill="#0f766e"/>
+      <text x="118" y="29" text-anchor="middle" dominant-baseline="central" style="font-family: Inter, Segoe UI, Arial, sans-serif; font-size: 20px; font-weight: 800; fill: white;">Projet de fin d'etudes</text>
+    </g>
+  </g>
+  <g filter="url(#softShadow)">
+    <rect x="70" y="150" width="1460" height="660" rx="14" fill="#ffffff"/>
+  </g>
+  <g transform="translate(70 150)">
+    <rect x="0" y="0" width="1460" height="84" rx="14" fill="#f8fafc"/>
+    <line x1="350" y1="0" x2="350" y2="660" class="monthLine"/>
+    <text class="month" x="466.7" y="28" text-anchor="middle">Mars</text>
+    <text class="month" x="640.0" y="28" text-anchor="middle">Avril</text>
+    <text class="month" x="813.3" y="28" text-anchor="middle">Mai</text>
+    <text class="month" x="986.7" y="28" text-anchor="middle">Juin</text>
+    <text class="month" x="1160.0" y="28" text-anchor="middle">Juillet</text>
+    <text class="month" x="1333.3" y="28" text-anchor="middle">Aout</text>
+    <text class="week" x="401.7" y="62" text-anchor="middle">S1</text>
+    <text class="week" x="445.0" y="62" text-anchor="middle">S2</text>
+    <text class="week" x="488.3" y="62" text-anchor="middle">S3</text>
+    <text class="week" x="531.7" y="62" text-anchor="middle">S4</text>
+    <text class="week" x="575.0" y="62" text-anchor="middle">S5</text>
+    <text class="week" x="618.3" y="62" text-anchor="middle">S6</text>
+    <text class="week" x="661.7" y="62" text-anchor="middle">S7</text>
+    <text class="week" x="705.0" y="62" text-anchor="middle">S8</text>
+    <text class="week" x="748.3" y="62" text-anchor="middle">S9</text>
+    <text class="week" x="791.7" y="62" text-anchor="middle">S10</text>
+    <text class="week" x="835.0" y="62" text-anchor="middle">S11</text>
+    <text class="week" x="878.3" y="62" text-anchor="middle">S12</text>
+    <text class="week" x="921.7" y="62" text-anchor="middle">S13</text>
+    <text class="week" x="965.0" y="62" text-anchor="middle">S14</text>
+    <text class="week" x="1008.3" y="62" text-anchor="middle">S15</text>
+    <text class="week" x="1051.7" y="62" text-anchor="middle">S16</text>
+    <text class="week" x="1095.0" y="62" text-anchor="middle">S17</text>
+    <text class="week" x="1138.3" y="62" text-anchor="middle">S18</text>
+    <text class="week" x="1181.7" y="62" text-anchor="middle">S19</text>
+    <text class="week" x="1225.0" y="62" text-anchor="middle">S20</text>
+    <text class="week" x="1268.3" y="62" text-anchor="middle">S21</text>
+    <text class="week" x="1311.7" y="62" text-anchor="middle">S22</text>
+    <text class="week" x="1355.0" y="62" text-anchor="middle">S23</text>
+    <text class="week" x="1398.3" y="62" text-anchor="middle">S24</text>
+    <g transform="translate(380 84)">
+      <line x1="0.0" y1="0" x2="0.0" y2="576" class="monthLine"/>
+      <line x1="173.3" y1="0" x2="173.3" y2="576" class="monthLine"/>
+      <line x1="346.7" y1="0" x2="346.7" y2="576" class="monthLine"/>
+      <line x1="520.0" y1="0" x2="520.0" y2="576" class="monthLine"/>
+      <line x1="693.3" y1="0" x2="693.3" y2="576" class="monthLine"/>
+      <line x1="866.7" y1="0" x2="866.7" y2="576" class="monthLine"/>
+      <line x1="1040.0" y1="0" x2="1040.0" y2="576" class="monthLine"/>
+      <line x1="43.3" y1="0" x2="43.3" y2="576" class="grid"/>
+      <line x1="86.7" y1="0" x2="86.7" y2="576" class="grid"/>
+      <line x1="130.0" y1="0" x2="130.0" y2="576" class="grid"/>
+      <line x1="216.7" y1="0" x2="216.7" y2="576" class="grid"/>
+      <line x1="260.0" y1="0" x2="260.0" y2="576" class="grid"/>
+      <line x1="303.3" y1="0" x2="303.3" y2="576" class="grid"/>
+      <line x1="390.0" y1="0" x2="390.0" y2="576" class="grid"/>
+      <line x1="433.3" y1="0" x2="433.3" y2="576" class="grid"/>
+      <line x1="476.7" y1="0" x2="476.7" y2="576" class="grid"/>
+      <line x1="563.3" y1="0" x2="563.3" y2="576" class="grid"/>
+      <line x1="606.7" y1="0" x2="606.7" y2="576" class="grid"/>
+      <line x1="650.0" y1="0" x2="650.0" y2="576" class="grid"/>
+      <line x1="736.7" y1="0" x2="736.7" y2="576" class="grid"/>
+      <line x1="780.0" y1="0" x2="780.0" y2="576" class="grid"/>
+      <line x1="823.3" y1="0" x2="823.3" y2="576" class="grid"/>
+      <line x1="910.0" y1="0" x2="910.0" y2="576" class="grid"/>
+      <line x1="953.3" y1="0" x2="953.3" y2="576" class="grid"/>
+      <line x1="996.7" y1="0" x2="996.7" y2="576" class="grid"/>
+    </g>
+    <g transform="translate(30 123)">
+      <text class="label" x="0" y="26">Cadrage et besoins</text>
+      <text class="small" x="0" y="50">Perimetre, roles, cas d'utilisation</text>
+      <line x1="0" y1="76" x2="1400" y2="76" class="rowLine"/>
+      <text class="label" x="0" y="95">Conception technique</text>
+      <text class="small" x="0" y="119">Architecture, donnees, API</text>
+      <line x1="0" y1="145" x2="1400" y2="145" class="rowLine"/>
+      <text class="label" x="0" y="164">Backend Spring Boot</text>
+      <text class="small" x="0" y="188">JWT, roles, services, BDD</text>
+      <line x1="0" y1="214" x2="1400" y2="214" class="rowLine"/>
+      <text class="label" x="0" y="233">Application mobile</text>
+      <text class="small" x="0" y="257">Flutter, ecrans, etats, API</text>
+      <line x1="0" y1="283" x2="1400" y2="283" class="rowLine"/>
+      <text class="label" x="0" y="302">Application web</text>
+      <text class="small" x="0" y="326">Tableaux de bord, gestion, API</text>
+      <line x1="0" y1="352" x2="1400" y2="352" class="rowLine"/>
+      <text class="label" x="0" y="371">Integrations externes</text>
+      <text class="small" x="0" y="395">Firebase, mail, OpenFDA, IA</text>
+      <line x1="0" y1="421" x2="1400" y2="421" class="rowLine"/>
+      <text class="label" x="0" y="440">Tests et validation</text>
+      <text class="small" x="0" y="464">Fonctionnels, securite, mobile/web</text>
+      <line x1="0" y1="490" x2="1400" y2="490" class="rowLine"/>
+      <text class="label" x="0" y="509">Deploiement et soutenance</text>
+      <text class="small" x="0" y="533">Docker, docs, presentation finale</text>
+    </g>
+    <rect x="380.0" y="104.0" width="130.0" height="38" rx="9" fill="#0f766e"/>
+    <text class="barText" x="445.0" y="123.0" text-anchor="middle" dominant-baseline="central">Analyse</text>
+    <rect x="466.7" y="173.0" width="173.3" height="38" rx="9" fill="#2563eb"/>
+    <text class="barText" x="553.3" y="192.0" text-anchor="middle" dominant-baseline="central">Conception</text>
+    <rect x="596.7" y="242.0" width="346.7" height="38" rx="9" fill="#7c3aed"/>
+    <text class="barText" x="770.0" y="261.0" text-anchor="middle" dominant-baseline="central">API, securite et donnees</text>
+    <rect x="683.3" y="311.0" width="433.3" height="38" rx="9" fill="#0891b2"/>
+    <text class="barText" x="900.0" y="330.0" text-anchor="middle" dominant-baseline="central">Application mobile</text>
+    <rect x="856.7" y="380.0" width="303.3" height="38" rx="9" fill="#ea580c"/>
+    <text class="barText" x="1008.3" y="399.0" text-anchor="middle" dominant-baseline="central">Application web</text>
+    <rect x="986.7" y="449.0" width="216.7" height="38" rx="9" fill="#16a34a"/>
+    <text class="barText" x="1095.0" y="468.0" text-anchor="middle" dominant-baseline="central">Services externes</text>
+    <rect x="1160.0" y="518.0" width="173.3" height="38" rx="9" fill="#dc2626"/>
+    <text class="barText" x="1246.7" y="537.0" text-anchor="middle" dominant-baseline="central">Validation</text>
+    <rect x="1290.0" y="587.0" width="130.0" height="38" rx="9" fill="#334155"/>
+    <text class="barText" x="1355.0" y="606.0" text-anchor="middle" dominant-baseline="central">Livraison</text>
+    <polygon points="596.7,180.0 608.7,192.0 596.7,204.0 584.7,192.0" fill="#f59e0b"/>
+    <text class="milestoneText" x="614.7" y="200.0">Architecture validee</text>
+    <polygon points="943.3,249.0 955.3,261.0 943.3,273.0 931.3,261.0" fill="#f59e0b"/>
+    <text class="milestoneText" x="961.3" y="269.0">Backend stable</text>
+    <polygon points="1116.7,387.0 1128.7,399.0 1116.7,411.0 1104.7,399.0" fill="#f59e0b"/>
+    <text class="milestoneText" x="1134.7" y="407.0">Mobile et web integres</text>
+    <polygon points="1333.3,525.0 1345.3,537.0 1333.3,549.0 1321.3,537.0" fill="#f59e0b"/>
+    <text class="milestoneText" x="1298.3" y="579.0">Recette finale</text>
+  </g>
+  <g transform="translate(70 838)">
+    <rect x="0" y="-19" width="18" height="18" rx="4" fill="#0f766e"/>
+    <text class="small" x="28" y="-5">Planification sur 6 mois adaptee au projet Afya: backend Spring Boot, application mobile, application web, integrations et validation finale.</text>
+    <text class="small" x="1325" y="-5" text-anchor="end">Version presentation</text>
+  </g>
+</svg>

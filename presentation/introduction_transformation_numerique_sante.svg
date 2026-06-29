@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="0.55" stop-color="#fff7fb"/>
+      <stop offset="1" stop-color="#f7d7e7"/>
+    </linearGradient>
+    <linearGradient id="blue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0e8fb7"/>
+      <stop offset="1" stop-color="#183b73"/>
+    </linearGradient>
+    <linearGradient id="red" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#d81b60"/>
+      <stop offset="1" stop-color="#a5103f"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#16345f" flood-opacity="0.14"/>
+    </filter>
+    <style>
+      .title { font-family: "Segoe UI", Arial, sans-serif; font-size: 54px; font-weight: 700; fill: #19365f; }
+      .subtitle { font-family: "Segoe UI", Arial, sans-serif; font-size: 24px; fill: #59708f; }
+      .label { font-family: "Segoe UI", Arial, sans-serif; font-size: 24px; font-weight: 650; fill: #19365f; }
+      .small { font-family: "Segoe UI", Arial, sans-serif; font-size: 18px; fill: #5c6f88; }
+      .tiny { font-family: "Segoe UI", Arial, sans-serif; font-size: 15px; fill: #718096; }
+      .number { font-family: "Segoe UI", Arial, sans-serif; font-size: 44px; font-weight: 800; fill: #b31349; }
+      .numberBlue { font-family: "Segoe UI", Arial, sans-serif; font-size: 44px; font-weight: 800; fill: #163d75; }
+      .source { font-family: "Segoe UI", Arial, sans-serif; font-size: 14px; fill: #6b7280; }
+      .axis { stroke: #d4dce8; stroke-width: 2; }
+      .grid { stroke: #edf1f7; stroke-width: 2; }
+    </style>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#bg)"/>
+
+  <g transform="translate(86,72)">
+    <text class="title" x="0" y="0">Transformation numérique de la santé</text>
+    <text class="subtitle" x="0" y="42">Un secteur porté par la télémédecine, les données, les applications mobiles et l’assistance intelligente.</text>
+    <line x1="0" y1="78" x2="1428" y2="78" stroke="#b31349" stroke-width="3" opacity="0.75"/>
+  </g>
+
+  <g transform="translate(86,190)" filter="url(#shadow)">
+    <rect x="0" y="0" width="682" height="478" rx="24" fill="#ffffff" stroke="#dbe7f4" stroke-width="2"/>
+    <text class="label" x="34" y="50">Marché mondial de la santé digitale</text>
+    <text class="small" x="34" y="82">Croissance estimée du marché global</text>
+
+    <g transform="translate(64,128)">
+      <line class="axis" x1="0" y1="260" x2="560" y2="260"/>
+      <line class="axis" x1="0" y1="30" x2="0" y2="260"/>
+      <line class="grid" x1="0" y1="205" x2="560" y2="205"/>
+      <line class="grid" x1="0" y1="150" x2="560" y2="150"/>
+      <line class="grid" x1="0" y1="95" x2="560" y2="95"/>
+
+      <path d="M 34 220 C 142 207, 215 175, 292 130 C 392 72, 470 42, 532 28" fill="none" stroke="#b31349" stroke-width="8" stroke-linecap="round"/>
+      <circle cx="34" cy="220" r="12" fill="#0e8fb7" stroke="#ffffff" stroke-width="5"/>
+      <circle cx="532" cy="28" r="12" fill="#b31349" stroke="#ffffff" stroke-width="5"/>
+
+      <text class="small" x="12" y="296">2025</text>
+      <text class="small" x="504" y="296">2033</text>
+
+      <text class="numberBlue" x="8" y="193">347,4</text>
+      <text class="tiny" x="22" y="217">Mds USD</text>
+
+      <rect x="374" y="-4" width="172" height="76" rx="16" fill="#ffffff" opacity="0.92"/>
+      <text class="number" x="386" y="46">1 830,4</text>
+      <text class="tiny" x="462" y="68">Mds USD</text>
+    </g>
+
+    <g transform="translate(36,414)">
+      <rect x="0" y="0" width="292" height="42" rx="21" fill="#fce7ef"/>
+      <text class="small" x="22" y="27" fill="#a5103f">TCAC 2026-2033 : 23,4 %</text>
+      <rect x="320" y="0" width="286" height="42" rx="21" fill="#e7f4f7"/>
+      <text class="small" x="342" y="27" fill="#163d75">Asie-Pacifique : plus forte croissance</text>
+    </g>
+  </g>
+
+  <g transform="translate(806,190)" filter="url(#shadow)">
+    <rect x="0" y="0" width="708" height="478" rx="24" fill="#ffffff" stroke="#dbe7f4" stroke-width="2"/>
+    <text class="label" x="34" y="50">Pourquoi digitaliser le parcours de soins ?</text>
+    <text class="small" x="34" y="82">Les besoins augmentent : suivi continu, accès rapide, coordination et prévention.</text>
+
+    <g transform="translate(34,124)">
+      <rect x="0" y="0" width="302" height="128" rx="18" fill="#f8fbff" stroke="#dbe7f4" stroke-width="2"/>
+      <circle cx="44" cy="44" r="24" fill="url(#red)" opacity="0.95"/>
+      <path d="M32 45 L40 53 L58 34" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+      <text class="number" x="84" y="50">75 %</text>
+      <text class="small" x="84" y="82">des décès hors pandémie</text>
+      <text class="tiny" x="84" y="106">dus aux maladies chroniques / MNT</text>
+    </g>
+
+    <g transform="translate(370,124)">
+      <rect x="0" y="0" width="302" height="128" rx="18" fill="#f8fbff" stroke="#dbe7f4" stroke-width="2"/>
+      <circle cx="44" cy="44" r="24" fill="url(#blue)" opacity="0.95"/>
+      <path d="M30 52 C44 24, 58 52, 44 68 C38 62, 34 58, 30 52 Z" fill="#ffffff"/>
+      <text class="numberBlue" x="84" y="50">380,3</text>
+      <text class="small" x="84" y="82">Mds USD en 2030</text>
+      <text class="tiny" x="84" y="106">marché mondial télémédecine</text>
+    </g>
+
+    <g transform="translate(34,282)">
+      <rect x="0" y="0" width="148" height="122" rx="18" fill="#fff7fb" stroke="#f3bfd2" stroke-width="2"/>
+      <text class="label" x="20" y="39" font-size="22">Suivi</text>
+      <text class="tiny" x="20" y="70">traitements</text>
+      <text class="tiny" x="20" y="94">rappels</text>
+    </g>
+    <g transform="translate(202,282)">
+      <rect x="0" y="0" width="148" height="122" rx="18" fill="#f5fbff" stroke="#c9e7f3" stroke-width="2"/>
+      <text class="label" x="20" y="39" font-size="22">Accès</text>
+      <text class="tiny" x="20" y="70">mobile</text>
+      <text class="tiny" x="20" y="94">télésoin</text>
+    </g>
+    <g transform="translate(370,282)">
+      <rect x="0" y="0" width="148" height="122" rx="18" fill="#fff7fb" stroke="#f3bfd2" stroke-width="2"/>
+      <text class="label" x="20" y="39" font-size="22">Données</text>
+      <text class="tiny" x="20" y="70">dossier</text>
+      <text class="tiny" x="20" y="94">indicateurs</text>
+    </g>
+    <g transform="translate(538,282)">
+      <rect x="0" y="0" width="134" height="122" rx="18" fill="#f5fbff" stroke="#c9e7f3" stroke-width="2"/>
+      <text class="label" x="20" y="39" font-size="22">IA</text>
+      <text class="tiny" x="20" y="70">assistance</text>
+      <text class="tiny" x="20" y="94">contexte</text>
+    </g>
+  </g>
+
+  <g transform="translate(86,704)">
+    <rect x="0" y="0" width="1428" height="92" rx="22" fill="#ffffff" opacity="0.86" stroke="#dbe7f4" stroke-width="2"/>
+    <text class="label" x="34" y="38">Lecture pour AFYA</text>
+    <text class="small" x="34" y="68">La transformation numérique répond à un besoin concret : centraliser le suivi patient, les médicaments, les rappels, les prescriptions et la coordination entre acteurs de santé.</text>
+  </g>
+
+  <text class="source" x="86" y="850">Sources : Grand View Research, Digital Health Market Report 2026-2033 ; Grand View Research, Telemedicine Market Report 2025-2030 ; OMS, Noncommunicable Diseases Fact Sheet 2025 ; OMS, Global Strategy on Digital Health 2020-2025.</text>
+</svg>
